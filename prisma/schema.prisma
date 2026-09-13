@@ -1,0 +1,442 @@
+// Prisma Schema for FACSS Corporate Platform
+// Aden First Center for Security Services and Strategic Studies
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  CONTENT_MANAGER
+  SERVICE_MANAGER
+  TRAINING_MANAGER
+  RESEARCH_MANAGER
+  EMPLOYEE
+  CLIENT
+  TRAINEE
+}
+
+enum RequestStatus {
+  NEW
+  UNDER_REVIEW
+  CONTACTED
+  WAITING_FOR_CLIENT
+  APPROVED
+  IN_PROGRESS
+  REPORT_READY
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum CourseStatus {
+  DRAFT
+  OPEN
+  FULL
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  REVIEWING
+  ACCEPTED
+  REJECTED
+  WAITLIST
+  COMPLETED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
+
+enum Visibility {
+  PUBLIC
+  REGISTERED_USERS
+  CLIENT_ONLY
+  PRIVATE
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+model User {
+  id               String                 @id @default(cuid())
+  email            String                 @unique
+  passwordHash     String
+  fullName         String
+  phone            String?
+  organization     String?
+  role             Role                   @default(CLIENT)
+  isActive         Boolean                @default(true)
+  avatar           String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  clientProfile    ClientProfile?
+  serviceRequests  ServiceRequest[]       @relation("ClientRequests")
+  assignedRequests ServiceRequest[]       @relation("AssignedStaff")
+  registrations    TrainingRegistration[]
+  notifications    Notification[]
+  activityLogs     ActivityLog[]
+  notes            ServiceRequestNote[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model ClientProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  companyName   String
+  sector        String?
+  taxNumber     String?
+  address       String?
+  accountStatus String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  slug        String    @unique
+  icon        String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  services    Service[]
+}
+
+model Service {
+  id              String          @id @default(cuid())
+  categoryId      String
+  titleAr         String
+  titleEn         String
+  slug            String          @unique
+  shortDescAr     String
+  shortDescEn     String
+  fullDescAr      String          @db.Text
+  fullDescEn      String          @db.Text
+  featuresAr      String          @db.Text // JSON string array
+  featuresEn      String          @db.Text // JSON string array
+  targetSectorsAr String?         @db.Text // JSON string array
+  targetSectorsEn String?         @db.Text // JSON string array
+  processAr       String?         @db.Text // JSON string array
+  processEn       String?         @db.Text // JSON string array
+  icon            String?
+  image           String?
+  order           Int             @default(0)
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  category        ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  requests        ServiceRequest[]
+
+  @@index([slug])
+  @@index([categoryId])
+}
+
+model ServiceRequest {
+  id                 String                   @id @default(cuid())
+  requestNumber      String                   @unique // e.g. FACSS-SR-2026-000101
+  userId             String?
+  serviceId          String
+  organization       String
+  contactName        String
+  contactEmail       String
+  contactPhone       String
+  priority           Priority                 @default(NORMAL)
+  status             RequestStatus            @default(NEW)
+  description        String                   @db.Text
+  assignedEmployeeId String?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  service            Service                  @relation(fields: [serviceId], references: [id])
+  user               User?                    @relation("ClientRequests", fields: [userId], references: [id], onDelete: SetNull)
+  assignedEmployee   User?                    @relation("AssignedStaff", fields: [assignedEmployeeId], references: [id], onDelete: SetNull)
+  notes              ServiceRequestNote[]
+  documents          ServiceRequestDocument[]
+
+  @@index([requestNumber])
+  @@index([status])
+  @@index([userId])
+}
+
+model ServiceRequestNote {
+  id              String         @id @default(cuid())
+  requestId       String
+  authorId        String?
+  authorName      String
+  note            String         @db.Text
+  isClientVisible Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+
+  request         ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  author          User?          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+model ServiceRequestDocument {
+  id             String         @id @default(cuid())
+  requestId      String
+  title          String
+  filePath       String
+  fileSize       Int
+  fileType       String
+  uploadedById   String
+  isConfidential Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+
+  request        ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+}
+
+model CourseCategory {
+  id        String   @id @default(cuid())
+  titleAr   String
+  titleEn   String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courses   Course[]
+}
+
+model Course {
+  id                   String                 @id @default(cuid())
+  categoryId           String
+  titleAr              String
+  titleEn              String
+  slug                 String                 @unique
+  descriptionAr        String                 @db.Text
+  descriptionEn        String                 @db.Text
+  trainerName          String
+  startDate            DateTime?
+  endDate              DateTime?
+  duration             String
+  location             String
+  capacity             Int                    @default(25)
+  registrationDeadline DateTime?
+  requirementsAr       String?                @db.Text
+  requirementsEn       String?                @db.Text
+  hasCertificate       Boolean                @default(true)
+  status               CourseStatus           @default(OPEN)
+  image                String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  category             CourseCategory         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  registrations        TrainingRegistration[]
+
+  @@index([slug])
+  @@index([status])
+}
+
+model TrainingRegistration {
+  id                String             @id @default(cuid())
+  courseId          String
+  userId            String?
+  fullName          String
+  nationalId        String?
+  email             String
+  phone             String
+  qualification     String?
+  status            RegistrationStatus @default(PENDING)
+  adminNotes        String?            @db.Text
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  course            Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  attendanceRecords AttendanceRecord[]
+  certificate       Certificate?
+
+  @@index([courseId])
+  @@index([userId])
+  @@index([status])
+}
+
+model AttendanceRecord {
+  id             String               @id @default(cuid())
+  registrationId String
+  sessionDate    DateTime
+  status         AttendanceStatus     @default(PRESENT)
+  notes          String?
+  createdAt      DateTime             @default(now())
+
+  registration   TrainingRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+}
+
+model Certificate {
+  id                String               @id @default(cuid())
+  certificateNumber String               @unique // e.g. FACSS-CERT-2026-0045
+  registrationId    String               @unique
+  studentName       String
+  courseTitle       String
+  issueDate         DateTime             @default(now())
+  grade             String?
+  verificationCode  String               @unique
+  pdfPath           String?
+  createdAt         DateTime             @default(now())
+
+  registration      TrainingRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([certificateNumber])
+  @@index([verificationCode])
+}
+
+model ResearchCategory {
+  id           String                @id @default(cuid())
+  titleAr      String
+  titleEn      String
+  slug         String                @unique
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  publications ResearchPublication[]
+}
+
+model ResearchPublication {
+  id              String           @id @default(cuid())
+  categoryId      String
+  titleAr         String
+  titleEn         String
+  slug            String           @unique
+  author          String
+  summaryAr       String           @db.Text
+  summaryEn       String           @db.Text
+  contentAr       String           @db.Text
+  contentEn       String           @db.Text
+  coverImage      String?
+  pdfPath         String?
+  publicationDate DateTime         @default(now())
+  visibility      Visibility       @default(PUBLIC)
+  isFeatured      Boolean          @default(false)
+  viewsCount      Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  category        ResearchCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([slug])
+  @@index([visibility])
+  @@index([categoryId])
+}
+
+model NewsArticle {
+  id          String        @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  slug        String        @unique
+  summaryAr   String        @db.Text
+  summaryEn   String        @db.Text
+  contentAr   String        @db.Text
+  contentEn   String        @db.Text
+  coverImage  String?
+  author      String
+  category    String?
+  status      ArticleStatus @default(PUBLISHED)
+  publishedAt DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([slug])
+  @@index([status])
+}
+
+model ContactMessage {
+  id           String        @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  organization String?
+  subject      String
+  message      String        @db.Text
+  status       MessageStatus @default(UNREAD)
+  replyNotes   String?       @db.Text
+  createdAt    DateTime      @default(now())
+
+  @@index([status])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  titleAr   String
+  titleEn   String
+  messageAr String
+  messageEn String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, ALERT
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  category  String   @default("GENERAL") // GENERAL, CONTACT, SOCIAL, SEO, BRANDING
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([category])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  userName   String?
+  action     String
+  entityType String
+  entityId   String?
+  details    String?  @db.Text
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}

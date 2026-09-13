@@ -1,0 +1,32 @@
+{
+  "name": "facss-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aden First Center for Security Services and Strategic Studies (FACSS) Corporate Platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:seed": "node scripts/seed.js",
+    "seed": "prisma db push && node scripts/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.21.1",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.6",
+    "lucide-react": "^0.453.0",
+    "next": "14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.16.11",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "prisma": "^5.21.1",
+    "typescript": "^5.6.3"
+  }
+}
