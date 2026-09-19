@@ -30,6 +30,29 @@ export default function ContactPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [contactSettings, setContactSettings] = useState({
+    phone: '+967 2 245 800',
+    email: 'info@facss-aden.com',
+    address: 'عدن، خور مكسر - حي السفارات',
+    hours: 'غرفة العمليات الميدانية تعمل 24/7',
+  });
+
+  React.useEffect(() => {
+    fetch('/api/settings/public')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setContactSettings({
+            phone: data.settings.OFFICIAL_PHONE || '+967 2 245 800',
+            email: data.settings.OFFICIAL_EMAIL || 'info@facss-aden.com',
+            address: data.settings.OFFICIAL_ADDRESS || 'عدن، خور مكسر - حي السفارات',
+            hours: data.settings.WORKING_HOURS || 'غرفة العمليات الميدانية تعمل 24/7',
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -45,7 +68,7 @@ export default function ContactPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'حدث خطأ أثناء إرسال الرسالة');
+        setError(data.error || (locale === 'ar' ? 'حدث خطأ أثناء إرسال الرسالة' : 'An error occurred while sending your message.'));
       } else {
         setSuccess(true);
         setFormData({
@@ -58,7 +81,7 @@ export default function ContactPage() {
         });
       }
     } catch {
-      setError('تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً.');
+      setError(locale === 'ar' ? 'تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً.' : 'Unable to reach server. Please try again later.');
     } finally {
       setSubmitting(false);
     }
@@ -69,18 +92,18 @@ export default function ContactPage() {
       {/* Banner */}
       <section
         style={{
-          paddingBlock: '4.5rem',
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(19, 62, 43, 0.6) 0%, rgba(5, 14, 9, 0.95) 80%)',
-          borderBottom: '1px solid rgba(197, 155, 39, 0.2)',
+          paddingBlock: '4rem',
+          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
+          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
           textAlign: 'center',
         }}
       >
         <div className="container">
           <span className="section-tag">{t.navContact}</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFF', marginBottom: '1rem' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
             {t.contactTitle}
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
+          <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
             {t.contactSubtitle}
           </p>
         </div>
@@ -88,22 +111,22 @@ export default function ContactPage() {
 
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '3.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '3rem' }}>
             {/* Form Column */}
             <div className="card">
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
                 {locale === 'ar' ? 'نموذج التواصل والاستفسار' : 'Inquiry & Consultation Form'}
               </h2>
 
               {success && (
-                <div style={{ padding: '1rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10B981', borderRadius: '8px', color: '#34D399', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <div style={{ padding: '1rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid #10B981', borderRadius: '8px', color: '#065F46', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', fontWeight: 600 }}>
                   <CheckCircle2 size={20} />
                   <span>{t.messageSentSuccess}</span>
                 </div>
               )}
 
               {error && (
-                <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #EF4444', borderRadius: '8px', color: '#F87171', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', fontWeight: 600 }}>
                   <AlertCircle size={20} />
                   <span>{error}</span>
                 </div>
@@ -188,7 +211,7 @@ export default function ContactPage() {
 
                 <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%' }} disabled={submitting}>
                   {submitting ? (
-                    <span>جارٍ الإرسال...</span>
+                    <span>{locale === 'ar' ? 'جارٍ الإرسال...' : 'Sending...'}</span>
                   ) : (
                     <>
                       <Send size={18} />
@@ -202,53 +225,53 @@ export default function ContactPage() {
             {/* Info Column */}
             <div>
               <div className="card" style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFF', marginBottom: '1.5rem' }}>
-                  {locale === 'ar' ? 'معلومات الاتصال المعتمدة' : 'Official Contact Details'}
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
+                  {locale === 'ar' ? 'معلومات الاتصال الرسمية' : 'Official Contact Details'}
                 </h3>
 
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1.35rem' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)', flexShrink: 0 }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(201,162,39,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--facss-gold-700)', flexShrink: 0 }}>
                       <MapPin size={20} />
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '0.85rem', color: 'var(--color-gold-light)' }}>{t.locationLabel}</strong>
-                      <span style={{ fontSize: '0.95rem', color: '#FFF' }}>
-                        {locale === 'ar' ? 'عدن، الجمهورية اليمنية' : 'Aden, Republic of Yemen'}
+                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700 }}>{t.locationLabel}</strong>
+                      <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                        {contactSettings.address}
                       </span>
                     </div>
                   </li>
 
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)', flexShrink: 0 }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(201,162,39,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--facss-gold-700)', flexShrink: 0 }}>
                       <Mail size={20} />
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '0.85rem', color: 'var(--color-gold-light)' }}>{t.emailLabel}</strong>
-                      <span style={{ fontSize: '0.95rem', color: '#FFF' }}>info@facss-aden.com</span>
+                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700 }}>{t.emailLabel}</strong>
+                      <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500 }}>{contactSettings.email}</span>
                     </div>
                   </li>
 
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)', flexShrink: 0 }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(201,162,39,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--facss-gold-700)', flexShrink: 0 }}>
                       <Phone size={20} />
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '0.85rem', color: 'var(--color-gold-light)' }}>{t.phoneLabel}</strong>
-                      <span style={{ fontSize: '0.95rem', color: '#FFF' }}>[يُضاف لاحقاً - PHONE_PLACEHOLDER]</span>
+                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700 }}>{t.phoneLabel}</strong>
+                      <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500, direction: 'ltr', display: 'inline-block' }}>{contactSettings.phone}</span>
                     </div>
                   </li>
 
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)', flexShrink: 0 }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(201,162,39,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--facss-gold-700)', flexShrink: 0 }}>
                       <Clock size={20} />
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '0.85rem', color: 'var(--color-gold-light)' }}>
+                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700 }}>
                         {locale === 'ar' ? 'ساعات العمل والمتابعة' : 'Operations Availability'}
                       </strong>
-                      <span style={{ fontSize: '0.95rem', color: '#FFF' }}>
-                        {locale === 'ar' ? 'غرفة العمليات الميدانية تعمل 24/7' : 'Command Operations Active 24/7'}
+                      <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                        {contactSettings.hours}
                       </span>
                     </div>
                   </li>
@@ -256,14 +279,14 @@ export default function ContactPage() {
               </div>
 
               {/* Security Confidentiality Notice */}
-              <div className="card" style={{ background: 'rgba(11,37,24,0.4)', borderInlineStart: '4px solid var(--color-gold)' }}>
+              <div className="card" style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border-color)', borderInlineStart: '4px solid var(--facss-gold-500)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-                  <ShieldCheck size={20} style={{ color: 'var(--color-gold-light)' }} />
-                  <h4 style={{ color: '#FFF', fontWeight: 700, margin: 0 }}>
+                  <ShieldCheck size={20} style={{ color: 'var(--facss-green-800)' }} />
+                  <h4 style={{ color: 'var(--text-primary)', fontWeight: 700, margin: 0 }}>
                     {locale === 'ar' ? 'مبدأ السرية التامة' : 'Strict Confidentiality Protocol'}
                   </h4>
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6, margin: 0 }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.6, margin: 0 }}>
                   {locale === 'ar'
                     ? 'نلتزم التزاماً صارماً بحماية بيانات عملائنا وخصوصية منشآتهم وفق أعلى المعايير الأمنية والأخلاقية.'
                     : 'We adhere strictly to safeguarding client information and physical premise specifics under uncompromising institutional non-disclosure standards.'}

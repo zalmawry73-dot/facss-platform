@@ -43,8 +43,7 @@ export default function ClientPortalLayout({ children }: { children: React.React
 
   const links = [
     { href: '/portal/client', label: 'لوحة المتابعة العامة', icon: LayoutDashboard },
-    { href: '/portal/client/requests', label: 'طلبات الخدمات الأمنية', icon: Shield },
-    { href: '/portal/client/reports', label: 'التقارير والمستندات السرية', icon: FolderLock },
+    { href: '/portal/client/requests', label: 'طلبات الخدمات والمستندات', icon: Shield },
     { href: '/portal/client/profile', label: 'الملف المؤسسي والأمان', icon: User },
   ];
 
@@ -62,7 +61,7 @@ export default function ClientPortalLayout({ children }: { children: React.React
                 بوابة العميل | {user.organization || user.fullName}
               </h1>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                {user.email} • حساب معتمد
+                {user.email} • حساب مفعل
               </span>
             </div>
           </div>

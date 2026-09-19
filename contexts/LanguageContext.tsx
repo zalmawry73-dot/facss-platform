@@ -13,24 +13,50 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('ar');
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+  return match ? decodeURIComponent(match[3]) : null;
+}
+
+function setCookie(name: string, value: string, days: number = 365) {
+  if (typeof document === 'undefined') return;
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires};path=/;SameSite=Lax`;
+}
+
+export function LanguageProvider({ 
+  children, 
+  initialLocale = 'ar' 
+}: { 
+  children: React.ReactNode;
+  initialLocale?: Locale;
+}) {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   useEffect(() => {
-    const saved = localStorage.getItem('facss_locale') as Locale | null;
-    if (saved && (saved === 'ar' || saved === 'en')) {
-      setLocaleState(saved);
-      document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = saved;
-    } else {
-      document.documentElement.dir = 'rtl';
-      document.documentElement.lang = 'ar';
+    // Check cookie first, then localStorage
+    const cookieLocale = getCookie('facss_locale') as Locale | null;
+    const localLocale = (typeof localStorage !== 'undefined' ? localStorage.getItem('facss_locale') : null) as Locale | null;
+    const resolvedLocale = cookieLocale || localLocale || initialLocale;
+
+    if (resolvedLocale === 'ar' || resolvedLocale === 'en') {
+      setLocaleState(resolvedLocale);
+      document.documentElement.dir = resolvedLocale === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = resolvedLocale;
+      setCookie('facss_locale', resolvedLocale);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('facss_locale', resolvedLocale);
+      }
     }
-  }, []);
+  }, [initialLocale]);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
-    localStorage.setItem('facss_locale', newLocale);
+    setCookie('facss_locale', newLocale);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('facss_locale', newLocale);
+    }
     document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = newLocale;
   };

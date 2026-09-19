@@ -32,16 +32,24 @@ export const metadata: Metadata = {
   },
 };
 
+import { cookies } from 'next/headers';
+import type { Locale } from '@/lib/i18n';
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = cookies();
+  const rawLocale = cookieStore.get('facss_locale')?.value;
+  const initialLocale: Locale = rawLocale === 'en' ? 'en' : 'ar';
+  const dir = initialLocale === 'ar' ? 'rtl' : 'ltr';
+
   return (
-    <html lang="ar" dir="rtl">
+    <html lang={initialLocale} dir={dir}>
       <body>
         <AuthProvider>
-          <LanguageProvider>
+          <LanguageProvider initialLocale={initialLocale}>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
               <Header />
               <main style={{ flex: 1 }}>{children}</main>

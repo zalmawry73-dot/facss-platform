@@ -1,12 +1,15 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
-import { Users, Shield, UserCheck, Lock } from 'lucide-react';
+import { requireCapability, CAPABILITIES } from '@/lib/rbac';
+import UsersManager, { UserItem } from '@/components/admin/UsersManager';
 
 export const revalidate = 0;
 
 export default async function AdminUsersPage() {
+  // Layer 3 Authorization: Enforce Granular Capability
+  const session = await requireCapability(CAPABILITIES.MANAGE_USERS, '/admin');
+
   const users = await prisma.user.findMany({
-    orderBy: { createdAt: 'desc' },
     select: {
       id: true,
       email: true,
@@ -16,58 +19,33 @@ export default async function AdminUsersPage() {
       phone: true,
       isActive: true,
       createdAt: true,
-    }
+      capabilities: {
+        select: { capability: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
   });
+
+  const serializedUsers: UserItem[] = users.map((u) => ({
+    id: u.id,
+    email: u.email,
+    fullName: u.fullName,
+    role: u.role,
+    organization: u.organization,
+    phone: u.phone,
+    isActive: u.isActive,
+    createdAt: u.createdAt.toISOString(),
+    assignedCapabilities: u.capabilities.map((c) => c.capability),
+  }));
 
   return (
     <div>
-      <div className="card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', marginBottom: '0.4rem' }}>
-          إدارة المستخدمين والصلاحيات (RBAC)
-        </h2>
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          التحكم برتب الموظفين، مدراء الخدمات، مسؤولي التدريب، والعملاء
-        </span>
-      </div>
-
-      <div className="card">
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>الاسم الكامل</th>
-                <th>البريد الإلكتروني</th>
-                <th>الجهة / المؤسسة</th>
-                <th>الرتبة والدور (Role)</th>
-                <th>الحالة</th>
-                <th>تاريخ الإنشاء</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
-                <tr key={u.id}>
-                  <td style={{ fontWeight: 700, color: '#FFF' }}>{u.fullName}</td>
-                  <td style={{ fontSize: '0.85rem' }}>{u.email}</td>
-                  <td style={{ fontSize: '0.85rem' }}>{u.organization || '—'}</td>
-                  <td>
-                    <span className={`badge ${u.role === 'SUPER_ADMIN' ? 'badge-red' : u.role.includes('MANAGER') ? 'badge-gold' : u.role === 'CLIENT' ? 'badge-blue' : 'badge-green'}`}>
-                      {u.role}
-                    </span>
-                  </td>
-                  <td>
-                    <span className="badge badge-green">
-                      {u.isActive ? 'مفعل' : 'معطل'}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    {new Date(u.createdAt).toLocaleDateString('ar-YE')}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <UsersManager
+        initialUsers={serializedUsers}
+        currentUserRole={session.role}
+        currentUserId={session.userId}
+      />
     </div>
   );
 }
+

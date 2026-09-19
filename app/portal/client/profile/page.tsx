@@ -1,13 +1,12 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/auth';
+import { requireRole, ROLES } from '@/lib/rbac';
 import { User, Building, Mail, Phone, ShieldCheck, Lock } from 'lucide-react';
 
 export const revalidate = 0;
 
 export default async function ClientProfilePage() {
-  const session = await getCurrentUser();
-  if (!session) return null;
+  const session = await requireRole([ROLES.CLIENT], '/portal/client/profile');
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
@@ -53,7 +52,7 @@ export default async function ClientProfilePage() {
 
           <div style={{ padding: '1rem', background: 'rgba(5,14,9,0.6)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', display: 'block', marginBottom: '0.2rem' }}>حالة الحساب</span>
-            <span className="badge badge-green">نشط ومعتمد</span>
+            <span className="badge badge-green">حساب نشط</span>
           </div>
         </div>
       </div>

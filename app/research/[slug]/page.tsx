@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 import { 
   FileText, 
   User, 
@@ -22,12 +23,34 @@ interface PageProps {
 }
 
 export default async function ResearchDetailPage({ params }: PageProps) {
+  const session = await getSession();
+  const isAuthorizedStaff = session && (
+    session.role === 'SUPER_ADMIN' ||
+    session.role === 'ADMIN' ||
+    session.role === 'STAFF' ||
+    session.role === 'RESEARCH_MANAGER' ||
+    session.role.includes('MANAGER')
+  );
+
   const pub = await prisma.researchPublication.findUnique({
     where: { slug: params.slug },
     include: { category: true }
   });
 
   if (!pub) {
+    notFound();
+  }
+
+  // 1. Status Gate: Non-published studies only accessible by authorized operations staff
+  if (pub.status !== 'PUBLISHED' && !isAuthorizedStaff) {
+    notFound();
+  }
+
+  // 2. Visibility Gate:
+  // - PUBLIC is accessible by everyone
+  // - CLIENT_ONLY & PRIVATE: To prevent cross-client data leakage where individual ownership cannot be proven
+  //   in the data model, access is strictly limited to authorized staff until a client-ownership decision is made.
+  if (pub.visibility !== 'PUBLIC' && !isAuthorizedStaff) {
     notFound();
   }
 

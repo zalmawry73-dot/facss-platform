@@ -15,19 +15,13 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
-  ChevronRight,
   TrendingUp,
   AlertTriangle,
-  Lock,
-  Flame,
-  Radio,
-  Eye,
-  KeyRound,
-  FileCheck,
   Building2,
-  Plane,
-  Landmark,
-  Briefcase
+  Briefcase,
+  Lock,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -35,12 +29,12 @@ export default function HomePage() {
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   const preventivePillars = [
-    { num: '01', title: t.pillar1, icon: AlertTriangle },
-    { num: '02', title: t.pillar2, icon: CheckCircle2 },
-    { num: '03', title: t.pillar3, icon: ShieldCheck },
-    { num: '04', title: t.pillar4, icon: FileCheck },
-    { num: '05', title: t.pillar5, icon: GraduationCap },
-    { num: '06', title: t.pillar6, icon: TrendingUp },
+    { num: '01', title: t.pillar1 || 'التحليل الاستباقي للمخاطر وتحديد نقاط الضعف', icon: AlertTriangle },
+    { num: '02', title: t.pillar2 || 'تطبيق معايير الأمن والسلامة المهنية المعتمدة', icon: CheckCircle2 },
+    { num: '03', title: t.pillar3 || 'تكامل المنظومات الإلكترونية والمراقبة الذكية', icon: ShieldCheck },
+    { num: '04', title: t.pillar4 || 'إجراءات تشغيل قياسية وخطط طوارئ معتمدة', icon: Lock },
+    { num: '05', title: t.pillar5 || 'تأهيل وتدريب الكوادر الأمنية بصفة دورية', icon: GraduationCap },
+    { num: '06', title: t.pillar6 || 'التقييم المستمر والتحديث الدوري للمنظومات', icon: TrendingUp },
   ];
 
   const mainServices = [
@@ -48,319 +42,226 @@ export default function HomePage() {
       slug: 'guarding-services',
       titleAr: 'حراسة المنشآت وحماية الشخصيات',
       titleEn: 'Guarding & VIP Protection Services',
-      descAr: 'حراسة المنشآت الحكومية والخاصة، تأمين الفعاليات، مرافقة نقل الأموال والممتلكات الثمينة، ودوريات 24/7.',
-      descEn: 'Public & private facility security, event security, cash-in-transit escort, and 24/7 patrols.',
+      descAr: 'حراسة المنشآت الحكومية والخاصة وتأمين الفعاليات ومرافقة الشخصيات بدوريات عملياتية 24/7.',
+      descEn: 'Public & private facility guarding, event security, VIP escort, and 24/7 operational patrols.',
       icon: Shield,
-      category: 'خدمات أمنية تشغيلية',
     },
     {
       slug: 'physical-security-assessment',
       titleAr: 'تقييم الأمن المادي للمباني والمنشآت',
       titleEn: 'Physical Security Assessment',
-      descAr: 'فحص شامل لنقاط الدخول، السياجات، أنظمة المراقبة والتحكم في الوصول، وتحديد الثغرات وإعداد مصفوفة المخاطر.',
-      descEn: 'Comprehensive audit of entry gates, perimeters, surveillance, access control, and vulnerability matrices.',
+      descAr: 'فحص شامل لمنافذ الدخول والمحيط وأنظمة المراقبة لتحديد الثغرات وإعداد مصفوفة المخاطر.',
+      descEn: 'Comprehensive audit of entry gates, perimeters, and surveillance to generate risk matrices.',
       icon: Building2,
-      category: 'تقييم واستشارات',
     },
     {
       slug: 'security-consultations',
       titleAr: 'الاستشارات الأمنية وتصميم المنظومات',
       titleEn: 'Security Consultations & Ecosystem Design',
-      descAr: 'تصميم المنظومات الأمنية المتكاملة، صياغة إجراءات التشغيل SOPs، ودعم الامتثال للمعايير الدولية.',
-      descEn: 'Integrated security architecture, SOP authoring, crisis planning, and global regulatory compliance.',
+      descAr: 'تصميم المنظومات الأمنية المتكاملة، صياغة إجراءات التشغيل SOPs، ودعم الامتثال للمعايير.',
+      descEn: 'Integrated security architecture, SOP authoring, crisis planning, and regulatory compliance.',
       icon: Briefcase,
-      category: 'استشارات استراتيجية',
     },
     {
       slug: 'electronic-security-solutions',
       titleAr: 'الأنظمة والحلول الأمنية الإلكترونية',
       titleEn: 'Electronic Security & Advanced Systems',
-      descAr: 'كاميرات CCTV، بوابات الدخول، التعرف على الوجوه، تتبع RFID، غرف العمليات المركزية، ومعدات الإطفاء والإنذار المبكر.',
-      descEn: 'CCTV, Access Control, Facial Recognition, RFID, Command Operations Rooms, and Fire Suppression.',
+      descAr: 'كاميرات CCTV، بوابات التحكم بالدخول، التتبع، وغرف العمليات والتحكم والإنذار المبكر.',
+      descEn: 'CCTV, access control gates, biometric systems, central control rooms, and early alarms.',
       icon: Cpu,
-      category: 'حلول تقنية وهندسية',
     },
     {
       slug: 'security-and-safety-training',
       titleAr: 'تدريب وتأهيل الكوادر الأمنية',
       titleEn: 'Security & Safety Cadre Training',
-      descAr: 'برامج تأهيل واعتماد للكوادر والشباب تشمل مهارات الحراسة، حماية الشخصيات، والسلامة المهنية والإسعافات.',
-      descEn: 'Accredited training programs for guards, VIP protection, OHS safety, and tactical first aid.',
+      descAr: 'برامج تدريب وتأهيل للكوادر تشمل مهارات الحراسة الميدانية والسلامة المهنية والإسعافات.',
+      descEn: 'Applied training programs for security personnel, occupational safety, and first aid.',
       icon: GraduationCap,
-      category: 'أكاديمية التدريب',
     },
     {
       slug: 'security-risk-analysis',
       titleAr: 'تحليل المخاطر والدراسات الاستراتيجية',
       titleEn: 'Security Risk Analysis & Strategic Studies',
-      descAr: 'تحليل معمق للتهديدات والسيناريوهات المحتملة، وإعداد التقارير الدورية لصناع القرار والمؤسسات.',
-      descEn: 'In-depth threat modeling, scenario planning, and periodic policy intelligence for leadership.',
+      descAr: 'تحليل استخباري واستراتيجي معمق للتهديدات والسيناريوهات لدعم صناع القرار والمؤسسات.',
+      descEn: 'In-depth strategic analysis and threat modeling to support corporate decision-makers.',
       icon: TrendingUp,
-      category: 'أبحاث ودراسات',
     },
-  ];
-
-  const electronicItems = [
-    { titleAr: 'كاميرات المراقبة CCTV والفيديو', titleEn: 'CCTV & Video Surveillance', icon: Eye },
-    { titleAr: 'أنظمة التحكم في الدخول Access Control', titleEn: 'Access Control Systems', icon: Lock },
-    { titleAr: 'أنظمة الحضور والانصراف الذكية', titleEn: 'Time & Attendance Systems', icon: Users },
-    { titleAr: 'إدارة المفاتيح Key Management', titleEn: 'Key Management Systems', icon: KeyRound },
-    { titleAr: 'إدارة المباني Building Management BMS', titleEn: 'Building Management Systems', icon: Building },
-    { titleAr: 'تجهيزات الشبكات والبنية التحتية', titleEn: 'Networking Hardware', icon: Cpu },
-    { titleAr: 'أنظمة التعرف على الوجوه', titleEn: 'Facial Recognition Systems', icon: Eye },
-    { titleAr: 'تتبع الأصول والأفراد بتقنية RFID', titleEn: 'RFID Tracking Systems', icon: Radio },
-    { titleAr: 'الحواجز الأمنية ومصدات الاقتحام', titleEn: 'Security Barriers & Bollards', icon: Shield },
-    { titleAr: 'أجهزة تفتيش الحقائب والأفراد (X-Ray)', titleEn: 'Luggage & Personnel Scanners', icon: ShieldCheck },
-    { titleAr: 'غرف عمليات المراقبة والتحكم المركزية', titleEn: 'Integrated Control Rooms', icon: Cpu },
-    { titleAr: 'معدات الإطفاء ومضخات وخراطيم المياه', titleEn: 'Fire Pumps, Hoses & Extinguishers', icon: Flame },
-    { titleAr: 'أجهزة الإنذار المبكر ضد الحريق والسرقة', titleEn: 'Early Fire & Burglar Alarms', icon: AlertTriangle },
-    { titleAr: 'ملابس السلامة والمعدات الواقية والكمامات', titleEn: 'PPE Safety Gear & Respirators', icon: ShieldCheck },
-  ];
-
-  const sectorsList = [
-    { nameAr: 'الجهات الحكومية والمؤسسات العامة', nameEn: 'Government Entities & Public Institutions', icon: Landmark },
-    { nameAr: 'البنوك والمصارف وشركات التأمين', nameEn: 'Banks, Financial Firms & Insurance', icon: Building2 },
-    { nameAr: 'الشركات النفطية والموانئ والمطارات', nameEn: 'Oil Companies, Seaports & Airports', icon: Plane },
-    { nameAr: 'المنشآت الصناعية والتجارية الكبرى', nameEn: 'Major Industrial & Commercial Complexes', icon: Building },
-    { nameAr: 'الفنادق والمنتجعات السياحية', nameEn: 'Hotels & Tourism Resorts', icon: Building2 },
-    { nameAr: 'الجامعات والمدارس والمستشفيات', nameEn: 'Universities, Schools & Hospitals', icon: GraduationCap },
-    { nameAr: 'الشخصيات المهمة والبعثات الدبلوماسية', nameEn: 'VIP Executives & Diplomatic Missions', icon: Users },
-    { nameAr: 'المنظمات الدولية وغير الحكومية', nameEn: 'International & Non-Governmental NGOs', icon: ShieldCheck },
   ];
 
   return (
     <div>
-      {/* 1. HERO SECTION */}
+      {/* ----------------------------------------------------
+         SECTION 1: HERO (INSTITUTIONAL & CALM)
+         ---------------------------------------------------- */}
       <section
         style={{
+          backgroundColor: 'var(--facss-green-950)',
+          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
+          paddingTop: '4.5rem',
+          paddingBottom: '4.5rem',
+          color: '#FFFFFF',
           position: 'relative',
-          paddingTop: '6rem',
-          paddingBottom: '7rem',
-          background: 'radial-gradient(ellipse at 50% -20%, rgba(19, 62, 43, 0.65) 0%, rgba(5, 14, 9, 0.95) 75%)',
-          borderBottom: '1px solid rgba(197, 155, 39, 0.2)',
-          overflow: 'hidden',
         }}
       >
-        {/* Tactical Ambient Glow Circles */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '-150px',
-            insetInlineStart: '50%',
-            transform: 'translateX(-50%)',
-            width: '650px',
-            height: '650px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(197, 155, 39, 0.12) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
+        <div className="container" style={{ maxWidth: '960px', textAlign: 'center' }}>
+          {/* Slogan Pill */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.35rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              background: 'rgba(201, 162, 39, 0.12)',
+              border: '1px solid rgba(201, 162, 39, 0.3)',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <Shield size={14} style={{ color: 'var(--facss-gold-400)' }} />
+            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>
+              {t.slogan || 'الوقاية قبل الاستجابة'}
+            </span>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-on-dark-muted)' }}>
+              {t.sloganSub || 'Aden First Center for Security Services'}
+            </span>
+          </div>
 
-        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ maxWidth: '920px', marginInline: 'auto', textAlign: 'center' }}>
-            {/* Slogan Banner Badge */}
-            <div
-              className="glow-animation"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.65rem',
-                padding: '0.45rem 1.4rem',
-                background: 'rgba(11, 37, 24, 0.85)',
-                border: '1px solid rgba(197, 155, 39, 0.4)',
-                borderRadius: '9999px',
-                marginBottom: '1.75rem',
-              }}
-            >
-              <Shield size={16} style={{ color: 'var(--color-gold-light)' }} />
-              <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-gold-light)' }}>
-                {t.slogan}
-              </span>
-              <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                {t.sloganSub}
+          {/* Main Title */}
+          <h1
+            style={{
+              fontSize: 'clamp(1.85rem, 3.5vw, 2.75rem)',
+              fontWeight: 900,
+              lineHeight: 1.3,
+              marginBottom: '1.25rem',
+              color: '#FFFFFF',
+            }}
+          >
+            {locale === 'ar' ? (
+              <>
+                منظومة أمنية واستشارية متكاملة تُرسي مفهوم{' '}
+                <span style={{ color: 'var(--facss-gold-400)' }}>«الوقاية قبل الاستجابة»</span>
+              </>
+            ) : (
+              <>
+                Integrated Security Architecture Grounded in{' '}
+                <span style={{ color: 'var(--facss-gold-400)' }}>«Prevention Before Response»</span>
+              </>
+            )}
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            style={{
+              fontSize: '1.05rem',
+              color: 'var(--text-on-dark-muted)',
+              lineHeight: 1.7,
+              marginBottom: '2.25rem',
+              maxWidth: '780px',
+              marginInline: 'auto',
+            }}
+          >
+            {locale === 'ar'
+              ? 'يقدم مركز عدن الأول حلولاً أمنية واستشارية وتدريبية متقدمة لحماية المنشآت الحيوية وتأهيل الكوادر، وفق أرقى المعايير المهنية المعتمدة لضمان الجاهزية والامتثال المؤسسي.'
+              : 'Aden First Center provides advanced security guarding, technical assessments, and training to protect critical assets and ensure organizational readiness.'}
+          </p>
+
+          {/* CTAs */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <Link href="/request-service" className="btn btn-gold btn-lg">
+              <Shield size={17} />
+              <span>{t.heroCtaPrimary || 'طلب خدمة أمنية'}</span>
+              <ArrowIcon size={16} />
+            </Link>
+            <Link href="/services" className="btn btn-outline-dark btn-lg">
+              <span>{t.heroCtaSecondary || 'استكشف خدماتنا'}</span>
+            </Link>
+          </div>
+
+          {/* Trust Highlights */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1rem',
+              marginTop: '3rem',
+              paddingTop: '2rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              <Award size={18} style={{ color: 'var(--facss-gold-400)' }} />
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+                {locale === 'ar' ? 'طواقم أمنية مؤهلة ميدانياً' : 'Professionally Trained Field Cadres'}
               </span>
             </div>
-
-            {/* Main Headline */}
-            <h1
-              style={{
-                fontSize: 'clamp(2.1rem, 4vw, 3.4rem)',
-                fontWeight: 900,
-                lineHeight: 1.25,
-                color: '#FFFFFF',
-                marginBottom: '1.25rem',
-              }}
-            >
-              {locale === 'ar' ? (
-                <>
-                  منظومة أمنية متكاملة تُرسي مفهوم{' '}
-                  <span className="gold-text">«الوقاية قبل الاستجابة»</span>
-                </>
-              ) : (
-                <>
-                  Comprehensive Security Ecosystem Grounded in{' '}
-                  <span className="gold-text">«Prevention Before Response»</span>
-                </>
-              )}
-            </h1>
-
-            {/* Official Tagline Subheadline */}
-            <p
-              style={{
-                fontSize: '1.15rem',
-                color: 'var(--text-muted)',
-                lineHeight: 1.7,
-                marginBottom: '2.5rem',
-                maxWidth: '820px',
-                marginInline: 'auto',
-              }}
-            >
-              {t.tagline}
-            </p>
-
-            {/* CTAs */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
-              <Link href="/request-service" className="btn btn-gold btn-lg">
-                <Shield size={18} />
-                <span>{t.heroCtaPrimary}</span>
-                <ArrowIcon size={18} />
-              </Link>
-              <Link href="/services" className="btn btn-outline btn-lg">
-                <span>{t.heroCtaSecondary}</span>
-              </Link>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              <ShieldCheck size={18} style={{ color: 'var(--facss-gold-400)' }} />
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+                {locale === 'ar' ? 'جاهزية استجابة ومراقبة 24/7' : '24/7 Command Readiness'}
+              </span>
             </div>
-
-            {/* Trust Badges */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '1rem',
-                marginTop: '3.5rem',
-                paddingTop: '2.5rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                <Award size={20} style={{ color: 'var(--color-gold)' }} />
-                <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                  {t.heroBadge1}
-                </span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                <ShieldCheck size={20} style={{ color: 'var(--color-gold)' }} />
-                <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                  {t.heroBadge2}
-                </span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                <Users size={20} style={{ color: 'var(--color-gold)' }} />
-                <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                  {t.heroBadge3}
-                </span>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              <Users size={18} style={{ color: 'var(--facss-gold-400)' }} />
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+                {locale === 'ar' ? 'استشارات ودراسات استراتيجية' : 'Strategic Security Intelligence'}
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. ABOUT FACSS & PREVENTIVE PHILOSOPHY */}
-      <section className="section" style={{ background: 'var(--bg-dark-elevated)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3.5rem', alignItems: 'center' }}>
-            <div>
-              <span className="section-tag">{t.aboutTitle}</span>
-              <h2 className="section-title">
-                {locale === 'ar' ? (
-                  <>
-                    الأمن في جوهره هو{' '}
-                    <span className="gold-text">الوقاية قبل الاستجابة</span>
-                  </>
-                ) : (
-                  <>
-                    Security in its Core is{' '}
-                    <span className="gold-text">Prevention Before Response</span>
-                  </>
-                )}
-              </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.8, marginBottom: '1.2rem' }}>
-                {t.aboutParagraph1}
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '1.8rem' }}>
-                {t.aboutParagraph2}
-              </p>
-
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <Link href="/about" className="btn btn-outline btn-sm">
-                  <span>{t.readMore}</span>
-                  <ArrowIcon size={14} />
-                </Link>
-                <Link href="/request-service" className="btn btn-gold btn-sm">
-                  <span>{t.requestThisService}</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Emblem Presentation Card */}
-            <div className="card glow-animation" style={{ textAlign: 'center', padding: '2.5rem 2rem' }}>
-              <img
-                src="/images/logo.png"
-                alt="FACSS Official Seal"
-                style={{ width: '170px', height: '170px', marginInline: 'auto', marginBottom: '1.5rem', objectFit: 'contain' }}
-              />
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFF', marginBottom: '0.4rem' }}>
-                {t.siteAcronym}
-              </h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-gold-light)', fontWeight: 600, marginBottom: '1rem' }}>
-                {locale === 'ar' ? 'مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية' : 'Aden First Security Center'}
-              </p>
-              <div style={{ padding: '0.85rem', background: 'rgba(11, 37, 24, 0.7)', borderRadius: '8px', border: '1px solid rgba(197, 155, 39, 0.2)' }}>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic', margin: 0 }}>
-                  «الأمن في جوهره هو الوقاية قبل الاستجابة. لا ينتظر المنظومة الأمنية القوية وقوع الحادثة لتتحرك، بل تستبقها.»
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. THE 6 PREVENTIVE PILLARS */}
-      <section className="section">
+      {/* ----------------------------------------------------
+         SECTION 2: CORE PREVENTIVE PILLARS
+         ---------------------------------------------------- */}
+      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.pillarsTitle}</span>
+            <span className="section-tag">{locale === 'ar' ? 'المنهجية الوقائية' : 'Preventive Methodology'}</span>
             <h2 className="section-title">
-              {locale === 'ar' ? 'الركائز الست للمقاربة الوقائية' : 'The 6 Pillars of Preventive Security'}
+              {locale === 'ar' ? 'ركائز منظومة الوقاية قبل الاستجابة' : 'Core Pillars of Prevention'}
             </h2>
-            <p className="section-subtitle">{t.pillarsSubtitle}</p>
+            <p className="section-subtitle">
+              {locale === 'ar'
+                ? 'نعمل وفق منظومة أمنية استباقية تستند إلى التقييم والتدريب والتجهيز التقني لتقليل المخاطر قبل وقوعها'
+                : 'A proactive institutional framework built on threat modeling, rigorous training, and technical precision'}
+            </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
             {preventivePillars.map((p, idx) => {
-              const IconComp = p.icon;
+              const Icon = p.icon;
               return (
-                <div key={idx} className="card" style={{ display: 'flex', gap: '1.2rem', alignItems: 'flex-start' }}>
+                <div
+                  key={idx}
+                  className="card"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '1rem',
+                    padding: '1.4rem',
+                  }}
+                >
                   <div
                     style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '10px',
-                      background: 'rgba(197, 155, 39, 0.12)',
-                      border: '1px solid rgba(197, 155, 39, 0.35)',
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: 'var(--radius-md)',
+                      backgroundColor: 'var(--facss-gold-100)',
+                      color: 'var(--facss-gold-600)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: 'var(--color-gold-light)',
-                      fontWeight: 800,
-                      fontSize: '1rem',
                       flexShrink: 0,
                     }}
                   >
-                    {p.num}
+                    <Icon size={20} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.5 }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--facss-gold-600)', display: 'block', marginBottom: '0.2rem' }}>
+                      {p.num}
+                    </span>
+                    <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.45 }}>
                       {p.title}
                     </h3>
                   </div>
@@ -371,276 +272,280 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. SERVICES OVERVIEW */}
-      <section className="section" style={{ background: 'var(--bg-dark-elevated)' }}>
+      {/* ----------------------------------------------------
+         SECTION 3: MAIN SERVICES
+         ---------------------------------------------------- */}
+      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.servicesSectionTitle}</span>
+            <span className="section-tag">{locale === 'ar' ? 'خدماتنا الأمنية' : 'Operational Services'}</span>
             <h2 className="section-title">
-              {locale === 'ar' ? 'منظومة الخدمات الأمنية والاستراتيجية' : 'Comprehensive Security Capabilities'}
+              {locale === 'ar' ? 'حلول أمنية تشغيلية واستشارية متكاملة' : 'Comprehensive Security Solutions'}
             </h2>
-            <p className="section-subtitle">{t.servicesSectionSubtitle}</p>
+            <p className="section-subtitle">
+              {locale === 'ar'
+                ? 'خدمات شاملة مصممة لتأمين المنشآت الحيوية والشركات والمؤسسات والبعثات الدبلوماسية'
+                : 'Customized services for critical infrastructure, private enterprises, and diplomatic missions'}
+            </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
-            {mainServices.map((srv, idx) => {
-              const IconComp = srv.icon;
-              return (
-                <div key={idx} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
-                      <div
-                        style={{
-                          width: '52px',
-                          height: '52px',
-                          borderRadius: '12px',
-                          background: 'rgba(197, 155, 39, 0.15)',
-                          border: '1px solid rgba(197, 155, 39, 0.35)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'var(--color-gold-light)',
-                        }}
-                      >
-                        <IconComp size={24} />
-                      </div>
-                      <span className="badge badge-gold">{srv.category}</span>
-                    </div>
-
-                    <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: '#FFF', marginBottom: '0.65rem' }}>
-                      {locale === 'ar' ? srv.titleAr : srv.titleEn}
-                    </h3>
-
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                      {locale === 'ar' ? srv.descAr : srv.descEn}
-                    </p>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                    <Link
-                      href={`/services/${srv.slug}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                        color: 'var(--color-gold-light)',
-                        fontSize: '0.85rem',
-                        fontWeight: 700,
-                      }}
-                    >
-                      <span>{t.viewDetails}</span>
-                      <ArrowIcon size={14} />
-                    </Link>
-
-                    <Link href={`/request-service?service=${srv.slug}`} className="btn btn-outline btn-sm" style={{ fontSize: '0.78rem' }}>
-                      {t.requestThisService}
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '3.5rem' }}>
-            <Link href="/services" className="btn btn-gold btn-lg">
-              <span>{t.allServices}</span>
-              <ArrowIcon size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. ELECTRONIC SECURITY SOLUTIONS SHOWCASE (14 EQUIPMENT ITEMS) */}
-      <section className="section">
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.electronicTitle}</span>
-            <h2 className="section-title">
-              {locale === 'ar' ? 'الأنظمة والحلول الأمنية الإلكترونية ومكافحة الحرائق' : 'Electronic Defense & Fire Suppression Systems'}
-            </h2>
-            <p className="section-subtitle">{t.electronicSubtitle}</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.2rem' }}>
-            {electronicItems.map((item, idx) => {
-              const IconComponent = item.icon;
-              return (
-                <div
-                  key={idx}
-                  className="glass-panel"
-                  style={{
-                    padding: '1.2rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    border: '1px solid rgba(197, 155, 39, 0.18)',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '42px',
-                      height: '42px',
-                      borderRadius: '8px',
-                      background: 'rgba(19, 62, 43, 0.7)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-gold-light)',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <IconComponent size={20} />
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#FFFFFF' }}>
-                      {locale === 'ar' ? item.titleAr : item.titleEn}
-                    </h4>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
-            <Link href="/services/electronic-security-solutions" className="btn btn-outline btn-sm">
-              <span>{locale === 'ar' ? 'تفاصيل الأنظمة والمواصفات الفنية' : 'View Full Technical Specifications'}</span>
-              <ArrowIcon size={14} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. 4-STAGE METHODOLOGY */}
-      <section className="section" style={{ background: 'var(--bg-dark-elevated)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.methodologyTitle}</span>
-            <h2 className="section-title">
-              {locale === 'ar' ? 'منهجية العمل المؤسسية في 4 مراحل' : 'Our 4-Stage Operational Methodology'}
-            </h2>
-            <p className="section-subtitle">{t.methodologySubtitle}</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
-            <div className="card">
-              <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>01</span>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFF', marginBottom: '0.6rem' }}>
-                {t.methodPhase1}
-              </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                {t.methodPhase1Desc}
-              </p>
-            </div>
-
-            <div className="card">
-              <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>02</span>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFF', marginBottom: '0.6rem' }}>
-                {t.methodPhase2}
-              </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                {t.methodPhase2Desc}
-              </p>
-            </div>
-
-            <div className="card">
-              <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>03</span>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFF', marginBottom: '0.6rem' }}>
-                {t.methodPhase3}
-              </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                {t.methodPhase3Desc}
-              </p>
-            </div>
-
-            <div className="card">
-              <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>04</span>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFF', marginBottom: '0.6rem' }}>
-                {t.methodPhase4}
-              </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                {t.methodPhase4Desc}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. SECTORS WE SERVE */}
-      <section className="section">
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.sectorsTitle}</span>
-            <h2 className="section-title">
-              {locale === 'ar' ? 'القطاعات الحيوية التي يخدمها المركز' : 'Vital Sectors We Safeguard'}
-            </h2>
-            <p className="section-subtitle">{t.sectorsSubtitle}</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.2rem' }}>
-            {sectorsList.map((sec, idx) => {
-              const SecIcon = sec.icon;
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+            {mainServices.map((service, idx) => {
+              const Icon = service.icon;
               return (
                 <div
                   key={idx}
                   className="card"
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    padding: '1.25rem',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <div
+                  <div>
+                    <div
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: 'var(--radius-md)',
+                        backgroundColor: 'var(--facss-green-50)',
+                        border: '1px solid var(--facss-green-100)',
+                        color: 'var(--facss-green-800)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '1.1rem',
+                      }}
+                    >
+                      <Icon size={22} />
+                    </div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                      {locale === 'ar' ? service.titleAr : service.titleEn}
+                    </h3>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                      {locale === 'ar' ? service.descAr : service.descEn}
+                    </p>
+                  </div>
+
+                  <Link
+                    href={`/services/${service.slug}`}
                     style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '10px',
-                      background: 'rgba(197, 155, 39, 0.12)',
-                      border: '1px solid rgba(197, 155, 39, 0.3)',
-                      display: 'flex',
+                      display: 'inline-flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--color-gold-light)',
-                      flexShrink: 0,
+                      gap: '0.4rem',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      color: 'var(--facss-green-800)',
+                      paddingTop: '0.75rem',
+                      borderTop: '1px solid var(--border-subtle)',
                     }}
                   >
-                    <SecIcon size={22} />
-                  </div>
-                  <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.4 }}>
-                    {locale === 'ar' ? sec.nameAr : sec.nameEn}
-                  </h4>
+                    <span>{locale === 'ar' ? 'تفاصيل الخدمة' : 'Service Details'}</span>
+                    <ArrowIcon size={14} />
+                  </Link>
                 </div>
               );
             })}
           </div>
+
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <Link href="/services" className="btn btn-secondary">
+              <span>{locale === 'ar' ? 'استعراض كافة الخدمات والتجهيزات الأمنية' : 'View All Services & Systems'}</span>
+              <ArrowIcon size={15} />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* 8. CALL TO ACTION (CTA) BAR */}
+      {/* ----------------------------------------------------
+         SECTION 4: INSTITUTIONAL CREDENTIALS / WHY FACSS
+         ---------------------------------------------------- */}
+      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+        <div className="container">
+          <div className="section-title-wrap">
+            <span className="section-tag">{locale === 'ar' ? 'القوة المؤسسية' : 'Institutional Strengths'}</span>
+            <h2 className="section-title">
+              {locale === 'ar' ? 'لماذا يعتمد صناع القرار على FACSS؟' : 'Why Leaders Trust FACSS'}
+            </h2>
+            <p className="section-subtitle">
+              {locale === 'ar'
+                ? 'نجمع بين الانضباط العملياتي، والخبرة الاستراتيجية، والمعايير الأمنية الدولية'
+                : 'Combining operational discipline, strategic intelligence, and international compliance'}
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+            <div className="card" style={{ padding: '1.75rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-gold-100)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <Award size={20} />
+              </div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                {locale === 'ar' ? 'الانضباط والامتثال للأطر المنظمة' : 'Regulatory Alignment'}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                {locale === 'ar'
+                  ? 'نعمل بانضباط مؤسسي متوافق مع الأطر والقوانين المنظمة لتقديم خدمات الحراسة والاستشارات والدراسات.'
+                  : 'Operating with strict institutional discipline aligned with national regulatory frameworks for security services and studies.'}
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '1.75rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-green-50)', color: 'var(--facss-green-800)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <Users size={20} />
+              </div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                {locale === 'ar' ? 'طواقم خضعت لفحص أمني دقيق' : 'Vetted & Trained Cadres'}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                {locale === 'ar'
+                  ? 'اختيار منضبط للأفراد مع فحص أمني جنائي وتدريب مكثف على مهارات الحراسة والإسعافات والسلامة.'
+                  : 'Strict background checks, security clearance vetting, and structured tactical training programs.'}
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '1.75rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-gold-100)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <Building size={20} />
+              </div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                {locale === 'ar' ? 'خبرة في حماية المنشآت الحيوية' : 'Critical Asset Protection'}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                {locale === 'ar'
+                  ? 'حلول أمنية مصممة خصيصاً للموانئ، المطارات، البنوك، المنشآت النفطية، والمجمعات الحيوية.'
+                  : 'Tailored security architecture designed specifically for ports, banking headquarters, and oil sites.'}
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '1.75rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-green-50)', color: 'var(--facss-green-800)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <Lock size={20} />
+              </div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                {locale === 'ar' ? 'سرية تامة وحماية البيانات' : 'Strict Confidentiality'}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                {locale === 'ar'
+                  ? 'التزام مطلق بالحفاظ على سرية وثائق وتقارير العملاء ونقاط الضعف الأمنية داخل بيئة تخزين مشفرة.'
+                  : 'Non-disclosure agreements, encrypted audit records, and strict zero-trust data storage protocol.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------
+         SECTION 5: ACADEMY & STRATEGIC STUDIES
+         ---------------------------------------------------- */}
+      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+            {/* Training Column */}
+            <div
+              className="card"
+              style={{
+                padding: '2.25rem',
+                border: '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'var(--facss-gold-100)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <GraduationCap size={22} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--facss-gold-600)', textTransform: 'uppercase' }}>
+                      {locale === 'ar' ? 'التأهيل المهني' : 'Security Academy'}
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      {locale === 'ar' ? 'أكاديمية التدريب والتأهيل الأمني' : 'Security Training Academy'}
+                    </h3>
+                  </div>
+                </div>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                  {locale === 'ar'
+                    ? 'برامج ودورات تدريبية متخصصة لتأهيل حراس المنشآت الحيوية، مسؤولي السلامة والصحة المهنية، وإدارة الأزمات، مع شهادات رقمية موثقة برمز تحقق.'
+                    : 'Specialized training courses for facility security officers, OHS safety leads, and crisis coordinators with digital verifiable certificates.'}
+                </p>
+              </div>
+              <Link href="/training" className="btn btn-secondary">
+                <span>{locale === 'ar' ? 'استعراض الدورات المتاحة والتسجيل' : 'View Courses & Register'}</span>
+                <ArrowIcon size={15} />
+              </Link>
+            </div>
+
+            {/* Research Column */}
+            <div
+              className="card"
+              style={{
+                padding: '2.25rem',
+                border: '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'var(--facss-green-50)', color: 'var(--facss-green-800)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <FileText size={22} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--facss-green-800)', textTransform: 'uppercase' }}>
+                      {locale === 'ar' ? 'الدراسات الاستشرافية' : 'Strategic Think-Tank'}
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      {locale === 'ar' ? 'مركز الدراسات والأبحاث الاستراتيجية' : 'Strategic Studies & Research'}
+                    </h3>
+                  </div>
+                </div>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                  {locale === 'ar'
+                    ? 'أبحاث أمنية وتحليلات جيوسياسية معمقة ترصد المتغيرات الإقليمية ومخاطر الملاحة وحماية سلاسل الإمداد لدعم صناع القرار وقادة الأعمال.'
+                    : 'Deep strategic intelligence analyzing regional dynamics, maritime navigation safety, and supply chain security for executive leadership.'}
+                </p>
+              </div>
+              <Link href="/research" className="btn btn-secondary">
+                <span>{locale === 'ar' ? 'استعراض الدراسات والتقارير' : 'Explore Studies & Reports'}</span>
+                <ArrowIcon size={15} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------
+         SECTION 6: FINAL INSTITUTIONAL CTA
+         ---------------------------------------------------- */}
       <section
         style={{
-          paddingBlock: '4.5rem',
-          background: 'linear-gradient(135deg, #0B2518 0%, #133E2B 100%)',
-          borderTop: '1px solid rgba(197, 155, 39, 0.3)',
-          borderBottom: '1px solid rgba(197, 155, 39, 0.3)',
+          backgroundColor: 'var(--facss-green-950)',
+          borderTop: '1px solid rgba(201, 162, 39, 0.2)',
+          paddingBlock: '4rem',
+          color: '#FFFFFF',
         }}
       >
-        <div className="container" style={{ textAlign: 'center', maxWidth: '850px' }}>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
-            {locale === 'ar' ? 'هل تحتاج إلى تقييم أمني أو حراسة لمنشأتك؟' : 'Require Physical Audit or Facility Protection?'}
+        <div className="container" style={{ maxWidth: '840px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '1.85rem', fontWeight: 900, marginBottom: '0.75rem', color: '#FFFFFF' }}>
+            {locale === 'ar' ? 'جاهزون لحماية منشأتكم وتأمين عملياتكم' : 'Ready to Secure Your Critical Operations'}
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '2rem' }}>
+          <p style={{ fontSize: '1rem', color: 'var(--text-on-dark-muted)', lineHeight: 1.65, marginBottom: '1.75rem' }}>
             {locale === 'ar'
-              ? 'تواصل مباشرة مع غرفة العمليات بمركز عدن الأول أو قدّم طلب خدمة رسمي للحصول على رقم مرجعي وخطة أمنية معتمدة.'
-              : 'Engage directly with FACSS command operations or submit an official service request for dedicated cadre deployment.'}
+              ? 'تواصل مع فريقنا المتخصص لبدء تقييم الاحتياجات الأمنية لمنشأتكم وإعداد خطة الحماية المناسبة'
+              : 'Contact our operational specialists to initiate a professional assessment and tailored security plan.'}
           </p>
-          <div style={{ display: 'flex', gap: '1.2rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link href="/request-service" className="btn btn-gold btn-lg">
-              <Shield size={18} />
-              <span>{t.navRequestService}</span>
+              <Shield size={17} />
+              <span>{locale === 'ar' ? 'تقديم طلب خدمة جديد' : 'Submit Service Request'}</span>
+              <ArrowIcon size={16} />
             </Link>
-            <Link href="/contact" className="btn btn-outline btn-lg">
-              <span>{t.navContact}</span>
+            <Link href="/contact" className="btn btn-outline-dark btn-lg">
+              <span>{locale === 'ar' ? 'تواصل مع إدارة المركز' : 'Contact Administration'}</span>
             </Link>
           </div>
         </div>

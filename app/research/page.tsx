@@ -1,22 +1,50 @@
 import React from 'react';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
+import { getTranslation, formatDate, type Locale } from '@/lib/i18n';
 import {
   FileText,
   Calendar,
   User,
   Eye,
-  Download,
   Lock,
-  ArrowLeft,
-  BookOpen,
-  Share2
+  BookOpen
 } from 'lucide-react';
 
 export const revalidate = 0;
 
 export default async function ResearchPage() {
+  const cookieStore = cookies();
+  const rawLocale = cookieStore.get('facss_locale')?.value;
+  const locale: Locale = rawLocale === 'en' ? 'en' : 'ar';
+  const t = getTranslation(locale);
+  const session = await getSession();
+
+  // FAIL-SECURE RESEARCH AUTHORIZATION GATE:
+  // Public anonymous visitors and general clients see strictly PUBLIC + PUBLISHED research.
+  // Because ResearchPublication lacks a clientId/ownership column, granting access based
+  // solely on the CLIENT role would expose client-specific research across different clients.
+  // Therefore, until an architectural decision/migration establishes explicit client ownership,
+  // CLIENT_ONLY is restricted exclusively to authorized Center Operations Staff & Admins.
+  const allowedVisibilities: ('PUBLIC' | 'CLIENT_ONLY')[] = ['PUBLIC'];
+  const isAuthorizedStaff = session && (
+    session.role === 'SUPER_ADMIN' ||
+    session.role === 'ADMIN' ||
+    session.role === 'STAFF' ||
+    session.role === 'RESEARCH_MANAGER' ||
+    session.role.includes('MANAGER')
+  );
+  if (isAuthorizedStaff) {
+    allowedVisibilities.push('CLIENT_ONLY');
+  }
+
   const publications = await prisma.researchPublication.findMany({
+    where: {
+      status: 'PUBLISHED',
+      visibility: { in: allowedVisibilities },
+    },
     include: { category: true },
     orderBy: { publicationDate: 'desc' },
   });
@@ -26,19 +54,19 @@ export default async function ResearchPage() {
       {/* Banner */}
       <section
         style={{
-          paddingBlock: '4.5rem',
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(19, 62, 43, 0.6) 0%, rgba(5, 14, 9, 0.95) 80%)',
-          borderBottom: '1px solid rgba(197, 155, 39, 0.2)',
+          paddingBlock: '4rem',
+          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
+          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
           textAlign: 'center',
         }}
       >
         <div className="container">
-          <span className="section-tag">مركز البحوث والدراسات الاستراتيجية</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFF', marginBottom: '1rem' }}>
-            الدراسات الأمنية والتقارير الدورية لصناع القرار
+          <span className="section-tag">{t.researchSectionTitle}</span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
+            {locale === 'ar' ? 'الدراسات الأمنية والتقارير الاستراتيجية' : 'Security Studies & Strategic Reports'}
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '800px', marginInline: 'auto', lineHeight: 1.7 }}>
-            الذراع البحثية لمركز عدن الأول (FACSS) تعمل بمنهجية أكاديمية تُوظّف المعرفة الميدانية العميقة بالشأن اليمني والمؤثرات الإقليمية في خدمة صناع القرار
+          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.1rem', maxWidth: '800px', marginInline: 'auto', lineHeight: 1.7 }}>
+            {t.researchSectionSubtitle}
           </p>
         </div>
       </section>
@@ -46,73 +74,77 @@ export default async function ResearchPage() {
       {/* Publications Repository */}
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
-            {publications.map((pub) => (
-              <div key={pub.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <span className="badge badge-gold">{pub.category.titleAr}</span>
-                    {pub.visibility === 'PUBLIC' ? (
-                      <span className="badge badge-green">متاح للعموم</span>
-                    ) : (
-                      <span className="badge badge-yellow" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Lock size={12} />
-                        <span>خاص بالعملاء</span>
+          {publications.length === 0 ? (
+            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
+              <FileText size={40} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                {locale === 'ar' ? 'لا توجد دراسات منشورة حالياً' : 'No publications currently available'}
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                {locale === 'ar' ? 'يتم تحديث ونشر الأوراق البحثية الدورية فور اعتمادها من الهيئة الاستشارية.' : 'Periodic research papers are published once approved by the advisory board.'}
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.75rem' }}>
+              {publications.map((pub) => {
+                const categoryTitle = locale === 'en' ? (pub.category.titleEn || pub.category.titleAr) : pub.category.titleAr;
+                const title = locale === 'en' ? (pub.titleEn || pub.titleAr) : pub.titleAr;
+                const summary = locale === 'en' ? (pub.summaryEn || pub.summaryAr) : pub.summaryAr;
+
+                return (
+                  <div key={pub.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span className="badge badge-gold">{categoryTitle}</span>
+                        {pub.visibility === 'PUBLIC' ? (
+                          <span className="badge badge-success">{t.publicAccess}</span>
+                        ) : (
+                          <span className="badge badge-warning" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <Lock size={12} />
+                            <span>{t.clientOnlyAccess}</span>
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.6rem', lineHeight: 1.4 }}>
+                        {title}
+                      </h3>
+
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                        {summary}
+                      </p>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <User size={14} style={{ color: 'var(--facss-green-800)' }} />
+                          <span>{pub.author}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <Eye size={14} style={{ color: 'var(--facss-gold-600)' }} />
+                          <span>{pub.viewsCount} {locale === 'ar' ? 'قراءة' : 'views'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ paddingTop: '1.2rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Link
+                        href={`/research/${pub.slug}`}
+                        className="btn btn-outline-dark btn-sm"
+                        style={{ fontSize: '0.82rem' }}
+                      >
+                        <BookOpen size={15} />
+                        <span>{t.viewResearch}</span>
+                      </Link>
+
+                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                        {formatDate(pub.publicationDate, locale)}
                       </span>
-                    )}
-                  </div>
-
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFF', marginBottom: '0.65rem', lineHeight: 1.4 }}>
-                    {pub.titleAr}
-                  </h3>
-                  <h4 style={{ fontSize: '0.82rem', color: 'var(--color-gold-light)', fontWeight: 600, marginBottom: '1.2rem', lineHeight: 1.4 }}>
-                    {pub.titleEn}
-                  </h4>
-
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                    {pub.summaryAr}
-                  </p>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', fontSize: '0.8rem', color: 'var(--text-subtle)', marginBottom: '1.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <User size={14} />
-                      <span>{pub.author}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Eye size={14} />
-                      <span>{pub.viewsCount} قراءة</span>
                     </div>
                   </div>
-                </div>
-
-                <div style={{ paddingTop: '1.2rem', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  {pub.visibility === 'PUBLIC' ? (
-                    <Link
-                      href={`/research/${pub.slug}`}
-                      className="btn btn-outline btn-sm"
-                      style={{ fontSize: '0.82rem' }}
-                    >
-                      <BookOpen size={15} />
-                      <span>قراءة الورقة البحثية</span>
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/portal/client/reports"
-                      className="btn btn-outline btn-sm"
-                      style={{ fontSize: '0.82rem', borderColor: 'var(--color-gold)' }}
-                    >
-                      <Lock size={14} />
-                      <span>دخول العملاء للاطلاع</span>
-                    </Link>
-                  )}
-
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>
-                    {new Date(pub.publicationDate).toLocaleDateString('ar-YE', { year: 'numeric', month: 'short' })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
     </div>

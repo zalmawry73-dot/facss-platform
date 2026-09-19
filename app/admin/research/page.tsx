@@ -1,77 +1,53 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
-import { FileText, Lock, Globe, Eye, Plus, Edit3 } from 'lucide-react';
+import { requireCapability, CAPABILITIES } from '@/lib/rbac';
+import ResearchManager from '@/components/admin/ResearchManager';
 
 export const revalidate = 0;
 
 export default async function AdminResearchCMSPage() {
-  const publications = await prisma.researchPublication.findMany({
-    include: { category: true },
-    orderBy: { publicationDate: 'desc' }
-  });
+  // Layer 3 Authorization: Enforce Granular Capability
+  await requireCapability(CAPABILITIES.MANAGE_RESEARCH, '/admin');
+
+  const [publications, categories] = await Promise.all([
+    prisma.researchPublication.findMany({
+      include: {
+        category: { select: { id: true, titleAr: true, titleEn: true } },
+      },
+      orderBy: { publicationDate: 'desc' },
+    }),
+    prisma.researchCategory.findMany({
+      select: { id: true, titleAr: true, titleEn: true },
+      orderBy: { titleAr: 'asc' },
+    }),
+  ]);
+
+  const serializedPublications = publications.map((pub) => ({
+    id: pub.id,
+    titleAr: pub.titleAr,
+    titleEn: pub.titleEn,
+    slug: pub.slug,
+    summaryAr: pub.summaryAr,
+    summaryEn: pub.summaryEn,
+    contentAr: pub.contentAr,
+    contentEn: pub.contentEn,
+    author: pub.author,
+    categoryId: pub.categoryId,
+    visibility: pub.visibility,
+    status: pub.status || 'PUBLISHED',
+    isFeatured: pub.isFeatured,
+    viewsCount: pub.viewsCount,
+    publicationDate: pub.publicationDate.toISOString(),
+    category: { id: pub.category.id, titleAr: pub.category.titleAr },
+  }));
 
   return (
     <div>
-      <div className="card" style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', margin: 0 }}>
-              إدارة الدراسات الأمنية والتقارير الاستراتيجية
-            </h2>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              نشر الأبحاث، التحكم بمستويات السرية (عام / حصري للعملاء / خاص)، وإحصائيات القراءة
-            </span>
-          </div>
-
-          <button type="button" className="btn btn-gold btn-sm">
-            <Plus size={16} />
-            <span>نشر دراسة جديدة</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>عنوان الدراسة / التقرير</th>
-                <th>التصنيف</th>
-                <th>المؤلف</th>
-                <th>مستوى الرؤية (Visibility)</th>
-                <th>المشاهدات</th>
-                <th>تاريخ النشر</th>
-              </tr>
-            </thead>
-            <tbody>
-              {publications.map((pub) => (
-                <tr key={pub.id}>
-                  <td style={{ fontWeight: 700, color: '#FFF' }}>
-                    {pub.titleAr}
-                  </td>
-                  <td>{pub.category.titleAr}</td>
-                  <td style={{ fontSize: '0.85rem' }}>{pub.author}</td>
-                  <td>
-                    {pub.visibility === 'PUBLIC' ? (
-                      <span className="badge badge-green">متاح للعموم</span>
-                    ) : (
-                      <span className="badge badge-yellow">حصري للعملاء</span>
-                    )}
-                  </td>
-                  <td>
-                    <span style={{ fontWeight: 700, color: 'var(--color-gold-light)' }}>
-                      {pub.viewsCount}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    {new Date(pub.publicationDate).toLocaleDateString('ar-YE')}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <ResearchManager
+        initialPublications={serializedPublications}
+        categories={categories}
+      />
     </div>
   );
 }
+

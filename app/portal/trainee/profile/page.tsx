@@ -1,13 +1,12 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/auth';
+import { requireRole, ROLES } from '@/lib/rbac';
 import { User, Award, ShieldCheck, Mail, Phone } from 'lucide-react';
 
 export const revalidate = 0;
 
 export default async function TraineeProfilePage() {
-  const session = await getCurrentUser();
-  if (!session) return null;
+  const session = await requireRole([ROLES.TRAINEE], '/portal/trainee/profile');
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
@@ -40,7 +39,7 @@ export default async function TraineeProfilePage() {
 
           <div style={{ padding: '1rem', background: 'rgba(5,14,9,0.6)', borderRadius: '8px' }}>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', display: 'block', marginBottom: '0.2rem' }}>الصفة</span>
-            <span className="badge badge-gold">متدرب أمني معتمد</span>
+            <span className="badge badge-gold">متدرب مسجل</span>
           </div>
         </div>
       </div>
@@ -50,7 +49,7 @@ export default async function TraineeProfilePage() {
           تحديث السجل والبيانات المهنية
         </h3>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6, margin: 0 }}>
-          يتم ربط كافة الدورات والشهادات المعتمدة التي تجتازها تلقائياً بملفك الشخصي لدى أكاديمية مركز عدن الأول للتدريب الأمني.
+          يتم ربط كافة الدورات والشهادات الصادرة التي تجتازها تلقائياً بملفك الشخصي لدى أكاديمية مركز عدن الأول للتدريب الأمني.
         </p>
       </div>
     </div>

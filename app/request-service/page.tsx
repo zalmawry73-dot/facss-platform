@@ -24,10 +24,12 @@ interface ServiceItem {
 }
 
 function RequestServiceForm() {
-  const { t, locale, dir } = useLanguage();
+  const { t, locale } = useLanguage();
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const preselectedSlug = searchParams.get('service');
+  const isAr = locale === 'ar';
+  const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
@@ -97,12 +99,12 @@ function RequestServiceForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'حدث خطأ أثناء إرسال الطلب');
+        setError(data.error || (isAr ? 'حدث خطأ أثناء إرسال الطلب' : 'An error occurred while submitting your request.'));
       } else {
         setGeneratedNumber(data.requestNumber);
       }
     } catch {
-      setError('تعذر الاتصال بالخادم، يرجى إعادة المحاولة.');
+      setError(isAr ? 'تعذر الاتصال بالخادم، يرجى إعادة المحاولة.' : 'Unable to contact server. Please retry.');
     } finally {
       setSubmitting(false);
     }
@@ -113,18 +115,18 @@ function RequestServiceForm() {
       {/* Banner */}
       <section
         style={{
-          paddingBlock: '4.5rem',
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(19, 62, 43, 0.6) 0%, rgba(5, 14, 9, 0.95) 80%)',
-          borderBottom: '1px solid rgba(197, 155, 39, 0.2)',
+          paddingBlock: '4rem',
+          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
+          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
           textAlign: 'center',
         }}
       >
         <div className="container">
-          <span className="section-tag">طلب خدمة أمنية</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFF', marginBottom: '1rem' }}>
+          <span className="section-tag">{t.requestService}</span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
             {t.requestServiceTitle}
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
+          <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
             {t.requestServiceSubtitle}
           </p>
         </div>
@@ -134,15 +136,15 @@ function RequestServiceForm() {
         <div className="container" style={{ maxWidth: '820px' }}>
           {/* Success Screen */}
           {generatedNumber ? (
-            <div className="card glow-animation" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
+            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', borderTop: '4px solid var(--facss-gold-500)' }}>
               <div
                 style={{
                   width: '80px',
                   height: '80px',
                   borderRadius: '50%',
-                  background: 'rgba(16, 185, 129, 0.15)',
+                  background: 'rgba(16, 185, 129, 0.12)',
                   border: '2px solid #10B981',
-                  color: '#34D399',
+                  color: '#065F46',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -153,10 +155,10 @@ function RequestServiceForm() {
                 <CheckCircle2 size={42} />
               </div>
 
-              <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.8rem' }}>
+              <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.8rem' }}>
                 {t.requestSuccessTitle}
               </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', marginBottom: '1.8rem' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginBottom: '1.8rem' }}>
                 {t.requestSuccessDesc}
               </p>
 
@@ -165,12 +167,12 @@ function RequestServiceForm() {
                 style={{
                   display: 'inline-block',
                   padding: '1rem 2.5rem',
-                  background: 'rgba(11, 37, 24, 0.8)',
-                  border: '2px dashed var(--color-gold)',
+                  background: 'var(--surface-sunken)',
+                  border: '2px dashed var(--facss-gold-500)',
                   borderRadius: '12px',
                   fontSize: '1.6rem',
                   fontWeight: 900,
-                  color: 'var(--color-gold-light)',
+                  color: 'var(--facss-gold-700)',
                   letterSpacing: '0.08em',
                   marginBottom: '2rem',
                 }}
@@ -178,29 +180,29 @@ function RequestServiceForm() {
                 {generatedNumber}
               </div>
 
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '580px', marginInline: 'auto', lineHeight: 1.7, marginBottom: '2.5rem' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '580px', marginInline: 'auto', lineHeight: 1.7, marginBottom: '2.5rem' }}>
                 {t.trackInPortal}
               </p>
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Link href="/portal/client/requests" className="btn btn-gold btn-lg">
-                  <span>متابعة الطلب في بوابة العميل</span>
-                  <ArrowLeft size={18} />
+                  <span>{isAr ? 'متابعة الطلب في بوابة العميل' : 'Track Request in Client Portal'}</span>
+                  <ArrowIcon size={18} />
                 </Link>
                 <Link href="/" className="btn btn-outline btn-lg">
-                  العودة للرئيسية
+                  {t.home}
                 </Link>
               </div>
             </div>
           ) : (
             /* Request Form */
             <div className="card">
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', marginBottom: '1.5rem' }}>
-                بيانات طلب الخدمة والمنشأة
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
+                {isAr ? 'بيانات طلب الخدمة والمنشأة' : 'Institutional Service Request Details'}
               </h2>
 
               {error && (
-                <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #EF4444', borderRadius: '8px', color: '#F87171', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', fontWeight: 600 }}>
                   <AlertCircle size={20} />
                   <span>{error}</span>
                 </div>
@@ -219,11 +221,11 @@ function RequestServiceForm() {
                     disabled={loadingServices}
                   >
                     {loadingServices ? (
-                      <option>جارٍ تحميل الخدمات...</option>
+                      <option>{isAr ? 'جارٍ تحميل الخدمات...' : 'Loading services...'}</option>
                     ) : (
                       services.map((s) => (
                         <option key={s.id} value={s.id}>
-                          {locale === 'ar' ? s.titleAr : s.titleEn}
+                          {isAr ? s.titleAr : (s.titleEn || s.titleAr)}
                         </option>
                       ))
                     )}
@@ -238,7 +240,7 @@ function RequestServiceForm() {
                     <input
                       type="text"
                       className="form-input"
-                      placeholder="اسم الشركة أو المؤسسة أو المنشأة"
+                      placeholder={isAr ? 'اسم الشركة أو المؤسسة أو المنشأة' : 'Company / Organization / Facility Name'}
                       value={formData.organization}
                       onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                       required
@@ -252,7 +254,7 @@ function RequestServiceForm() {
                     <input
                       type="text"
                       className="form-input"
-                      placeholder="اسم المفوض بالتواصل"
+                      placeholder={isAr ? 'اسم المفوض بالتواصل' : 'Authorized Representative Name'}
                       value={formData.contactName}
                       onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
                       required
@@ -310,7 +312,9 @@ function RequestServiceForm() {
                   <textarea
                     className="form-textarea"
                     rows={5}
-                    placeholder="وضح نطاق المنشأة، موقعها، المتطلبات الخاصة، وأي تواريخ مستهدفة لبدء الخدمة..."
+                    placeholder={isAr
+                      ? 'وضح نطاق المنشأة، موقعها، المتطلبات الخاصة، وأي تواريخ مستهدفة لبدء الخدمة...'
+                      : 'Specify facility scope, location, specialized requirements, and expected operational timeline...'}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     required
@@ -324,7 +328,7 @@ function RequestServiceForm() {
                   disabled={submitting}
                 >
                   {submitting ? (
-                    <span>جارٍ معالجة وتوليد الطلب...</span>
+                    <span>{isAr ? 'جارٍ معالجة وتوليد الطلب...' : 'Processing & generating reference...'}</span>
                   ) : (
                     <>
                       <Shield size={18} />
@@ -343,7 +347,7 @@ function RequestServiceForm() {
 
 export default function RequestServicePage() {
   return (
-    <Suspense fallback={<div className="container" style={{ padding: '6rem 1rem', textAlign: 'center', color: 'var(--color-gold-light)' }}>جارٍ تحميل نموذج الطلب...</div>}>
+    <Suspense fallback={<div className="container" style={{ padding: '6rem 1rem', textAlign: 'center', color: 'var(--facss-gold-600)' }}>...</div>}>
       <RequestServiceForm />
     </Suspense>
   );

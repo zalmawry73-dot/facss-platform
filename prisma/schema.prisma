@@ -13,6 +13,7 @@ datasource db {
 enum Role {
   SUPER_ADMIN
   ADMIN
+  STAFF
   CONTENT_MANAGER
   SERVICE_MANAGER
   TRAINING_MANAGER
@@ -104,6 +105,7 @@ model User {
   notifications    Notification[]
   activityLogs     ActivityLog[]
   notes            ServiceRequestNote[]
+  capabilities     UserCapability[]
 
   @@index([role])
   @@index([email])
@@ -209,19 +211,34 @@ model ServiceRequestNote {
 }
 
 model ServiceRequestDocument {
-  id             String         @id @default(cuid())
-  requestId      String
-  title          String
-  filePath       String
-  fileSize       Int
-  fileType       String
-  uploadedById   String
-  isConfidential Boolean        @default(true)
-  createdAt      DateTime       @default(now())
+  id               String         @id @default(cuid())
+  requestId        String
+  title            String
+  filePath         String
+  fileSize         Int
+  fileType         String
+  uploadedById     String
+  isConfidential   Boolean        @default(true)
+  createdAt        DateTime       @default(now())
 
-  request        ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  // Phase 2C Document Security & Operations Metadata
+  documentType     String         @default("CLIENT_ATTACHMENT") // CLIENT_ATTACHMENT, INTERNAL_DOCUMENT, FINAL_REPORT
+  originalFilename String?
+  storageKey       String?
+  mimeType         String?
+  visibility       String         @default("CLIENT_VISIBLE") // CLIENT_VISIBLE, INTERNAL_ONLY
+  isArchived       Boolean        @default(false)
+  uploadedByUserId String?
+  sizeBytes        Int?
+  updatedAt        DateTime       @default(now()) @updatedAt
+
+  request          ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
 
   @@index([requestId])
+  @@index([documentType])
+  @@index([visibility])
+  @@index([isArchived])
+  @@index([uploadedByUserId])
 }
 
 model CourseCategory {
@@ -314,6 +331,11 @@ model Certificate {
   pdfPath           String?
   createdAt         DateTime             @default(now())
 
+  // Phase 2D: Certificate Revocation Support
+  isRevoked         Boolean              @default(false)
+  revokedReason     String?
+  revokedAt         DateTime?
+
   registration      TrainingRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
   @@index([certificateNumber])
@@ -346,6 +368,7 @@ model ResearchPublication {
   pdfPath         String?
   publicationDate DateTime         @default(now())
   visibility      Visibility       @default(PUBLIC)
+  status          ArticleStatus    @default(PUBLISHED)
   isFeatured      Boolean          @default(false)
   viewsCount      Int              @default(0)
   createdAt       DateTime         @default(now())
@@ -355,6 +378,7 @@ model ResearchPublication {
 
   @@index([slug])
   @@index([visibility])
+  @@index([status])
   @@index([categoryId])
 }
 
@@ -439,4 +463,17 @@ model ActivityLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+model UserCapability {
+  id         String   @id @default(cuid())
+  userId     String
+  capability String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, capability])
+  @@index([userId])
+  @@index([capability])
 }

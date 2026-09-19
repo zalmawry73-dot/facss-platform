@@ -40,7 +40,7 @@ export default function TraineePortalLayout({ children }: { children: React.Reac
   const links = [
     { href: '/portal/trainee', label: 'لوحة التدريب العامة', icon: LayoutDashboard },
     { href: '/portal/trainee/courses', label: 'دوراتي والبرامج المتاحة', icon: BookOpen },
-    { href: '/portal/trainee/certificates', label: 'الشهادات المعتمدة', icon: Award },
+    { href: '/portal/trainee/certificates', label: 'الشهادات الصادرة', icon: Award },
     { href: '/portal/trainee/profile', label: 'الملف الشخصي', icon: User },
   ];
 
@@ -58,7 +58,7 @@ export default function TraineePortalLayout({ children }: { children: React.Reac
                 بوابة المتدرب | {user.fullName}
               </h1>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                أكاديمية FACSS للتدريب الأمني المعتمد • {user.email}
+                أكاديمية FACSS للتدريب والتأهيل الأمني • {user.email}
               </span>
             </div>
           </div>

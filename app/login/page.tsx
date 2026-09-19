@@ -10,10 +10,7 @@ import {
   Mail, 
   ShieldCheck, 
   AlertCircle, 
-  LogIn, 
-  UserCheck, 
-  GraduationCap, 
-  Briefcase 
+  LogIn 
 } from 'lucide-react';
 
 function LoginForm() {
@@ -22,11 +19,18 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
+  const errorParam = searchParams.get('error');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    errorParam === 'unauthorized' 
+      ? 'يرجى تسجيل الدخول بحساب مصرح له للوصول إلى هذا القسم' 
+      : errorParam === 'forbidden'
+      ? 'غير مصرح لك بالوصول إلى هذا المورد'
+      : null
+  );
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,15 +39,30 @@ function LoginForm() {
 
     const res = await login(email, password);
     if (!res.success) {
-      setError(res.error || 'فشل تسجيل الدخول، تأكد من البيانات');
+      setError(res.error || 'بيانات الدخول غير صحيحة أو الحساب غير مفعل');
       setLoading(false);
     } else {
-      // Redirect based on role
+      // Redirect based on role or explicit redirect query parameter
+      if (redirect && redirect !== '/') {
+        router.push(redirect);
+        return;
+      }
+
       const meRes = await fetch('/api/auth/me');
       const meData = await meRes.json();
       const user = meData.user;
 
-      if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' || user?.role?.includes('MANAGER')) {
+      const STAFF_ROLES = [
+        'SUPER_ADMIN',
+        'ADMIN',
+        'CONTENT_MANAGER',
+        'SERVICE_MANAGER',
+        'TRAINING_MANAGER',
+        'RESEARCH_MANAGER',
+        'EMPLOYEE',
+      ];
+
+      if (user && STAFF_ROLES.includes(user.role)) {
         router.push('/admin');
       } else if (user?.role === 'TRAINEE') {
         router.push('/portal/trainee');
@@ -53,17 +72,10 @@ function LoginForm() {
     }
   };
 
-  // Quick fill helper for development review
-  const quickFill = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setError(null);
-  };
-
   return (
     <div style={{ paddingBlock: '4rem' }}>
-      <div className="container" style={{ maxWidth: '520px' }}>
-        <div className="card glow-animation" style={{ padding: '2.5rem' }}>
+      <div className="container" style={{ maxWidth: '500px' }}>
+        <div className="card" style={{ padding: '2.5rem', borderTop: '4px solid var(--facss-gold-500)' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <img
@@ -71,16 +83,16 @@ function LoginForm() {
               alt="FACSS Logo"
               style={{ width: '72px', height: '72px', marginInline: 'auto', marginBottom: '1rem', objectFit: 'contain' }}
             />
-            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.4rem' }}>
+            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
               {t.navLogin}
             </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              بوابة الدخول الموحدة لمنصة مركز عدن الأول (FACSS)
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+              {t.loginSubtitle}
             </p>
           </div>
 
           {error && (
-            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #EF4444', borderRadius: '8px', color: '#F87171', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem' }}>
+            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 600 }}>
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
@@ -88,12 +100,12 @@ function LoginForm() {
 
           <form onSubmit={handleLogin}>
             <div className="form-group">
-              <label className="form-label">البريد الإلكتروني</label>
+              <label className="form-label">{t.emailAddress}</label>
               <div style={{ position: 'relative' }}>
                 <input
                   type="email"
                   className="form-input"
-                  placeholder="admin@facss-aden.com"
+                  placeholder="name@organization.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -102,7 +114,7 @@ function LoginForm() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">كلمة المرور</label>
+              <label className="form-label">{t.password}</label>
               <input
                 type="password"
                 className="form-input"
@@ -120,66 +132,21 @@ function LoginForm() {
               disabled={loading}
             >
               {loading ? (
-                <span>جارٍ التحقق...</span>
+                <span>{t.loggingIn}</span>
               ) : (
                 <>
                   <LogIn size={18} />
-                  <span>دخول إلى المنصة</span>
+                  <span>{t.loginSubmit}</span>
                 </>
               )}
             </button>
           </form>
 
-          {/* Quick Demo Accounts Selection Box */}
-          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-light)', fontWeight: 700, display: 'block', marginBottom: '0.65rem', textAlign: 'center' }}>
-              حسابات تجريبية سريعة للاختبار المحلي (Development Demo):
-            </span>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-              <button
-                type="button"
-                onClick={() => quickFill('admin@facss-aden.com', 'Admin@FACSS2026')}
-                className="btn btn-outline btn-sm"
-                style={{ fontSize: '0.75rem', padding: '0.4rem' }}
-              >
-                Super Admin
-              </button>
-
-              <button
-                type="button"
-                onClick={() => quickFill('services@facss-aden.com', 'Service@FACSS2026')}
-                className="btn btn-outline btn-sm"
-                style={{ fontSize: '0.75rem', padding: '0.4rem' }}
-              >
-                Service Manager
-              </button>
-
-              <button
-                type="button"
-                onClick={() => quickFill('client@yemen-bank.com', 'Client@FACSS2026')}
-                className="btn btn-outline btn-sm"
-                style={{ fontSize: '0.75rem', padding: '0.4rem' }}
-              >
-                Client (بنك اليمن)
-              </button>
-
-              <button
-                type="button"
-                onClick={() => quickFill('trainee@facss-aden.com', 'Trainee@FACSS2026')}
-                className="btn btn-outline btn-sm"
-                style={{ fontSize: '0.75rem', padding: '0.4rem' }}
-              >
-                Trainee (متدرب)
-              </button>
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              ليس لديك حساب بعد؟{' '}
-              <Link href="/register" style={{ color: 'var(--color-gold-light)', fontWeight: 700 }}>
-                إنشاء حساب عميل أو متدرب
+          <div style={{ textAlign: 'center', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+              {t.dontHaveAccount}{' '}
+              <Link href="/register" style={{ color: 'var(--facss-green-900)', fontWeight: 700 }}>
+                {t.registerNewAccount}
               </Link>
             </p>
           </div>
@@ -191,7 +158,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="container" style={{ padding: '6rem 1rem', textAlign: 'center', color: 'var(--color-gold-light)' }}>جارٍ تحميل بوابة الدخول...</div>}>
+    <Suspense fallback={<div className="container" style={{ padding: '6rem 1rem', textAlign: 'center', color: 'var(--color-gold-light)' }}>Loading...</div>}>
       <LoginForm />
     </Suspense>
   );

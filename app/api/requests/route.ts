@@ -1,10 +1,35 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
+import { STAFF_ROLES, hasCapability, CAPABILITIES } from '@/lib/rbac';
+import { checkRateLimit, rateLimitResponse, LIMITERS } from '@/lib/rateLimit';
+
+async function generateUniqueRequestNumber(): Promise<string> {
+  const year = new Date().getFullYear();
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const randomSuffix = Math.floor(100000 + Math.random() * 900000);
+    const candidate = `FACSS-SR-${year}-${randomSuffix}`;
+    const existing = await prisma.serviceRequest.findUnique({
+      where: { requestNumber: candidate },
+      select: { id: true },
+    });
+    if (!existing) {
+      return candidate;
+    }
+  }
+  // High-concurrency fallback ensuring zero collision
+  return `FACSS-SR-${year}-${Date.now().toString().slice(-6)}`;
+}
 
 export async function POST(request: Request) {
   try {
-    const session = await getCurrentUser();
+    // Rate Limiting: 10 requests per hour per IP (Anti-Spam protection)
+    const rateCheck = checkRateLimit(request, 'REQUESTS', LIMITERS.REQUESTS);
+    if (!rateCheck.allowed) {
+      return rateLimitResponse(rateCheck.resetTime);
+    }
+
+    const session = await getCurrentUser(true);
     const body = await request.json();
     const { 
       serviceId, 
@@ -23,22 +48,45 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate unique request number: FACSS-SR-YYYY-XXXXXX
-    const year = new Date().getFullYear();
-    const randomSuffix = Math.floor(100000 + Math.random() * 900000);
-    const requestNumber = `FACSS-SR-${year}-${randomSuffix}`;
+    const sanitizedEmail = String(contactEmail).trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(sanitizedEmail)) {
+      return NextResponse.json(
+        { error: 'صيغة البريد الإلكتروني غير صالحة' },
+        { status: 400 }
+      );
+    }
+
+    const validPriorities = ['NORMAL', 'HIGH', 'URGENT'];
+    const sanitizedPriority = validPriorities.includes(priority) ? priority : 'NORMAL';
+
+    // Verify that service exists
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+      select: { id: true, titleAr: true },
+    });
+
+    if (!service) {
+      return NextResponse.json(
+        { error: 'الخدمة المختارة غير صالحة أو غير موجودة' },
+        { status: 400 }
+      );
+    }
+
+    // Generate collision-proof unique request number
+    const requestNumber = await generateUniqueRequestNumber();
 
     const newRequest = await prisma.serviceRequest.create({
       data: {
         requestNumber,
         serviceId,
         userId: session?.userId || null,
-        organization: organization.trim(),
-        contactName: contactName.trim(),
-        contactEmail: contactEmail.trim().toLowerCase(),
-        contactPhone: contactPhone.trim(),
-        priority: priority || 'NORMAL',
-        description: description.trim(),
+        organization: String(organization).trim(),
+        contactName: String(contactName).trim(),
+        contactEmail: sanitizedEmail,
+        contactPhone: String(contactPhone).trim(),
+        priority: sanitizedPriority as any,
+        description: String(description).trim(),
         status: 'NEW',
       },
       include: { service: true }
@@ -78,7 +126,7 @@ export async function POST(request: Request) {
         action: 'CREATE_SERVICE_REQUEST',
         entityType: 'ServiceRequest',
         entityId: newRequest.id,
-        details: `طلب خدمة جديد [${requestNumber}] لصالح: ${organization} (${newRequest.service.titleAr})`,
+        details: `طلب خدمة جديد [${requestNumber}] لصالح: ${organization} (${service.titleAr})`,
       }
     });
 
@@ -99,19 +147,37 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const session = await getCurrentUser();
+    const session = await getCurrentUser(true);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // If client, only their requests; if admin/manager, all requests
-    const isStaff = session.role === 'SUPER_ADMIN' || session.role === 'ADMIN' || session.role.includes('MANAGER');
+    // Role gate: Staff roles view all (requires manage_requests); CLIENT views own requests; TRAINEE has no access
+    const isStaff = STAFF_ROLES.includes(session.role as any);
+
+    if (session.role === 'TRAINEE') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (isStaff) {
+      const canManage = await hasCapability(session, CAPABILITIES.MANAGE_REQUESTS);
+      if (!canManage) {
+        return NextResponse.json(
+          { error: `Forbidden: Missing required capability [${CAPABILITIES.MANAGE_REQUESTS}]` },
+          { status: 403 }
+        );
+      }
+    }
 
     const requests = await prisma.serviceRequest.findMany({
       where: isStaff ? {} : { userId: session.userId },
       include: {
         service: true,
         assignedEmployee: { select: { fullName: true, email: true } },
+        documents: {
+          where: isStaff ? {} : { isArchived: false, visibility: 'CLIENT_VISIBLE' },
+          orderBy: { createdAt: 'desc' },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

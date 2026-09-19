@@ -1,75 +1,256 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
-import { BookOpen, Clock, MapPin, Users, Award, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import StatusBadge from '@/components/StatusBadge';
+import { BookOpen, Clock, MapPin, Users, Award, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
-export const revalidate = 0;
+interface Course {
+  id: string;
+  titleAr: string;
+  titleEn: string;
+  descriptionAr: string;
+  duration: string;
+  location: string;
+  capacity: number;
+  status: string;
+  trainerName: string;
+  startDate: string | null;
+  hasCertificate: boolean;
+  category: { titleAr: string; titleEn?: string };
+  _count?: { registrations: number };
+  activeRegistrations?: number;
+}
 
-export default async function TraineeCoursesPage() {
-  const allCourses = await prisma.course.findMany({
-    include: { category: true },
-    orderBy: { createdAt: 'desc' }
-  });
+interface MyRegistration {
+  courseId: string;
+  status: string;
+}
+
+export default function TraineeCoursesPage() {
+  const { locale } = useLanguage();
+  const isAr = locale === 'ar';
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [myRegistrations, setMyRegistrations] = useState<MyRegistration[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [registering, setRegistering] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  async function loadData() {
+    try {
+      // Load my registrations
+      const myRegsRes = await fetch('/api/training/my-registrations');
+      const myRegsData = await myRegsRes.json();
+
+      if (myRegsData.success) {
+        setMyRegistrations(
+          myRegsData.registrations.map((r: any) => ({
+            courseId: r.course?.id || r.courseId,
+            status: r.status,
+          }))
+        );
+      }
+
+      // Load courses from the training data
+      const publicRes = await fetch('/api/training/available-courses');
+      if (publicRes.ok) {
+        const data = await publicRes.json();
+        if (data.success) {
+          setCourses(data.courses);
+        }
+      }
+    } catch (err) {
+      console.error('Error loading data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRegister(course: Course) {
+    setRegistering(course.id);
+    setFeedback(null);
+
+    try {
+      const res = await fetch('/api/training/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: course.id,
+          fullName: '', // Auto-filled from session
+          email: '',
+          phone: '',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || (isAr ? 'فشلت عملية التسجيل' : 'Registration failed'));
+      }
+
+      setFeedback({ 
+        type: 'success', 
+        message: data.message || (isAr ? 'تم التسجيل بنجاح!' : 'Successfully registered!') 
+      });
+      setMyRegistrations((prev) => [...prev, { courseId: course.id, status: 'PENDING' }]);
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: err.message });
+    } finally {
+      setRegistering(null);
+    }
+  }
+
+  function getRegistrationForCourse(courseId: string): MyRegistration | undefined {
+    return myRegistrations.find((r) => r.courseId === courseId && r.status !== 'REJECTED');
+  }
+
+  if (loading) {
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center' }}>
+        <Loader2 size={32} style={{ color: 'var(--facss-gold-600)', animation: 'spin 1s linear infinite' }} />
+        <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>
+          {isAr ? 'جارٍ تحميل الدورات المتاحة...' : 'Loading available courses...'}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
+      {/* Feedback */}
+      {feedback && (
+        <div
+          style={{
+            padding: '1rem 1.25rem',
+            marginBottom: '1.5rem',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            background: feedback.type === 'success' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.1)',
+            border: `1px solid ${feedback.type === 'success' ? '#10B981' : '#EF4444'}`,
+            color: feedback.type === 'success' ? '#065F46' : '#991B1B',
+            fontWeight: 600,
+          }}
+        >
+          {feedback.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+          <span style={{ fontSize: '0.9rem' }}>{feedback.message}</span>
+        </div>
+      )}
+
       <div className="card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', marginBottom: '0.4rem' }}>
-          الدورات التدريبية المتاحة للتسجيل
+        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+          {isAr ? 'الدورات التدريبية المتاحة للتسجيل' : 'Available Training Courses for Enrollment'}
         </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
-          استعرض البرامج والتخصصات الأمنية وسجّل في الدورات القادمة لترقية مهاراتك الميدانية.
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+          {isAr
+            ? 'استعرض البرامج والتخصصات الأمنية وسجّل في الدورات القادمة لترقية مهاراتك الميدانية.'
+            : 'Explore certified security programs and enroll in upcoming sessions to advance your field competencies.'}
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
-        {allCourses.map((c) => (
-          <div key={c.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-                <span className="badge badge-gold">{c.category.titleAr}</span>
-                <span className="badge badge-green">{c.status}</span>
-              </div>
+      {courses.length === 0 ? (
+        <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <BookOpen size={48} style={{ color: 'var(--facss-gold-600)', marginInline: 'auto', marginBottom: '1rem', opacity: 0.5 }} />
+          <p>{isAr ? 'لا توجد دورات مفتوحة للتسجيل حالياً. تابعنا للمزيد من البرامج القادمة.' : 'No courses currently open for enrollment. Check back soon for new programs.'}</p>
+          <Link href="/training" className="btn btn-gold btn-sm" style={{ marginTop: '1rem' }}>
+            {isAr ? 'استعراض جميع الدورات' : 'View All Courses'}
+          </Link>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
+          {courses.map((c) => {
+            const myReg = getRegistrationForCourse(c.id);
+            const remainingSeats = c.capacity - (c.activeRegistrations || 0);
+            const title = isAr ? c.titleAr : (c.titleEn || c.titleAr);
+            const categoryName = isAr ? (c.category?.titleAr || 'عام') : (c.category?.titleEn || c.category?.titleAr || 'General');
 
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFF', marginBottom: '0.5rem' }}>
-                {c.titleAr}
-              </h3>
-              <h4 style={{ fontSize: '0.82rem', color: 'var(--color-gold-light)', fontWeight: 600, marginBottom: '1rem' }}>
-                {c.titleEn}
-              </h4>
+            return (
+              <div key={c.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                    <span className="badge badge-gold">{categoryName}</span>
+                    {remainingSeats > 0 ? (
+                      <span className="badge badge-green">
+                        {isAr ? `متاح (${remainingSeats} مقعد)` : `Open (${remainingSeats} seats)`}
+                      </span>
+                    ) : (
+                      <span className="badge badge-red">
+                        {isAr ? 'مكتمل العدد' : 'Full'}
+                      </span>
+                    )}
+                  </div>
 
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '1.2rem' }}>
-                {c.descriptionAr}
-              </p>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+                    {title}
+                  </h3>
+                  {isAr && (
+                    <h4 style={{ fontSize: '0.82rem', color: 'var(--facss-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
+                      {c.titleEn}
+                    </h4>
+                  )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', padding: '0.85rem', background: 'rgba(5,14,9,0.5)', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <Clock size={14} style={{ color: 'var(--color-gold-light)' }} />
-                  <span>{c.duration}</span>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '1.2rem' }}>
+                    {c.descriptionAr}
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', padding: '0.85rem', background: 'var(--surface-sunken)', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', border: '1px solid var(--border-color)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Clock size={14} style={{ color: 'var(--facss-gold-600)' }} />
+                      <span>{c.duration}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <MapPin size={14} style={{ color: 'var(--facss-gold-600)' }} />
+                      <span>{c.location}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Users size={14} style={{ color: 'var(--facss-green-700)' }} />
+                      <span>{isAr ? `السعة: ${c.capacity} متدرب` : `Capacity: ${c.capacity}`}</span>
+                    </div>
+                    {c.hasCertificate && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Award size={14} style={{ color: 'var(--facss-green-700)' }} />
+                        <span>{isAr ? 'شهادة إتمام' : 'Completion Certificate'}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <MapPin size={14} style={{ color: 'var(--color-gold-light)' }} />
-                  <span>{c.location}</span>
+
+                <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {isAr ? `إشراف: ${c.trainerName}` : `Lead: ${c.trainerName}`}
+                  </span>
+
+                  {myReg ? (
+                    <StatusBadge type="trainingRegistration" status={myReg.status} locale={locale} />
+                  ) : remainingSeats > 0 ? (
+                    <button
+                      type="button"
+                      className="btn btn-gold btn-sm"
+                      disabled={registering === c.id}
+                      onClick={() => handleRegister(c)}
+                    >
+                      {registering === c.id 
+                        ? (isAr ? 'جارٍ التسجيل...' : 'Enrolling...') 
+                        : (isAr ? 'التسجيل في الدورة' : 'Enroll Now')}
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                      {isAr ? 'مكتمل العدد' : 'Full'}
+                    </span>
+                  )}
                 </div>
               </div>
-            </div>
-
-            <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-subtle)' }}>
-                السعة: {c.capacity} متدرب
-              </span>
-
-              <button
-                type="button"
-                className="btn btn-gold btn-sm"
-                onClick={() => alert(`تم استلام طلب تسجيلكم في ${c.titleAr} وسيتم مراجعته من إدارة التدريب.`)}
-              >
-                تأكيد التسجيل الآن
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -15,9 +15,29 @@ import {
 
 export default function Footer() {
   const { t, locale } = useLanguage();
+  const [footerSettings, setFooterSettings] = React.useState({
+    email: 'info@facss-aden.com',
+    phone: '+967 2 245 800',
+    address: 'عدن، خور مكسر - الجمهورية اليمنية',
+  });
+
+  React.useEffect(() => {
+    fetch('/api/settings/public')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setFooterSettings({
+            email: data.settings.OFFICIAL_EMAIL || 'info@facss-aden.com',
+            phone: data.settings.OFFICIAL_PHONE || '+967 2 245 800',
+            address: data.settings.OFFICIAL_ADDRESS || 'عدن، خور مكسر - الجمهورية اليمنية',
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" style={{ backgroundColor: 'var(--facss-green-950)', color: 'var(--text-on-dark)', borderTop: '1px solid var(--border-dark)' }}>
       <div className="container">
         <div className="footer-grid">
           {/* Col 1: Brand & Slogans */}
@@ -62,9 +82,8 @@ export default function Footer() {
               <li><Link href="/services">{t.navServices}</Link></li>
               <li><Link href="/training">{t.navTraining}</Link></li>
               <li><Link href="/research">{t.navResearch}</Link></li>
-              <li><Link href="/sectors">{t.navSectors}</Link></li>
-              <li><Link href="/methodology">{t.navMethodology}</Link></li>
               <li><Link href="/contact">{t.navContact}</Link></li>
+              <li><Link href="/request-service" style={{ color: 'var(--color-gold-light)', fontWeight: 700 }}>{t.navRequestService}</Link></li>
             </ul>
           </div>
 
@@ -72,12 +91,12 @@ export default function Footer() {
           <div>
             <h4 className="footer-heading">{t.securityServices}</h4>
             <ul className="footer-links">
-              <li><Link href="/services/guarding-services">خدمات الحراسات المنشآت</Link></li>
-              <li><Link href="/services/physical-security-assessment">تقييم الأمن المادي</Link></li>
-              <li><Link href="/services/security-consultations">الاستشارات الأمنية المتكاملة</Link></li>
-              <li><Link href="/services/electronic-security-solutions">الأنظمة الإلكترونية المتقدمة</Link></li>
-              <li><Link href="/services/security-and-safety-training">برامج التدريب والتأهيل</Link></li>
-              <li><Link href="/services/security-risk-analysis">تحليل المخاطر والتقارير</Link></li>
+              <li><Link href="/services/guarding-services">{t.footerGuardingLink}</Link></li>
+              <li><Link href="/services/physical-security-assessment">{t.footerAssessmentLink}</Link></li>
+              <li><Link href="/services/security-consultations">{t.footerConsultingLink}</Link></li>
+              <li><Link href="/services/electronic-security-solutions">{t.footerElectronicLink}</Link></li>
+              <li><Link href="/services/security-and-safety-training">{t.footerTrainingLink}</Link></li>
+              <li><Link href="/services/security-risk-analysis">{t.footerRiskLink}</Link></li>
             </ul>
           </div>
 
@@ -87,15 +106,19 @@ export default function Footer() {
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
                 <MapPin size={18} style={{ color: 'var(--color-gold)', flexShrink: 0, marginTop: '3px' }} />
-                <span>{locale === 'ar' ? 'عدن، الجمهورية اليمنية' : 'Aden, Republic of Yemen'}</span>
+                <span>
+                  {locale === 'en' && footerSettings.address.includes('خور مكسر')
+                    ? 'Aden Capital - Khor Maksar - Diplomatic District'
+                    : footerSettings.address}
+                </span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <Mail size={18} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
-                <span>info@facss-aden.com</span>
+                <span>{footerSettings.email}</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <Phone size={18} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
-                <span>[يُضاف لاحقاً - PHONE_PLACEHOLDER]</span>
+                <span>{footerSettings.phone}</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <Globe size={18} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />

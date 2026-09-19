@@ -2,21 +2,48 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { hashPassword, signToken, TOKEN_COOKIE_NAME } from '@/lib/auth';
+import { checkRateLimit, rateLimitResponse, LIMITERS } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
   try {
+    // Rate Limiting: 3 registrations per hour per IP (anti-spam / mass account creation)
+    const rateCheck = checkRateLimit(request, 'REGISTER', LIMITERS.REGISTER);
+    if (!rateCheck.allowed) {
+      return rateLimitResponse(rateCheck.resetTime);
+    }
+
     const body = await request.json();
     const { email, password, fullName, phone, organization, role, companySector } = body;
 
-    if (!email || !password || !fullName) {
+    // Strict Input Validation
+    if (!email || !password || !fullName || typeof email !== 'string' || typeof password !== 'string' || typeof fullName !== 'string') {
       return NextResponse.json(
         { error: 'الاسم الكامل، البريد الإلكتروني، وكلمة المرور حقول إلزامية' },
         { status: 400 }
       );
     }
 
+    const sanitizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(sanitizedEmail)) {
+      return NextResponse.json(
+        { error: 'صيغة البريد الإلكتروني غير صالحة' },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'يجب أن تتكون كلمة المرور من 8 خانات على الأقل لضمان أمان الحساب' },
+        { status: 400 }
+      );
+    }
+
+    // Role whitelisting: NEVER allow self-registering as ADMIN or STAFF (Privilege Escalation protection)
+    const assignedRole = role === 'TRAINEE' ? 'TRAINEE' : 'CLIENT';
+
     const existing = await prisma.user.findUnique({
-      where: { email: email.trim().toLowerCase() }
+      where: { email: sanitizedEmail }
     });
 
     if (existing) {
@@ -26,23 +53,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const assignedRole = role === 'TRAINEE' ? 'TRAINEE' : 'CLIENT';
     const passwordHash = await hashPassword(password);
 
+    // Unvetted public client accounts are created with accountStatus: 'PENDING_VERIFICATION'
     const newUser = await prisma.user.create({
       data: {
-        email: email.trim().toLowerCase(),
+        email: sanitizedEmail,
         passwordHash,
         fullName: fullName.trim(),
-        phone: phone ? phone.trim() : null,
-        organization: organization ? organization.trim() : null,
+        phone: phone ? String(phone).trim() : null,
+        organization: organization ? String(organization).trim() : null,
         role: assignedRole,
         isActive: true,
-        ...(assignedRole === 'CLIENT' && organization ? {
+        ...(assignedRole === 'CLIENT' ? {
           clientProfile: {
             create: {
-              companyName: organization.trim(),
-              sector: companySector || 'منشأة تجارية / خاصة',
+              companyName: organization ? String(organization).trim() : fullName.trim(),
+              sector: companySector ? String(companySector).trim() : 'منشأة تجارية / خاصة',
+              accountStatus: 'PENDING_VERIFICATION', // Requires administrative verification for corporate access
             }
           }
         } : {})
@@ -58,10 +86,11 @@ export async function POST(request: Request) {
     });
 
     const isHttps = process.env.APP_URL?.startsWith('https://') ?? false;
+    const isProduction = process.env.NODE_ENV === 'production';
 
     cookies().set(TOKEN_COOKIE_NAME, token, {
       httpOnly: true,
-      secure: isHttps,
+      secure: isProduction || isHttps,
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
@@ -74,7 +103,7 @@ export async function POST(request: Request) {
         action: 'USER_REGISTER',
         entityType: 'User',
         entityId: newUser.id,
-        details: `تسجيل حساب جديد [${newUser.email}] برتبة [${newUser.role}]`,
+        details: `تسجيل حساب ذاتي جديد [${newUser.email}] برتبة [${newUser.role}] - حالة الاعتماد: ${assignedRole === 'CLIENT' ? 'قيد التحقق' : 'مباشر'}`,
       }
     });
 

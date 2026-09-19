@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
+import { isStaffRole, ROLES, CAPABILITIES, assertApiCapability } from '@/lib/rbac';
 
 interface RouteContext {
   params: {
@@ -10,12 +11,19 @@ interface RouteContext {
 
 export async function GET(request: Request, { params }: RouteContext) {
   try {
-    const session = await getCurrentUser();
+    // 1. Verify session + isActive in DB
+    const session = await getCurrentUser(true);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const isStaff = session.role === 'SUPER_ADMIN' || session.role === 'ADMIN' || session.role.includes('MANAGER');
+    const isStaff = isStaffRole(session.role);
+    const isClient = session.role === ROLES.CLIENT;
+
+    // Explicit DENY: Trainee and unauthorized roles cannot access client service requests
+    if (!isStaff && !isClient) {
+      return NextResponse.json({ error: 'Forbidden: Access denied' }, { status: 403 });
+    }
 
     const req = await prisma.serviceRequest.findUnique({
       where: { id: params.id },
@@ -27,6 +35,7 @@ export async function GET(request: Request, { params }: RouteContext) {
           orderBy: { createdAt: 'desc' },
         },
         documents: {
+          where: isStaff ? {} : { isArchived: false, visibility: 'CLIENT_VISIBLE' },
           orderBy: { createdAt: 'desc' },
         }
       }
@@ -36,9 +45,9 @@ export async function GET(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: 'Request not found' }, { status: 404 });
     }
 
-    // Security check: client can only view own request
+    // Explicit IDOR check: Non-staff client can ONLY view their own requests
     if (!isStaff && req.userId !== session.userId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden: You do not have permission to view this request' }, { status: 403 });
     }
 
     return NextResponse.json({ success: true, request: req });
@@ -49,15 +58,16 @@ export async function GET(request: Request, { params }: RouteContext) {
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
-    const session = await getCurrentUser();
+    // 1. Verify session + isActive in DB
+    const session = await getCurrentUser(true);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const isStaff = session.role === 'SUPER_ADMIN' || session.role === 'ADMIN' || session.role.includes('MANAGER');
-    if (!isStaff) {
-      return NextResponse.json({ error: 'Staff access required' }, { status: 403 });
-    }
+    // 2. Granular capability gate: Requires manage_requests
+    const gate = await assertApiCapability(session, CAPABILITIES.MANAGE_REQUESTS);
+    if (!gate.authorized) return gate.response!;
+
 
     const body = await request.json();
     const { status, assignedEmployeeId, note, isClientVisible } = body;

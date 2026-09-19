@@ -61,46 +61,46 @@ export default function RegisterPage() {
   return (
     <div style={{ paddingBlock: '4rem' }}>
       <div className="container" style={{ maxWidth: '580px' }}>
-        <div className="card" style={{ padding: '2.5rem' }}>
+        <div className="card" style={{ padding: '2.5rem', borderTop: '4px solid var(--facss-gold-500)' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <img
               src="/images/logo.png"
               alt="FACSS Logo"
               style={{ width: '64px', height: '64px', marginInline: 'auto', marginBottom: '0.75rem', objectFit: 'contain' }}
             />
-            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.4rem' }}>
-              إنشاء حساب جديد
+            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+              {t.registerTitle}
             </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              انضم إلى منصة مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+              {t.registerSubtitle}
             </p>
           </div>
 
           {/* Role Toggle Tab */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.75rem', background: 'rgba(5,14,9,0.7)', padding: '0.35rem', borderRadius: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.75rem', background: 'var(--surface-sunken)', padding: '0.35rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
             <button
               type="button"
               onClick={() => setRole('CLIENT')}
-              className={`btn btn-sm ${role === 'CLIENT' ? 'btn-gold' : 'btn-outline'}`}
-              style={{ border: 'none' }}
+              className={`btn btn-sm ${role === 'CLIENT' ? 'btn-gold' : 'btn-ghost'}`}
+              style={{ border: 'none', justifyContent: 'center' }}
             >
               <Building2 size={16} />
-              <span>حساب جهة / عميل</span>
+              <span>{t.clientAccountType}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setRole('TRAINEE')}
-              className={`btn btn-sm ${role === 'TRAINEE' ? 'btn-gold' : 'btn-outline'}`}
-              style={{ border: 'none' }}
+              className={`btn btn-sm ${role === 'TRAINEE' ? 'btn-gold' : 'btn-ghost'}`}
+              style={{ border: 'none', justifyContent: 'center' }}
             >
               <GraduationCap size={16} />
-              <span>حساب متدرب</span>
+              <span>{t.traineeAccountType}</span>
             </button>
           </div>
 
           {error && (
-            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #EF4444', borderRadius: '8px', color: '#F87171', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem' }}>
+            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 600 }}>
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
@@ -108,11 +108,11 @@ export default function RegisterPage() {
 
           <form onSubmit={handleRegister}>
             <div className="form-group">
-              <label className="form-label">الاسم الكامل <span className="required">*</span></label>
+              <label className="form-label">{t.fullName} <span className="required">*</span></label>
               <input
                 type="text"
                 className="form-input"
-                placeholder={role === 'CLIENT' ? 'اسم المفوض الرسمي' : 'اسم المتدرب الرباعي'}
+                placeholder={role === 'CLIENT' ? (locale === 'ar' ? 'اسم المفوض الرسمي' : 'Authorized Representative Name') : (locale === 'ar' ? 'اسم المتدرب الرباعي' : 'Trainee Full Name')}
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 required
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div className="form-group">
-                <label className="form-label">البريد الإلكتروني <span className="required">*</span></label>
+                <label className="form-label">{t.emailAddress} <span className="required">*</span></label>
                 <input
                   type="email"
                   className="form-input"
@@ -133,7 +133,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">رقم الهاتف للتواصل</label>
+                <label className="form-label">{t.phoneLabel}</label>
                 <input
                   type="text"
                   className="form-input"
@@ -147,11 +147,11 @@ export default function RegisterPage() {
             {role === 'CLIENT' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">اسم الشركة أو المنشأة <span className="required">*</span></label>
+                  <label className="form-label">{locale === 'ar' ? 'اسم المنشأة / الشركة' : 'Company / Organization Name'} <span className="required">*</span></label>
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="اسم المؤسسة / البنك / الشركة"
+                    placeholder={locale === 'ar' ? 'اسم المؤسسة / البنك / الشركة' : 'Institution / Enterprise Name'}
                     value={formData.organization}
                     onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                     required={role === 'CLIENT'}
@@ -159,11 +159,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">القطاع</label>
+                  <label className="form-label">{t.companySector}</label>
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="مثال: البنوك، النفط، المقاولات"
+                    placeholder={t.companySectorPlaceholder}
                     value={formData.companySector}
                     onChange={(e) => setFormData({ ...formData, companySector: e.target.value })}
                   />
@@ -172,7 +172,7 @@ export default function RegisterPage() {
             )}
 
             <div className="form-group">
-              <label className="form-label">كلمة المرور (8 أحرف على الأقل) <span className="required">*</span></label>
+              <label className="form-label">{t.password} ({locale === 'ar' ? '8 أحرف على الأقل' : 'min 8 chars'}) <span className="required">*</span></label>
               <input
                 type="password"
                 className="form-input"
@@ -191,21 +191,21 @@ export default function RegisterPage() {
               disabled={submitting}
             >
               {submitting ? (
-                <span>جارٍ إنشاء الحساب...</span>
+                <span>{t.registering}</span>
               ) : (
                 <>
                   <UserPlus size={18} />
-                  <span>تسجيل الحساب والدخول</span>
+                  <span>{t.registerSubmit}</span>
                 </>
               )}
             </button>
           </form>
 
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              لديك حساب بالفعل؟{' '}
-              <Link href="/login" style={{ color: 'var(--color-gold-light)', fontWeight: 700 }}>
-                تسجيل الدخول
+          <div style={{ textAlign: 'center', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+              {t.alreadyHaveAccount}{' '}
+              <Link href="/login" style={{ color: 'var(--facss-green-900)', fontWeight: 700 }}>
+                {t.loginHere}
               </Link>
             </p>
           </div>

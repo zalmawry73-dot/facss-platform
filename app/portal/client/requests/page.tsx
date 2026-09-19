@@ -1,14 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/auth';
+import { requireRole, ROLES } from '@/lib/rbac';
 import { Shield, ArrowLeft, Filter, Plus } from 'lucide-react';
 
 export const revalidate = 0;
 
 export default async function ClientRequestsPage() {
-  const session = await getCurrentUser();
-  if (!session) return null;
+  const session = await requireRole([ROLES.CLIENT], '/portal/client/requests');
 
   const requests = await prisma.serviceRequest.findMany({
     where: { userId: session.userId },

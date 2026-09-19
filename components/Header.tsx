@@ -16,6 +16,7 @@ import {
   GraduationCap, 
   Building2 
 } from 'lucide-react';
+import NotificationBell from '@/components/NotificationBell';
 
 export default function Header() {
   const { t, locale, toggleLocale, dir } = useLanguage();
@@ -30,14 +31,12 @@ export default function Header() {
     { href: '/services', label: t.navServices },
     { href: '/training', label: t.navTraining },
     { href: '/research', label: t.navResearch },
-    { href: '/sectors', label: t.navSectors },
-    { href: '/methodology', label: t.navMethodology },
     { href: '/contact', label: t.navContact },
   ];
 
   const getPortalLink = () => {
     if (!user) return '/login';
-    if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role.includes('MANAGER')) {
+    if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'STAFF' || user.role.includes('MANAGER') || user.role === 'EMPLOYEE') {
       return '/admin';
     }
     if (user.role === 'TRAINEE') {
@@ -48,7 +47,7 @@ export default function Header() {
 
   const getPortalLabel = () => {
     if (!user) return t.navLogin;
-    if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role.includes('MANAGER')) {
+    if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'STAFF' || user.role.includes('MANAGER') || user.role === 'EMPLOYEE') {
       return t.navAdminDashboard;
     }
     if (user.role === 'TRAINEE') {
@@ -111,10 +110,14 @@ export default function Header() {
               <span>{t.navRequestService}</span>
             </Link>
 
+            {/* In-App Notifications for Logged-In Users */}
+            {user && <NotificationBell />}
+
             {/* User Session / Portal Access */}
             {user ? (
               <div style={{ position: 'relative' }}>
                 <button
+                  id="user-menu-btn"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   className="btn btn-outline btn-sm"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
@@ -127,20 +130,20 @@ export default function Header() {
                   <div
                     style={{
                       position: 'absolute',
-                      top: '110%',
+                      top: '115%',
                       insetInlineEnd: 0,
-                      minWidth: '200px',
-                      background: '#091A11',
-                      border: '1px solid rgba(197,155,39,0.3)',
-                      borderRadius: '8px',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
-                      padding: '0.5rem',
+                      minWidth: '220px',
+                      background: 'var(--facss-green-900)',
+                      border: '1px solid var(--border-dark)',
+                      borderRadius: 'var(--radius-md)',
+                      boxShadow: 'var(--shadow-lg)',
+                      padding: '0.6rem',
                       zIndex: 1000,
                     }}
                   >
-                    <div style={{ padding: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', marginBottom: '0.4rem' }}>
-                      <p style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#FFF' }}>{user.fullName}</p>
-                      <span className="badge badge-gold" style={{ fontSize: '0.7rem', marginTop: '0.2rem' }}>
+                    <div style={{ padding: '0.5rem 0.6rem', borderBottom: '1px solid var(--border-dark-subtle)', marginBottom: '0.4rem' }}>
+                      <p style={{ fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>{user.fullName}</p>
+                      <span className="badge badge-gold" style={{ fontSize: '0.7rem', marginTop: '0.3rem' }}>
                         {user.role}
                       </span>
                     </div>
@@ -152,10 +155,11 @@ export default function Header() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        padding: '0.5rem',
+                        padding: '0.55rem 0.6rem',
                         fontSize: '0.85rem',
-                        color: 'var(--color-gold-light)',
-                        borderRadius: '4px',
+                        color: 'var(--facss-gold-400)',
+                        borderRadius: 'var(--radius-sm)',
+                        transition: 'var(--transition)',
                       }}
                     >
                       <LayoutDashboard size={15} />
@@ -172,14 +176,15 @@ export default function Header() {
                         alignItems: 'center',
                         gap: '0.5rem',
                         width: '100%',
-                        padding: '0.5rem',
+                        padding: '0.55rem 0.6rem',
                         fontSize: '0.85rem',
                         color: '#EF4444',
                         background: 'transparent',
                         border: 'none',
                         cursor: 'pointer',
-                        borderRadius: '4px',
+                        borderRadius: 'var(--radius-sm)',
                         textAlign: dir === 'rtl' ? 'right' : 'left',
+                        transition: 'var(--transition)',
                       }}
                     >
                       <LogOut size={15} />
@@ -212,8 +217,8 @@ export default function Header() {
       {mobileMenuOpen && (
         <div 
           style={{
-            background: 'rgba(5, 14, 9, 0.98)',
-            borderBottom: '1px solid rgba(197, 155, 39, 0.3)',
+            background: 'var(--facss-green-950)',
+            borderBottom: '1px solid var(--border-dark)',
             padding: '1.5rem',
           }}
         >
