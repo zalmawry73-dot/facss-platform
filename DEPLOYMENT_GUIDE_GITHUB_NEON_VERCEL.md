@@ -32,36 +32,21 @@
 > [!IMPORTANT]
 > **الهدف:** تطبيق الجداول الجديدة المضافة في المرحلتين الثانية والثالثة (منظومة البلاغات الميدانية `Incidents`، التنبيهات الأمنية `Alerts`، سجل المخاطر التشغيلية الميدانية `OperationalRisk`، ومصفوفة الصلاحيات والحصريات `ClientPublicationAccess`) على قاعدة بيانات Neon السحابية، دون المساس بأي بيانات سابقة.
 
-#### الأمر المطلوب تنفيذه في PowerShell:
-افتح نافذة **Windows PowerShell** في مجلد `D:\FACSSS`، ونفّذ الأمر التالي لمزامنة الجداول مع Neon مباشرة:
+#### الأمر المعتمد لتحديث قاعدة Neon مباشرة (Direct Endpoint):
+في خدمات Neon السحابية، تنصح Neon و Prisma باستخدام الرابط المباشر (Direct Connection بدون كلمة `-pooler`) لعمليات مزامنة الجداول، مع إضافة مهلة اتصال `connect_timeout=30` لإيقاظ السيرفر بسلاسة:
 
 ```powershell
-$env:DATABASE_URL="postgresql://neondb_owner:npg_JAcyQoO0m5Gs@ep-plain-river-b1x6n7oh-pooler.c-5.eu-central-1.aws.neon.tech/neondb?sslmode=require"
-npx prisma db push
+$env:DATABASE_URL="postgresql://neondb_owner:npg_JAcyQoO0m5Gs@ep-plain-river-b1x6n7oh.c-5.eu-central-1.aws.neon.tech/neondb?sslmode=require&connect_timeout=30"
+npx prisma db push --skip-generate
 ```
 
-#### النتيجة المتوقعة:
+#### النتيجة المؤكدة:
 ```text
+Environment variables loaded from .env
 Prisma schema loaded from prisma\schema.prisma
-Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-plain-river-b1x6n7oh-pooler.c-5.eu-central-1.aws.neon.tech"
+Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-plain-river-b1x6n7oh.c-5.eu-central-1.aws.neon.tech"
 
-Applying the following changes to database:
-  - CreateEnum Role values (FIELD_FOCAL_POINT)
-  - CreateTable IncidentReport
-  - CreateTable IncidentVerification
-  - CreateTable IncidentAssignment
-  - CreateTable IncidentOriginal
-  - CreateTable IncidentRedacted
-  - CreateTable IncidentAttachment
-  - CreateTable SecurityAlert
-  - CreateTable SecurityAlertRecipient
-  - CreateTable OperationalRisk
-  - CreateTable RiskAssessmentHistory
-  - CreateTable RiskMitigationAction
-  - CreateTable RiskLinkedIncident
-  - CreateTable ClientPublicationAccess
-
-✔ Your database is now in sync with your Prisma schema.
+The database is already in sync with the Prisma schema.
 ```
 
 *(اختياري)* بعد مزامنة الجداول، يمكنك تشغيل سكربت توليد بيانات الهوية المعتمدة على Neon:
