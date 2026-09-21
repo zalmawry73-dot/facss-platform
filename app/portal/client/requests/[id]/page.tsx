@@ -60,7 +60,7 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
   if (!isOwner && !isStaff) {
     return (
       <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-        <p style={{ color: '#EF4444', fontWeight: 700 }}>غير مصرح لك بالاطلاع على هذا الطلب الأمني.</p>
+        <p style={{ color: '#EF4444', fontWeight: 700 }}>غير مصرح لك بالاطلاع على هذا الطلب.</p>
         <Link href="/portal/client/requests" className="btn btn-outline" style={{ marginTop: '1rem' }}>
           العودة للطلبات
         </Link>
@@ -185,7 +185,7 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
           </div>
 
           <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', lineHeight: 1.6 }}>
-            تم إنجاز التقييم الأمني الميداني وإصدار الوثيقة النهائية من قبل خبراء مركز عدن الأول. يمكنك تنزيل النسخة الرقمية عبر الرابط المشفر أدناه:
+            تم إنجاز التقييم الميداني وإصدار الوثيقة النهائية المعتمدة من قبل خبراء مركز عدن الدولي للسلامة والدراسات الميدانية. يمكنك تنزيل النسخة الرقمية عبر الرابط المشفر أدناه:
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

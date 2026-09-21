@@ -102,6 +102,16 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       }
 
       updatePayload.role = role;
+
+      // If user is changed to FIELD_FOCAL_POINT, strip any administrative capabilities immediately
+      if (role === ROLES.FIELD_FOCAL_POINT) {
+        await prisma.userCapability.deleteMany({
+          where: {
+            userId: params.id,
+            capability: { not: CAPABILITIES.SUBMIT_INCIDENT },
+          },
+        });
+      }
     }
 
     if (Object.keys(updatePayload).length === 0) {

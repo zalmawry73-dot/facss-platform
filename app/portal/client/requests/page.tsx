@@ -23,10 +23,10 @@ export default async function ClientRequestsPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', margin: 0 }}>
-            سجل طلبات الخدمات الأمنية
+            سجل طلبات الخدمات الميدانية والاستشارية
           </h2>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            متابعة حالة طلبات التقييم الأمني والحراسات والاستشارات
+            متابعة حالة طلبات تقييم مخاطر الوصول الإنساني والرصد والتدريب الميداني
           </span>
         </div>
 

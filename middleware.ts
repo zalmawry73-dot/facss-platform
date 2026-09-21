@@ -99,6 +99,41 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Route: /portal/field/:path* (Dedicated Independent Field Portal)
+  if (pathname.startsWith('/portal/field')) {
+    const token = request.cookies.get(TOKEN_COOKIE_NAME)?.value;
+    if (!token) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    const payload = await verifyEdgeToken(token);
+    const allowedFieldRoles = ['FIELD_FOCAL_POINT', 'SUPER_ADMIN', 'EMPLOYEE', 'STAFF'];
+    if (!payload || !payload.role || !allowedFieldRoles.includes(payload.role)) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('error', 'unauthorized');
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // Route: /portal/alerts/:path* (Targeted Field Alerts for Authenticated Users)
+  if (pathname.startsWith('/portal/alerts')) {
+    const token = request.cookies.get(TOKEN_COOKIE_NAME)?.value;
+    if (!token) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    const payload = await verifyEdgeToken(token);
+    if (!payload || !payload.role) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   return response;
 }
 

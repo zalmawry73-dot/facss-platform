@@ -19,6 +19,7 @@ enum Role {
   TRAINING_MANAGER
   RESEARCH_MANAGER
   EMPLOYEE
+  FIELD_FOCAL_POINT
   CLIENT
   TRAINEE
 }
@@ -107,6 +108,16 @@ model User {
   notes            ServiceRequestNote[]
   capabilities     UserCapability[]
 
+  // Phase 2: Field Incidents & Alerts Relations
+  createdIncidents  Incident[]             @relation("CreatedIncidents")
+  assignedIncidents IncidentAssignment[]   @relation("AssignedIncidents")
+  verifiedIncidents IncidentVerification[] @relation("VerifiedIncidents")
+  alertRecipients   AlertRecipient[]
+  alertDeliveryLogs AlertDeliveryLog[]
+
+  // Phase 3: Operational Risks Relation
+  createdRisks      OperationalRisk[]      @relation("CreatedRisks")
+
   @@index([role])
   @@index([email])
 }
@@ -132,6 +143,7 @@ model ServiceCategory {
   slug        String    @unique
   icon        String?
   order       Int       @default(0)
+  isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -477,3 +489,427 @@ model UserCapability {
   @@index([userId])
   @@index([capability])
 }
+
+// ==========================================
+// PHASE 2: FIELD INCIDENTS, VERIFICATION & ALERTS
+// ==========================================
+
+enum IncidentStatus {
+  RECEIVED
+  TRIAGED
+  REDACTED
+  ASSIGNED
+  UNDER_VERIFICATION
+  VERIFIED
+  UNCONFIRMED
+  CONTRADICTED
+  DISPROVED
+  DUPLICATE
+  ALERT_DRAFTED
+  ALERT_APPROVED
+  ALERT_DISPATCHED
+  CLOSED
+  ARCHIVED
+}
+
+enum IncidentPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL_EMERGENCY
+}
+
+enum IncidentCategory {
+  ARMED_CONFLICT_TACTICAL
+  HUMANITARIAN_ACCESS_DENIAL
+  PHYSICAL_ATTACK_THREAT
+  UXO_LANDMINE_HAZARD
+  CIVIL_UNREST_ROADBLOCK
+  DETENTION_HARASSMENT
+  NATURAL_DISASTER_ENVIRONMENTAL
+}
+
+enum AlertSeverity {
+  INFORMATIONAL
+  ADVISORY_WATCH
+  WARNING_HIGH
+  CRITICAL_FLASH
+}
+
+enum AlertTier {
+  REDACTED_OPERATIONAL_BRIEFING
+  EXECUTIVE_FLASH_SUMMARY
+}
+
+enum AlertApprovalStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum AttachmentSensitivity {
+  ORIGINAL_SENSITIVE
+  REDACTED_SAFE
+}
+
+model Incident {
+  id               String            @id @default(cuid())
+  incidentNumber   String            @unique // e.g. FACSS-INC-2026-000101
+  category         IncidentCategory
+  priority         IncidentPriority  @default(MEDIUM)
+  status           IncidentStatus    @default(RECEIVED)
+  governorate      String
+  district         String?
+  incidentDate     DateTime
+  parentIncidentId String?
+  createdById      String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  original         IncidentOriginal?
+  redactedVersions IncidentRedacted[]
+  assignments      IncidentAssignment[]
+  verifications    IncidentVerification[]
+  alerts           IncidentAlert[]
+  attachments      IncidentAttachment[]
+  risks            OperationalRisk[]
+
+  parentIncident   Incident?         @relation("IncidentDuplicates", fields: [parentIncidentId], references: [id], onDelete: SetNull)
+  duplicateReports Incident[]        @relation("IncidentDuplicates")
+  createdBy        User              @relation("CreatedIncidents", fields: [createdById], references: [id])
+
+  @@index([incidentNumber])
+  @@index([status])
+  @@index([category])
+  @@index([governorate])
+  @@index([incidentDate])
+  @@index([createdById])
+}
+
+model IncidentOriginal {
+  id                  String    @id @default(cuid())
+  incidentId          String    @unique
+  sourceType          String    // FOCAL_POINT, EYEWITNESS, FIELD_STAFF
+  sourceNameEnc       String    @db.Text
+  sourcePhoneEnc      String?   @db.Text
+  sourceOrgEnc        String?   @db.Text
+  rawDescriptionEnc   String    @db.Text
+  exactLocationEnc    String?   @db.Text
+  exactLatEnc         String?   @db.Text
+  exactLngEnc         String?   @db.Text
+  initialRiskNotesEnc String?   @db.Text
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  incident            Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
+
+model IncidentRedacted {
+  id               String    @id @default(cuid())
+  incidentId       String
+  versionNumber    Int       @default(1)
+  redactedTitleAr  String
+  redactedTitleEn  String?
+  redactedDescAr   String    @db.Text
+  redactedDescEn   String?   @db.Text
+  safeAreaScopeAr  String
+  safeAreaScopeEn  String?
+  immediateImpact  String?   @db.Text
+  safetyAdvisory   String?   @db.Text
+  approvedByUserId String
+  isApproved       Boolean   @default(true)
+  isCurrent        Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+
+  incident         Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId, isCurrent])
+}
+
+model IncidentAssignment {
+  id               String    @id @default(cuid())
+  incidentId       String
+  assignedToUserId String
+  assignedByUserId String
+  roleScope        String    // VERIFIER, ANALYST
+  instructions     String?   @db.Text
+  isActive         Boolean   @default(true)
+  assignedAt       DateTime  @default(now())
+  revokedAt        DateTime?
+
+  incident         Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  assignedTo       User      @relation("AssignedIncidents", fields: [assignedToUserId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId, isActive])
+  @@index([assignedToUserId, isActive])
+}
+
+model IncidentVerification {
+  id                  String    @id @default(cuid())
+  incidentId          String
+  verifiedByUserId    String
+  sourceReliability   String    // Admiralty: A, B, C, D, E, F
+  infoCredibility     String    // Admiralty: 1, 2, 3, 4, 5, 6
+  admiraltyCode       String    // Combined code e.g. "A1", "B2", "C3"
+  verificationMethod  String
+  verificationSummary String    @db.Text
+  corroboratingCount  Int       @default(1)
+  contradictionsFound Boolean   @default(false)
+  contradictionNotes  String?   @db.Text
+  verifiedAt          DateTime  @default(now())
+
+  incident            Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  verifiedBy          User      @relation("VerifiedIncidents", fields: [verifiedByUserId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+  @@index([admiraltyCode])
+}
+
+model IncidentAlert {
+  id                  String              @id @default(cuid())
+  alertNumber         String              @unique // e.g. FACSS-ALT-2026-000101
+  incidentId          String
+  severity            AlertSeverity
+  titleAr             String              // Tier 1: Redacted Operational Briefing Title
+  titleEn             String?
+  bodyAr              String              @db.Text // Tier 1: Redacted Operational Briefing Body
+  bodyEn              String?             @db.Text
+  executiveTitleAr    String?             // Tier 2: Executive Flash Summary Title
+  executiveSummaryAr  String?             @db.Text // Tier 2: Executive Flash Summary Body
+  movementAdviceAr    String?             @db.Text // Reviewed & Sanitized Movement Advice
+  movementAdviceEn    String?             @db.Text
+  targetGovernorate   String
+  targetDistricts     String              // JSON array string of districts
+  approvalStatus      AlertApprovalStatus @default(DRAFT)
+  currentVersion      Int                 @default(1)
+  activeSnapshotId    String?
+  draftedByUserId     String?
+  approvedByUserId    String?
+  approvedAt          DateTime?
+  dispatchedAt        DateTime?
+  expiresAt           DateTime?
+  isPrecautionary     Boolean             @default(false)
+  isCorrection        Boolean             @default(false)
+  replacesAlertId     String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  incident            Incident            @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  snapshots           AlertSnapshot[]
+  recipients          AlertRecipient[]
+  deliveryLogs        AlertDeliveryLog[]
+
+  @@index([alertNumber])
+  @@index([approvalStatus])
+  @@index([severity])
+}
+
+model AlertSnapshot {
+  id                 String              @id @default(cuid())
+  alertId            String
+  approvalVersion    Int
+  titleAr            String              // Frozen Tier 1 Title
+  titleEn            String?
+  bodyAr             String              @db.Text // Frozen Tier 1 Body
+  bodyEn             String?             @db.Text
+  executiveTitleAr   String?             // Frozen Tier 2 Title
+  executiveSummaryAr String?             @db.Text // Frozen Tier 2 Body
+  movementAdviceAr   String?             @db.Text
+  movementAdviceEn   String?             @db.Text
+  severity           AlertSeverity
+  targetGovernorate  String
+  targetDistricts    String
+  isPrecautionary    Boolean             @default(false)
+  approvedByUserId   String
+  approvedAt         DateTime            @default(now())
+  snapshotHash       String
+  frozenRecipients   String              @db.Text // Serialized array of recipients & tiers
+
+  alert              IncidentAlert       @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  @@unique([alertId, approvalVersion])
+  @@index([alertId])
+  @@index([snapshotHash])
+}
+
+model AlertRecipient {
+  id               String        @id @default(cuid())
+  alertId          String
+  recipientUserId  String
+  alertTier        AlertTier
+  isDispatched     Boolean       @default(false)
+  dispatchedAt     DateTime?
+  readAt           DateTime?
+
+  alert            IncidentAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  recipientUser    User          @relation(fields: [recipientUserId], references: [id], onDelete: Cascade)
+
+  @@unique([alertId, recipientUserId])
+  @@index([alertId])
+  @@index([recipientUserId])
+}
+
+model AlertDeliveryLog {
+  id               String        @id @default(cuid())
+  alertId          String
+  recipientUserId  String
+  channel          String        @default("IN_APP_PORTAL")
+  status           String        // SUCCESS, FAILED
+  idempotencyKey   String        @unique
+  errorMessage     String?
+  deliveredAt      DateTime?
+  readAt           DateTime?
+  createdAt        DateTime      @default(now())
+
+  alert            IncidentAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  recipientUser    User          @relation(fields: [recipientUserId], references: [id], onDelete: Cascade)
+
+  @@index([alertId])
+  @@index([status])
+  @@index([idempotencyKey])
+}
+
+model IncidentAttachment {
+  id                 String                @id @default(cuid())
+  incidentId         String
+  fileName           String
+  fileSize           Int
+  mimeType           String
+  storageKey         String
+  sensitivity        AttachmentSensitivity @default(ORIGINAL_SENSITIVE)
+  hasExifStripped    Boolean               @default(false)
+  uploadedByUserId   String
+  uploadedAt         DateTime              @default(now())
+
+  incident           Incident              @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+  @@index([sensitivity])
+}
+
+// ==========================================
+// PHASE 3: OPERATIONAL RISK REGISTER
+// ==========================================
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RiskStatus {
+  IDENTIFIED
+  ASSESSED
+  TREATMENT_IN_PROGRESS
+  MONITORED
+  RESOLVED
+  CLOSED
+}
+
+enum RiskCategory {
+  ARMED_CONFLICT_SECURITY
+  ACCESS_ROADBLOCK_DENIAL
+  EXPLOSIVE_HAZARD_UXO
+  CRIMINALITY_THEFT
+  STAFF_DETENTION_THREAT
+  FACILITY_DAMAGE
+  ENVIRONMENTAL_NATURAL
+  HEALTH_SAFETY
+}
+
+enum MitigationStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  CANCELLED
+}
+
+enum MitigationType {
+  PREVENTIVE
+  CONTINGENCY
+  CORRECTIVE
+}
+
+model OperationalRisk {
+  id                   String                  @id @default(cuid())
+  riskNumber           String                  @unique // e.g. AICSFA-RSK-2026-000101
+  title                String
+  description          String                  @db.Text
+  category             RiskCategory
+  status               RiskStatus              @default(IDENTIFIED)
+  governorate          String
+  district             String?
+  generalLocation      String?
+  incidentId           String?
+  likelihood           Int                     @default(1) // 1 to 5
+  impact               Int                     @default(1) // 1 to 5
+  riskScore            Int                     @default(1) // likelihood * impact (1 to 25)
+  riskLevel            RiskLevel               @default(LOW)
+  targetResolutionDate DateTime?
+  resolvedAt           DateTime?
+  closedAt             DateTime?
+  reopenedAt           DateTime?
+  reopenReason         String?                 @db.Text
+  closeReason          String?                 @db.Text
+  createdById          String
+  lastAssessedById     String?
+  lastAssessedAt       DateTime                @default(now())
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  incident             Incident?               @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+  createdBy            User                    @relation("CreatedRisks", fields: [createdById], references: [id])
+  mitigations          RiskMitigationAction[]
+  assessments          RiskAssessmentHistory[]
+
+  @@index([riskNumber])
+  @@index([status])
+  @@index([category])
+  @@index([riskLevel])
+  @@index([governorate])
+  @@index([incidentId])
+  @@index([createdById])
+}
+
+model RiskMitigationAction {
+  id            String           @id @default(cuid())
+  riskId        String
+  actionTitle   String
+  actionType    MitigationType   @default(PREVENTIVE)
+  description   String?          @db.Text
+  assignedTo    String?
+  dueDate       DateTime?
+  status        MitigationStatus @default(PLANNED)
+  progressNotes String?          @db.Text
+  completedAt   DateTime?
+  createdById   String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  risk          OperationalRisk  @relation(fields: [riskId], references: [id], onDelete: Cascade)
+
+  @@index([riskId])
+  @@index([status])
+}
+
+model RiskAssessmentHistory {
+  id             String          @id @default(cuid())
+  riskId         String
+  likelihood     Int
+  impact         Int
+  riskScore      Int
+  riskLevel      RiskLevel
+  rationale      String?         @db.Text
+  assessedById   String
+  assessedByName String
+  assessedAt     DateTime        @default(now())
+
+  risk           OperationalRisk @relation(fields: [riskId], references: [id], onDelete: Cascade)
+
+  @@index([riskId])
+  @@index([assessedAt])
+}
+

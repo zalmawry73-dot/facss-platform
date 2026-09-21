@@ -52,12 +52,12 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         <div className="container">
           <span className="section-tag">{t.verifyCertificate}</span>
           <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.5rem' }}>
-            {isAr ? 'نظام التحقق الإلكتروني — FACSS Certificate Verification' : 'FACSS Electronic Credential Verification'}
+            {isAr ? 'نظام التحقق الإلكتروني من الوثائق والشهادات' : 'Digital Credential & Certificate Verification'}
           </h1>
           <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1rem', maxWidth: '700px', marginInline: 'auto' }}>
             {isAr
-              ? 'تحقق من صحة الشهادات الصادرة من مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية'
-              : 'Cryptographic validation of official security training certificates issued by Aden First Center (FACSS).'}
+              ? 'تحقق من صحة الوثائق والشهادات الصادرة عن مركز عدن الدولي للسلامة والدراسات الميدانية'
+              : 'Official validation of training certificates and credentials issued by Aden International Center for Safety and Field Assessment.'}
           </p>
         </div>
       </section>
@@ -82,7 +82,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '500px', marginInline: 'auto', marginBottom: '1.5rem' }}>
                 {isAr
                   ? `لم يتم العثور على أي شهادة مرتبطة برمز التحقق [${params.code}]. يُرجى التأكد من كتابة الرمز بشكل صحيح أو مراجعة إدارة المركز.`
-                  : `No certificate matched verification code [${params.code}]. Verify the cryptographic code or contact FACSS Administration.`}
+                  : `No certificate matched verification code [${params.code}]. Verify the cryptographic code or contact the Center Administration.`}
               </p>
               <Link href="/" className="btn btn-secondary" style={{ display: 'inline-flex' }}>
                 {t.home}

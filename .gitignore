@@ -20,11 +20,24 @@
 
 # Local Database Cluster & Logs
 /db_cluster/
+/backups/
+.temp_chrome*
+/temp_chrome/
+/temp_chrome_cdp/
+/qa_evidence/
 /extracted_assets/
 *.log
+*.backup
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Test Screenshots & Scratch
+screenshot_*.png
+desktop_homepage_*.png
+/scratch/
+/storage/secure/*
+!/storage/secure/.gitkeep
 
 # Archive files
 FACSS_COMPLETE_PROJECT.zip

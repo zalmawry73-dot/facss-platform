@@ -80,6 +80,22 @@ export async function POST(request: Request, { params }: RouteContext) {
       );
     }
 
+    // Security Gate 4: Focal points (FIELD_FOCAL_POINT) can NEVER be assigned any administrative/staff capability
+    if (targetUser.role === ROLES.FIELD_FOCAL_POINT && capability !== CAPABILITIES.SUBMIT_INCIDENT) {
+      return NextResponse.json(
+        { error: 'عزل أمني: لا يمكن منح نقاط الاتصال الميدانية أي صلاحيات إدارية أو تشغيلية خارج صلاحية تقديم البلاغ (submit_incident)' },
+        { status: 403 }
+      );
+    }
+
+    // Security Gate 5: Incident alert approval (approve_incident_alert) is strictly restricted to SUPER_ADMIN
+    if (capability === CAPABILITIES.APPROVE_INCIDENT_ALERT && session?.role !== ROLES.SUPER_ADMIN) {
+      return NextResponse.json(
+        { error: 'منح صلاحية اعتماد ونشر التنبيهات محصور بمسؤولي الإدارة العليا (SUPER_ADMIN) حصراً' },
+        { status: 403 }
+      );
+    }
+
     // Upsert capability
     const userCap = await prisma.userCapability.upsert({
       where: {

@@ -5,86 +5,157 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Shield,
-  ShieldCheck,
-  Award,
-  Users,
-  Building,
-  Cpu,
+  ShieldAlert,
+  Compass,
   GraduationCap,
-  FileText,
-  CheckCircle2,
+  HeartHandshake,
+  Users2,
+  BookOpen,
   ArrowRight,
   ArrowLeft,
-  TrendingUp,
-  AlertTriangle,
-  Building2,
-  Briefcase,
+  CheckCircle2,
+  FileText,
+  Activity,
   Lock,
-  ChevronLeft,
-  ChevronRight
+  Scale,
+  SearchCheck,
+  Heart,
+  BadgeCheck,
+  Building
 } from 'lucide-react';
 
 export default function HomePage() {
   const { t, locale, dir } = useLanguage();
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  const isAr = locale === 'ar';
 
-  const preventivePillars = [
-    { num: '01', title: t.pillar1 || 'التحليل الاستباقي للمخاطر وتحديد نقاط الضعف', icon: AlertTriangle },
-    { num: '02', title: t.pillar2 || 'تطبيق معايير الأمن والسلامة المهنية المعتمدة', icon: CheckCircle2 },
-    { num: '03', title: t.pillar3 || 'تكامل المنظومات الإلكترونية والمراقبة الذكية', icon: ShieldCheck },
-    { num: '04', title: t.pillar4 || 'إجراءات تشغيل قياسية وخطط طوارئ معتمدة', icon: Lock },
-    { num: '05', title: t.pillar5 || 'تأهيل وتدريب الكوادر الأمنية بصفة دورية', icon: GraduationCap },
-    { num: '06', title: t.pillar6 || 'التقييم المستمر والتحديث الدوري للمنظومات', icon: TrendingUp },
+  // 6 Core Humanitarian Principles
+  const principles = [
+    {
+      num: '01',
+      title: isAr ? 'عدم الإضرار' : 'Do No Harm',
+      desc: isAr 
+        ? 'تجنب التسبب في أي مخاطر إضافية للأفراد أو المجتمعات بسبب جمع المعلومات أو نشرها.' 
+        : 'Preventing additional risks to individuals or communities from data gathering or dissemination.',
+      icon: Shield
+    },
+    {
+      num: '02',
+      title: isAr ? 'السرية وحماية البيانات' : 'Confidentiality & Data Protection',
+      desc: isAr 
+        ? 'تقييد الوصول للمعلومات الحساسة واستخدامها حصريًا للغرض المحدد والمشروع.' 
+        : 'Restricting sensitive information access strictly for defined legitimate purposes.',
+      icon: Lock
+    },
+    {
+      num: '03',
+      title: isAr ? 'الحياد والاستقلالية' : 'Neutrality & Independence',
+      desc: isAr 
+        ? 'الفصل التام بين التحليل المهني والمصالح السياسية أو العسكرية أو التجارية.' 
+        : 'Decoupling professional analysis from political, military, or commercial interests.',
+      icon: Scale
+    },
+    {
+      num: '04',
+      title: isAr ? 'الدقة والتحقق' : 'Accuracy & Verification',
+      desc: isAr 
+        ? 'التمييز المنهجي الصارم بين المعلومة المؤكدة وغير المؤكدة والادعاء.' 
+        : 'Rigorous methodical distinction between verified facts, unconfirmed reports, and claims.',
+      icon: SearchCheck
+    },
+    {
+      num: '05',
+      title: isAr ? 'احترام الكرامة' : 'Respect for Dignity',
+      desc: isAr 
+        ? 'التعامل المهني الإنساني مع العاملين والمجتمعات والشركاء وصون الكرامة دون وصم.' 
+        : 'Respectful, non-stigmatizing engagement with aid workers, partners, and communities.',
+      icon: Heart
+    },
+    {
+      num: '06',
+      title: isAr ? 'المهنية والمساءلة' : 'Professionalism & Accountability',
+      desc: isAr 
+        ? 'توثيق القرارات، مراجعة الأداء، والتعلم المؤسسي المستمر بعد الحدث.' 
+        : 'Systematic decision logging, peer review, and post-event institutional learning.',
+      icon: BadgeCheck
+    },
   ];
 
-  const mainServices = [
+  // 6 Approved Humanitarian Activity Fields
+  const activityFields = [
     {
-      slug: 'guarding-services',
-      titleAr: 'حراسة المنشآت وحماية الشخصيات',
-      titleEn: 'Guarding & VIP Protection Services',
-      descAr: 'حراسة المنشآت الحكومية والخاصة وتأمين الفعاليات ومرافقة الشخصيات بدوريات عملياتية 24/7.',
-      descEn: 'Public & private facility guarding, event security, VIP escort, and 24/7 operational patrols.',
-      icon: Shield,
+      id: 'field-1',
+      title: t.field1Title,
+      desc: t.field1Desc,
+      icon: ShieldAlert,
+      link: '/services',
     },
     {
-      slug: 'physical-security-assessment',
-      titleAr: 'تقييم الأمن المادي للمباني والمنشآت',
-      titleEn: 'Physical Security Assessment',
-      descAr: 'فحص شامل لمنافذ الدخول والمحيط وأنظمة المراقبة لتحديد الثغرات وإعداد مصفوفة المخاطر.',
-      descEn: 'Comprehensive audit of entry gates, perimeters, and surveillance to generate risk matrices.',
-      icon: Building2,
+      id: 'field-2',
+      title: t.field2Title,
+      desc: t.field2Desc,
+      icon: Compass,
+      link: '/services',
     },
     {
-      slug: 'security-consultations',
-      titleAr: 'الاستشارات الأمنية وتصميم المنظومات',
-      titleEn: 'Security Consultations & Ecosystem Design',
-      descAr: 'تصميم المنظومات الأمنية المتكاملة، صياغة إجراءات التشغيل SOPs، ودعم الامتثال للمعايير.',
-      descEn: 'Integrated security architecture, SOP authoring, crisis planning, and regulatory compliance.',
-      icon: Briefcase,
-    },
-    {
-      slug: 'electronic-security-solutions',
-      titleAr: 'الأنظمة والحلول الأمنية الإلكترونية',
-      titleEn: 'Electronic Security & Advanced Systems',
-      descAr: 'كاميرات CCTV، بوابات التحكم بالدخول، التتبع، وغرف العمليات والتحكم والإنذار المبكر.',
-      descEn: 'CCTV, access control gates, biometric systems, central control rooms, and early alarms.',
-      icon: Cpu,
-    },
-    {
-      slug: 'security-and-safety-training',
-      titleAr: 'تدريب وتأهيل الكوادر الأمنية',
-      titleEn: 'Security & Safety Cadre Training',
-      descAr: 'برامج تدريب وتأهيل للكوادر تشمل مهارات الحراسة الميدانية والسلامة المهنية والإسعافات.',
-      descEn: 'Applied training programs for security personnel, occupational safety, and first aid.',
+      id: 'field-3',
+      title: t.field3Title,
+      desc: t.field3Desc,
       icon: GraduationCap,
+      link: '/training',
     },
     {
-      slug: 'security-risk-analysis',
-      titleAr: 'تحليل المخاطر والدراسات الاستراتيجية',
-      titleEn: 'Security Risk Analysis & Strategic Studies',
-      descAr: 'تحليل استخباري واستراتيجي معمق للتهديدات والسيناريوهات لدعم صناع القرار والمؤسسات.',
-      descEn: 'In-depth strategic analysis and threat modeling to support corporate decision-makers.',
-      icon: TrendingUp,
+      id: 'field-4',
+      title: t.field4Title,
+      desc: t.field4Desc,
+      icon: HeartHandshake,
+      link: '/services',
+    },
+    {
+      id: 'field-5',
+      title: t.field5Title,
+      desc: t.field5Desc,
+      icon: Users2,
+      link: '/services',
+    },
+    {
+      id: 'field-6',
+      title: t.field6Title,
+      desc: t.field6Desc,
+      icon: BookOpen,
+      link: '/research',
+    },
+  ];
+
+  // Beneficiary Categories
+  const beneficiaries = [
+    {
+      title: isAr ? 'المنظمات غير الحكومية الدولية والمحلية' : 'International & National NGOs',
+      desc: isAr 
+        ? 'تزويد المنظمات الإنسانية بتقييمات دقيقة لمخاطر الوصول وإرشادات السلامة الميدانية.' 
+        : 'Providing humanitarian agencies with access risk assessments and field safety guidance.',
+      icon: Building
+    },
+    {
+      title: isAr ? 'فرق الإغاثة والبعثات الميدانية' : 'Field Relief & Mobile Missions',
+      desc: isAr 
+        ? 'دعم مسارات الحركة وتأهيل الفرق للتعامل مع بيئة العمل الميداني وإدارة المخاطر.' 
+        : 'Supporting movement corridors and preparing teams for challenging field operational dynamics.',
+      icon: Compass
+    },
+    {
+      title: isAr ? 'وكالات التنمية والعمل الإنساني' : 'Development & Aid Agencies',
+      desc: isAr 
+        ? 'تحليلات السياق وأصحاب المصلحة لدعم استدامة المشاريع وتسهيل وصول المساعدات.' 
+        : 'Context analyses and stakeholder mapping to advance project sustainability and safe access.',
+      icon: Activity
+    },
+    {
+      title: isAr ? 'المبادرات والمجتمعات المحلية' : 'Local Initiatives & Communities',
+      desc: isAr 
+        ? 'تعزيز القبول المجتمعي والتنسيق الإنساني بما يخدم حماية العاملين والفئات المتأثرة.' 
+        : 'Fostering community acceptance and coordination to safeguard aid workers and beneficiaries.',
+      icon: Users2
     },
   ];
 
@@ -103,51 +174,37 @@ export default function HomePage() {
           position: 'relative',
         }}
       >
-        <div className="container" style={{ maxWidth: '960px', textAlign: 'center' }}>
+        <div className="container" style={{ maxWidth: '980px', textAlign: 'center' }}>
           {/* Slogan Pill */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              padding: '0.35rem 1rem',
+              padding: '0.4rem 1.1rem',
               borderRadius: 'var(--radius-full)',
               background: 'rgba(201, 162, 39, 0.12)',
               border: '1px solid rgba(201, 162, 39, 0.3)',
               marginBottom: '1.5rem',
             }}
           >
-            <Shield size={14} style={{ color: 'var(--facss-gold-400)' }} />
-            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>
-              {t.slogan || 'الوقاية قبل الاستجابة'}
-            </span>
-            <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-on-dark-muted)' }}>
-              {t.sloganSub || 'Aden First Center for Security Services'}
+            <Shield size={15} style={{ color: 'var(--facss-gold-400)' }} />
+            <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>
+              {t.slogan}
             </span>
           </div>
 
           {/* Main Title */}
           <h1
             style={{
-              fontSize: 'clamp(1.85rem, 3.5vw, 2.75rem)',
+              fontSize: 'clamp(1.85rem, 3.8vw, 2.75rem)',
               fontWeight: 900,
               lineHeight: 1.3,
               marginBottom: '1.25rem',
               color: '#FFFFFF',
             }}
           >
-            {locale === 'ar' ? (
-              <>
-                منظومة أمنية واستشارية متكاملة تُرسي مفهوم{' '}
-                <span style={{ color: 'var(--facss-gold-400)' }}>«الوقاية قبل الاستجابة»</span>
-              </>
-            ) : (
-              <>
-                Integrated Security Architecture Grounded in{' '}
-                <span style={{ color: 'var(--facss-gold-400)' }}>«Prevention Before Response»</span>
-              </>
-            )}
+            {t.heroHeadline}
           </h1>
 
           {/* Subtitle */}
@@ -155,56 +212,54 @@ export default function HomePage() {
             style={{
               fontSize: '1.05rem',
               color: 'var(--text-on-dark-muted)',
-              lineHeight: 1.7,
+              lineHeight: 1.75,
               marginBottom: '2.25rem',
-              maxWidth: '780px',
+              maxWidth: '820px',
               marginInline: 'auto',
             }}
           >
-            {locale === 'ar'
-              ? 'يقدم مركز عدن الأول حلولاً أمنية واستشارية وتدريبية متقدمة لحماية المنشآت الحيوية وتأهيل الكوادر، وفق أرقى المعايير المهنية المعتمدة لضمان الجاهزية والامتثال المؤسسي.'
-              : 'Aden First Center provides advanced security guarding, technical assessments, and training to protect critical assets and ensure organizational readiness.'}
+            {t.heroSubheadline}
           </p>
 
           {/* CTAs */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link href="/request-service" className="btn btn-gold btn-lg">
               <Shield size={17} />
-              <span>{t.heroCtaPrimary || 'طلب خدمة أمنية'}</span>
+              <span>{t.heroCtaPrimary}</span>
               <ArrowIcon size={16} />
             </Link>
             <Link href="/services" className="btn btn-outline-dark btn-lg">
-              <span>{t.heroCtaSecondary || 'استكشف خدماتنا'}</span>
+              <span>{t.heroCtaSecondary}</span>
             </Link>
           </div>
 
-          {/* Trust Highlights */}
+          {/* Institutional Highlights */}
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '1rem',
-              marginTop: '3rem',
+              gap: '1.25rem',
+              marginTop: '3.25rem',
               paddingTop: '2rem',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              <Award size={18} style={{ color: 'var(--facss-gold-400)' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
-                {locale === 'ar' ? 'طواقم أمنية مؤهلة ميدانياً' : 'Professionally Trained Field Cadres'}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+              <ShieldAlert size={18} style={{ color: 'var(--facss-gold-400)' }} />
+              <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+                {t.heroBadge1}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              <ShieldCheck size={18} style={{ color: 'var(--facss-gold-400)' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
-                {locale === 'ar' ? 'جاهزية استجابة ومراقبة 24/7' : '24/7 Command Readiness'}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+              <Compass size={18} style={{ color: 'var(--facss-gold-400)' }} />
+              <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+                {t.heroBadge2}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              <Users size={18} style={{ color: 'var(--facss-gold-400)' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
-                {locale === 'ar' ? 'استشارات ودراسات استراتيجية' : 'Strategic Security Intelligence'}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+              <GraduationCap size={18} style={{ color: 'var(--facss-gold-400)' }} />
+              <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+                {t.heroBadge3}
               </span>
             </div>
           </div>
@@ -212,24 +267,22 @@ export default function HomePage() {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 2: CORE PREVENTIVE PILLARS
+         SECTION 2: 6 CORE HUMANITARIAN PRINCIPLES
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{locale === 'ar' ? 'المنهجية الوقائية' : 'Preventive Methodology'}</span>
+            <span className="section-tag">{t.pillarsTitle}</span>
             <h2 className="section-title">
-              {locale === 'ar' ? 'ركائز منظومة الوقاية قبل الاستجابة' : 'Core Pillars of Prevention'}
+              {isAr ? 'المبادئ والقيم الحاكمة لنشاط المركز' : 'Core Humanitarian Principles & Standards'}
             </h2>
             <p className="section-subtitle">
-              {locale === 'ar'
-                ? 'نعمل وفق منظومة أمنية استباقية تستند إلى التقييم والتدريب والتجهيز التقني لتقليل المخاطر قبل وقوعها'
-                : 'A proactive institutional framework built on threat modeling, rigorous training, and technical precision'}
+              {t.pillarsSubtitle}
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
-            {preventivePillars.map((p, idx) => {
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+            {principles.map((p, idx) => {
               const Icon = p.icon;
               return (
                 <div
@@ -247,7 +300,7 @@ export default function HomePage() {
                       width: '42px',
                       height: '42px',
                       borderRadius: 'var(--radius-md)',
-                      backgroundColor: 'var(--facss-gold-100)',
+                      backgroundColor: 'rgba(201, 162, 39, 0.12)',
                       color: 'var(--facss-gold-600)',
                       display: 'flex',
                       alignItems: 'center',
@@ -261,9 +314,12 @@ export default function HomePage() {
                     <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--facss-gold-600)', display: 'block', marginBottom: '0.2rem' }}>
                       {p.num}
                     </span>
-                    <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.45 }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
                       {p.title}
                     </h3>
+                    <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                      {p.desc}
+                    </p>
                   </div>
                 </div>
               );
@@ -273,25 +329,23 @@ export default function HomePage() {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 3: MAIN SERVICES
+         SECTION 3: 6 APPROVED HUMANITARIAN ACTIVITY FIELDS
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{locale === 'ar' ? 'خدماتنا الأمنية' : 'Operational Services'}</span>
+            <span className="section-tag">{t.servicesSectionTitle}</span>
             <h2 className="section-title">
-              {locale === 'ar' ? 'حلول أمنية تشغيلية واستشارية متكاملة' : 'Comprehensive Security Solutions'}
+              {isAr ? 'مجالات النشاط والخدمات الميدانية المعتمدة' : 'Approved Humanitarian Activity Fields'}
             </h2>
             <p className="section-subtitle">
-              {locale === 'ar'
-                ? 'خدمات شاملة مصممة لتأمين المنشآت الحيوية والشركات والمؤسسات والبعثات الدبلوماسية'
-                : 'Customized services for critical infrastructure, private enterprises, and diplomatic missions'}
+              {t.servicesSectionSubtitle}
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            {mainServices.map((service, idx) => {
-              const Icon = service.icon;
+            {activityFields.map((field, idx) => {
+              const Icon = field.icon;
               return (
                 <div
                   key={idx}
@@ -319,16 +373,16 @@ export default function HomePage() {
                     >
                       <Icon size={22} />
                     </div>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                      {locale === 'ar' ? service.titleAr : service.titleEn}
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.6rem', lineHeight: 1.4 }}>
+                      {field.title}
                     </h3>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-                      {locale === 'ar' ? service.descAr : service.descEn}
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.25rem' }}>
+                      {field.desc}
                     </p>
                   </div>
 
                   <Link
-                    href={`/services/${service.slug}`}
+                    href={field.link}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -338,9 +392,10 @@ export default function HomePage() {
                       color: 'var(--facss-green-800)',
                       paddingTop: '0.75rem',
                       borderTop: '1px solid var(--border-subtle)',
+                      textDecoration: 'none',
                     }}
                   >
-                    <span>{locale === 'ar' ? 'تفاصيل الخدمة' : 'Service Details'}</span>
+                    <span>{isAr ? 'تفاصيل المجال' : 'Learn More'}</span>
                     <ArrowIcon size={14} />
                   </Link>
                 </div>
@@ -350,7 +405,7 @@ export default function HomePage() {
 
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link href="/services" className="btn btn-secondary">
-              <span>{locale === 'ar' ? 'استعراض كافة الخدمات والتجهيزات الأمنية' : 'View All Services & Systems'}</span>
+              <span>{t.allServices}</span>
               <ArrowIcon size={15} />
             </Link>
           </div>
@@ -358,84 +413,43 @@ export default function HomePage() {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 4: INSTITUTIONAL CREDENTIALS / WHY FACSS
+         SECTION 4: BENEFICIARY SECTORS & PARTNERS
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{locale === 'ar' ? 'القوة المؤسسية' : 'Institutional Strengths'}</span>
+            <span className="section-tag">{t.sectorsWeServeTitle}</span>
             <h2 className="section-title">
-              {locale === 'ar' ? 'لماذا يعتمد صناع القرار على FACSS؟' : 'Why Leaders Trust FACSS'}
+              {isAr ? 'الجهات والشركاء المستفيدون من أنشطة المركز' : 'Beneficiaries & Field Partners'}
             </h2>
             <p className="section-subtitle">
-              {locale === 'ar'
-                ? 'نجمع بين الانضباط العملياتي، والخبرة الاستراتيجية، والمعايير الأمنية الدولية'
-                : 'Combining operational discipline, strategic intelligence, and international compliance'}
+              {t.sectorsWeServeSubtitle}
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-            <div className="card" style={{ padding: '1.75rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-gold-100)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-                <Award size={20} />
-              </div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-                {locale === 'ar' ? 'الانضباط والامتثال للأطر المنظمة' : 'Regulatory Alignment'}
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                {locale === 'ar'
-                  ? 'نعمل بانضباط مؤسسي متوافق مع الأطر والقوانين المنظمة لتقديم خدمات الحراسة والاستشارات والدراسات.'
-                  : 'Operating with strict institutional discipline aligned with national regulatory frameworks for security services and studies.'}
-              </p>
-            </div>
-
-            <div className="card" style={{ padding: '1.75rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-green-50)', color: 'var(--facss-green-800)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-                <Users size={20} />
-              </div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-                {locale === 'ar' ? 'طواقم خضعت لفحص أمني دقيق' : 'Vetted & Trained Cadres'}
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                {locale === 'ar'
-                  ? 'اختيار منضبط للأفراد مع فحص أمني جنائي وتدريب مكثف على مهارات الحراسة والإسعافات والسلامة.'
-                  : 'Strict background checks, security clearance vetting, and structured tactical training programs.'}
-              </p>
-            </div>
-
-            <div className="card" style={{ padding: '1.75rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-gold-100)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-                <Building size={20} />
-              </div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-                {locale === 'ar' ? 'خبرة في حماية المنشآت الحيوية' : 'Critical Asset Protection'}
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                {locale === 'ar'
-                  ? 'حلول أمنية مصممة خصيصاً للموانئ، المطارات، البنوك، المنشآت النفطية، والمجمعات الحيوية.'
-                  : 'Tailored security architecture designed specifically for ports, banking headquarters, and oil sites.'}
-              </p>
-            </div>
-
-            <div className="card" style={{ padding: '1.75rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--facss-green-50)', color: 'var(--facss-green-800)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-                <Lock size={20} />
-              </div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-                {locale === 'ar' ? 'سرية تامة وحماية البيانات' : 'Strict Confidentiality'}
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                {locale === 'ar'
-                  ? 'التزام مطلق بالحفاظ على سرية وثائق وتقارير العملاء ونقاط الضعف الأمنية داخل بيئة تخزين مشفرة.'
-                  : 'Non-disclosure agreements, encrypted audit records, and strict zero-trust data storage protocol.'}
-              </p>
-            </div>
+            {beneficiaries.map((b, idx) => {
+              const Icon = b.icon;
+              return (
+                <div key={idx} className="card" style={{ padding: '1.75rem' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'rgba(201,162,39,0.12)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                    <Icon size={20} />
+                  </div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                    {b.title}
+                  </h3>
+                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                    {b.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 5: ACADEMY & STRATEGIC STUDIES
+         SECTION 5: TRAINING & RESEARCH SHOWCASE
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="container">
@@ -453,26 +467,26 @@ export default function HomePage() {
             >
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'var(--facss-gold-100)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'rgba(201, 162, 39, 0.12)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <GraduationCap size={22} />
                   </div>
                   <div>
                     <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--facss-gold-600)', textTransform: 'uppercase' }}>
-                      {locale === 'ar' ? 'التأهيل المهني' : 'Security Academy'}
+                      {isAr ? 'بناء القدرات' : 'Capacity Building'}
                     </span>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                      {locale === 'ar' ? 'أكاديمية التدريب والتأهيل الأمني' : 'Security Training Academy'}
+                      {t.trainingSectionTitle}
                     </h3>
                   </div>
                 </div>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
-                  {locale === 'ar'
-                    ? 'برامج ودورات تدريبية متخصصة لتأهيل حراس المنشآت الحيوية، مسؤولي السلامة والصحة المهنية، وإدارة الأزمات، مع شهادات رقمية موثقة برمز تحقق.'
-                    : 'Specialized training courses for facility security officers, OHS safety leads, and crisis coordinators with digital verifiable certificates.'}
+                  {isAr
+                    ? 'برامج تطبيقية مخصصة لبناء قدرات العاملين في الميدان في مجالات السلامة الشخصية، إدارة مخاطر الحركة، إعداد خطط الوصول، والدعم النفسي الأولي.'
+                    : 'Applied programs dedicated to building field personnel capacities in personal safety, movement risk management, access planning, and psychological first aid.'}
                 </p>
               </div>
               <Link href="/training" className="btn btn-secondary">
-                <span>{locale === 'ar' ? 'استعراض الدورات المتاحة والتسجيل' : 'View Courses & Register'}</span>
+                <span>{isAr ? 'استعراض برامج التدريب' : 'View Training Programs'}</span>
                 <ArrowIcon size={15} />
               </Link>
             </div>
@@ -495,21 +509,21 @@ export default function HomePage() {
                   </div>
                   <div>
                     <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--facss-green-800)', textTransform: 'uppercase' }}>
-                      {locale === 'ar' ? 'الدراسات الاستشرافية' : 'Strategic Think-Tank'}
+                      {isAr ? 'المنتجات المعرفية' : 'Knowledge Products'}
                     </span>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                      {locale === 'ar' ? 'مركز الدراسات والأبحاث الاستراتيجية' : 'Strategic Studies & Research'}
+                      {t.researchSectionTitle}
                     </h3>
                   </div>
                 </div>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
-                  {locale === 'ar'
-                    ? 'أبحاث أمنية وتحليلات جيوسياسية معمقة ترصد المتغيرات الإقليمية ومخاطر الملاحة وحماية سلاسل الإمداد لدعم صناع القرار وقادة الأعمال.'
-                    : 'Deep strategic intelligence analyzing regional dynamics, maritime navigation safety, and supply chain security for executive leadership.'}
+                  {isAr
+                    ? 'تقارير دورية وموجزات تحليلية ترصد بيئة وسياق الوصول الإنساني، مع خرائط مخاطر ودراسات مسحية معمقة لدعم اتخاذ القرار وتأمين حركة المساعدات.'
+                    : 'Periodic bulletins, analytical briefs, and access risk evaluations monitoring field context to support decision-makers in facilitating principled aid.'}
                 </p>
               </div>
               <Link href="/research" className="btn btn-secondary">
-                <span>{locale === 'ar' ? 'استعراض الدراسات والتقارير' : 'Explore Studies & Reports'}</span>
+                <span>{isAr ? 'استعراض الدراسات والتقارير' : 'Explore Studies & Reports'}</span>
                 <ArrowIcon size={15} />
               </Link>
             </div>
@@ -518,7 +532,7 @@ export default function HomePage() {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 6: FINAL INSTITUTIONAL CTA
+         SECTION 6: INSTITUTIONAL CTA
          ---------------------------------------------------- */}
       <section
         style={{
@@ -530,22 +544,22 @@ export default function HomePage() {
       >
         <div className="container" style={{ maxWidth: '840px', textAlign: 'center' }}>
           <h2 style={{ fontSize: '1.85rem', fontWeight: 900, marginBottom: '0.75rem', color: '#FFFFFF' }}>
-            {locale === 'ar' ? 'جاهزون لحماية منشأتكم وتأمين عملياتكم' : 'Ready to Secure Your Critical Operations'}
+            {isAr ? 'تنسيق ميداني واستشارات مهنية لدعم سلامة العمل الإنساني' : 'Field Coordination & Professional Advisory for Humanitarian Safety'}
           </h2>
           <p style={{ fontSize: '1rem', color: 'var(--text-on-dark-muted)', lineHeight: 1.65, marginBottom: '1.75rem' }}>
-            {locale === 'ar'
-              ? 'تواصل مع فريقنا المتخصص لبدء تقييم الاحتياجات الأمنية لمنشأتكم وإعداد خطة الحماية المناسبة'
-              : 'Contact our operational specialists to initiate a professional assessment and tailored security plan.'}
+            {isAr
+              ? 'تواصل مع إدارة المركز لتقديم طلبات التنسيق الميداني أو استشارات تقييم مخاطر الوصول وبناء خطط الحركة الآمنة'
+              : 'Contact center coordination to initiate field assessment requests or access risk analysis for safer operational movement.'}
           </p>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link href="/request-service" className="btn btn-gold btn-lg">
               <Shield size={17} />
-              <span>{locale === 'ar' ? 'تقديم طلب خدمة جديد' : 'Submit Service Request'}</span>
+              <span>{t.requestService}</span>
               <ArrowIcon size={16} />
             </Link>
             <Link href="/contact" className="btn btn-outline-dark btn-lg">
-              <span>{locale === 'ar' ? 'تواصل مع إدارة المركز' : 'Contact Administration'}</span>
+              <span>{t.navContact}</span>
             </Link>
           </div>
         </div>

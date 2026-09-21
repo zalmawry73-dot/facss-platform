@@ -12,6 +12,7 @@ export const ROLES = {
   TRAINING_MANAGER: 'TRAINING_MANAGER',
   RESEARCH_MANAGER: 'RESEARCH_MANAGER',
   EMPLOYEE: 'EMPLOYEE',
+  FIELD_FOCAL_POINT: 'FIELD_FOCAL_POINT',
   CLIENT: 'CLIENT',
   TRAINEE: 'TRAINEE',
 } as const;
@@ -47,10 +48,11 @@ export const TRAINEE_ROLES: RoleType[] = [
 ];
 
 // ==========================================
-// GRANULAR CAPABILITIES FOUNDATION (PHASE 2B)
+// GRANULAR CAPABILITIES FOUNDATION
 // ==========================================
 
 export const CAPABILITIES = {
+  // Operational Management (Admin Portal)
   MANAGE_REQUESTS: 'manage_requests',
   MANAGE_TRAINING: 'manage_training',
   MANAGE_RESEARCH: 'manage_research',
@@ -58,6 +60,18 @@ export const CAPABILITIES = {
   MANAGE_SETTINGS: 'manage_settings',
   MANAGE_USERS: 'manage_users',
   VIEW_AUDIT_LOGS: 'view_audit_logs',
+
+  // Phase 2: Field Incident & Targeted Alert Capabilities
+  SUBMIT_INCIDENT: 'submit_incident',
+  VERIFY_INCIDENT: 'verify_incident',
+  ANALYZE_INCIDENT: 'analyze_incident',
+  DRAFT_INCIDENT_ALERT: 'draft_incident_alert',
+  APPROVE_INCIDENT_ALERT: 'approve_incident_alert',
+
+  // Phase 3: Operational Risk Register Capabilities
+  VIEW_RISK_REGISTER: 'view_risk_register',
+  MANAGE_RISK_REGISTER: 'manage_risk_register',
+  ASSESS_RISK: 'assess_risk',
 } as const;
 
 export type Capability = typeof CAPABILITIES[keyof typeof CAPABILITIES];
@@ -92,9 +106,10 @@ export function isAdminRole(role: string): boolean {
 /**
  * Returns all effective capabilities for a user.
  * - SUPER_ADMIN: all capabilities.
- * - ADMIN: all operational capabilities.
+ * - ADMIN: all operational capabilities + any explicitly assigned.
  * - Legacy Managers: mapped operational capabilities + any explicitly assigned.
  * - STAFF / EMPLOYEE: only explicitly assigned capabilities (Least Privilege).
+ * - FIELD_FOCAL_POINT: ONLY SUBMIT_INCIDENT (if explicitly assigned). Zero admin capabilities.
  * - CLIENT / TRAINEE: empty array (always denied).
  */
 export async function getUserCapabilities(userId: string, role: string): Promise<Capability[]> {
@@ -102,16 +117,33 @@ export async function getUserCapabilities(userId: string, role: string): Promise
     return [...ALL_CAPABILITIES];
   }
 
-  if (role === ROLES.ADMIN) {
-    return [...ADMIN_OPERATIONAL_CAPABILITIES];
-  }
-
   if (role === ROLES.CLIENT || role === ROLES.TRAINEE) {
     return [];
   }
 
-  // Base capabilities from legacy manager roles (if any)
-  const baseCaps: Capability[] = LEGACY_ROLE_CAPABILITIES[role] ? [...LEGACY_ROLE_CAPABILITIES[role]] : [];
+  // Field Focal Points: Strictly limited to explicit submit_incident capability
+  if (role === ROLES.FIELD_FOCAL_POINT) {
+    try {
+      const assigned = await prisma.userCapability.findMany({
+        where: { userId },
+        select: { capability: true },
+      });
+      return assigned
+        .map((a) => a.capability as Capability)
+        .filter((c) => c === CAPABILITIES.SUBMIT_INCIDENT);
+    } catch (err) {
+      console.error('Error fetching focal point capabilities:', err);
+      return [];
+    }
+  }
+
+  // Base capabilities from roles (ADMIN gets operational baseline, managers get their legacy scope)
+  let baseCaps: Capability[] = [];
+  if (role === ROLES.ADMIN) {
+    baseCaps = [...ADMIN_OPERATIONAL_CAPABILITIES];
+  } else if (LEGACY_ROLE_CAPABILITIES[role]) {
+    baseCaps = [...LEGACY_ROLE_CAPABILITIES[role]];
+  }
 
   // Query database for explicit user capabilities
   try {
@@ -295,5 +327,112 @@ export async function requireOwnershipOrStaff(
   }
 
   return { user, isStaff, isOwner };
+}
+
+// ==========================================
+// PHASE 2: INCIDENT ACCESS GATES
+// ==========================================
+
+/**
+ * Gate for Sensitive Original Incident.
+ * STRICTLY restricted to SUPER_ADMIN.
+ * Any other role (including ADMIN) is unconditionally denied.
+ */
+export function canAccessOriginalIncident(
+  session: TokenPayload | null
+): { authorized: boolean; error?: string; status?: number } {
+  if (!session || !session.userId) {
+    return { authorized: false, error: 'Unauthorized: Authentication required', status: 401 };
+  }
+
+  if (session.role !== ROLES.SUPER_ADMIN) {
+    return {
+      authorized: false,
+      error: 'Forbidden: Sensitive original incident data is restricted strictly to SUPER_ADMIN',
+      status: 403,
+    };
+  }
+
+  return { authorized: true };
+}
+
+/**
+ * Triple-Gate Enforcement for Redacted Incidents:
+ * 1. Active Account: User account must be active in DB (isActive === true).
+ * 2. Functional Capability: Must possess verify_incident, analyze_incident, or draft_incident_alert.
+ * 3. Active Assignment: Must have an active assignment record for the specific incident.
+ * 
+ * Note: SUPER_ADMIN bypasses this gate.
+ * Note: General ADMIN role without active assignment is explicitly REJECTED.
+ */
+export async function canAccessRedactedIncident(
+  session: TokenPayload | null,
+  incidentId: string
+): Promise<{ authorized: boolean; error?: string; status?: number }> {
+  if (!session || !session.userId) {
+    return { authorized: false, error: 'Unauthorized: Authentication required', status: 401 };
+  }
+
+  // Universal bypass for SUPER_ADMIN
+  if (session.role === ROLES.SUPER_ADMIN) {
+    return { authorized: true };
+  }
+
+  // Hard deny for CLIENT, TRAINEE, or FIELD_FOCAL_POINT
+  if (
+    session.role === ROLES.CLIENT ||
+    session.role === ROLES.TRAINEE ||
+    session.role === ROLES.FIELD_FOCAL_POINT
+  ) {
+    return { authorized: false, error: 'Forbidden: Role not authorized for incident review', status: 403 };
+  }
+
+  // Gate 1: Verify Active Account in DB
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { isActive: true },
+  });
+
+  if (!dbUser || !dbUser.isActive) {
+    return { authorized: false, error: 'Forbidden: User account is inactive or disabled', status: 403 };
+  }
+
+  // Gate 2: Verify Functional Capability
+  const allowedCapabilities = [
+    CAPABILITIES.VERIFY_INCIDENT,
+    CAPABILITIES.ANALYZE_INCIDENT,
+    CAPABILITIES.DRAFT_INCIDENT_ALERT,
+  ];
+
+  const userCaps = await getUserCapabilities(session.userId, session.role);
+  const hasRequiredCapability = allowedCapabilities.some((c) => userCaps.includes(c));
+
+  if (!hasRequiredCapability) {
+    return {
+      authorized: false,
+      error: 'Forbidden: Missing required incident capability (verify_incident or analyze_incident)',
+      status: 403,
+    };
+  }
+
+  // Gate 3: Verify Active Task Assignment for this specific incident
+  const assignment = await prisma.incidentAssignment.findFirst({
+    where: {
+      incidentId,
+      assignedToUserId: session.userId,
+      isActive: true,
+      revokedAt: null,
+    },
+  });
+
+  if (!assignment) {
+    return {
+      authorized: false,
+      error: 'Forbidden: Access denied. No active assignment found for this incident (Triple-Gate Enforcement)',
+      status: 403,
+    };
+  }
+
+  return { authorized: true };
 }
 

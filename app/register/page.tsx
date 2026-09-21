@@ -65,7 +65,7 @@ export default function RegisterPage() {
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <img
               src="/images/logo.png"
-              alt="FACSS Logo"
+              alt={t.siteTitle}
               style={{ width: '64px', height: '64px', marginInline: 'auto', marginBottom: '0.75rem', objectFit: 'contain' }}
             />
             <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>

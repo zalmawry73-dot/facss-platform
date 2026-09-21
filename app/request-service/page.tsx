@@ -240,7 +240,7 @@ function RequestServiceForm() {
                     <input
                       type="text"
                       className="form-input"
-                      placeholder={isAr ? 'اسم الشركة أو المؤسسة أو المنشأة' : 'Company / Organization / Facility Name'}
+                      placeholder={isAr ? 'اسم المنظمة أو الهيئة أو الشريك الميداني' : 'Organization / Agency / Field Partner Name'}
                       value={formData.organization}
                       onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                       required
@@ -313,8 +313,8 @@ function RequestServiceForm() {
                     className="form-textarea"
                     rows={5}
                     placeholder={isAr
-                      ? 'وضح نطاق المنشأة، موقعها، المتطلبات الخاصة، وأي تواريخ مستهدفة لبدء الخدمة...'
-                      : 'Specify facility scope, location, specialized requirements, and expected operational timeline...'}
+                      ? 'وضح نطاق الاحتياج الميداني، الموقع الجغرافي أو المسار، المتطلبات التخصصية، وأي تواريخ مستهدفة...'
+                      : 'Specify field requirements, geographic scope or movement corridor, specialized needs, and target timeline...'}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     required

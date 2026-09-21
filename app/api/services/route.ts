@@ -4,15 +4,31 @@ import prisma from '@/lib/prisma';
 export async function GET() {
   try {
     const services = await prisma.service.findMany({
-      where: { isActive: true },
-      orderBy: { order: 'asc' },
+      where: { 
+        isActive: true,
+        category: { isActive: true }
+      },
+      orderBy: [
+        { category: { order: 'asc' } },
+        { order: 'asc' }
+      ],
       select: {
         id: true,
         slug: true,
         titleAr: true,
         titleEn: true,
         shortDescAr: true,
+        shortDescEn: true,
         categoryId: true,
+        category: {
+          select: {
+            id: true,
+            slug: true,
+            titleAr: true,
+            titleEn: true,
+            order: true,
+          }
+        }
       }
     });
 

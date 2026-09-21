@@ -7,24 +7,24 @@ import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || 'http://localhost:3000'),
-  title: 'مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية | FACSS',
-  description: 'Aden First Center for Security Services and Strategic Studies (FACSS) — Comprehensive Security Ecosystem, Guarding, Risk Assessment, Electronic Solutions, and Strategic Research.',
-  keywords: 'FACSS, Security Aden, حراسات أمنية عدن, تقييم أمن مادي, دراسات استراتيجية, تدريب أمني, كاميرات مراقبة, مكافحة حرائق',
+  title: 'مركز عدن الدولي للسلامة والدراسات الميدانية | Aden International Center for Safety and Field Assessment',
+  description: 'مركز عدن الدولي للسلامة والدراسات الميدانية — مؤسسة مهنية متخصصة في دعم سلامة العاملين في المجال الإنساني، وتحليل مخاطر الوصول، وبناء القدرات، والدراسات الميدانية.',
+  keywords: 'سلامة العاملين في المجال الإنساني, تقييم مخاطر الوصول, دراسات ميدانية عدن, بناء القدرات الميدانية, التدريب وإدارة المخاطر, Humanitarian Safety Aden, Access Assessment, Field Assessment Yemen',
   icons: {
     icon: '/favicon.ico',
     apple: '/images/logo-128.png',
   },
   openGraph: {
-    title: 'FACSS — Aden First Center for Security Services & Strategic Studies',
-    description: '«أمانٌ يبدأ من عدن» — First in Security, First in Trust',
-    url: 'https://www.facss-aden.com',
-    siteName: 'FACSS Aden',
+    title: 'مركز عدن الدولي للسلامة والدراسات الميدانية | Aden International Center for Safety and Field Assessment',
+    description: '«معلوماتٌ ميدانيةٌ دقيقة... لوصولٍ إنسانيٍّ آمن» — Actionable Field Insights for Safer Humanitarian Access',
+    url: process.env.APP_URL || 'http://localhost:3000',
+    siteName: 'مركز عدن الدولي للسلامة والدراسات الميدانية',
     images: [
       {
         url: '/images/logo.png',
         width: 800,
         height: 800,
-        alt: 'FACSS Center Emblem',
+        alt: 'شعار مركز عدن الدولي للسلامة والدراسات الميدانية',
       },
     ],
     locale: 'ar_YE',

@@ -60,15 +60,20 @@ export async function POST(request: Request) {
     const validPriorities = ['NORMAL', 'HIGH', 'URGENT'];
     const sanitizedPriority = validPriorities.includes(priority) ? priority : 'NORMAL';
 
-    // Verify that service exists
+    // Verify that service exists and is active for new requests
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
-      select: { id: true, titleAr: true },
+      select: { 
+        id: true, 
+        titleAr: true, 
+        isActive: true,
+        category: { select: { isActive: true } }
+      },
     });
 
-    if (!service) {
+    if (!service || !service.isActive || !service.category?.isActive) {
       return NextResponse.json(
-        { error: 'الخدمة المختارة غير صالحة أو غير موجودة' },
+        { error: 'الخدمة المختارة غير متاحة حالياً لتقديم طلبات جديدة أو تم إيقافها.' },
         { status: 400 }
       );
     }
@@ -97,7 +102,7 @@ export async function POST(request: Request) {
       data: {
         requestId: newRequest.id,
         authorId: session?.userId || null,
-        authorName: 'نظام الاستقبال الآلي لمركز FACSS',
+        authorName: 'نظام الاستقبال الآلي لمركز عدن الدولي للسلامة والدراسات الميدانية',
         note: `تم تسجيل طلب الخدمة رقم ${requestNumber} بنجاح وإحالته إلى إدارة العمليات للمراجعة.`,
         isClientVisible: true,
       }

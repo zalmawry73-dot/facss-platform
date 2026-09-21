@@ -187,10 +187,10 @@ export async function POST(request: Request, { params }: RouteContext) {
         await prisma.notification.create({
           data: {
             userId: serviceRequest.userId,
-            titleAr: 'تم إرفاق التقرير الأمني النهائي المعتمد',
-            titleEn: 'Final Security Report Published',
-            messageAr: `تم إصدار التقرير الأمني النهائي لطلبكم [${serviceRequest.requestNumber}]. يمكنك الاطلاع عليه وتنزيله الآن.`,
-            messageEn: `The final approved security report for request [${serviceRequest.requestNumber}] is now available.`,
+            titleAr: 'تم إرفاق تقرير التقييم الميداني النهائي المعتمد',
+            titleEn: 'Final Field Assessment Report Published',
+            messageAr: `تم إصدار تقرير التقييم الميداني النهائي لطلبكم [${serviceRequest.requestNumber}]. يمكنك الاطلاع عليه وتنزيله الآن.`,
+            messageEn: `The final approved field assessment report for request [${serviceRequest.requestNumber}] is now available.`,
             type: 'SUCCESS',
             link: `/portal/client/requests/${requestId}`,
           },

@@ -27,12 +27,12 @@ export default function SettingsManager({ initialSettings }: Props) {
     OFFICIAL_EMAIL: settingsMap.OFFICIAL_EMAIL || 'info@facss-aden.com',
     OPERATIONS_EMAIL: settingsMap.OPERATIONS_EMAIL || 'services@facss-aden.com',
     TRAINING_EMAIL: settingsMap.TRAINING_EMAIL || 'training@facss-aden.com',
-    OFFICIAL_ADDRESS: settingsMap.OFFICIAL_ADDRESS || 'العاصمة عدن - خور مكسر - حي السفارات',
-    WORKING_HOURS: settingsMap.WORKING_HOURS || 'الأحد - الخميس: 8:00 صباحاً - 4:00 مساءً (استجابة عملياتية ميدانية على مدار الساعة)',
+    OFFICIAL_ADDRESS: settingsMap.OFFICIAL_ADDRESS || 'عدن - الجمهورية اليمنية',
+    WORKING_HOURS: settingsMap.WORKING_HOURS || 'الأحد - الخميس: 8:00 صباحاً - 3:00 مساءً',
     SOCIAL_TWITTER: settingsMap.SOCIAL_TWITTER || '',
     SOCIAL_LINKEDIN: settingsMap.SOCIAL_LINKEDIN || '',
     SOCIAL_FACEBOOK: settingsMap.SOCIAL_FACEBOOK || '',
-    ANNOUNCEMENT_TEXT: settingsMap.ANNOUNCEMENT_TEXT || 'مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية — منظومة أمنية متكاملة تُرسي مفهوم الوقاية قبل الاستجابة',
+    ANNOUNCEMENT_TEXT: settingsMap.ANNOUNCEMENT_TEXT || 'مركز عدن الدولي للسلامة والدراسات الميدانية — دعم سلامة العاملين في المجال الإنساني وتحليل مخاطر الوصول',
   });
 
   const [savingKey, setSavingKey] = useState<string | null>(null);

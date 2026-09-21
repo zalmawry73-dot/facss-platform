@@ -7,13 +7,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard, 
   ShieldAlert, 
+  BellRing,
   GraduationCap, 
   FileText, 
   Mail, 
   Users, 
   Settings, 
   History, 
-  LogOut 
+  LogOut,
+  Briefcase,
+  AlertTriangle
 } from 'lucide-react';
 
 interface AdminClientBarProps {
@@ -36,7 +39,11 @@ export default function AdminClientBar({ user }: AdminClientBarProps) {
 
   const primaryNav = [
     { href: '/admin', label: 'المؤشرات العامة', icon: LayoutDashboard, exact: true },
-    { href: '/admin/requests', label: 'طلبات الخدمات', icon: ShieldAlert },
+    { href: '/admin/incidents', label: 'البلاغات الميدانية', icon: ShieldAlert },
+    { href: '/admin/alerts', label: 'التنبيهات الميدانية', icon: BellRing },
+    { href: '/admin/risks', label: 'سجل المخاطر', icon: AlertTriangle },
+    { href: '/admin/services', label: 'دليل الخدمات', icon: Briefcase },
+    { href: '/admin/requests', label: 'طلبات الخدمات', icon: FileText },
     { href: '/admin/training', label: 'أكاديمية التدريب', icon: GraduationCap },
     { href: '/admin/research', label: 'الدراسات والأبحاث', icon: FileText },
     { href: '/admin/system', label: 'تشغيل المنظومة', icon: Settings, isGroupActive: isSystemActive },
@@ -53,25 +60,25 @@ export default function AdminClientBar({ user }: AdminClientBarProps) {
   return (
     <>
       {/* Admin Top Banner */}
-      <div className="card" style={{ marginBottom: '2rem', padding: '1.5rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', background: 'linear-gradient(135deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)', border: '1px solid rgba(201,162,39,0.25)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <img src="/images/logo.png" alt="FACSS Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
-          <div>
-            <h1 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#FFFFFF', margin: 0 }}>
-              لوحة الإدارة والتحكم (FACSS Admin)
+      <div className="card admin-top-banner">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0 }}>
+          <img src="/images/logo.png" alt="شعار المركز" style={{ width: '42px', height: '42px', objectFit: 'contain', flexShrink: 0 }} />
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF', margin: 0, lineHeight: 1.3 }}>
+              لوحة الإدارة والتحكم — مركز عدن الدولي للسلامة
             </h1>
-            <span style={{ fontSize: '0.8rem', color: 'var(--facss-gold-400)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--facss-gold-400)', fontWeight: 600 }}>
               {user.fullName} • رتبة: {user.role}
             </span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.8rem' }}>
-          <Link href="/" target="_blank" className="btn btn-outline btn-sm" style={{ borderColor: 'rgba(255,255,255,0.2)', color: '#FFFFFF' }}>
+        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <Link href="/" target="_blank" className="btn btn-outline btn-sm" style={{ borderColor: 'rgba(255,255,255,0.2)', color: '#FFFFFF', fontSize: '0.8rem' }}>
             معاينة الموقع العام
           </Link>
-          <button onClick={() => logout()} className="btn btn-outline btn-sm" style={{ color: '#EF4444', borderColor: 'rgba(239,68,68,0.4)' }}>
-            <LogOut size={15} />
+          <button onClick={() => logout()} className="btn btn-outline btn-sm" style={{ color: '#EF4444', borderColor: 'rgba(239,68,68,0.4)', fontSize: '0.8rem' }}>
+            <LogOut size={14} />
             <span>تسجيل الخروج</span>
           </button>
         </div>

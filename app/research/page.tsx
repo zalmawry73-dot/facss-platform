@@ -58,14 +58,15 @@ export default async function ResearchPage() {
           background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
           borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
           textAlign: 'center',
+          color: '#FFFFFF',
         }}
       >
         <div className="container">
           <span className="section-tag">{t.researchSectionTitle}</span>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
-            {locale === 'ar' ? 'الدراسات الأمنية والتقارير الاستراتيجية' : 'Security Studies & Strategic Reports'}
+            {locale === 'ar' ? 'المنتجات المعرفية والدراسات والتقارير الميدانية' : 'Knowledge Products, Field Studies & Reports'}
           </h1>
-          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.1rem', maxWidth: '800px', marginInline: 'auto', lineHeight: 1.7 }}>
+          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.1rem', maxWidth: '820px', marginInline: 'auto', lineHeight: 1.75 }}>
             {t.researchSectionSubtitle}
           </p>
         </div>
@@ -75,13 +76,15 @@ export default async function ResearchPage() {
       <section className="section">
         <div className="container">
           {publications.length === 0 ? (
-            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
-              <FileText size={40} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
+            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
+              <FileText size={44} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                {locale === 'ar' ? 'لا توجد دراسات منشورة حالياً' : 'No publications currently available'}
+                {locale === 'ar' ? 'لا توجد دراسات أو تقارير منشورة حالياً' : 'No publications currently available'}
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                {locale === 'ar' ? 'يتم تحديث ونشر الأوراق البحثية الدورية فور اعتمادها من الهيئة الاستشارية.' : 'Periodic research papers are published once approved by the advisory board.'}
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                {locale === 'ar' 
+                  ? 'يتم نشر التقارير الدورية وموجزات سياق الوصول الإنساني ومصفوفات المخاطر فور اعتمادها وتدقيقها الداخلي.' 
+                  : 'Periodic context briefs, access risk analyses, and danger matrices are published upon internal validation.'}
               </p>
             </div>
           ) : (
@@ -129,7 +132,7 @@ export default async function ResearchPage() {
                     <div style={{ paddingTop: '1.2rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Link
                         href={`/research/${pub.slug}`}
-                        className="btn btn-outline-dark btn-sm"
+                        className="btn btn-outline btn-sm"
                         style={{ fontSize: '0.82rem' }}
                       >
                         <BookOpen size={15} />

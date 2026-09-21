@@ -26,6 +26,7 @@ export default async function ServicesPage() {
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   const categories = await prisma.serviceCategory.findMany({
+    where: { isActive: true },
     orderBy: { order: 'asc' },
     include: {
       services: {
@@ -47,14 +48,12 @@ export default async function ServicesPage() {
         }}
       >
         <div className="container">
-          <span className="section-tag">{t.servicesSystem}</span>
+          <span className="section-tag">{t.servicesSectionTitle}</span>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
-            {isAr ? 'خدمات وحلول مركز عدن الأول (FACSS)' : 'FACSS Integrated Security Services & Solutions'}
+            {t.siteTitle}
           </h1>
           <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
-            {isAr
-              ? 'نقدم منظومة متكاملة من الخدمات الأمنية التشغيلية، الأنظمة التقنية المتقدمة، والاستشارات والدراسات الاستراتيجية'
-              : 'Delivering an integrated matrix of operational security, advanced technical solutions, tactical training, and strategic advisory.'}
+            {t.tagline}
           </p>
         </div>
       </section>
@@ -69,7 +68,7 @@ export default async function ServicesPage() {
                 {isAr ? 'دليل الخدمات قيد التحديث المؤسسي' : 'Services catalog currently under institutional update'}
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                {isAr ? 'سيتم إدراج باقات الخدمات الأمنية التخصصية وحلول الحراسة والاستشارات قريباً عبر لوحة الإدارة.' : 'Specialized security, guarding, and advisory services will be published soon via the administration.'}
+                {isAr ? 'سيتم إدراج مجالات النشاط الميداني وخدمات تقييم المخاطر والوصول الإنساني قريباً عبر لوحة الإدارة.' : 'Field activity fields, risk assessment, and humanitarian access services will be published soon via the administration.'}
               </p>
             </div>
           ) : (
@@ -102,14 +101,14 @@ export default async function ServicesPage() {
 
                     const srvTitle = isAr ? srv.titleAr : (srv.titleEn || srv.titleAr);
                     const srvSub = isAr ? srv.titleEn : srv.titleAr;
-                    const srvDesc = isAr ? srv.shortDescAr : (srv.fullDescEn || srv.shortDescAr);
+                    const srvDesc = isAr ? srv.shortDescAr : (srv.shortDescEn || srv.shortDescAr);
 
                     return (
                       <div key={srv.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                             <span className="badge badge-gold">{catTitle}</span>
-                            <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>FACSS</span>
+                            <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>{t.siteAcronym}</span>
                           </div>
 
                           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
@@ -170,77 +169,65 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      {/* Merged Sectors: 8 Target Sectors */}
+      {/* Humanitarian & Field Beneficiary Sectors */}
       <section className="section" style={{ background: 'var(--surface-sunken)', borderTop: '1px solid var(--border-color)' }}>
         <div className="container">
           <div className="section-title-wrap">
             <span className="section-tag">{t.targetSectors}</span>
             <h2 className="section-title">
-              {isAr ? 'المؤسسات والقطاعات التي يخدمها المركز' : 'Institutions & Industries We Serve'}
+              {isAr ? 'الجهات والقطاعات المستفيدة من خدمات المركز' : 'Beneficiary Sectors & Partners We Support'}
             </h2>
             <p className="section-subtitle">
               {isAr
-                ? 'حلول أمنية وتدريبية متخصصة ومصممة بدقة لتلائم البيئة التشغيلية وطبيعة التهديدات في عدن والمحافظات المجاورة'
-                : 'Specialized security and training frameworks tailored to operational environments and threat postures in Aden and surrounding regions.'}
+                ? 'تقييمات ميدانية واستشارات متخصصة مصممة لتيسير الوصول الإنساني الآمن وحماية الكوادر والفرق العاملة في الميدان'
+                : 'Field assessments and specialized advisory tailored to facilitate safe humanitarian access and protect aid workers.'}
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.75rem' }}>
             {[
               {
-                titleAr: 'الجهات الحكومية والمؤسسات العامة',
-                titleEn: 'Government Entities & Public Institutions',
-                descAr: 'تأمين المقار الرسمية، تنظيم تدفق المراجعين، حراسة المنشآت الحساسة، وتقييم الأمن المادي وخطط الطوارئ.',
-                descEn: 'Securing official facilities, visitor access control, sensitive installation guarding, physical security assessments, and emergency planning.',
+                titleAr: 'المنظمات الإنسانية الدولية (INGOs)',
+                titleEn: 'International Humanitarian NGOs (INGOs)',
+                descAr: 'تقييم مخاطر الوصول الإنساني، دراسات السياق الميداني، وخطط التحرك الآمن للقوافل والبعثات الميدانية.',
+                descEn: 'Humanitarian access risk assessments, local context studies, and safe movement plans for aid missions.',
               },
               {
-                titleAr: 'البنوك والمصارف وشركات التأمين',
-                titleEn: 'Banks, Financial Firms & Insurance Providers',
-                descAr: 'حراسة الفروع والمقار الرئيسية، غرف الخزنات، مرافقة نقل الأموال، أنظمة الإنذار المبكر والتحكم في الدخول.',
-                descEn: 'HQ and branch static guarding, vault security, cash-in-transit (CIT) escort protocols, early alarm systems, and biometric access control.',
+                titleAr: 'وكالات الأمم المتحدة والبعثات الإغاثية',
+                titleEn: 'UN Agencies & Relief Missions',
+                descAr: 'موجزات دورية لحالة المسارات والمعابر، تحليلات أصحاب المصلحة، وتيسير قنوات التواصل الميداني غير السياسي.',
+                descEn: 'Periodic transit route and corridor risk briefs, stakeholder mapping, and non-political field access dialogue.',
               },
               {
-                titleAr: 'الشركات النفطية والموانئ والمطارات',
-                titleEn: 'Oil Companies, Seaports & International Airports',
-                descAr: 'تأمين المنشآت الحيوية وسلاسل الإمداد، الرصد التلفزيوني المتطور، مكافحة الحرائق، وتأمين الأرصفة والمناطق الحرة.',
-                descEn: 'Critical national infrastructure protection, supply chain integrity, thermal surveillance, fire safety compliance, and customs gate security.',
+                titleAr: 'المنظمات والمؤسسات المحلية غير الحكومية',
+                titleEn: 'National & Local NGOs',
+                descAr: 'بناء قدرات الكوادر في إدارة المخاطر، بروتوكولات السلامة الميدانية، واستراتيجيات كسب القبول المجتمعي.',
+                descEn: 'Capacity building in field risk management, personal safety protocols, and community acceptance strategies.',
               },
               {
-                titleAr: 'المنشآت الصناعية والتجارية الكبرى',
-                titleEn: 'Major Industrial & Commercial Complexes',
-                descAr: 'حراسة المصانع والمستودعات ومراكز التوزيع، أجهزة فحص الشاحنات، والتحكم في بوابات الشحن والتفريغ.',
-                descEn: 'Factory and logistics perimeter protection, vehicle inspection lanes, loading dock surveillance, and loss prevention audits.',
+                titleAr: 'الفرق الميدانية وكوادر الاستجابة الإنسانية',
+                titleEn: 'Field Response Teams & Aid Personnel',
+                descAr: 'توعية بالدعم النفسي الأولي، التعامل مع ضغوط بيئات النزاع، وتصميم مسارات الإحالة التخصصية المعتمدة.',
+                descEn: 'Psychological first aid sensitization, acute stress management, and vetted specialized referral pathways.',
               },
               {
-                titleAr: 'الفنادق والمنتجعات السياحية',
-                titleEn: 'Hotels & Tourism Resorts',
-                descAr: 'تأمين المداخل والنزلاء، تدريب فرق السلامة الفندقية، فحص الحقائب، وتأمين الفعاليات والمؤتمرات.',
-                descEn: 'Hospitality security management, guest screening, baggage scanners, event protection, and multilingual concierge safety staff.',
+                titleAr: 'مجموعات الإمداد والخدمات اللوجستية الإنسانية',
+                titleEn: 'Humanitarian Logistics & Supply Clusters',
+                descAr: 'تقييم أمان سلاسل الإمداد ونقاط الاختناق الحركي، وتحديثات سجل المخاطر التشغيلية على المعابر.',
+                descEn: 'Supply chain corridor safety assessments, movement bottleneck reviews, and transit risk register updates.',
               },
               {
-                titleAr: 'الجامعات والمدارس والمستشفيات',
-                titleEn: 'Universities, Schools & Healthcare Facilities',
-                descAr: 'توفير بيئة تعليمية وصحية آمنة، إدارة حركة الدخول والخروج، خطط الإخلاء الطبي ومكافحة الحرائق.',
-                descEn: 'Safe academic and clinical environments, credentialed perimeter control, pediatric ward protection, and emergency evacuation drills.',
-              },
-              {
-                titleAr: 'الشخصيات المهمة والبعثات الدبلوماسية',
-                titleEn: 'VIP Executives & Diplomatic Missions',
-                descAr: 'الحماية اللصيقة (Close Protection)، مرافقة المواكب، القيادة الدفاعية، وتأمين مقرات الإقامة والزيارات.',
-                descEn: 'Executive and close protection (CP) teams, armored convoy routing, defensive driving, safehaven prep, and residential sweeps.',
-              },
-              {
-                titleAr: 'المنظمات الدولية وغير الحكومية',
-                titleEn: 'International & Non-Governmental Organizations (NGOs)',
-                descAr: 'تقارير تقييم المخاطر، استشارات أمن الحركة الميدانية، حراسة المجمعات السكنية والمقرات، وتأمين البعثات.',
-                descEn: 'Security risk assessments (SRA), mission movement advisory, compound guarding, field liaison, and communications protocols.',
+                titleAr: 'الشبكات والجهات المجتمعية المحلية',
+                titleEn: 'Local Community Networks & Mediators',
+                descAr: 'تعزيز الحوار المجتمعي المشترك، ترسيخ مبادئ عدم الإضرار والحياد، وتيسير وصول المساعدات للمجتمعات الأشد احتياجاً.',
+                descEn: 'Fostering local dialogue, reinforcing do-no-harm and neutrality principles, and facilitating aid delivery to vulnerable communities.',
               },
             ].map((sec, idx) => (
               <div key={idx} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                     <span className="badge badge-gold">
-                      {isAr ? 'قطاع أمني متخصص' : 'Specialized Sector'}
+                      {isAr ? 'قطاع إنساني شريك' : 'Humanitarian Sector'}
                     </span>
                     <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', fontWeight: 700 }}>0{idx + 1}</span>
                   </div>
@@ -263,7 +250,7 @@ export default async function ServicesPage() {
                     className="btn btn-outline btn-sm"
                     style={{ width: '100%', justifyContent: 'center' }}
                   >
-                    <span>{isAr ? 'طلب خطة أمنية مخصصة لهذا القطاع' : 'Request Tailored Sector Plan'}</span>
+                    <span>{isAr ? 'طلب استشارة أو تقييم ميداني' : 'Request Field Consultation or Assessment'}</span>
                     <ArrowIcon size={14} />
                   </Link>
                 </div>

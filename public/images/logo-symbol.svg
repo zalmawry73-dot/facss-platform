@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F1E2E"/>
+      <stop offset="50%" stop-color="#162A40"/>
+      <stop offset="100%" stop-color="#0A1622"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A5F" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0F1E2E" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Protective Hexagonal Shield (Safety Framework) -->
+  <polygon points="256,24 436,88 436,336 256,488 76,336 76,88" 
+           fill="url(#bgGrad)" 
+           stroke="url(#goldGrad)" 
+           stroke-width="8" 
+           stroke-linejoin="round"/>
+
+  <!-- Inner Concentric Shield (Field Assessment & Resilience) -->
+  <polygon points="256,56 406,110 406,320 256,450 106,320 106,110" 
+           fill="url(#shieldGrad)" 
+           stroke="#38BDF8" 
+           stroke-width="2.5" 
+           stroke-opacity="0.5" 
+           stroke-linejoin="round"/>
+
+  <!-- Field Assessment Coordinate Grid (Subtle Lines) -->
+  <!-- Horizontal Axis -->
+  <line x1="126" y1="230" x2="386" y2="230" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.25" stroke-dasharray="4,4"/>
+  <!-- Vertical Axis -->
+  <line x1="256" y1="90" x2="256" y2="400" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.25" stroke-dasharray="4,4"/>
+
+  <!-- Concentric Assessment Rings (Early Warning & Analysis) -->
+  <circle cx="256" cy="230" r="105" fill="none" stroke="#F59E0B" stroke-width="2" stroke-opacity="0.3" stroke-dasharray="6,4"/>
+  <circle cx="256" cy="230" r="70" fill="none" stroke="#38BDF8" stroke-width="2" stroke-opacity="0.45"/>
+  <circle cx="256" cy="230" r="35" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-opacity="0.75"/>
+
+  <!-- Central Pathway / Access Route (Field Access) -->
+  <!-- Left Wing / Assessment Vector -->
+  <path d="M190,320 L256,150 L256,270 Z" fill="url(#tealGrad)" opacity="0.9"/>
+  <!-- Right Wing / Safety Anchor -->
+  <path d="M322,320 L256,150 L256,270 Z" fill="url(#goldGrad)" opacity="0.9"/>
+
+  <!-- Central Calibration Beacon (Early Warning Focal Point) -->
+  <circle cx="256" cy="230" r="14" fill="#FFFFFF" filter="url(#softGlow)"/>
+  <circle cx="256" cy="230" r="7" fill="#0F1E2E"/>
+
+  <!-- Four Cardinal Field Coordinate Markers -->
+  <!-- North (Apex) -->
+  <polygon points="256,130 251,146 261,146" fill="#F59E0B"/>
+  <!-- South -->
+  <polygon points="256,330 251,314 261,314" fill="#38BDF8"/>
+  <!-- West -->
+  <polygon points="150,230 166,225 166,235" fill="#38BDF8"/>
+  <!-- East -->
+  <polygon points="362,230 346,225 346,235" fill="#F59E0B"/>
+
+  <!-- Bottom Milestone Marker (Field Knowledge Base) -->
+  <circle cx="256" cy="410" r="6" fill="#F59E0B"/>
+  <line x1="236" y1="410" x2="246" y2="410" stroke="#38BDF8" stroke-width="2"/>
+  <line x1="266" y1="410" x2="276" y2="410" stroke="#38BDF8" stroke-width="2"/>
+</svg>

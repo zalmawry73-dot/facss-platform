@@ -128,14 +128,14 @@ export default function TraineeCertificatesPage() {
                 <div style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '2rem', marginBottom: '2rem' }}>
                   <img
                     src="/images/logo.png"
-                    alt="FACSS Seal"
+                    alt="شعار المركز"
                     style={{ width: '80px', height: '80px', marginInline: 'auto', marginBottom: '1rem', objectFit: 'contain' }}
                   />
                   <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--facss-green-950)', margin: '0 0 0.3rem 0' }}>
-                    {isAr ? 'مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية' : 'Aden First Center for Security Services and Strategic Studies'}
+                    {isAr ? 'مركز عدن الدولي للسلامة والدراسات الميدانية' : 'Aden International Center for Safety and Field Assessment'}
                   </h2>
                   <h3 style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: 0 }}>
-                    Aden First Center for Security Services and Strategic Studies (FACSS)
+                    Aden International Center for Safety and Field Assessment
                   </h3>
                   <span className="badge badge-gold" style={{ marginTop: '1rem', fontSize: '0.85rem', padding: '0.35rem 1.2rem' }}>
                     {isAr ? 'شهادة إتمام واجتياز دورة تدريبية' : 'Training Course Completion Certificate'}
@@ -146,8 +146,8 @@ export default function TraineeCertificatesPage() {
                 <div style={{ textAlign: 'center', maxWidth: '720px', marginInline: 'auto', marginBottom: '2.5rem' }}>
                   <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', marginBottom: '0.8rem' }}>
                     {isAr
-                      ? 'يشهد مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية بأن المتدرب:'
-                      : 'Aden First Center for Security Services and Strategic Studies certifies that:'}
+                      ? 'يشهد مركز عدن الدولي للسلامة والدراسات الميدانية بأن المتدرب:'
+                      : 'Aden International Center for Safety and Field Assessment certifies that:'}
                   </p>
                   <h3 style={{
                     fontSize: '1.85rem',

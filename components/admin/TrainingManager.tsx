@@ -572,6 +572,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
       {/* Create / Edit Modal */}
       {isModalOpen && (
         <div
+          className="facss-modal-overlay"
           style={{
             position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)',
             backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center',
@@ -579,7 +580,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
           }}
         >
           <div
-            className="card"
+            className="card facss-modal-content"
             style={{ maxWidth: '720px', width: '100%', maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--color-gold)' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
@@ -592,7 +593,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
             </div>
 
             <form onSubmit={handleSubmit}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">اسم البرنامج (بالعربية) *</label>
                   <input type="text" className="form-control" required value={form.titleAr} onChange={(e) => setForm({ ...form, titleAr: e.target.value })} placeholder="مثال: دورة حماية المنشآت الحيوية" />
@@ -603,7 +604,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">تصنيف البرنامج *</label>
                   <select className="form-control" required value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
@@ -618,7 +619,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-3" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">المدة التدريبية *</label>
                   <input type="text" className="form-control" required value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="5 أيام (25 ساعة)" />
@@ -645,7 +646,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
                 <input type="text" className="form-control" required value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">تاريخ البدء</label>
                   <input type="date" className="form-control" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />

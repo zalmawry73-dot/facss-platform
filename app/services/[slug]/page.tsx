@@ -37,7 +37,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
     include: { category: true }
   });
 
-  if (!service) {
+  if (!service || !service.isActive || !service.category?.isActive) {
     notFound();
   }
 
@@ -161,8 +161,8 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 </h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
                   {isAr
-                    ? 'قدّم طلبك الآن للحصول على دراسة مبدئية وخطة أمنية مقترحة ورقم مرجعي لمتابعة طلبك.'
-                    : 'Submit your request for a preliminary assessment, security proposal, and a reference tracking code.'}
+                    ? 'قدّم طلبك الآن للحصول على دراسة مبدئية وخطة استشارية وميدانية مقترحة ورقم مرجعي لمتابعة طلبك.'
+                    : 'Submit your request for a preliminary assessment, operational proposal, and a reference tracking code.'}
                 </p>
 
                 <Link

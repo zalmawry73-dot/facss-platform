@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: PublicSettings = {
   SOCIAL_TWITTER: '',
   SOCIAL_LINKEDIN: '',
   SOCIAL_FACEBOOK: '',
-  ANNOUNCEMENT_TEXT: 'مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية — منظومة أمنية متكاملة تُرسي مفهوم الوقاية قبل الاستجابة',
+  ANNOUNCEMENT_TEXT: 'مركز عدن الدولي للسلامة والدراسات الميدانية — دعم سلامة العاملين في المجال الإنساني وتعزيز الوصول الآمن',
 };
 
 /**

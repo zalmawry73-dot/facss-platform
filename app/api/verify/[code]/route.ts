@@ -37,7 +37,7 @@ export async function GET(
 
     if (!certificate) {
       return NextResponse.json(
-        { valid: false, error: 'رمز التحقق غير صالح — لا توجد شهادة مطابقة في قاعدة بيانات FACSS' },
+        { valid: false, error: 'رمز التحقق غير صالح — لا توجد شهادة مطابقة في قاعدة بيانات مركز عدن الدولي للسلامة (AICSFA)' },
         { status: 404 }
       );
     }
@@ -63,7 +63,7 @@ export async function GET(
       issueDate: certificate.issueDate,
       grade: certificate.grade,
       verificationCode: certificate.verificationCode,
-      message: 'شهادة صحيحة وسارية المفعول — صادرة رسمياً من مركز عدن الأول (FACSS)',
+      message: 'شهادة صحيحة وسارية المفعول — صادرة رسمياً من مركز عدن الدولي للسلامة والدراسات الميدانية (AICSFA)',
     });
   } catch (error: any) {
     console.error('Certificate verification error:', error);

@@ -51,7 +51,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
     summaryEn: '',
     contentAr: '',
     contentEn: '',
-    author: 'فريق الدراسات الأمنية والتحليل الاستراتيجي - مركز عدن الأول',
+    author: 'وحدة التحليل والتقييم الميداني — مركز عدن الدولي للسلامة والدراسات الميدانية',
     categoryId: categories[0]?.id || '',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
@@ -67,7 +67,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
       summaryEn: '',
       contentAr: '',
       contentEn: '',
-      author: 'فريق الدراسات الأمنية والتحليل الاستراتيجي - مركز عدن الأول',
+      author: 'وحدة التحليل والتقييم الميداني — مركز عدن الدولي للسلامة والدراسات الميدانية',
       categoryId: categories[0]?.id || '',
       visibility: 'PUBLIC',
       status: 'PUBLISHED',
@@ -346,6 +346,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
       {/* Create / Edit Modal */}
       {isModalOpen && (
         <div
+          className="facss-modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -359,7 +360,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
           }}
         >
           <div
-            className="card"
+            className="card facss-modal-content"
             style={{
               maxWidth: '740px',
               width: '100%',
@@ -382,7 +383,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
             </div>
 
             <form onSubmit={handleSubmit}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">عنوان الدراسة (بالعربية) *</label>
                   <input
@@ -408,7 +409,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">تصنيف البحث *</label>
                   <select
@@ -437,7 +438,7 @@ export default function ResearchManager({ initialPublications, categories }: Pro
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="facss-form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div>
                   <label className="form-label">مستوى الرؤية والسرية *</label>
                   <select

@@ -4,6 +4,20 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
+  webpack: (config) => {
+    config.resolve.extensions = [
+      '.tsx',
+      '.ts',
+      '.jsx',
+      '.js',
+      '.mjs',
+      '.json',
+      ...(config.resolve.extensions || []).filter(
+        (ext) => !['.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'].includes(ext)
+      ),
+    ];
+    return config;
+  },
   async headers() {
     return [
       {

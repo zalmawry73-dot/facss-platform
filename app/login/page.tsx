@@ -55,6 +55,7 @@ function LoginForm() {
       const STAFF_ROLES = [
         'SUPER_ADMIN',
         'ADMIN',
+        'STAFF',
         'CONTENT_MANAGER',
         'SERVICE_MANAGER',
         'TRAINING_MANAGER',
@@ -62,7 +63,9 @@ function LoginForm() {
         'EMPLOYEE',
       ];
 
-      if (user && STAFF_ROLES.includes(user.role)) {
+      if (user?.role === 'FIELD_FOCAL_POINT') {
+        router.push('/portal/field/intake');
+      } else if (user && STAFF_ROLES.includes(user.role)) {
         router.push('/admin');
       } else if (user?.role === 'TRAINEE') {
         router.push('/portal/trainee');
@@ -80,7 +83,7 @@ function LoginForm() {
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <img
               src="/images/logo.png"
-              alt="FACSS Logo"
+              alt={t.siteTitle}
               style={{ width: '72px', height: '72px', marginInline: 'auto', marginBottom: '1rem', objectFit: 'contain' }}
             />
             <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>

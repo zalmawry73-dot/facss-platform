@@ -524,3 +524,365 @@ export function validateCertificateInput(body: any): ValidationResult<Certificat
     },
   };
 }
+
+// ----------------------------------------------------
+// 9. CREATE USER VALIDATION (PHASE 2 COMMAND 2)
+// ----------------------------------------------------
+export interface CreateUserInput {
+  fullName: string;
+  email: string;
+  password: string;
+  role: string;
+  phone?: string | null;
+  organization?: string | null;
+  functionalArea?: string | null;
+  capabilities?: Capability[];
+}
+
+export const VALID_FUNCTIONAL_AREAS = [
+  'PROGRAMS_OPERATIONS', // البرامج والعمليات
+  'MONITORING_ANALYSIS', // الرصد والتحليل
+  'RESEARCH_FIELD_FOCAL', // البحث والاتصال الميداني
+  'TRAINING_CAPACITY',    // التدريب وبناء القدرات
+] as const;
+
+export function validateCreateUserInput(body: any): ValidationResult<CreateUserInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body || typeof body !== 'object') {
+    return { success: false, errors: { body: 'بيانات المستخدم مطلوبة' } };
+  }
+
+  // Full Name
+  if (!body.fullName || typeof body.fullName !== 'string' || body.fullName.trim().length < 3) {
+    errors.fullName = 'الاسم الكامل مطلوب ويجب ألا يقل عن 3 أحرف';
+  }
+
+  // Email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!body.email || typeof body.email !== 'string' || !emailRegex.test(body.email.trim())) {
+    errors.email = 'البريد الإلكتروني غير صالح أو غير مدخل بالشكل الصحيح';
+  }
+
+  // Password
+  if (!body.password || typeof body.password !== 'string' || body.password.length < 8) {
+    errors.password = 'كلمة المرور مطلوبة وتتطلب 8 خانات على الأقل';
+  }
+
+  // Role
+  const validRoles = [
+    'ADMIN',
+    'STAFF',
+    'CONTENT_MANAGER',
+    'SERVICE_MANAGER',
+    'TRAINING_MANAGER',
+    'RESEARCH_MANAGER',
+    'EMPLOYEE',
+    'FIELD_FOCAL_POINT',
+    'CLIENT',
+    'TRAINEE',
+  ];
+
+  if (!body.role || !validRoles.includes(body.role)) {
+    errors.role = `الرتبة المحددة غير صالحة. الرتب المسموح إنشاؤها: ${validRoles.join(', ')}`;
+  }
+
+  // Functional Area (optional)
+  if (body.functionalArea && !VALID_FUNCTIONAL_AREAS.includes(body.functionalArea)) {
+    errors.functionalArea = `مجال العمل غير صالح. المجالات المعتمدة: ${VALID_FUNCTIONAL_AREAS.join(', ')}`;
+  }
+
+  // Capabilities
+  let validatedCaps: Capability[] = [];
+  if (body.capabilities) {
+    if (!Array.isArray(body.capabilities)) {
+      errors.capabilities = 'قائمة الصلاحيات يجب أن تكون مصفوفة';
+    } else {
+      const invalidCaps = body.capabilities.filter((c: any) => !ALL_CAPABILITIES.includes(c));
+      if (invalidCaps.length > 0) {
+        errors.capabilities = `صلاحيات غير معروفة: ${invalidCaps.join(', ')}`;
+      } else {
+        validatedCaps = body.capabilities as Capability[];
+      }
+    }
+  }
+
+  // Strict focal point check
+  if (body.role === 'FIELD_FOCAL_POINT') {
+    const forbiddenCaps = validatedCaps.filter((c) => c !== CAPABILITIES.SUBMIT_INCIDENT);
+    if (forbiddenCaps.length > 0) {
+      errors.capabilities = `نقاط الاتصال الميدانية لا يمكن منحها صلاحيات إدارية [${forbiddenCaps.join(', ')}]. الصلاحية المسموحة حصراً هي submit_incident.`;
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      fullName: body.fullName.trim(),
+      email: body.email.trim().toLowerCase(),
+      password: body.password,
+      role: body.role,
+      phone: body.phone ? String(body.phone).trim() : null,
+      organization: body.organization ? String(body.organization).trim() : null,
+      functionalArea: body.functionalArea || null,
+      capabilities: validatedCaps,
+    },
+  };
+}
+
+// ----------------------------------------------------
+// 10. OPERATIONAL RISK REGISTER VALIDATIONS (PHASE 3)
+// ----------------------------------------------------
+export const VALID_RISK_CATEGORIES = [
+  'ARMED_CONFLICT_SECURITY',
+  'ACCESS_ROADBLOCK_DENIAL',
+  'EXPLOSIVE_HAZARD_UXO',
+  'CRIMINALITY_THEFT',
+  'STAFF_DETENTION_THREAT',
+  'FACILITY_DAMAGE',
+  'ENVIRONMENTAL_NATURAL',
+  'HEALTH_SAFETY',
+] as const;
+
+export const VALID_RISK_STATUSES = [
+  'IDENTIFIED',
+  'ASSESSED',
+  'TREATMENT_IN_PROGRESS',
+  'MONITORED',
+  'RESOLVED',
+  'CLOSED',
+] as const;
+
+export const VALID_MITIGATION_STATUSES = [
+  'PLANNED',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'DELAYED',
+  'CANCELLED',
+] as const;
+
+export const VALID_MITIGATION_TYPES = [
+  'PREVENTIVE',
+  'CONTINGENCY',
+  'CORRECTIVE',
+] as const;
+
+export interface RiskInputData {
+  title: string;
+  description: string;
+  category: (typeof VALID_RISK_CATEGORIES)[number];
+  governorate: string;
+  district?: string | null;
+  generalLocation?: string | null;
+  incidentId?: string | null;
+  likelihood: number;
+  impact: number;
+  targetResolutionDate?: Date | null;
+}
+
+export function validateRiskInput(body: any): ValidationResult<RiskInputData> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات الإدخال مفقودة' } };
+  }
+
+  // Title
+  if (!body.title || typeof body.title !== 'string' || body.title.trim().length < 5) {
+    errors.title = 'عنوان الخطر التشغيلي مطلوب ويجب أن يحتوي على 5 أحرف على الأقل';
+  }
+
+  // Description
+  if (!body.description || typeof body.description !== 'string' || body.description.trim().length < 10) {
+    errors.description = 'الوصف التشغيلي المنقح مطلوب ويجب أن يحتوي على 10 أحرف على الأقل';
+  }
+
+  // Category
+  if (!body.category || !VALID_RISK_CATEGORIES.includes(body.category)) {
+    errors.category = `تصنيف الخطر غير صالح. التصنيفات المعتمدة: ${VALID_RISK_CATEGORIES.join(', ')}`;
+  }
+
+  // Governorate
+  if (!body.governorate || typeof body.governorate !== 'string' || body.governorate.trim().length < 2) {
+    errors.governorate = 'المحافظة مطلوبة (مثال: عدن، لحج، أبين)';
+  }
+
+  // Likelihood & Impact (1-5)
+  const likelihood = Number(body.likelihood);
+  if (isNaN(likelihood) || !Number.isInteger(likelihood) || likelihood < 1 || likelihood > 5) {
+    errors.likelihood = 'احتمالية الحدوث يجب أن تكون رقماً صحيحاً بين 1 (نادر) و 5 (شبه مؤكد)';
+  }
+
+  const impact = Number(body.impact);
+  if (isNaN(impact) || !Number.isInteger(impact) || impact < 1 || impact > 5) {
+    errors.impact = 'شدة الأثر يجب أن تكون رقماً صحيحاً بين 1 (طفيف) و 5 (كارثي)';
+  }
+
+  let targetResolutionDate: Date | null = null;
+  if (body.targetResolutionDate) {
+    const d = new Date(body.targetResolutionDate);
+    if (isNaN(d.getTime())) {
+      errors.targetResolutionDate = 'تاريخ الاستهداف غير صالح';
+    } else {
+      targetResolutionDate = d;
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      title: body.title.trim(),
+      description: body.description.trim(),
+      category: body.category,
+      governorate: body.governorate.trim(),
+      district: body.district ? String(body.district).trim() : null,
+      generalLocation: body.generalLocation ? String(body.generalLocation).trim() : null,
+      incidentId: body.incidentId ? String(body.incidentId).trim() : null,
+      likelihood,
+      impact,
+      targetResolutionDate,
+    },
+  };
+}
+
+export interface ReassessmentInputData {
+  likelihood: number;
+  impact: number;
+  rationale: string;
+}
+
+export function validateReassessmentInput(body: any): ValidationResult<ReassessmentInputData> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات إعادة التقييم مفقودة' } };
+  }
+
+  const likelihood = Number(body.likelihood);
+  if (isNaN(likelihood) || !Number.isInteger(likelihood) || likelihood < 1 || likelihood > 5) {
+    errors.likelihood = 'احتمالية الحدوث يجب أن تكون رقماً صحيحاً بين 1 و 5';
+  }
+
+  const impact = Number(body.impact);
+  if (isNaN(impact) || !Number.isInteger(impact) || impact < 1 || impact > 5) {
+    errors.impact = 'شدة الأثر يجب أن تكون رقماً صحيحاً بين 1 و 5';
+  }
+
+  if (!body.rationale || typeof body.rationale !== 'string' || body.rationale.trim().length < 5) {
+    errors.rationale = 'مبررات إعادة التقييم مطلوبة (5 أحرف على الأقل) لتوثيق السجل التدقيقي';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      likelihood,
+      impact,
+      rationale: body.rationale.trim(),
+    },
+  };
+}
+
+export interface MitigationInputData {
+  actionTitle: string;
+  actionType: (typeof VALID_MITIGATION_TYPES)[number];
+  description?: string | null;
+  assignedTo?: string | null;
+  dueDate?: Date | null;
+  status?: (typeof VALID_MITIGATION_STATUSES)[number];
+  progressNotes?: string | null;
+}
+
+export function validateMitigationInput(body: any): ValidationResult<MitigationInputData> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات إجراء التخفيف مفقودة' } };
+  }
+
+  if (!body.actionTitle || typeof body.actionTitle !== 'string' || body.actionTitle.trim().length < 3) {
+    errors.actionTitle = 'عنوان إجراء التخفيف مطلوب (3 أحرف على الأقل)';
+  }
+
+  const actionType = body.actionType || 'PREVENTIVE';
+  if (!VALID_MITIGATION_TYPES.includes(actionType)) {
+    errors.actionType = `نوع الإجراء غير صالح. الأنواع المعتمدة: ${VALID_MITIGATION_TYPES.join(', ')}`;
+  }
+
+  let dueDate: Date | null = null;
+  if (body.dueDate) {
+    const d = new Date(body.dueDate);
+    if (isNaN(d.getTime())) {
+      errors.dueDate = 'تاريخ الاستحقاق غير صالح';
+    } else {
+      dueDate = d;
+    }
+  }
+
+  const status = body.status || 'PLANNED';
+  if (!VALID_MITIGATION_STATUSES.includes(status)) {
+    errors.status = `حالة الإجراء غير صالحة. الحالات: ${VALID_MITIGATION_STATUSES.join(', ')}`;
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      actionTitle: body.actionTitle.trim(),
+      actionType,
+      description: body.description ? String(body.description).trim() : null,
+      assignedTo: body.assignedTo ? String(body.assignedTo).trim() : null,
+      dueDate,
+      status,
+      progressNotes: body.progressNotes ? String(body.progressNotes).trim() : null,
+    },
+  };
+}
+
+export interface RiskStatusChangeData {
+  status: (typeof VALID_RISK_STATUSES)[number];
+  reason: string;
+}
+
+export function validateRiskStatusChange(body: any): ValidationResult<RiskStatusChangeData> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات تغيير الحالة مفقودة' } };
+  }
+
+  if (!body.status || !VALID_RISK_STATUSES.includes(body.status)) {
+    errors.status = `الحالة التشغيلية غير صالحة. الحالات: ${VALID_RISK_STATUSES.join(', ')}`;
+  }
+
+  if (!body.reason || typeof body.reason !== 'string' || body.reason.trim().length < 5) {
+    errors.reason = 'سبب ومبرر تغيير الحالة التشغيلية مطلوب لتوثيق القرار (5 أحرف على الأقل)';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      status: body.status,
+      reason: body.reason.trim(),
+    },
+  };
+}
+

@@ -51,16 +51,16 @@ export default function ClientPortalLayout({ children }: { children: React.React
     <div style={{ paddingBlock: '2.5rem' }}>
       <div className="container-wide">
         {/* Portal Header Card */}
-        <div className="card" style={{ marginBottom: '2rem', padding: '1.5rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)' }}>
-              <Shield size={24} />
+        <div className="card" style={{ marginBottom: '2rem', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0 }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)', flexShrink: 0 }}>
+              <Shield size={22} />
             </div>
-            <div>
-              <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFF', margin: 0 }}>
+            <div style={{ minWidth: 0 }}>
+              <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFF', margin: 0, lineHeight: 1.3 }}>
                 بوابة العميل | {user.organization || user.fullName}
               </h1>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 {user.email} • حساب مفعل
               </span>
             </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,9 +12,9 @@ import {
   X, 
   User as UserIcon, 
   LogOut, 
-  LayoutDashboard, 
-  GraduationCap, 
-  Building2 
+  LayoutDashboard,
+  FileCheck2,
+  BellRing
 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 
@@ -24,6 +24,24 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  // Close menus on route navigation
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setUserDropdownOpen(false);
+  }, [pathname]);
+
+  // Handle Escape key to close open menus
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setUserDropdownOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const navLinks = [
     { href: '/', label: t.navHome },
@@ -36,6 +54,9 @@ export default function Header() {
 
   const getPortalLink = () => {
     if (!user) return '/login';
+    if (user.role === 'FIELD_FOCAL_POINT') {
+      return '/portal/field/intake';
+    }
     if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'STAFF' || user.role.includes('MANAGER') || user.role === 'EMPLOYEE') {
       return '/admin';
     }
@@ -47,6 +68,9 @@ export default function Header() {
 
   const getPortalLabel = () => {
     if (!user) return t.navLogin;
+    if (user.role === 'FIELD_FOCAL_POINT') {
+      return locale === 'ar' ? 'بوابة البلاغات الميدانية' : 'Field Intake Portal';
+    }
     if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'STAFF' || user.role.includes('MANAGER') || user.role === 'EMPLOYEE') {
       return t.navAdminDashboard;
     }
@@ -60,21 +84,25 @@ export default function Header() {
     <header className="site-header">
       <div className="container-wide">
         <div className="nav-inner">
-          {/* Logo & Brand */}
+          {/* Logo & Official Center Name in 2 Clear Lines */}
           <Link href="/" className="brand-logo" onClick={() => setMobileMenuOpen(false)}>
-            <img src="/images/logo.png" alt="FACSS Official Emblem" />
+            <img 
+              src="/images/logo.png" 
+              alt={t.siteTitle} 
+              className="brand-logo-img" 
+            />
             <div className="brand-title-wrap">
-              <span className="brand-acronym">{t.siteAcronym}</span>
-              <span className="brand-fullname">
-                {locale === 'ar' 
-                  ? 'مركز عدن الأول للخدمات الأمنية' 
-                  : 'Aden First Security Center'}
+              <span className="brand-name-primary">
+                {locale === 'ar' ? 'مركز عدن الدولي' : 'Aden International Center'}
+              </span>
+              <span className="brand-name-secondary">
+                {locale === 'ar' ? 'للسلامة والدراسات الميدانية' : 'for Safety & Field Assessment'}
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Menu */}
-          <nav>
+          <nav className="desktop-nav" aria-label="Main Navigation">
             <ul className="nav-menu">
               {navLinks.map((item) => {
                 const isActive = pathname === item.href;
@@ -99,14 +127,15 @@ export default function Header() {
               onClick={toggleLocale} 
               className="lang-btn" 
               title={locale === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'}
+              aria-label="Toggle language"
             >
               <Globe size={15} />
-              <span>{locale === 'ar' ? 'English' : 'العربية'}</span>
+              <span className="lang-text">{locale === 'ar' ? 'English' : 'العربية'}</span>
             </button>
 
             {/* Request a Service CTA */}
-            <Link href="/request-service" className="btn btn-gold btn-sm">
-              <Shield size={16} />
+            <Link href="/request-service" className="btn btn-gold btn-sm nav-cta-btn">
+              <Shield size={15} />
               <span>{t.navRequestService}</span>
             </Link>
 
@@ -115,35 +144,23 @@ export default function Header() {
 
             {/* User Session / Portal Access */}
             {user ? (
-              <div style={{ position: 'relative' }}>
+              <div className="user-dropdown-container">
                 <button
                   id="user-menu-btn"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="btn btn-outline btn-sm"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                  className="btn btn-outline btn-sm user-btn"
+                  aria-expanded={userDropdownOpen}
+                  aria-haspopup="true"
                 >
-                  <UserIcon size={16} />
-                  <span>{user.fullName?.split(' ')[0]}</span>
+                  <UserIcon size={15} />
+                  <span className="user-name-text">{user.fullName?.split(' ')[0]}</span>
                 </button>
 
                 {userDropdownOpen && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '115%',
-                      insetInlineEnd: 0,
-                      minWidth: '220px',
-                      background: 'var(--facss-green-900)',
-                      border: '1px solid var(--border-dark)',
-                      borderRadius: 'var(--radius-md)',
-                      boxShadow: 'var(--shadow-lg)',
-                      padding: '0.6rem',
-                      zIndex: 1000,
-                    }}
-                  >
-                    <div style={{ padding: '0.5rem 0.6rem', borderBottom: '1px solid var(--border-dark-subtle)', marginBottom: '0.4rem' }}>
-                      <p style={{ fontSize: '0.88rem', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>{user.fullName}</p>
-                      <span className="badge badge-gold" style={{ fontSize: '0.7rem', marginTop: '0.3rem' }}>
+                  <div className="user-dropdown-menu">
+                    <div className="user-dropdown-header">
+                      <p className="user-dropdown-name">{user.fullName}</p>
+                      <span className="badge badge-gold user-dropdown-role">
                         {user.role}
                       </span>
                     </div>
@@ -151,41 +168,29 @@ export default function Header() {
                     <Link
                       href={getPortalLink()}
                       onClick={() => setUserDropdownOpen(false)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.55rem 0.6rem',
-                        fontSize: '0.85rem',
-                        color: 'var(--facss-gold-400)',
-                        borderRadius: 'var(--radius-sm)',
-                        transition: 'var(--transition)',
-                      }}
+                      className="user-dropdown-item portal-link"
                     >
                       <LayoutDashboard size={15} />
                       <span>{getPortalLabel()}</span>
                     </Link>
+
+                    {user.role !== 'FIELD_FOCAL_POINT' && (
+                      <Link
+                        href="/portal/alerts"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="user-dropdown-item"
+                      >
+                        <BellRing size={15} />
+                        <span>{locale === 'ar' ? 'التنبيهات الميدانية' : 'Field Alerts'}</span>
+                      </Link>
+                    )}
 
                     <button
                       onClick={() => {
                         setUserDropdownOpen(false);
                         logout();
                       }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        width: '100%',
-                        padding: '0.55rem 0.6rem',
-                        fontSize: '0.85rem',
-                        color: '#EF4444',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        borderRadius: 'var(--radius-sm)',
-                        textAlign: dir === 'rtl' ? 'right' : 'left',
-                        transition: 'var(--transition)',
-                      }}
+                      className="user-dropdown-item logout-btn"
                     >
                       <LogOut size={15} />
                       <span>{t.navLogout}</span>
@@ -194,74 +199,70 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Link href="/login" className="btn btn-outline btn-sm">
-                <UserIcon size={16} />
-                <span>{t.navLogin}</span>
+              <Link href="/login" className="btn btn-outline btn-sm auth-btn">
+                <UserIcon size={15} />
+                <span className="auth-btn-text">{t.navLogin}</span>
               </Link>
             )}
 
-            {/* Mobile Hamburger Toggle */}
+            {/* Mobile / Tablet Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="btn btn-outline btn-sm"
-              style={{ padding: '0.4rem', display: 'none' }}
+              className="mobile-toggle-btn"
               id="mobile-toggle-btn"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-drawer"
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Responsive Mobile / Tablet Drawer */}
       {mobileMenuOpen && (
-        <div 
-          style={{
-            background: 'var(--facss-green-950)',
-            borderBottom: '1px solid var(--border-dark)',
-            padding: '1.5rem',
-          }}
-        >
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {navLinks.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    color: pathname === item.href ? 'var(--color-gold-light)' : '#FFFFFF',
-                    fontWeight: 600,
-                    fontSize: '1rem',
-                  }}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            <li style={{ paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="mobile-drawer" id="mobile-drawer" role="region" aria-label="Mobile Navigation Drawer">
+          <ul className="mobile-nav-list">
+            {navLinks.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`mobile-nav-link ${isActive ? 'active' : ''}`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+            <li className="mobile-drawer-cta">
               <Link
                 href="/request-service"
                 onClick={() => setMobileMenuOpen(false)}
                 className="btn btn-gold btn-sm"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
-                {t.navRequestService}
+                <Shield size={16} />
+                <span>{t.navRequestService}</span>
+              </Link>
+            </li>
+            <li className="mobile-drawer-verify">
+              <Link
+                href="/verify"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-outline btn-sm"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <FileCheck2 size={16} />
+                <span>{t.verifyCertificate}</span>
               </Link>
             </li>
           </ul>
         </div>
       )}
-
-      <style jsx>{`
-        @media (max-width: 992px) {
-          :global(.nav-menu) {
-            display: none !important;
-          }
-          #mobile-toggle-btn {
-            display: inline-flex !important;
-          }
-        }
-      `}</style>
     </header>
   );
 }
