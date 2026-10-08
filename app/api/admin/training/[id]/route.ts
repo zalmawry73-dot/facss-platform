@@ -19,6 +19,9 @@ export async function GET(request: Request, { params }: RouteContext) {
       where: { id: params.id },
       include: {
         category: true,
+        sessions: {
+          orderBy: { sessionNumber: 'asc' },
+        },
         registrations: {
           select: {
             id: true,
@@ -81,6 +84,16 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     if (body.requirementsAr !== undefined) updatePayload.requirementsAr = d.requirementsAr;
     if (body.requirementsEn !== undefined) updatePayload.requirementsEn = d.requirementsEn;
     if (body.hasCertificate !== undefined) updatePayload.hasCertificate = d.hasCertificate;
+    if (body.requiresPreEval !== undefined) updatePayload.requiresPreEval = d.requiresPreEval;
+    if (body.requiresPostEval !== undefined) updatePayload.requiresPostEval = d.requiresPostEval;
+    if (body.minAttendancePct !== undefined) updatePayload.minAttendancePct = d.minAttendancePct;
+    if (body.courseType !== undefined) updatePayload.courseType = d.courseType;
+    if (body.deliveryMode !== undefined) updatePayload.deliveryMode = d.deliveryMode;
+    if (body.clientId !== undefined) updatePayload.clientId = d.clientId;
+    if (body.objectivesAr !== undefined) updatePayload.objectivesAr = d.objectivesAr;
+    if (body.objectivesEn !== undefined) updatePayload.objectivesEn = d.objectivesEn;
+    if (body.targetAudienceAr !== undefined) updatePayload.targetAudienceAr = d.targetAudienceAr;
+    if (body.targetAudienceEn !== undefined) updatePayload.targetAudienceEn = d.targetAudienceEn;
 
     if (body.startDate !== undefined) {
       updatePayload.startDate = d.startDate ? new Date(d.startDate) : null;

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   ShieldCheck, 
@@ -13,9 +14,23 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-export default function Footer() {
+interface FooterProps {
+  contactAddressAr?: string;
+  contactAddressEn?: string;
+  contactEmail?: string;
+}
+
+export default function Footer({ contactAddressAr, contactAddressEn, contactEmail }: FooterProps = {}) {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const { t, locale, dir } = useLanguage();
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  const isAr = locale === 'ar';
+  const address = isAr ? (contactAddressAr || 'العاصمة عدن، الجمهورية اليمنية') : (contactAddressEn || 'Aden Capital, Republic of Yemen');
+  const email = contactEmail || 'info@facss.org';
 
   const activityFields = [
     { title: t.field1Title, href: '/services' },
@@ -40,12 +55,12 @@ export default function Footer() {
               />
               <div>
                 <h3 className="gold-text" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
-                  {locale === 'ar' ? 'مركز عدن الدولي' : 'Aden International Center'}
+                  {locale === 'ar' ? 'المركز المتكامل' : 'Integrated Center'}
                 </h3>
                 <p style={{ fontSize: '0.78rem', color: '#E2E8F0', margin: '2px 0 0 0' }}>
                   {locale === 'ar' 
-                    ? 'للسلامة والدراسات الميدانية' 
-                    : 'for Safety & Field Assessment'}
+                    ? 'لخدمات الأمن والسلامة والدراسات الميدانية' 
+                    : 'for Security, Safety & Field Studies'}
                 </p>
               </div>
             </div>
@@ -95,10 +110,16 @@ export default function Footer() {
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.88rem', color: 'var(--text-on-dark-muted)', padding: 0, margin: 0 }}>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
                 <MapPin size={18} style={{ color: 'var(--color-gold)', flexShrink: 0, marginTop: '2px' }} />
-                <span>
-                  {locale === 'ar' ? 'العاصمة عدن، الجمهورية اليمنية' : 'Aden Capital, Republic of Yemen'}
-                </span>
+                <span>{address}</span>
               </li>
+              {email && (
+                <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
+                  <Mail size={18} style={{ color: 'var(--color-gold)', flexShrink: 0, marginTop: '2px' }} />
+                  <a href={`mailto:${email}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {email}
+                  </a>
+                </li>
+              )}
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
                 <Globe size={18} style={{ color: 'var(--color-gold)', flexShrink: 0, marginTop: '2px' }} />
                 <span>

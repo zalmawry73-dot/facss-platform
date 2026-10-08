@@ -17,6 +17,51 @@ import {
 
 export const revalidate = 0;
 
+const DURATION_TRANSLATIONS: Record<string, string> = {
+  '4 أيام (32 ساعة تدريبية تطبيقية)': '4 Days (32 Practical Training Hours)',
+  '3 أيام (24 ساعة تدريبية)': '3 Days (24 Training Hours)',
+  '5 أيام (40 ساعة تدريبية)': '5 Days (40 Training Hours)',
+  'أسبوعان (60 ساعة تدريبية)': '2 Weeks (60 Training Hours)',
+};
+
+const LOCATION_TRANSLATIONS: Record<string, string> = {
+  'مركز التدريب والتأهيل الميداني - عدن': 'Field Training & Capacity Center - Aden',
+  'قاعات المحاكاة بمركز الأمن والسلامة - عدن': 'Security & Safety Simulation Halls - Aden',
+  'مركز التدريب الميداني التابع للمركز - عدن': 'Center Field Training Academy - Aden',
+  'مقر المركز - عدن': 'Center HQ - Aden',
+  'قاعة المؤتمرات الرئيسية': 'Main Conference Hall',
+  'ميدان التدريب التكتيكي - عدن': 'Tactical Training Grounds - Aden',
+  'مركز التدريب الميداني التابع لـ AICSFA - عدن': 'Center Field Training Academy - Aden',
+  'قاعات المحاكاة الطبية بمركز AICSFA - عدن': 'Security & Safety Simulation Halls - Aden',
+};
+
+function formatCourseDuration(val: string, isAr: boolean): string {
+  if (isAr) return val;
+  if (DURATION_TRANSLATIONS[val]) return DURATION_TRANSLATIONS[val];
+  return val
+    .replace(/(\d+)\s*أيام/g, '$1 Days')
+    .replace(/(\d+)\s*يوم/g, '$1 Day')
+    .replace(/(\d+)\s*ساعة تدريبية تطبيقية/g, '$1 Practical Training Hours')
+    .replace(/(\d+)\s*ساعة تدريبية/g, '$1 Training Hours')
+    .replace(/(\d+)\s*ساعة/g, '$1 Hours')
+    .replace(/أسبوعان/g, '2 Weeks')
+    .replace(/(\d+)\s*أسابيع/g, '$1 Weeks');
+}
+
+function formatCourseLocation(val: string, isAr: boolean): string {
+  if (isAr) return val;
+  if (LOCATION_TRANSLATIONS[val]) return LOCATION_TRANSLATIONS[val];
+  return val
+    .replace(/مركز التدريب الميداني التابع لـ\s*(AICSFA)?/g, 'Field Training Academy - ')
+    .replace(/قاعات المحاكاة الطبية بمركز\s*(AICSFA)?/g, 'Medical Simulation Halls - ')
+    .replace(/قاعات المحاكاة بمركز\s*/g, 'Simulation Halls at ')
+    .replace(/قاعات المحاكاة\s*/g, 'Simulation Halls ')
+    .replace(/ميدان التدريب التكتيكي\s*/g, 'Tactical Training Grounds ')
+    .replace(/مركز تدريب\s*/g, 'Training Center ')
+    .replace(/بمركز\s*/g, 'at ')
+    .replace(/عدن/g, 'Aden');
+}
+
 export default async function TrainingPage() {
   const cookieStore = cookies();
   const rawLocale = cookieStore.get('facss_locale')?.value;
@@ -26,7 +71,7 @@ export default async function TrainingPage() {
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   const courses = await prisma.course.findMany({
-    where: { status: 'OPEN' },
+    where: { status: 'OPEN', courseType: 'PUBLIC' },
     include: { category: true },
     orderBy: { createdAt: 'desc' },
   });
@@ -86,13 +131,13 @@ export default async function TrainingPage() {
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
               {courses.map((course) => {
                 const catTitle = isAr ? course.category.titleAr : (course.category.titleEn || course.category.titleAr);
                 const title = isAr ? course.titleAr : (course.titleEn || course.titleAr);
-                const subtitle = isAr ? course.titleEn : course.titleAr;
+                const subtitle = isAr ? course.titleEn : null;
                 const desc = isAr ? course.descriptionAr : (course.descriptionEn || course.descriptionAr);
-                const reqs = isAr ? course.requirementsAr : (course.requirementsEn || course.requirementsAr);
+                const reqs = isAr ? course.requirementsAr : (course.requirementsEn || null);
 
                 return (
                   <div key={course.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -121,11 +166,11 @@ export default async function TrainingPage() {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', background: 'var(--surface-sunken)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '1.25rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                           <Clock size={16} style={{ color: 'var(--facss-gold-600)' }} />
-                          <span>{course.duration}</span>
+                          <span>{formatCourseDuration(course.duration, isAr)}</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                           <MapPin size={16} style={{ color: 'var(--facss-gold-600)' }} />
-                          <span>{course.location}</span>
+                          <span>{formatCourseLocation(course.location, isAr)}</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                           <Users size={16} style={{ color: 'var(--facss-green-700)' }} />

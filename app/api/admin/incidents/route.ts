@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { ROLES, CAPABILITIES, getUserCapabilities } from '@/lib/rbac';
+import { getSlaConfig, calculateIncidentSlaStatus } from '@/lib/sla-engine';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,6 +50,11 @@ export async function GET(request: Request) {
     const categoryFilter = searchParams.get('category');
     const priorityFilter = searchParams.get('priority');
     const governorateFilter = searchParams.get('governorate');
+    const quickFilter = searchParams.get('quickFilter');
+    const slaFilter = searchParams.get('slaFilter');
+
+    const slaConfig = await getSlaConfig();
+    const now = new Date();
 
     // Case 1: SUPER_ADMIN can view all incidents
     if (isSuperAdmin) {
@@ -58,7 +64,18 @@ export async function GET(request: Request) {
       if (priorityFilter && priorityFilter !== 'ALL') whereClause.priority = priorityFilter;
       if (governorateFilter && governorateFilter !== 'ALL') whereClause.governorate = governorateFilter;
 
-      const incidents = await prisma.incident.findMany({
+      // Handle Database-level Quick Filters where possible
+      if (quickFilter === 'OPEN') {
+        whereClause.status = { notIn: ['CLOSED', 'ARCHIVED'] };
+      } else if (quickFilter === 'CRITICAL') {
+        whereClause.priority = 'CRITICAL_EMERGENCY';
+      } else if (quickFilter === 'CLOSED') {
+        whereClause.status = { in: ['CLOSED', 'ARCHIVED'] };
+      } else if (quickFilter === 'ESCALATED') {
+        whereClause.isEscalated = true;
+      }
+
+      const rawIncidents = await prisma.incident.findMany({
         where: whereClause,
         include: {
           createdBy: { select: { id: true, fullName: true, role: true, organization: true } },
@@ -68,7 +85,7 @@ export async function GET(request: Request) {
           },
           assignments: {
             where: { isActive: true },
-            include: { assignedTo: { select: { id: true, fullName: true } } },
+            include: { assignedTo: { select: { id: true, fullName: true, email: true } } },
           },
           _count: {
             select: { verifications: true, attachments: true, alerts: true },
@@ -77,10 +94,9 @@ export async function GET(request: Request) {
         orderBy: { createdAt: 'desc' },
       });
 
-      return NextResponse.json({
-        success: true,
-        isSuperAdmin: true,
-        incidents: incidents.map((inc) => ({
+      let formattedIncidents = rawIncidents.map((inc) => {
+        const slaCalc = calculateIncidentSlaStatus(inc, slaConfig, now);
+        return {
           id: inc.id,
           incidentNumber: inc.incidentNumber,
           category: inc.category,
@@ -92,10 +108,46 @@ export async function GET(request: Request) {
           createdAt: inc.createdAt,
           createdBy: inc.createdBy,
           hasOriginal: true,
+          firstResponseAt: inc.firstResponseAt,
+          dueAt: slaCalc.dueAt,
+          closedAt: inc.closedAt,
+          slaTargetMinutes: slaCalc.slaTargetMinutes,
+          slaStatus: slaCalc.status,
+          isEscalated: inc.isEscalated,
+          escalatedAt: inc.escalatedAt,
+          escalationReason: inc.escalationReason,
+          slaDetails: {
+            elapsedMinutes: slaCalc.elapsedMinutes,
+            remainingMinutes: slaCalc.remainingMinutes,
+            isBreached: slaCalc.isBreached,
+            isApproachingBreach: slaCalc.isApproachingBreach,
+            isClosed: slaCalc.isClosed,
+          },
           currentRedacted: inc.redactedVersions[0] || null,
           activeAssignments: inc.assignments,
           counts: inc._count,
-        })),
+        };
+      });
+
+      // Post-calculation filters (for dynamically computed SLA status / unassigned)
+      if (quickFilter === 'UNASSIGNED') {
+        formattedIncidents = formattedIncidents.filter((inc) => inc.activeAssignments.length === 0);
+      } else if (quickFilter === 'APPROACHING_BREACH') {
+        formattedIncidents = formattedIncidents.filter((inc) => inc.slaStatus === 'APPROACHING_BREACH');
+      } else if (quickFilter === 'BREACHED') {
+        formattedIncidents = formattedIncidents.filter(
+          (inc) => inc.slaStatus === 'BREACHED' || inc.slaStatus === 'CLOSED_BREACHED'
+        );
+      }
+
+      if (slaFilter && slaFilter !== 'ALL') {
+        formattedIncidents = formattedIncidents.filter((inc) => inc.slaStatus === slaFilter);
+      }
+
+      return NextResponse.json({
+        success: true,
+        isSuperAdmin: true,
+        incidents: formattedIncidents,
       });
     }
 

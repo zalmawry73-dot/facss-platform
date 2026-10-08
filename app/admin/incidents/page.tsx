@@ -1,11 +1,11 @@
+import React, { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { ROLES, CAPABILITIES, getUserCapabilities } from '@/lib/rbac';
-import AdminClientBar from '@/app/admin/AdminClientBar';
 import IncidentsManager from '@/components/admin/IncidentsManager';
 
 export const metadata = {
-  title: 'إدارة البلاغات الميدانية والتحقق | مركز عدن الدولي للسلامة',
+  title: 'إدارة البلاغات الميدانية والتحقق | المركز المتكامل لخدمات الأمن والسلامة',
 };
 
 export default async function AdminIncidentsPage() {
@@ -35,12 +35,13 @@ export default async function AdminIncidentsPage() {
   }
 
   return (
-    <div className="container-wide" style={{ padding: '2rem 1.5rem 4rem' }}>
-      <AdminClientBar user={{ fullName: session.fullName, role: session.role }} />
-      <IncidentsManager
-        currentUserRole={session.role}
-        currentUserId={session.userId}
-      />
+    <div>
+      <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>جارٍ تحميل منظومة البلاغات...</div>}>
+        <IncidentsManager
+          currentUserRole={session.role}
+          currentUserId={session.userId}
+        />
+      </Suspense>
     </div>
   );
 }

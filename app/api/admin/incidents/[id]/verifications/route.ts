@@ -33,7 +33,7 @@ export async function POST(request: Request, { params }: RouteContext) {
 
     const incident = await prisma.incident.findUnique({
       where: { id: params.id },
-      select: { id: true, incidentNumber: true, status: true },
+      select: { id: true, incidentNumber: true, status: true, firstResponseAt: true },
     });
 
     if (!incident) {
@@ -72,16 +72,15 @@ export async function POST(request: Request, { params }: RouteContext) {
         },
       });
 
-      // Update incident status to recommended status or UNDER_VERIFICATION
-      if (input.recommendedStatus) {
+      const targetStatus = input.recommendedStatus || (incident.status === 'ASSIGNED' ? 'UNDER_VERIFICATION' : undefined);
+      const incUpdate: any = {};
+      if (targetStatus) incUpdate.status = targetStatus as any;
+      if (!incident.firstResponseAt) incUpdate.firstResponseAt = new Date();
+
+      if (Object.keys(incUpdate).length > 0) {
         await tx.incident.update({
           where: { id: params.id },
-          data: { status: input.recommendedStatus as any },
-        });
-      } else if (incident.status === 'ASSIGNED') {
-        await tx.incident.update({
-          where: { id: params.id },
-          data: { status: 'UNDER_VERIFICATION' },
+          data: incUpdate,
         });
       }
 

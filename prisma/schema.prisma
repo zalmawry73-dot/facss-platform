@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -75,13 +76,30 @@ enum Visibility {
 
 enum ArticleStatus {
   DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
   PUBLISHED
   ARCHIVED
+}
+
+enum EvaluationType {
+  PRE
+  POST
+}
+
+enum EvaluationStatus {
+  NOT_REQUIRED
+  NOT_TAKEN
+  COMPLETED
 }
 
 enum MessageStatus {
   UNREAD
   READ
+  IN_PROGRESS
+  RESOLVED
   REPLIED
   ARCHIVED
 }
@@ -117,6 +135,30 @@ model User {
 
   // Phase 3: Operational Risks Relation
   createdRisks      OperationalRisk[]      @relation("CreatedRisks")
+
+  // Package B: Complaints & Contact Messages Assignment
+  assignedMessages  ContactMessage[]       @relation("AssignedContactMessages")
+
+  // Package C: Quality Assurance & Client Feedback
+  reviewedDocuments             ServiceRequestDocument[]       @relation("QaReviewer")
+  clientFeedbacks               ClientFeedback[]               @relation("ClientFeedbackAuthor")
+
+  // Package D: Academy, Trainers, Materials & Needs Assessment
+  clientPrivateCourses          Course[]                       @relation("ClientPrivateCourses")
+  uploadedTrainingMaterials     TrainingMaterial[]             @relation("UploadedTrainingMaterials")
+  trainerProfile                Trainer?                       @relation("TrainerAccount")
+  uploadedTrainerDocuments      TrainerDocument[]              @relation("UploadedTrainerDocuments")
+  clientTnaAssessments          TrainingNeedsAssessment[]      @relation("ClientTnaAssessments")
+  createdTnaAssessments         TrainingNeedsAssessment[]      @relation("CreatedTnaAssessments")
+  courseSatisfactionEvaluations CourseSatisfactionEvaluation[] @relation("CourseSatisfactionAuthor")
+
+  // Package E: Procurement, Inventory & Equipment Relations
+  createdProcurements           ProcurementOrder[]             @relation("CreatedProcurements")
+  approvedProcurements          ProcurementOrder[]             @relation("ApprovedProcurements")
+  receivedProcurements          ProcurementReceiving[]         @relation("ReceivedProcurements")
+  inspectionsConducted          EquipmentInspection[]          @relation("InspectionsConducted")
+  deliveriesConducted           EquipmentDelivery[]            @relation("DeliveriesConducted")
+  movementsRecorded             InventoryMovement[]            @relation("MovementsRecorded")
 
   @@index([role])
   @@index([email])
@@ -201,10 +243,19 @@ model ServiceRequest {
   assignedEmployee   User?                    @relation("AssignedStaff", fields: [assignedEmployeeId], references: [id], onDelete: SetNull)
   notes              ServiceRequestNote[]
   documents          ServiceRequestDocument[]
+  feedback           ClientFeedback?
+
+  // Package E: Equipment & Supply Fulfillment Relations
+  fulfillmentStatus   SupplyFulfillmentStatus? @default(NONE)
+  supplyItems         SupplyRequestItem[]
+  equipmentDeliveries EquipmentDelivery[]
+  equipmentReturns    EquipmentReturn[]
+  procurementOrders   ProcurementOrder[]
 
   @@index([requestNumber])
   @@index([status])
   @@index([userId])
+  @@index([fulfillmentStatus])
 }
 
 model ServiceRequestNote {
@@ -244,13 +295,43 @@ model ServiceRequestDocument {
   sizeBytes        Int?
   updatedAt        DateTime       @default(now()) @updatedAt
 
+  // Package C: Report Quality Assurance (QA) Workflow
+  // Values: NOT_APPLICABLE, PENDING_QA, UNDER_REVIEW, APPROVED, REJECTED, DELIVERED, CLIENT_ACCEPTED
+  qaStatus         String         @default("NOT_APPLICABLE")
+  qaReviewerId     String?
+  qaReviewedAt     DateTime?
+  qaNotes          String?        @db.Text
+  qaApprovedAt     DateTime?
+  deliveredAt      DateTime?
+  clientAcceptedAt DateTime?
+
   request          ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  qaReviewer       User?          @relation("QaReviewer", fields: [qaReviewerId], references: [id], onDelete: SetNull)
 
   @@index([requestId])
   @@index([documentType])
   @@index([visibility])
   @@index([isArchived])
   @@index([uploadedByUserId])
+  @@index([qaStatus])
+}
+
+model ClientFeedback {
+  id             String         @id @default(cuid())
+  requestId      String         @unique
+  clientId       String
+  overallRating  Int            // 1 to 5
+  serviceQuality Int            // 1 to 5
+  timeliness     Int            // 1 to 5
+  communication  Int            // 1 to 5
+  comment        String?        @db.Text
+  submittedAt    DateTime       @default(now())
+
+  request        ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  client         User           @relation("ClientFeedbackAuthor", fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([submittedAt])
 }
 
 model CourseCategory {
@@ -284,50 +365,119 @@ model Course {
   hasCertificate       Boolean                @default(true)
   status               CourseStatus           @default(OPEN)
   image                String?
+  requiresPreEval      Boolean                @default(false)
+  requiresPostEval     Boolean                @default(false)
+  minAttendancePct     Float                  @default(75)
+
+  // Package D: Academy Course Type, Delivery Mode, Client & Objectives
+  courseType           String                 @default("PUBLIC") // PUBLIC, PRIVATE_CLIENT
+  deliveryMode         String                 @default("IN_PERSON") // IN_PERSON, VIRTUAL, HYBRID, FIELD
+  clientId             String?
+  objectivesAr         String?                @db.Text
+  objectivesEn         String?                @db.Text
+  targetAudienceAr     String?                @db.Text
+  targetAudienceEn     String?                @db.Text
+
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
 
   category             CourseCategory         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  client               User?                  @relation("ClientPrivateCourses", fields: [clientId], references: [id], onDelete: SetNull)
   registrations        TrainingRegistration[]
+  sessions             TrainingSession[]
+  materials            TrainingMaterial[]
+  trainers             CourseTrainer[]
+  tnaAssessments       TrainingNeedsAssessment[] @relation("CourseTnaAssessments")
+  satisfactionEvaluations CourseSatisfactionEvaluation[]
 
   @@index([slug])
   @@index([status])
+  @@index([courseType])
+  @@index([clientId])
 }
 
 model TrainingRegistration {
-  id                String             @id @default(cuid())
-  courseId          String
-  userId            String?
-  fullName          String
-  nationalId        String?
-  email             String
-  phone             String
-  qualification     String?
-  status            RegistrationStatus @default(PENDING)
-  adminNotes        String?            @db.Text
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id                     String             @id @default(cuid())
+  courseId               String
+  userId                 String?
+  fullName               String
+  nationalId             String?
+  email                  String
+  phone                  String
+  qualification          String?
+  status                 RegistrationStatus @default(PENDING)
+  adminNotes             String?            @db.Text
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
 
-  course            Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attendanceRecords AttendanceRecord[]
-  certificate       Certificate?
+  course                 Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user                   User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  attendanceRecords      AttendanceRecord[]
+  certificate            Certificate?
+  evaluations            TrainingEvaluation[]
+  satisfactionEvaluation CourseSatisfactionEvaluation?
 
   @@index([courseId])
   @@index([userId])
   @@index([status])
 }
 
+model TrainingSession {
+  id            String               @id @default(cuid())
+  courseId      String
+  sessionNumber Int
+  title         String
+  sessionDate   DateTime
+  startTime     String?
+  endTime       String?
+  notes         String?              @db.Text
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  course        Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attendances   AttendanceRecord[]
+
+  @@unique([courseId, sessionNumber])
+  @@index([courseId])
+  @@index([sessionDate])
+}
+
 model AttendanceRecord {
   id             String               @id @default(cuid())
   registrationId String
+  sessionId      String?
   sessionDate    DateTime
   status         AttendanceStatus     @default(PRESENT)
   notes          String?
+  modifiedById   String?
+  modifiedAt     DateTime?
+  modifiedReason String?
   createdAt      DateTime             @default(now())
 
   registration   TrainingRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  session        TrainingSession?     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
+  @@unique([registrationId, sessionId])
+  @@index([registrationId])
+  @@index([sessionId])
+}
+
+model TrainingEvaluation {
+  id             String               @id @default(cuid())
+  registrationId String
+  type           EvaluationType
+  score          Float?
+  maxScore       Float                @default(100)
+  status         EvaluationStatus     @default(NOT_TAKEN)
+  notes          String?              @db.Text
+  evaluatedById  String?
+  evaluatedAt    DateTime?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  registration   TrainingRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@unique([registrationId, type])
   @@index([registrationId])
 }
 
@@ -352,6 +502,149 @@ model Certificate {
 
   @@index([certificateNumber])
   @@index([verificationCode])
+}
+
+// ==========================================
+// PACKAGE D: ACADEMY, MATERIALS, TRAINERS & TNA
+// ==========================================
+
+model TrainingMaterial {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String
+  description String?  @db.Text
+  fileKey     String
+  fileName    String
+  fileSize    Int
+  mimeType    String
+  visibility  String   @default("ENROLLED_TRAINEES") // INTERNAL, ENROLLED_TRAINEES, PUBLIC
+  sortOrder   Int      @default(0)
+  uploadedById String
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uploadedBy  User     @relation("UploadedTrainingMaterials", fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([visibility])
+  @@index([uploadedById])
+}
+
+model Trainer {
+  id                  String             @id @default(cuid())
+  userId              String?            @unique
+  fullNameAr          String
+  fullNameEn          String?
+  professionalTitleAr String
+  professionalTitleEn String?
+  specializations     String?            @db.Text
+  bioAr               String?            @db.Text
+  bioEn               String?            @db.Text
+  qualifications      String?            @db.Text
+  certifications      String?            @db.Text
+  email               String?
+  phone               String?
+  isActive            Boolean            @default(true)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  user                User?              @relation("TrainerAccount", fields: [userId], references: [id], onDelete: SetNull)
+  courseAssignments   CourseTrainer[]
+  documents           TrainerDocument[]
+
+  @@index([isActive])
+  @@index([userId])
+}
+
+model CourseTrainer {
+  id         String   @id @default(cuid())
+  courseId   String
+  trainerId  String
+  role       String   @default("LEAD_TRAINER") // LEAD_TRAINER, ASSISTANT_TRAINER, GUEST_LECTURER
+  isLead     Boolean  @default(true)
+  assignedAt DateTime @default(now())
+
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  trainer    Trainer  @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, trainerId])
+  @@index([courseId])
+  @@index([trainerId])
+}
+
+model TrainerDocument {
+  id                 String    @id @default(cuid())
+  trainerId          String
+  title              String
+  documentType       String    // CV, CERTIFICATION, ACCREDITATION, DEGREE, ID_PASSPORT
+  issuingBody        String?
+  issueDate          DateTime?
+  expiryDate         DateTime?
+  verificationStatus String    @default("VERIFIED") // PENDING, VERIFIED, EXPIRED
+  fileKey            String
+  fileName           String
+  fileSize           Int
+  mimeType           String
+  uploadedById       String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  trainer            Trainer   @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  uploadedBy         User      @relation("UploadedTrainerDocuments", fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([trainerId])
+  @@index([documentType])
+}
+
+model TrainingNeedsAssessment {
+  id                 String    @id @default(cuid())
+  referenceNumber    String    @unique // e.g. FACSS-TNA-2026-0001
+  title              String
+  clientId           String?
+  courseId           String?
+  targetAudience     String
+  participantCount   Int       @default(1)
+  requestedTopics    String    @db.Text
+  currentCompetency  String    @db.Text
+  desiredCompetency  String    @db.Text
+  operationalContext String?   @db.Text
+  recommendations    String?   @db.Text
+  assessmentDate     DateTime  @default(now())
+  status             String    @default("DRAFT") // DRAFT, SUBMITTED, REVIEWED, APPROVED, IMPLEMENTED
+  createdById        String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  client             User?     @relation("ClientTnaAssessments", fields: [clientId], references: [id], onDelete: SetNull)
+  course             Course?   @relation("CourseTnaAssessments", fields: [courseId], references: [id], onDelete: SetNull)
+  createdBy          User      @relation("CreatedTnaAssessments", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([courseId])
+  @@index([status])
+}
+
+model CourseSatisfactionEvaluation {
+  id                 String               @id @default(cuid())
+  registrationId     String               @unique
+  courseId           String
+  userId             String?
+  contentRating      Int                  // 1 to 5
+  trainerRating      Int                  // 1 to 5
+  organizationRating Int                  // 1 to 5
+  usefulnessRating   Int                  // 1 to 5
+  overallRating      Int                  // 1 to 5
+  comment            String?              @db.Text
+  submittedAt        DateTime             @default(now())
+
+  registration       TrainingRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  course             Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user               User?                @relation("CourseSatisfactionAuthor", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([courseId])
+  @@index([submittedAt])
 }
 
 model ResearchCategory {
@@ -379,19 +672,62 @@ model ResearchPublication {
   coverImage      String?
   pdfPath         String?
   publicationDate DateTime         @default(now())
-  visibility      Visibility       @default(PUBLIC)
-  status          ArticleStatus    @default(PUBLISHED)
-  isFeatured      Boolean          @default(false)
-  viewsCount      Int              @default(0)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  visibility      Visibility            @default(PUBLIC)
+  status          ArticleStatus         @default(PUBLISHED)
+  isFeatured      Boolean               @default(false)
+  viewsCount      Int                   @default(0)
+  submittedById   String?
+  approvedById    String?
+  approvedAt      DateTime?
+  rejectedReason  String?               @db.Text
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
 
-  category        ResearchCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category        ResearchCategory      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  accessGrants    ResearchAccessGrant[]
+  reviewLogs      ResearchReviewLog[]
 
   @@index([slug])
   @@index([visibility])
   @@index([status])
   @@index([categoryId])
+}
+
+model ResearchAccessGrant {
+  id              String              @id @default(cuid())
+  publicationId   String
+  grantedToUserId String
+  grantedByUserId String
+  isActive        Boolean             @default(true)
+  revokedAt       DateTime?
+  revokedByUserId String?
+  revokedReason   String?
+  notes           String?             @db.Text
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  publication     ResearchPublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@unique([publicationId, grantedToUserId])
+  @@index([publicationId])
+  @@index([grantedToUserId])
+}
+
+model ResearchReviewLog {
+  id             String              @id @default(cuid())
+  publicationId  String
+  action         String
+  fromStatus     String
+  toStatus       String
+  reviewerUserId String
+  reviewerName   String
+  comments       String?             @db.Text
+  createdAt      DateTime            @default(now())
+
+  publication    ResearchPublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@index([publicationId])
+  @@index([createdAt])
 }
 
 model NewsArticle {
@@ -416,18 +752,33 @@ model NewsArticle {
 }
 
 model ContactMessage {
-  id           String        @id @default(cuid())
-  name         String
-  email        String
-  phone        String?
-  organization String?
-  subject      String
-  message      String        @db.Text
-  status       MessageStatus @default(UNREAD)
-  replyNotes   String?       @db.Text
-  createdAt    DateTime      @default(now())
+  id                String        @id @default(cuid())
+  messageType       String        @default("GENERAL_INQUIRY") // GENERAL_INQUIRY | COMPLAINT
+  referenceNumber   String?       @unique // e.g. FACSS-CMP-2026-000001
+  name              String
+  email             String
+  phone             String?
+  organization      String?
+  subject           String
+  message           String        @db.Text
+  status            MessageStatus @default(UNREAD)
+  priority          Priority      @default(NORMAL)
+  assignedToUserId  String?
+  dueAt             DateTime?
+  resolvedAt        DateTime?
+  resolutionSummary String?       @db.Text
+  slaStatus         String?       // ON_TIME | BREACHED | RESOLVED_ON_TIME | RESOLVED_BREACHED
+  replyNotes        String?       @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @default(now()) @updatedAt
+
+  assignedTo        User?         @relation("AssignedContactMessages", fields: [assignedToUserId], references: [id], onDelete: SetNull)
 
   @@index([status])
+  @@index([messageType])
+  @@index([referenceNumber])
+  @@index([assignedToUserId])
+  @@index([dueAt])
 }
 
 model Notification {
@@ -457,6 +808,31 @@ model SystemSetting {
 
   @@index([key])
   @@index([category])
+}
+
+// Content Management System — Institutional Content Blocks
+// Sections: identity | principles | activity_fields | lifecycle | org_structure | beneficiaries | homepage | footer
+model ContentBlock {
+  id            String   @id @default(cuid())
+  section       String   // e.g. 'identity', 'principles', 'activity_fields', 'lifecycle', 'org_structure', 'beneficiaries', 'homepage'
+  key           String   // unique key within section, e.g. 'vision', 'mission', 'principle_1'
+  titleAr       String?  @db.Text
+  titleEn       String?  @db.Text
+  descriptionAr String?  @db.Text
+  descriptionEn String?  @db.Text
+  icon          String?  // lucide icon name
+  link          String?  // optional URL / route
+  order         Int      @default(0)
+  isVisible     Boolean  @default(true)
+  metadata      String?  @db.Text  // JSON for extra fields
+  updatedByName String?  // name of admin who last edited
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([section, key])
+  @@index([section])
+  @@index([section, isVisible])
+  @@index([order])
 }
 
 model ActivityLog {
@@ -508,6 +884,7 @@ enum IncidentStatus {
   ALERT_DRAFTED
   ALERT_APPROVED
   ALERT_DISPATCHED
+  RESOLVED
   CLOSED
   ARCHIVED
 }
@@ -520,6 +897,7 @@ enum IncidentPriority {
 }
 
 enum IncidentCategory {
+  // Existing Historical Categories
   ARMED_CONFLICT_TACTICAL
   HUMANITARIAN_ACCESS_DENIAL
   PHYSICAL_ATTACK_THREAT
@@ -527,6 +905,14 @@ enum IncidentCategory {
   CIVIL_UNREST_ROADBLOCK
   DETENTION_HARASSMENT
   NATURAL_DISASTER_ENVIRONMENTAL
+  // Package B: Security & Safety Operational Categories
+  THEFT
+  INTRUSION
+  FIRE
+  INJURY
+  SAFETY_INCIDENT
+  VEHICLE_INCIDENT
+  SECURITY_THREAT
 }
 
 enum AlertSeverity {
@@ -564,6 +950,17 @@ model Incident {
   incidentDate     DateTime
   parentIncidentId String?
   createdById      String
+
+  // Package B: Operations, 24/7 Monitoring & Configurable SLA Timestamps
+  firstResponseAt  DateTime?
+  dueAt            DateTime?
+  closedAt         DateTime?
+  slaTargetMinutes Int?
+  slaStatus        String?           // ON_TIME | APPROACHING_BREACH | BREACHED | CLOSED_ON_TIME | CLOSED_BREACHED
+  isEscalated      Boolean           @default(false)
+  escalatedAt      DateTime?
+  escalationReason String?           @db.Text
+
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
@@ -585,6 +982,8 @@ model Incident {
   @@index([governorate])
   @@index([incidentDate])
   @@index([createdById])
+  @@index([dueAt])
+  @@index([isEscalated])
 }
 
 model IncidentOriginal {
@@ -912,4 +1311,480 @@ model RiskAssessmentHistory {
   @@index([riskId])
   @@index([assessedAt])
 }
+
+// ==========================================
+// PACKAGE E: PROCUREMENT, INVENTORY & SAFETY EQUIPMENT
+// ==========================================
+
+enum ProcurementStatus {
+  DRAFT
+  REQUESTED
+  APPROVED
+  ORDERED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CLOSED
+  CANCELLED
+}
+
+enum MovementType {
+  RECEIPT
+  RESERVATION
+  RESERVATION_RELEASE
+  ISSUE_DELIVERY
+  RETURN
+  ADJUSTMENT
+}
+
+enum ItemStatus {
+  AVAILABLE
+  RESERVED
+  DELIVERED
+  QUARANTINE
+  MAINTENANCE
+  SCRAPPED
+}
+
+enum InspectionType {
+  RECEIVING
+  PRE_DELIVERY
+  PERIODIC
+  MAINTENANCE
+  RETURN
+}
+
+enum InspectionResult {
+  PASS
+  FAIL
+  CONDITIONAL
+}
+
+enum MaintenanceType {
+  PREVENTIVE
+  CORRECTIVE
+  CALIBRATION
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  DRAFT
+  PREPARED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum ReturnStatus {
+  RETURNED
+  QUARANTINE
+  INSPECTED
+  RESTOCKED
+  SCRAPPED
+}
+
+enum SupplyFulfillmentStatus {
+  NONE
+  REQUESTED
+  REVIEWED
+  APPROVED
+  STOCK_CHECKED
+  RESERVED
+  PROCUREMENT_REQUIRED
+  INSPECTED
+  READY_FOR_DELIVERY
+  DELIVERED
+  COMPLETED
+}
+
+model EquipmentCategory {
+  id          String             @id @default(cuid())
+  code        String             @unique // e.g. CAT-PPE, CAT-FIRE
+  nameAr      String
+  nameEn      String
+  description String?            @db.Text
+  icon        String?
+  isActive    Boolean            @default(true)
+  order       Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  products    EquipmentProduct[]
+
+  @@index([code])
+  @@index([isActive])
+}
+
+model EquipmentProduct {
+  id                     String                 @id @default(cuid())
+  sku                    String                 @unique // Internal code / SKU e.g. FACSS-PRD-001
+  nameAr                 String
+  nameEn                 String
+  categoryId             String
+  descriptionAr          String?                @db.Text
+  descriptionEn          String?                @db.Text
+  unit                   String                 @default("piece") // piece, kit, set, meter, etc.
+  manufacturer           String?
+  brand                  String?
+  model                  String?
+  specifications         String?                @db.Text
+  imageUrl               String?
+  isActive               Boolean                @default(true)
+
+  // Tracking rules & controls
+  inspectionRequired     Boolean                @default(false)
+  maintenanceRequired    Boolean                @default(false)
+  expiryTrackingRequired Boolean                @default(false)
+  serialTrackingRequired Boolean                @default(false)
+  minimumStockLevel      Int                    @default(5)
+
+  // Aggregate stock counts (strictly transaction-managed and verified by ledger)
+  quantityOnHand         Int                    @default(0)
+  quantityReserved       Int                    @default(0)
+
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+
+  category               EquipmentCategory      @relation(fields: [categoryId], references: [id])
+  trackedItems           TrackedEquipmentItem[]
+  movements              InventoryMovement[]
+  procurementItems       ProcurementItem[]
+  receivingItems         ReceivingItem[]
+  inspections            EquipmentInspection[]
+  maintenances           EquipmentMaintenance[]
+  supplyRequestItems     SupplyRequestItem[]
+  deliveryItems          DeliveryItem[]
+  returnItems            EquipmentReturn[]
+
+  @@index([sku])
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+model TrackedEquipmentItem {
+  id                String                 @id @default(cuid())
+  productId         String
+  serialNumber      String?
+  batchNumber       String?
+  manufacturingDate DateTime?
+  expiryDate        DateTime?
+  status            ItemStatus             @default(AVAILABLE)
+  location          String?
+  notes             String?                @db.Text
+  receivingItemId   String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  product           EquipmentProduct       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  receivingItem     ReceivingItem?         @relation(fields: [receivingItemId], references: [id], onDelete: SetNull)
+  deliveryItems     DeliveryItem[]
+  inspections       EquipmentInspection[]
+  maintenances      EquipmentMaintenance[]
+  movements         InventoryMovement[]
+  returns           EquipmentReturn[]
+
+  @@unique([productId, serialNumber])
+  @@index([productId])
+  @@index([serialNumber])
+  @@index([batchNumber])
+  @@index([expiryDate])
+  @@index([status])
+}
+
+model Supplier {
+  id            String             @id @default(cuid())
+  supplierCode  String             @unique // e.g. FACSS-SUP-2026-0001
+  name          String
+  nameAr        String?
+  contactPerson String?
+  phone         String
+  email         String?
+  address       String?            @db.Text
+  categories    String?            // JSON string array of supplied categories
+  taxNumber     String?
+  commercialReg String?
+  status        String             @default("ACTIVE") // ACTIVE, INACTIVE, BLACKLISTED
+  rating        Float?             @default(5.0)
+  notes         String?            @db.Text
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  procurements  ProcurementOrder[]
+
+  @@index([supplierCode])
+  @@index([status])
+}
+
+model ProcurementOrder {
+  id                   String                 @id @default(cuid())
+  referenceNumber      String                 @unique // e.g. FACSS-PO-2026-000101
+  supplierId           String
+  serviceRequestId     String?
+  status               ProcurementStatus      @default(DRAFT)
+  orderDate            DateTime               @default(now())
+  expectedDeliveryDate DateTime?
+  notes                String?                @db.Text
+  totalEstimatedCost   Float?
+  currency             String                 @default("YER")
+  createdById          String
+  approvedById         String?
+  approvedAt           DateTime?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  supplier             Supplier               @relation(fields: [supplierId], references: [id])
+  serviceRequest       ServiceRequest?        @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
+  createdBy            User                   @relation("CreatedProcurements", fields: [createdById], references: [id])
+  approvedBy           User?                  @relation("ApprovedProcurements", fields: [approvedById], references: [id], onDelete: SetNull)
+  items                ProcurementItem[]
+  receivings           ProcurementReceiving[]
+
+  @@index([referenceNumber])
+  @@index([supplierId])
+  @@index([serviceRequestId])
+  @@index([status])
+  @@index([orderDate])
+}
+
+model ProcurementItem {
+  id                 String           @id @default(cuid())
+  procurementOrderId String
+  productId          String
+  quantityOrdered    Int
+  quantityReceived   Int              @default(0)
+  unitPrice          Float?
+  specifications     String?          @db.Text
+  notes              String?          @db.Text
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  procurementOrder   ProcurementOrder @relation(fields: [procurementOrderId], references: [id], onDelete: Cascade)
+  product            EquipmentProduct @relation(fields: [productId], references: [id])
+
+  @@index([procurementOrderId])
+  @@index([productId])
+}
+
+model ProcurementReceiving {
+  id                 String          @id @default(cuid())
+  receivingNumber    String          @unique // e.g. FACSS-RCV-2026-000101
+  procurementOrderId String
+  receivingDate      DateTime        @default(now())
+  receivedById       String
+  deliveryNoteNumber String?
+  notes              String?         @db.Text
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  procurementOrder   ProcurementOrder @relation(fields: [procurementOrderId], references: [id])
+  receivedBy         User            @relation("ReceivedProcurements", fields: [receivedById], references: [id])
+  items              ReceivingItem[]
+
+  @@index([receivingNumber])
+  @@index([procurementOrderId])
+  @@index([receivingDate])
+}
+
+model ReceivingItem {
+  id                     String                 @id @default(cuid())
+  procurementReceivingId String
+  productId              String
+  quantityReceived       Int
+  quantityAccepted       Int                    // ONLY accepted quantity increases on-hand stock
+  quantityRejected       Int                    @default(0)
+  rejectionReason        String?                @db.Text
+  batchNumber            String?
+  expiryDate             DateTime?
+  notes                  String?                @db.Text
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+
+  procurementReceiving   ProcurementReceiving   @relation(fields: [procurementReceivingId], references: [id], onDelete: Cascade)
+  product                EquipmentProduct       @relation(fields: [productId], references: [id])
+  trackedItems           TrackedEquipmentItem[]
+
+  @@index([procurementReceivingId])
+  @@index([productId])
+}
+
+model InventoryMovement {
+  id             String                @id @default(cuid())
+  movementNumber String                @unique // e.g. FACSS-MOV-2026-000101
+  productId      String
+  trackedItemId  String?
+  movementType   MovementType
+  quantityBefore Int
+  quantityDelta  Int                   // Positive for inward, negative for outward
+  quantityAfter  Int
+  referenceType  String?               // PROCUREMENT, RECEIVING, SERVICE_REQUEST, DELIVERY, RETURN, MANUAL_ADJUSTMENT
+  referenceId    String?
+  reason         String                @db.Text
+  actorId        String
+  actorName      String
+  timestamp      DateTime              @default(now())
+
+  product        EquipmentProduct      @relation(fields: [productId], references: [id])
+  trackedItem    TrackedEquipmentItem? @relation(fields: [trackedItemId], references: [id], onDelete: SetNull)
+  actor          User                  @relation("MovementsRecorded", fields: [actorId], references: [id])
+
+  @@index([movementNumber])
+  @@index([productId])
+  @@index([trackedItemId])
+  @@index([movementType])
+  @@index([timestamp])
+  @@index([actorId])
+}
+
+model EquipmentInspection {
+  id                 String                @id @default(cuid())
+  inspectionNumber   String                @unique // e.g. FACSS-INSP-2026-000101
+  productId          String
+  trackedItemId      String?
+  inspectionType     InspectionType
+  inspectionDate     DateTime              @default(now())
+  inspectorId        String
+  result             InspectionResult
+  checklistSummary   String?               @db.Text
+  findings           String?               @db.Text
+  correctiveActions  String?               @db.Text
+  nextInspectionDate DateTime?
+  documentUrl        String?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  product            EquipmentProduct      @relation(fields: [productId], references: [id])
+  trackedItem        TrackedEquipmentItem? @relation(fields: [trackedItemId], references: [id], onDelete: SetNull)
+  inspector          User                  @relation("InspectionsConducted", fields: [inspectorId], references: [id])
+
+  @@index([inspectionNumber])
+  @@index([productId])
+  @@index([trackedItemId])
+  @@index([inspectionType])
+  @@index([result])
+  @@index([inspectionDate])
+  @@index([nextInspectionDate])
+}
+
+model EquipmentMaintenance {
+  id              String                @id @default(cuid())
+  productId       String
+  trackedItemId   String?
+  maintenanceType MaintenanceType       @default(PREVENTIVE)
+  status          MaintenanceStatus     @default(COMPLETED)
+  maintenanceDate DateTime              @default(now())
+  performedBy     String
+  result          String?               @db.Text
+  notes           String?               @db.Text
+  nextDueDate     DateTime?
+  cost            Float?
+  documentUrl     String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  product         EquipmentProduct      @relation(fields: [productId], references: [id])
+  trackedItem     TrackedEquipmentItem? @relation(fields: [trackedItemId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([trackedItemId])
+  @@index([maintenanceDate])
+  @@index([nextDueDate])
+}
+
+model SupplyRequestItem {
+  id                String           @id @default(cuid())
+  serviceRequestId  String
+  productId         String
+  quantityRequested Int
+  quantityReserved  Int              @default(0)
+  quantityDelivered Int              @default(0)
+  specifications    String?          @db.Text
+  notes             String?          @db.Text
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  serviceRequest    ServiceRequest   @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  product           EquipmentProduct @relation(fields: [productId], references: [id])
+
+  @@index([serviceRequestId])
+  @@index([productId])
+}
+
+model EquipmentDelivery {
+  id                   String              @id @default(cuid())
+  deliveryNumber       String              @unique // e.g. FACSS-DEL-2026-000101
+  serviceRequestId     String
+  status               DeliveryStatus      @default(DELIVERED)
+  deliveryDate         DateTime            @default(now())
+  deliveredById        String
+  receivedByName       String
+  receivedByPhone      String?
+  receivedByRole       String?
+  deliveryLocation     String?             @db.Text
+  notes                String?             @db.Text
+  handoverDocGenerated Boolean             @default(true)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  serviceRequest       ServiceRequest      @relation(fields: [serviceRequestId], references: [id])
+  deliveredBy          User                @relation("DeliveriesConducted", fields: [deliveredById], references: [id])
+  items                DeliveryItem[]
+
+  @@index([deliveryNumber])
+  @@index([serviceRequestId])
+  @@index([deliveryDate])
+  @@index([status])
+}
+
+model DeliveryItem {
+  id                  String                @id @default(cuid())
+  equipmentDeliveryId String
+  productId           String
+  quantity            Int
+  trackedItemId       String?
+  notes               String?               @db.Text
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  equipmentDelivery   EquipmentDelivery     @relation(fields: [equipmentDeliveryId], references: [id], onDelete: Cascade)
+  product             EquipmentProduct      @relation(fields: [productId], references: [id])
+  trackedItem         TrackedEquipmentItem? @relation(fields: [trackedItemId], references: [id], onDelete: SetNull)
+
+  @@index([equipmentDeliveryId])
+  @@index([productId])
+  @@index([trackedItemId])
+}
+
+model EquipmentReturn {
+  id               String                @id @default(cuid())
+  returnNumber     String                @unique // e.g. FACSS-RET-2026-000101
+  serviceRequestId String?
+  productId        String
+  trackedItemId    String?
+  quantity         Int
+  returnDate       DateTime              @default(now())
+  reason           String                @db.Text
+  receivedByName   String
+  status           ReturnStatus          @default(QUARANTINE)
+  inspectionId     String?
+  notes            String?               @db.Text
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  serviceRequest   ServiceRequest?       @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
+  product          EquipmentProduct      @relation(fields: [productId], references: [id])
+  trackedItem      TrackedEquipmentItem? @relation(fields: [trackedItemId], references: [id], onDelete: SetNull)
+
+  @@index([returnNumber])
+  @@index([serviceRequestId])
+  @@index([productId])
+  @@index([trackedItemId])
+  @@index([status])
+  @@index([returnDate])
+}
+
 

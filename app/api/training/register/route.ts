@@ -70,7 +70,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'الدورة التدريبية غير موجودة' }, { status: 404 });
     }
 
-    // 2. Course must be OPEN for registration
+    // 2. Block public registration on private client courses
+    if (course.courseType === 'PRIVATE_CLIENT') {
+      return NextResponse.json(
+        { error: 'هذه الدورة خاصة بالعميل ولا تتيح التسجيل العام' },
+        { status: 403 }
+      );
+    }
+
+    // 3. Course must be OPEN for registration
     if (course.status !== 'OPEN') {
       return NextResponse.json(
         { error: `التسجيل غير متاح حالياً — حالة الدورة: ${course.status}` },

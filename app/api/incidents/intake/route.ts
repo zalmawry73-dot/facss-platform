@@ -9,6 +9,7 @@ import {
   saveIncidentAttachmentToDisk,
 } from '@/lib/storage/incident-attachments';
 import { logActivity } from '@/lib/audit';
+import { getSlaConfig, calculateIncidentDueAt } from '@/lib/sla-engine';
 
 export const dynamic = 'force-dynamic';
 
@@ -137,8 +138,12 @@ export async function POST(request: Request) {
       }
     }
 
-    // 7. Atomic Database Transaction
-    const year = new Date().getFullYear();
+    // 7. Atomic Database Transaction with SLA Snapshot Calculation
+    const slaConfig = await getSlaConfig();
+    const now = new Date();
+    const { dueAt, slaTargetMinutes } = calculateIncidentDueAt(input.priority, now, slaConfig);
+
+    const year = now.getFullYear();
     const count = await prisma.incident.count();
     const incidentNumber = `FACSS-INC-${year}-${String(count + 1).padStart(6, '0')}`;
 
@@ -153,6 +158,10 @@ export async function POST(request: Request) {
           district: input.district || null,
           incidentDate: new Date(input.incidentDate),
           createdById: session.userId,
+          slaTargetMinutes,
+          dueAt,
+          slaStatus: 'ON_TIME',
+          isEscalated: false,
         },
       });
 

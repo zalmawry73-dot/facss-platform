@@ -102,8 +102,17 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       });
     }
 
-    // Send notification to client if status changed
+    // Send notification to user if status changed
     if (status && existing.userId && existing.status !== status) {
+      const recipient = await prisma.user.findUnique({
+        where: { id: existing.userId },
+        select: { role: true },
+      });
+      const isStaffRecipient = recipient ? isStaffRole(recipient.role) : false;
+      const notifLink = isStaffRecipient
+        ? `/admin/requests?id=${params.id}`
+        : `/portal/client/requests/${params.id}`;
+
       await prisma.notification.create({
         data: {
           userId: existing.userId,
@@ -112,7 +121,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
           messageAr: `تم تحديث حالة طلبكم [${existing.requestNumber}] إلى: ${status}`,
           messageEn: `Your request [${existing.requestNumber}] status is now: ${status}`,
           type: 'INFO',
-          link: `/portal/client/requests/${params.id}`,
+          link: notifLink,
         }
       });
     }

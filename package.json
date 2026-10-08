@@ -2,17 +2,19 @@
   "name": "facss-platform",
   "version": "1.0.0",
   "private": true,
-  "description": "Aden First Center for Security Services and Strategic Studies (FACSS) Corporate Platform",
+  "description": "Integrated Center for Security, Safety & Field Studies Platform",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
-    "db:seed": "node scripts/seed.js",
-    "seed": "prisma db push && node scripts/seed.js"
+    "db:seed": "node scripts/bootstrap_initial.js",
+    "seed": "prisma db push && node scripts/bootstrap_initial.js",
+    "seed:demo": "node -e \"process.env.ALLOW_DEMO_SEED='true'; require('./scripts/seed.js');\""
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1148.0",
     "@prisma/client": "^5.21.1",
     "bcryptjs": "^2.4.3",
     "jose": "^5.9.6",
@@ -23,10 +25,11 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.16.11",
+    "@types/node": "^22.20.4",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "prisma": "^5.21.1",
+    "puppeteer-core": "^25.12.0",
     "typescript": "^5.6.3"
   }
 }

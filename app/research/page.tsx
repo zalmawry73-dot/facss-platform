@@ -15,6 +15,17 @@ import {
 
 export const revalidate = 0;
 
+const AUTHOR_TRANSLATIONS: Record<string, string> = {
+  'وحدة الدراسات الميدانية والتحليل بالمركز المتكامل': 'Field Studies & Analysis Unit (Integrated Center)',
+  'وحدة الأبحاث والمسوحات الميدانية بالمركز المتكامل': 'Field Research & Surveys Unit (Integrated Center)',
+  'فريق السلامة والتقييم الميداني بالمركز المتكامل': 'Safety & Field Assessment Team (Integrated Center)',
+  'هيئة الرصد والتحليل الميداني بالمركز المتكامل': 'Field Monitoring & Analysis Board (Integrated Center)',
+  'وحدة الدراسات الاستراتيجية بمركز عدن الأول (FACSS)': 'Strategic Studies Unit',
+  'وحدة الدراسات الاستراتيجية بمركز عدن الدولي (FACSS)': 'Strategic Studies Unit',
+  'فريق الاستشارات الأمنية وتقييم المخاطر (FACSS)': 'Security Advisory & Risk Assessment Team',
+  'هيئة التحرير والتحليل الاستراتيجي (FACSS)': 'Editorial & Strategic Analysis Board',
+};
+
 export default async function ResearchPage() {
   const cookieStore = cookies();
   const rawLocale = cookieStore.get('facss_locale')?.value;
@@ -88,7 +99,7 @@ export default async function ResearchPage() {
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
               {publications.map((pub) => {
                 const categoryTitle = locale === 'en' ? (pub.category.titleEn || pub.category.titleAr) : pub.category.titleAr;
                 const title = locale === 'en' ? (pub.titleEn || pub.titleAr) : pub.titleAr;
@@ -120,7 +131,7 @@ export default async function ResearchPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <User size={14} style={{ color: 'var(--facss-green-800)' }} />
-                          <span>{pub.author}</span>
+                          <span>{locale === 'en' ? (AUTHOR_TRANSLATIONS[pub.author] || pub.author) : pub.author}</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Eye size={14} style={{ color: 'var(--facss-gold-600)' }} />

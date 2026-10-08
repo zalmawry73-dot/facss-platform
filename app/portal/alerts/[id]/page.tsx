@@ -180,7 +180,7 @@ export default function PortalAlertDetailPage({ params }: AlertDetailProps) {
             <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-800/30 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Lock className="h-3.5 w-3.5 text-emerald-600" />
-                <span>وثيقة منقحة رقمياً وخاضعة للتسليم الداخلي المشفر عبر منصة مركز عدن الدولي</span>
+                <span>وثيقة منقحة رقمياً وخاضعة للتسليم الداخلي المشفر عبر منصة المركز المتكامل</span>
               </div>
               <span className="font-mono text-[10px] text-slate-400">
                 Snapshot v{alert.snapshotVersion}

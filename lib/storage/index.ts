@@ -1,6 +1,13 @@
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+} from '@aws-sdk/client-s3';
 
 export interface StorageDriver {
   upload(buffer: Buffer, key: string, mimeType: string): Promise<string>;
@@ -110,31 +117,37 @@ export class LocalStorageDriver implements StorageDriver {
 
 /**
  * S3-Compatible Private Storage Driver.
- * Configured for AWS S3, Cloudflare R2, or MinIO.
+ * Configured for Cloudflare R2, AWS S3, or MinIO.
  * In production or when STORAGE_DRIVER=s3, fails securely if credentials are missing.
  */
 export class S3StorageDriver implements StorageDriver {
+  private client: S3Client;
   private bucket: string;
-  private endpoint?: string;
-  private region: string;
-  private accessKeyId: string;
-  private secretAccessKey: string;
 
   constructor() {
-    this.bucket = process.env.AWS_S3_BUCKET || '';
-    this.endpoint = process.env.AWS_ENDPOINT;
-    this.region = process.env.AWS_REGION || 'us-east-1';
-    this.accessKeyId = process.env.AWS_ACCESS_KEY_ID || '';
-    this.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || '';
+    this.bucket = process.env.AWS_S3_BUCKET || process.env.R2_BUCKET_NAME || '';
+    const endpoint = process.env.AWS_ENDPOINT || process.env.R2_ENDPOINT || process.env.CLOUDFLARE_R2_ENDPOINT;
+    const region = process.env.AWS_REGION || (endpoint ? 'auto' : 'us-east-1');
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID || '';
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY || '';
 
     // Production / S3 fail-safe check
-    if (!this.bucket || !this.accessKeyId || !this.secretAccessKey) {
+    if (!this.bucket || !accessKeyId || !secretAccessKey) {
       throw new Error(
         'FATAL SECURITY CONFIGURATION: S3StorageDriver initialized without required credentials. ' +
-        'Missing one or more of: AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY. ' +
+        'Missing one or more of: AWS_S3_BUCKET (or R2_BUCKET_NAME), AWS_ACCESS_KEY_ID (or R2_ACCESS_KEY_ID), AWS_SECRET_ACCESS_KEY (or R2_SECRET_ACCESS_KEY). ' +
         'Silent fallback to local storage in production/S3 mode is prohibited.'
       );
     }
+
+    this.client = new S3Client({
+      region,
+      endpoint: endpoint || undefined,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
   }
 
   getDriverName(): string {
@@ -142,20 +155,71 @@ export class S3StorageDriver implements StorageDriver {
   }
 
   async upload(buffer: Buffer, key: string, mimeType: string): Promise<string> {
-    // S3 HTTP REST PUT with AWS signature
-    throw new Error('S3 REST upload: Active cloud credentials required for live S3 operations.');
+    const cleanKey = key.replace(/^[/\\]+/, '');
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: cleanKey,
+      Body: buffer,
+      ContentType: mimeType,
+    });
+    await this.client.send(command);
+    return cleanKey;
   }
 
   async get(key: string): Promise<{ buffer: Buffer; mimeType: string } | null> {
-    throw new Error('S3 REST get: Active cloud credentials required for live S3 operations.');
+    const cleanKey = key.replace(/^[/\\]+/, '');
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: cleanKey,
+      });
+      const response = await this.client.send(command);
+      if (!response.Body) {
+        return null;
+      }
+      const byteArray = await response.Body.transformToByteArray();
+      const mimeType = response.ContentType || 'application/octet-stream';
+      return { buffer: Buffer.from(byteArray), mimeType };
+    } catch (err: any) {
+      if (err.name === 'NoSuchKey' || err.$metadata?.httpStatusCode === 404) {
+        return null;
+      }
+      throw err;
+    }
   }
 
   async delete(key: string): Promise<boolean> {
-    throw new Error('S3 REST delete: Active cloud credentials required for live S3 operations.');
+    const cleanKey = key.replace(/^[/\\]+/, '');
+    try {
+      const command = new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: cleanKey,
+      });
+      await this.client.send(command);
+      return true;
+    } catch (err: any) {
+      if (err.name === 'NoSuchKey' || err.$metadata?.httpStatusCode === 404) {
+        return false;
+      }
+      throw err;
+    }
   }
 
   async exists(key: string): Promise<boolean> {
-    throw new Error('S3 REST exists: Active cloud credentials required for live S3 operations.');
+    const cleanKey = key.replace(/^[/\\]+/, '');
+    try {
+      const command = new HeadObjectCommand({
+        Bucket: this.bucket,
+        Key: cleanKey,
+      });
+      await this.client.send(command);
+      return true;
+    } catch (err: any) {
+      if (err.name === 'NotFound' || err.$metadata?.httpStatusCode === 404) {
+        return false;
+      }
+      throw err;
+    }
   }
 }
 

@@ -163,6 +163,7 @@ export async function POST(request: Request, { params }: RouteContext) {
           visibility: validatedVisibility,
           isConfidential: validatedVisibility === DOCUMENT_VISIBILITIES.INTERNAL_ONLY,
           isArchived: false,
+          qaStatus: validatedType === DOCUMENT_TYPES.FINAL_REPORT ? 'PENDING_QA' : 'NOT_APPLICABLE',
         },
       });
     } catch (dbErr: any) {
@@ -182,8 +183,17 @@ export async function POST(request: Request, { params }: RouteContext) {
     // 9. Lifecycle hooks & Audit Logging
     // Rule: Do NOT change ServiceRequest.status to REPORT_READY. Status remains independent.
     if (validatedType === DOCUMENT_TYPES.FINAL_REPORT && validatedVisibility === DOCUMENT_VISIBILITIES.CLIENT_VISIBLE) {
-      // Notify client if request is owned by user
+      // Notify user if request is owned by user
       if (serviceRequest.userId) {
+        const recipient = await prisma.user.findUnique({
+          where: { id: serviceRequest.userId },
+          select: { role: true },
+        });
+        const isStaffRecipient = recipient ? isStaffRole(recipient.role) : false;
+        const notifLink = isStaffRecipient
+          ? `/admin/requests?id=${requestId}`
+          : `/portal/client/requests/${requestId}`;
+
         await prisma.notification.create({
           data: {
             userId: serviceRequest.userId,
@@ -192,7 +202,7 @@ export async function POST(request: Request, { params }: RouteContext) {
             messageAr: `تم إصدار تقرير التقييم الميداني النهائي لطلبكم [${serviceRequest.requestNumber}]. يمكنك الاطلاع عليه وتنزيله الآن.`,
             messageEn: `The final approved field assessment report for request [${serviceRequest.requestNumber}] is now available.`,
             type: 'SUCCESS',
-            link: `/portal/client/requests/${requestId}`,
+            link: notifLink,
           },
         }).catch(err => console.error('Notification error:', err));
       }

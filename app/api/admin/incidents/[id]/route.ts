@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
-import { ROLES, canAccessRedactedIncident, canAccessOriginalIncident } from '@/lib/rbac';
+import { ROLES, canAccessRedactedIncident } from '@/lib/rbac';
 import { logActivity } from '@/lib/audit';
+import { getSlaConfig, calculateIncidentSlaStatus } from '@/lib/sla-engine';
+import { escalateIncidentInternal } from '@/lib/escalation-engine';
 
 interface RouteContext {
   params: { id: string };
@@ -62,6 +64,9 @@ export async function GET(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: 'البلاغ الميداني غير موجود' }, { status: 404 });
     }
 
+    const slaConfig = await getSlaConfig();
+    const slaCalc = calculateIncidentSlaStatus(incident, slaConfig);
+
     // Response for SUPER_ADMIN
     if (isSuperAdmin) {
       return NextResponse.json({
@@ -70,12 +75,26 @@ export async function GET(request: Request, { params }: RouteContext) {
         incident: {
           ...incident,
           hasOriginalData: Boolean(incident.original),
+          firstResponseAt: incident.firstResponseAt,
+          dueAt: slaCalc.dueAt,
+          closedAt: incident.closedAt,
+          slaTargetMinutes: slaCalc.slaTargetMinutes,
+          slaStatus: slaCalc.status,
+          isEscalated: incident.isEscalated,
+          escalatedAt: incident.escalatedAt,
+          escalationReason: incident.escalationReason,
+          slaDetails: {
+            elapsedMinutes: slaCalc.elapsedMinutes,
+            remainingMinutes: slaCalc.remainingMinutes,
+            isBreached: slaCalc.isBreached,
+            isApproachingBreach: slaCalc.isApproachingBreach,
+            isClosed: slaCalc.isClosed,
+          },
         },
       });
     }
 
     // Response for Staff (Filtered by Triple-Gate)
-    // Must ONLY receive the approved current redacted version, safe attachments, and verifications
     const approvedRedacted = incident.redactedVersions.find((r) => r.isCurrent && r.isApproved);
     if (!approvedRedacted) {
       return NextResponse.json(
@@ -108,6 +127,10 @@ export async function GET(request: Request, { params }: RouteContext) {
         myAssignment,
         verifications: incident.verifications,
         attachments: safeAttachments,
+        firstResponseAt: incident.firstResponseAt,
+        dueAt: slaCalc.dueAt,
+        slaStatus: slaCalc.status,
+        isEscalated: incident.isEscalated,
       },
     });
   } catch (error: any) {
@@ -125,8 +148,34 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       );
     }
 
+    const currentIncident = await prisma.incident.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!currentIncident) {
+      return NextResponse.json({ error: 'البلاغ غير موجود' }, { status: 404 });
+    }
+
     const body = await request.json().catch(() => ({}));
-    const { status, priority } = body;
+    const { status, priority, isEscalated, escalationReason } = body;
+
+    // Check if requesting manual escalation
+    if (isEscalated === true && !currentIncident.isEscalated) {
+      const escResult = await escalateIncidentInternal(
+        params.id,
+        escalationReason || 'تصعيد يدوي مباشر من قبل الإدارة العليا',
+        session.userId,
+        session.fullName
+      );
+      if (!escResult.success) {
+        return NextResponse.json({ error: escResult.error }, { status: 400 });
+      }
+      return NextResponse.json({
+        success: true,
+        message: 'تم تصعيد البلاغ وإشعار الفريق المعني بنجاح',
+        incident: escResult.incident,
+      });
+    }
 
     const updatePayload: any = {};
     const validStatuses = [
@@ -136,6 +185,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       'ASSIGNED',
       'UNDER_VERIFICATION',
       'VERIFIED',
+      'RESOLVED',
       'UNCONFIRMED',
       'CONTRADICTED',
       'DISPROVED',
@@ -147,11 +197,31 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       'ARCHIVED',
     ];
 
+    const now = new Date();
+
     if (status) {
       if (!validStatuses.includes(status)) {
         return NextResponse.json({ error: `حالة غير صالحة: ${status}` }, { status: 400 });
       }
       updatePayload.status = status;
+
+      // 1. First Response Timestamp: If transitioning away from RECEIVED and firstResponseAt is not yet set
+      if (status !== 'RECEIVED' && !currentIncident.firstResponseAt) {
+        updatePayload.firstResponseAt = now;
+      }
+
+      // 2. Closed Timestamp: If transitioning to CLOSED
+      if (status === 'CLOSED') {
+        updatePayload.closedAt = now;
+        // Determine SLA status at closure
+        if (currentIncident.dueAt) {
+          const respTime = currentIncident.firstResponseAt || now;
+          updatePayload.slaStatus = respTime > currentIncident.dueAt ? 'CLOSED_BREACHED' : 'CLOSED_ON_TIME';
+        }
+      } else if (currentIncident.status === 'CLOSED' && status !== 'CLOSED') {
+        // Reopening previously closed incident
+        updatePayload.closedAt = null;
+      }
     }
 
     if (priority) {

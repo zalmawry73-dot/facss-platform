@@ -23,7 +23,7 @@ export async function POST(request: Request, { params }: RouteContext) {
 
     const incident = await prisma.incident.findUnique({
       where: { id: params.id },
-      select: { id: true, incidentNumber: true, status: true },
+      select: { id: true, incidentNumber: true, status: true, firstResponseAt: true },
     });
 
     if (!incident) {
@@ -99,11 +99,18 @@ export async function POST(request: Request, { params }: RouteContext) {
         },
       });
 
-      // Update incident status to ASSIGNED if currently RECEIVED, TRIAGED, or REDACTED
+      const incidentUpdateData: any = {};
       if (['RECEIVED', 'TRIAGED', 'REDACTED'].includes(incident.status)) {
+        incidentUpdateData.status = 'ASSIGNED';
+      }
+      if (!incident.firstResponseAt) {
+        incidentUpdateData.firstResponseAt = new Date();
+      }
+
+      if (Object.keys(incidentUpdateData).length > 0) {
         await tx.incident.update({
           where: { id: params.id },
-          data: { status: 'ASSIGNED' },
+          data: incidentUpdateData,
         });
       }
 

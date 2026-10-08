@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const courses = await prisma.course.findMany({
-      where: { status: 'OPEN' },
+      where: { status: 'OPEN', courseType: 'PUBLIC' },
       include: {
         category: { select: { id: true, titleAr: true, titleEn: true } },
         registrations: {

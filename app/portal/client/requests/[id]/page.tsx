@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { requireAuth, STAFF_ROLES } from '@/lib/rbac';
 import StatusBadge from '@/components/StatusBadge';
@@ -15,6 +16,8 @@ import {
   FolderLock
 } from 'lucide-react';
 import ClientDocumentUpload from '@/components/portal/ClientDocumentUpload';
+import ClientFeedbackForm from '@/components/portal/ClientFeedbackForm';
+import ClientReportAcceptanceButton from '@/components/portal/ClientReportAcceptanceButton';
 
 export const revalidate = 0;
 
@@ -25,6 +28,9 @@ interface PageProps {
 }
 
 export default async function ClientRequestDetailPage({ params }: PageProps) {
+  const cookieStore = cookies();
+  const isAr = cookieStore.get('facss_locale')?.value !== 'en';
+
   // Layer 2 server-side auth check
   const user = await requireAuth(`/portal/client/requests/${params.id}`);
 
@@ -45,6 +51,7 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
         },
         orderBy: { createdAt: 'desc' },
       },
+      feedback: true,
     },
   });
 
@@ -99,6 +106,57 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
 
   return (
     <div>
+      {/* Staff Operational Notice Banner */}
+      {isStaff && (
+        <div
+          style={{
+            background: 'linear-gradient(90deg, rgba(201, 162, 39, 0.12), rgba(13, 26, 18, 0.95))',
+            border: '1px solid var(--facss-gold-500)',
+            borderRadius: '12px',
+            padding: '1rem 1.25rem',
+            marginBottom: '1.75rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '8px',
+                background: 'rgba(201, 162, 39, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--facss-gold-400)',
+                flexShrink: 0,
+              }}
+            >
+              <Shield size={22} />
+            </div>
+            <div>
+              <strong style={{ color: '#FFFFFF', fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem' }}>
+                أنت تستعرض هذا الطلب بصلاحية مسؤول نظام ({user.role})
+              </strong>
+              <span style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.75)' }}>
+                هذه الصفحة هي واجهة العميل. لإدارة الطلب، تحديث الحالة، وتصدير التقارير عبر الشريط الجانبي للوحة التحكم:
+              </span>
+            </div>
+          </div>
+          <Link
+            href={`/admin/requests?id=${req.id}`}
+            className="btn btn-gold btn-sm"
+            style={{ fontWeight: 800, whiteSpace: 'nowrap' }}
+          >
+            <span>الانتقال لإدارة الطلب في لوحة التحكم الإدارية</span>
+          </Link>
+        </div>
+      )}
+
       {/* Back button & Title */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
@@ -109,14 +167,24 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
             <StatusBadge type="serviceRequest" status={req.status} />
           </div>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            {req.service.titleAr} • {req.organization}
+            {(isAr ? req.service.titleAr : ((req.service as any).titleEn || req.service.titleAr))} • {req.organization}
           </span>
         </div>
 
-        <Link href="/portal/client/requests" className="btn btn-outline btn-sm">
-          <span>العودة لسجل الطلبات</span>
-          <ArrowLeft size={16} />
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          {isStaff && (
+            <Link href={`/admin/requests?id=${req.id}`} className="btn btn-gold btn-sm">
+              <span>إدارة الطلب (لوحة الإدارة)</span>
+            </Link>
+          )}
+          <Link
+            href={isStaff ? '/admin/requests' : '/portal/client/requests'}
+            className="btn btn-outline btn-sm"
+          >
+            <span>{isStaff ? 'العودة لطلبات الإدارة' : 'العودة لسجل الطلبات'}</span>
+            <ArrowLeft size={16} />
+          </Link>
+        </div>
       </div>
 
       {/* Visual Workflow Pipeline */}
@@ -185,7 +253,7 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
           </div>
 
           <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', lineHeight: 1.6 }}>
-            تم إنجاز التقييم الميداني وإصدار الوثيقة النهائية المعتمدة من قبل خبراء مركز عدن الدولي للسلامة والدراسات الميدانية. يمكنك تنزيل النسخة الرقمية عبر الرابط المشفر أدناه:
+            تم إنجاز التقييم الميداني وإصدار الوثيقة النهائية المعتمدة من قبل خبراء المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية. يمكنك تنزيل النسخة الرقمية عبر الرابط المشفر أدناه:
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -216,21 +284,29 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                <a 
-                  href={`/api/documents/${report.id}/download`} 
-                  className="btn btn-gold btn-sm" 
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
-                >
-                  <Download size={15} />
-                  <span>تنزيل التقرير الأمني الرسمي</span>
-                </a>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <ClientReportAcceptanceButton
+                    documentId={report.id}
+                    initialQaStatus={report.qaStatus}
+                    initialAcceptedAt={report.clientAcceptedAt ? report.clientAcceptedAt.toISOString() : null}
+                    locale={isAr ? 'ar' : 'en'}
+                  />
+                  <a 
+                    href={`/api/documents/${report.id}/download`} 
+                    className="btn btn-gold btn-sm" 
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+                  >
+                    <Download size={15} />
+                    <span>تنزيل التقرير الأمني الرسمي</span>
+                  </a>
+                </div>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
         {/* Left Column: Scope & Timeline Notes */}
         <div style={{ flex: 2 }}>
           {/* Scope Card */}
@@ -424,6 +500,22 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* C11: Client Feedback Card on Completed Requests */}
+      {req.status === 'COMPLETED' && isOwner && (
+        <ClientFeedbackForm
+          requestId={req.id}
+          existingFeedback={req.feedback ? {
+            overallRating: req.feedback.overallRating,
+            serviceQuality: req.feedback.serviceQuality,
+            timeliness: req.feedback.timeliness,
+            communication: req.feedback.communication,
+            comment: req.feedback.comment,
+            submittedAt: req.feedback.submittedAt.toISOString(),
+          } : null}
+          locale={isAr ? 'ar' : 'en'}
+        />
+      )}
     </div>
   );
 }

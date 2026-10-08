@@ -5,6 +5,7 @@ export interface ValidationResult<T> {
 }
 
 export const VALID_INCIDENT_CATEGORIES = [
+  // Historical Categories
   'ARMED_CONFLICT_TACTICAL',
   'HUMANITARIAN_ACCESS_DENIAL',
   'PHYSICAL_ATTACK_THREAT',
@@ -12,6 +13,14 @@ export const VALID_INCIDENT_CATEGORIES = [
   'CIVIL_UNREST_ROADBLOCK',
   'DETENTION_HARASSMENT',
   'NATURAL_DISASTER_ENVIRONMENTAL',
+  // Package B: Security & Safety Operational Categories
+  'THEFT',
+  'INTRUSION',
+  'FIRE',
+  'INJURY',
+  'SAFETY_INCIDENT',
+  'VEHICLE_INCIDENT',
+  'SECURITY_THREAT',
 ] as const;
 
 export type IncidentCategoryType = typeof VALID_INCIDENT_CATEGORIES[number];

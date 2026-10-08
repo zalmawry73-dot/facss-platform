@@ -38,6 +38,11 @@ export async function GET() {
             endDate: true,
             trainerName: true,
             hasCertificate: true,
+            courseType: true,
+            deliveryMode: true,
+            requiresPreEval: true,
+            requiresPostEval: true,
+            minAttendancePct: true,
           },
         },
         certificate: {
@@ -48,6 +53,29 @@ export async function GET() {
             issueDate: true,
             grade: true,
             isRevoked: true,
+          },
+        },
+        evaluations: {
+          select: {
+            id: true,
+            type: true,
+            score: true,
+            maxScore: true,
+            status: true,
+          },
+        },
+        attendanceRecords: {
+          select: {
+            id: true,
+            sessionDate: true,
+            status: true,
+          },
+        },
+        satisfactionEvaluation: {
+          select: {
+            id: true,
+            overallRating: true,
+            submittedAt: true,
           },
         },
       },

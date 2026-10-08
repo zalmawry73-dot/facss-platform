@@ -11,6 +11,7 @@ interface Course {
   titleAr: string;
   titleEn: string;
   descriptionAr: string;
+  descriptionEn?: string;
   duration: string;
   location: string;
   capacity: number;
@@ -21,6 +22,51 @@ interface Course {
   category: { titleAr: string; titleEn?: string };
   _count?: { registrations: number };
   activeRegistrations?: number;
+}
+
+const DURATION_TRANSLATIONS: Record<string, string> = {
+  '4 أيام (32 ساعة تدريبية تطبيقية)': '4 Days (32 Practical Training Hours)',
+  '3 أيام (24 ساعة تدريبية)': '3 Days (24 Training Hours)',
+  '5 أيام (40 ساعة تدريبية)': '5 Days (40 Training Hours)',
+  'أسبوعان (60 ساعة تدريبية)': '2 Weeks (60 Training Hours)',
+};
+
+const LOCATION_TRANSLATIONS: Record<string, string> = {
+  'مركز التدريب والتأهيل الميداني - عدن': 'Field Training & Capacity Center - Aden',
+  'قاعات المحاكاة بمركز الأمن والسلامة - عدن': 'Security & Safety Simulation Halls - Aden',
+  'مركز التدريب الميداني التابع للمركز - عدن': 'Center Field Training Academy - Aden',
+  'مقر المركز - عدن': 'Center HQ - Aden',
+  'قاعة المؤتمرات الرئيسية': 'Main Conference Hall',
+  'ميدان التدريب التكتيكي - عدن': 'Tactical Training Grounds - Aden',
+  'مركز التدريب الميداني التابع لـ AICSFA - عدن': 'Center Field Training Academy - Aden',
+  'قاعات المحاكاة الطبية بمركز AICSFA - عدن': 'Security & Safety Simulation Halls - Aden',
+};
+
+function formatCourseDuration(val: string, isAr: boolean): string {
+  if (isAr) return val;
+  if (DURATION_TRANSLATIONS[val]) return DURATION_TRANSLATIONS[val];
+  return val
+    .replace(/(\d+)\s*أيام/g, '$1 Days')
+    .replace(/(\d+)\s*يوم/g, '$1 Day')
+    .replace(/(\d+)\s*ساعة تدريبية تطبيقية/g, '$1 Practical Training Hours')
+    .replace(/(\d+)\s*ساعة تدريبية/g, '$1 Training Hours')
+    .replace(/(\d+)\s*ساعة/g, '$1 Hours')
+    .replace(/أسبوعان/g, '2 Weeks')
+    .replace(/(\d+)\s*أسابيع/g, '$1 Weeks');
+}
+
+function formatCourseLocation(val: string, isAr: boolean): string {
+  if (isAr) return val;
+  if (LOCATION_TRANSLATIONS[val]) return LOCATION_TRANSLATIONS[val];
+  return val
+    .replace(/مركز التدريب الميداني التابع لـ\s*(AICSFA)?/g, 'Field Training Academy - ')
+    .replace(/قاعات المحاكاة الطبية بمركز\s*(AICSFA)?/g, 'Medical Simulation Halls - ')
+    .replace(/قاعات المحاكاة بمركز\s*/g, 'Simulation Halls at ')
+    .replace(/قاعات المحاكاة\s*/g, 'Simulation Halls ')
+    .replace(/ميدان التدريب التكتيكي\s*/g, 'Tactical Training Grounds ')
+    .replace(/مركز تدريب\s*/g, 'Training Center ')
+    .replace(/بمركز\s*/g, 'at ')
+    .replace(/عدن/g, 'Aden');
 }
 
 interface MyRegistration {
@@ -164,7 +210,7 @@ export default function TraineeCoursesPage() {
           </Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
           {courses.map((c) => {
             const myReg = getRegistrationForCourse(c.id);
             const remainingSeats = c.capacity - (c.activeRegistrations || 0);
@@ -197,17 +243,17 @@ export default function TraineeCoursesPage() {
                   )}
 
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '1.2rem' }}>
-                    {c.descriptionAr}
+                    {isAr ? c.descriptionAr : (c.descriptionEn || c.descriptionAr)}
                   </p>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', padding: '0.85rem', background: 'var(--surface-sunken)', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', border: '1px solid var(--border-color)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Clock size={14} style={{ color: 'var(--facss-gold-600)' }} />
-                      <span>{c.duration}</span>
+                      <span>{formatCourseDuration(c.duration, isAr)}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <MapPin size={14} style={{ color: 'var(--facss-gold-600)' }} />
-                      <span>{c.location}</span>
+                      <span>{formatCourseLocation(c.location, isAr)}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Users size={14} style={{ color: 'var(--facss-green-700)' }} />

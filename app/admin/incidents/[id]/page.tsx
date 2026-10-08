@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { ROLES, canAccessRedactedIncident } from '@/lib/rbac';
-import AdminClientBar from '@/app/admin/AdminClientBar';
 import IncidentDetailManager from '@/components/admin/IncidentDetailManager';
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
 }
 
 export const metadata = {
-  title: 'ملف وتفاصيل البلاغ الميداني | مركز عدن الدولي للسلامة',
+  title: 'ملف وتفاصيل البلاغ الميداني | المركز المتكامل لخدمات الأمن والسلامة',
 };
 
 export default async function IncidentDetailPage({ params }: Props) {
@@ -38,8 +37,7 @@ export default async function IncidentDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="container-wide" style={{ padding: '2rem 1.5rem 4rem' }}>
-      <AdminClientBar user={{ fullName: session.fullName, role: session.role }} />
+    <div>
       <IncidentDetailManager
         incidentId={params.id}
         currentUserRole={session.role}

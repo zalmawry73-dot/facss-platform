@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { getStorageDriver } from './index';
 
 const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
 const FORBIDDEN_EXTENSIONS = [
@@ -249,14 +250,34 @@ export function stripMetadataIfSupported(
 
 /**
  * Saves an attachment to private storage outside /public.
+ * Dispatches to active StorageDriver (S3/R2 or Local).
  */
 export async function saveIncidentAttachmentToDisk(
   buffer: Buffer,
   originalFileName: string
 ): Promise<{ storageKey: string; fileSize: number; fullPath: string }> {
-  const baseDir = getIncidentStorageDir();
+  const driver = getStorageDriver();
   const ext = path.extname(originalFileName).toLowerCase() || '.bin';
   const uniqueKey = `inc_att_${crypto.randomUUID()}${ext}`;
+
+  if (driver.getDriverName() === 'S3_COMPATIBLE_PRIVATE') {
+    let mimeType = 'application/octet-stream';
+    if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg';
+    else if (ext === '.png') mimeType = 'image/png';
+    else if (ext === '.webp') mimeType = 'image/webp';
+    else if (ext === '.pdf') mimeType = 'application/pdf';
+
+    const s3Key = `incidents/${uniqueKey}`;
+    await driver.upload(buffer, s3Key, mimeType);
+    return {
+      storageKey: s3Key,
+      fileSize: buffer.length,
+      fullPath: s3Key,
+    };
+  }
+
+  // Local filesystem
+  const baseDir = getIncidentStorageDir();
   const fullPath = path.join(baseDir, uniqueKey);
 
   // Assert containment
@@ -274,12 +295,23 @@ export async function saveIncidentAttachmentToDisk(
 }
 
 /**
- * Retrieves an attachment buffer from private disk.
+ * Retrieves an attachment buffer from private storage (S3/R2 or Local).
  */
 export async function getIncidentAttachmentFromDisk(
   storageKey: string
 ): Promise<Buffer | null> {
-  if (!storageKey || typeof storageKey !== 'string' || storageKey.includes('..') || storageKey.includes('/') || storageKey.includes('\\')) {
+  if (!storageKey || typeof storageKey !== 'string' || storageKey.includes('..')) {
+    throw new Error('SECURITY VIOLATION: Invalid storage key path traversal attempt.');
+  }
+
+  const driver = getStorageDriver();
+  if (driver.getDriverName() === 'S3_COMPATIBLE_PRIVATE') {
+    const file = await driver.get(storageKey);
+    return file ? file.buffer : null;
+  }
+
+  // Local filesystem
+  if (storageKey.includes('/') || storageKey.includes('\\')) {
     throw new Error('SECURITY VIOLATION: Invalid storage key path traversal attempt.');
   }
 

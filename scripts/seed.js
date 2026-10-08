@@ -3,6 +3,15 @@ const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
+if (process.env.ALLOW_DEMO_SEED !== 'true') {
+  console.error('\n[SAFETY BLOCK]: Demo seeding is disabled in this Clean Release environment.');
+  console.error('To verify or bootstrap system master configuration safely without test data, use:');
+  console.error('  node scripts/bootstrap_initial.js\n');
+  console.error('If you ever intentionally need to populate fake demo test data, run with:');
+  console.error('  ALLOW_DEMO_SEED=true node scripts/seed.js\n');
+  process.exit(1);
+}
+
 async function main() {
   console.log('--- Seeding AICSFA Database (PostgreSQL) ---');
   console.log('Aden International Center for Safety & Field Assessments');

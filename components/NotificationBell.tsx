@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Bell, 
   Check, 
@@ -15,6 +16,17 @@ import {
   Clock,
   ExternalLink
 } from 'lucide-react';
+
+const STAFF_ROLES = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'STAFF',
+  'CONTENT_MANAGER',
+  'SERVICE_MANAGER',
+  'TRAINING_MANAGER',
+  'RESEARCH_MANAGER',
+  'EMPLOYEE',
+];
 
 interface NotificationItem {
   id: string;
@@ -29,9 +41,56 @@ interface NotificationItem {
   createdAt: string;
 }
 
+/**
+ * Intelligent role/context-aware notification link resolver.
+ * When viewed from the Admin Panel or by Staff members, transforms client-portal
+ * paths into administrative paths to preserve the admin shell and sidebar navigation.
+ */
+export function resolveNotificationLink(link: string | null, isAdminContext: boolean): string | null {
+  if (!link) return null;
+  if (!isAdminContext) return link;
+
+  // 1. Service requests: /portal/client/requests/:id -> /admin/requests?id=:id
+  const requestMatch = link.match(/^\/portal\/client\/requests\/([a-zA-Z0-9_-]+)$/);
+  if (requestMatch) {
+    return `/admin/requests?id=${requestMatch[1]}`;
+  }
+  if (link === '/portal/client/requests' || link.startsWith('/portal/client/requests?')) {
+    return '/admin/requests';
+  }
+
+  // 2. Alerts: /portal/alerts/:id -> /admin/alerts/:id
+  const alertMatch = link.match(/^\/portal\/alerts\/([a-zA-Z0-9_-]+)$/);
+  if (alertMatch) {
+    return `/admin/alerts/${alertMatch[1]}`;
+  }
+  if (link === '/portal/alerts' || link.startsWith('/portal/alerts?')) {
+    return '/admin/alerts';
+  }
+
+  // 3. Training & Certificates: /portal/trainee/... -> /admin/training
+  if (link.startsWith('/portal/trainee')) {
+    return '/admin/training';
+  }
+
+  // 4. Research: /portal/client/research/:id or /portal/client/research -> /admin/research
+  if (link.startsWith('/portal/client/research')) {
+    return '/admin/research';
+  }
+
+  // 5. Field intake: /portal/field/intake -> /admin/incidents
+  if (link.startsWith('/portal/field')) {
+    return '/admin/incidents';
+  }
+
+  return link;
+}
+
 export default function NotificationBell() {
   const { locale } = useLanguage();
+  const { user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -40,6 +99,9 @@ export default function NotificationBell() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAr = locale === 'ar';
+  const isStaff = user?.role ? STAFF_ROLES.includes(user.role as any) : false;
+  const isInAdminShell = Boolean(pathname?.startsWith('/admin'));
+  const isAdminContext = isInAdminShell || isStaff;
 
   const fetchNotifications = async () => {
     try {
@@ -109,7 +171,8 @@ export default function NotificationBell() {
 
       if (link) {
         setIsOpen(false);
-        router.push(link);
+        const targetLink = resolveNotificationLink(link, isAdminContext) || link;
+        router.push(targetLink);
       }
     } catch (err) {
       console.error('Failed to mark notification as read:', err);

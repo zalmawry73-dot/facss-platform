@@ -1,11 +1,11 @@
+import React, { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { ROLES, CAPABILITIES, getUserCapabilities } from '@/lib/rbac';
-import AdminClientBar from '@/app/admin/AdminClientBar';
 import RiskRegisterManager from '@/components/admin/RiskRegisterManager';
 
 export const metadata = {
-  title: 'سجل المخاطر التشغيلية الميدانية | مركز عدن الدولي للسلامة',
+  title: 'سجل المخاطر التشغيلية الميدانية | المركز المتكامل لخدمات الأمن والسلامة',
   description: 'إدارة وتقييم المخاطر التشغيلية الميدانية ومتابعة مصفوفات التخفيف والمعالجة',
 };
 
@@ -39,17 +39,18 @@ export default async function AdminRisksPage() {
   const canAssess = isSuperAdmin || canManage || userCaps.includes(CAPABILITIES.ASSESS_RISK);
 
   return (
-    <div className="container-wide" style={{ padding: '2rem 1.5rem 4rem' }}>
-      <AdminClientBar user={{ fullName: session.fullName, role: session.role }} />
-      <RiskRegisterManager
-        currentUser={{
-          id: session.userId,
-          fullName: session.fullName,
-          role: session.role,
-          canManage,
-          canAssess,
-        }}
-      />
+    <div>
+      <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>جارٍ تحميل سجل المخاطر التشغيلية...</div>}>
+        <RiskRegisterManager
+          currentUser={{
+            id: session.userId,
+            fullName: session.fullName,
+            role: session.role,
+            canManage,
+            canAssess,
+          }}
+        />
+      </Suspense>
     </div>
   );
 }

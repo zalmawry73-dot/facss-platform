@@ -100,8 +100,24 @@ export async function POST(request: Request) {
     const registration = await prisma.trainingRegistration.findUnique({
       where: { id: registrationId },
       include: {
-        course: { select: { id: true, titleAr: true, titleEn: true, hasCertificate: true } },
+        course: {
+          select: {
+            id: true,
+            titleAr: true,
+            titleEn: true,
+            hasCertificate: true,
+            minAttendancePct: true,
+            requiresPostEval: true,
+            sessions: { select: { id: true } },
+          },
+        },
         certificate: true,
+        attendanceRecords: {
+          select: { sessionId: true, status: true },
+        },
+        evaluations: {
+          where: { type: 'POST' },
+        },
       },
     });
 
@@ -131,6 +147,36 @@ export async function POST(request: Request) {
         { error: `تم إصدار شهادة مسبقاً لهذا التسجيل: ${registration.certificate.certificateNumber}` },
         { status: 409 }
       );
+    }
+
+    // 5. Eligibility Check: Minimum Attendance Percentage
+    const totalSessions = registration.course.sessions.length;
+    if (totalSessions > 0) {
+      const presentCount = registration.attendanceRecords.filter((a) => a.status === 'PRESENT').length;
+      const attendancePct = Math.round((presentCount / totalSessions) * 100);
+      const minRequired = registration.course.minAttendancePct ?? 75;
+
+      if (attendancePct < minRequired) {
+        return NextResponse.json(
+          {
+            error: `المتدرب غير مؤهل للحصول على الشهادة: نسبة الحضور الفعلية (${attendancePct}%) أقل من الحد الأدنى المطلوب (${minRequired}%). جلسات الحضور: ${presentCount} من ${totalSessions}.`,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 6. Eligibility Check: Post-Evaluation Requirement
+    if (registration.course.requiresPostEval) {
+      const postEval = registration.evaluations[0];
+      if (!postEval || postEval.status !== 'COMPLETED') {
+        return NextResponse.json(
+          {
+            error: 'المتدرب غير مؤهل للحصول على الشهادة: تتطلب هذه الدورة إكمال التقييم البعدي (Post-Evaluation) قبل إصدار الشهادة.',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // 5. Generate unique identifiers

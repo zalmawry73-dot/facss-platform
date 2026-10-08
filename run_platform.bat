@@ -1,10 +1,10 @@
 @echo off
 chcp 65001 >nul
-title FACSS Platform Runner - مركز عدن الأول
+title FACSS Platform Runner - المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية
 
 echo =====================================================================
-echo    تشغيل منصة مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية
-echo    FACSS Corporate Platform — Starting Services
+echo    تشغيل منصة المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية
+echo    Integrated Center for Security, Safety & Field Studies — Starting
 echo =====================================================================
 echo.
 

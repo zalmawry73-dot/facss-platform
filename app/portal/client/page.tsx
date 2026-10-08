@@ -18,6 +18,12 @@ import {
   Plus
 } from 'lucide-react';
 
+const PRIORITY_LABEL: Record<string, { ar: string; en: string }> = {
+  NORMAL: { ar: 'عادية', en: 'Normal' },
+  HIGH: { ar: 'عالية', en: 'High' },
+  URGENT: { ar: 'عاجلة', en: 'Urgent' },
+};
+
 export const revalidate = 0;
 
 export default async function ClientDashboardPage() {
@@ -219,7 +225,7 @@ export default async function ClientDashboardPage() {
                         <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{serviceTitle}</td>
                         <td>
                           <span className={`badge ${req.priority === 'URGENT' ? 'badge-red' : req.priority === 'HIGH' ? 'badge-yellow' : 'badge-gold'}`}>
-                            {req.priority}
+                            {PRIORITY_LABEL[req.priority]?.[locale] ?? req.priority}
                           </span>
                         </td>
                         <td>

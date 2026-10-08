@@ -132,10 +132,10 @@ export default function TraineeCertificatesPage() {
                     style={{ width: '80px', height: '80px', marginInline: 'auto', marginBottom: '1rem', objectFit: 'contain' }}
                   />
                   <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--facss-green-950)', margin: '0 0 0.3rem 0' }}>
-                    {isAr ? 'مركز عدن الدولي للسلامة والدراسات الميدانية' : 'Aden International Center for Safety and Field Assessment'}
+                    {isAr ? 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية' : 'Integrated Center for Security, Safety & Field Studies'}
                   </h2>
                   <h3 style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: 0 }}>
-                    Aden International Center for Safety and Field Assessment
+                    Integrated Center for Security, Safety & Field Studies
                   </h3>
                   <span className="badge badge-gold" style={{ marginTop: '1rem', fontSize: '0.85rem', padding: '0.35rem 1.2rem' }}>
                     {isAr ? 'شهادة إتمام واجتياز دورة تدريبية' : 'Training Course Completion Certificate'}
@@ -146,8 +146,8 @@ export default function TraineeCertificatesPage() {
                 <div style={{ textAlign: 'center', maxWidth: '720px', marginInline: 'auto', marginBottom: '2.5rem' }}>
                   <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', marginBottom: '0.8rem' }}>
                     {isAr
-                      ? 'يشهد مركز عدن الدولي للسلامة والدراسات الميدانية بأن المتدرب:'
-                      : 'Aden International Center for Safety and Field Assessment certifies that:'}
+                      ? 'يشهد المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية بأن المتدرب:'
+                      : 'Integrated Center for Security, Safety & Field Studies certifies that:'}
                   </p>
                   <h3 style={{
                     fontSize: '1.85rem',

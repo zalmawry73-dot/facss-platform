@@ -45,13 +45,17 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   let targetSectors: string[] = [];
   let processSteps: string[] = [];
 
-  try { features = JSON.parse(service.featuresAr || '[]'); } catch { features = []; }
-  try { targetSectors = JSON.parse(service.targetSectorsAr || '[]'); } catch { targetSectors = []; }
-  try { processSteps = JSON.parse(service.processAr || '[]'); } catch { processSteps = []; }
+  const rawFeatures = isAr ? service.featuresAr : (service.featuresEn || service.featuresAr);
+  const rawSectors = isAr ? service.targetSectorsAr : (service.targetSectorsEn || service.targetSectorsAr);
+  const rawProcess = isAr ? service.processAr : (service.processEn || service.processAr);
+
+  try { features = JSON.parse(rawFeatures || '[]'); } catch { features = []; }
+  try { targetSectors = JSON.parse(rawSectors || '[]'); } catch { targetSectors = []; }
+  try { processSteps = JSON.parse(rawProcess || '[]'); } catch { processSteps = []; }
 
   const catTitle = isAr ? service.category.titleAr : (service.category.titleEn || service.category.titleAr);
   const title = isAr ? service.titleAr : (service.titleEn || service.titleAr);
-  const subtitle = isAr ? service.titleEn : service.titleAr;
+  const subtitle = isAr ? service.titleEn : null;
 
   return (
     <div>
@@ -90,30 +94,16 @@ export default async function ServiceDetailPage({ params }: PageProps) {
       {/* Main Content */}
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem' }}>
             {/* Left/Main Column: Full Description & Features */}
             <div style={{ flex: 2 }}>
               <div className="card" style={{ marginBottom: '2.5rem' }}>
                 <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1rem' }}>
                   {isAr ? 'وصف ونطاق الخدمة' : 'Service Scope & Operational Overview'}
                 </h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1.02rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1.02rem', lineHeight: 1.8, margin: 0 }}>
                   {isAr ? service.fullDescAr : (service.fullDescEn || service.fullDescAr)}
                 </p>
-                {isAr && service.fullDescEn && (
-                  <div style={{ padding: '1rem', background: 'var(--surface-sunken)', borderRadius: '8px', borderInlineStart: '4px solid var(--facss-gold-600)' }}>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0, fontStyle: 'italic' }}>
-                      {service.fullDescEn}
-                    </p>
-                  </div>
-                )}
-                {!isAr && service.fullDescAr && (
-                  <div style={{ padding: '1rem', background: 'var(--surface-sunken)', borderRadius: '8px', borderInlineStart: '4px solid var(--facss-gold-600)' }}>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0, fontStyle: 'italic' }}>
-                      {service.fullDescAr}
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* Features Grid */}

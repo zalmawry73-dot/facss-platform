@@ -28,6 +28,16 @@ export interface CourseInput {
   requirementsAr?: string | null;
   requirementsEn?: string | null;
   hasCertificate?: boolean;
+  requiresPreEval?: boolean;
+  requiresPostEval?: boolean;
+  minAttendancePct?: number;
+  courseType?: 'PUBLIC' | 'PRIVATE_CLIENT';
+  deliveryMode?: string;
+  clientId?: string | null;
+  objectivesAr?: string | null;
+  objectivesEn?: string | null;
+  targetAudienceAr?: string | null;
+  targetAudienceEn?: string | null;
 }
 
 export function validateCourseInput(body: any, isPartial = false): ValidationResult<CourseInput> {
@@ -128,6 +138,16 @@ export function validateCourseInput(body: any, isPartial = false): ValidationRes
       requirementsAr: body.requirementsAr ? body.requirementsAr.trim() : null,
       requirementsEn: body.requirementsEn ? body.requirementsEn.trim() : null,
       hasCertificate: body.hasCertificate !== undefined ? Boolean(body.hasCertificate) : true,
+      requiresPreEval: body.requiresPreEval !== undefined ? Boolean(body.requiresPreEval) : false,
+      requiresPostEval: body.requiresPostEval !== undefined ? Boolean(body.requiresPostEval) : false,
+      minAttendancePct: body.minAttendancePct !== undefined ? Number(body.minAttendancePct) : 75,
+      courseType: body.courseType === 'PRIVATE_CLIENT' ? 'PRIVATE_CLIENT' : 'PUBLIC',
+      deliveryMode: body.deliveryMode ? String(body.deliveryMode).trim() : 'IN_PERSON',
+      clientId: body.clientId ? String(body.clientId).trim() : null,
+      objectivesAr: body.objectivesAr ? String(body.objectivesAr).trim() : null,
+      objectivesEn: body.objectivesEn ? String(body.objectivesEn).trim() : null,
+      targetAudienceAr: body.targetAudienceAr ? String(body.targetAudienceAr).trim() : null,
+      targetAudienceEn: body.targetAudienceEn ? String(body.targetAudienceEn).trim() : null,
     },
   };
 }
@@ -136,7 +156,7 @@ export function validateCourseInput(body: any, isPartial = false): ValidationRes
 // 2. RESEARCH PUBLICATION VALIDATION
 // ----------------------------------------------------
 const VALID_RESEARCH_VISIBILITIES = ['PUBLIC', 'CLIENT_ONLY'] as const;
-const VALID_RESEARCH_STATUSES = ['DRAFT', 'PUBLISHED', 'ARCHIVED'] as const;
+const VALID_RESEARCH_STATUSES = ['DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'PUBLISHED', 'ARCHIVED'] as const;
 
 export interface ResearchInput {
   titleAr: string;
@@ -212,7 +232,7 @@ export function validateResearchInput(body: any, isPartial = false): ValidationR
 
   if (!isPartial || body.status !== undefined) {
     if (!body.status || !VALID_RESEARCH_STATUSES.includes(body.status)) {
-      errors.status = 'حالة النشر يجب أن تكون DRAFT أو PUBLISHED أو ARCHIVED';
+      errors.status = `حالة النشر غير صالحة. الحالات المتاحة: ${VALID_RESEARCH_STATUSES.join(', ')}`;
     }
   }
 
@@ -242,18 +262,38 @@ export function validateResearchInput(body: any, isPartial = false): ValidationR
 // ----------------------------------------------------
 // 3. CONTACT MESSAGE STATUS VALIDATION
 // ----------------------------------------------------
-const VALID_MESSAGE_STATUSES = ['UNREAD', 'READ', 'REPLIED', 'ARCHIVED'] as const;
+const VALID_MESSAGE_STATUSES = ['UNREAD', 'READ', 'IN_PROGRESS', 'RESOLVED', 'REPLIED', 'ARCHIVED'] as const;
 export type MessageStatusType = typeof VALID_MESSAGE_STATUSES[number];
 
-export function validateMessageStatusUpdate(body: any): ValidationResult<{ status: MessageStatusType; replyNotes?: string | null }> {
+export interface MessageUpdateInput {
+  status?: MessageStatusType;
+  replyNotes?: string | null;
+  assignedToUserId?: string | null;
+  resolutionSummary?: string | null;
+  priority?: 'NORMAL' | 'HIGH' | 'URGENT';
+}
+
+export function validateMessageStatusUpdate(body: any): ValidationResult<MessageUpdateInput> {
   const errors: Record<string, string> = {};
 
-  if (!body || !body.status || !VALID_MESSAGE_STATUSES.includes(body.status)) {
+  if (!body || typeof body !== 'object') {
+    return { success: false, errors: { body: 'البيانات مطلوبة' } };
+  }
+
+  if (body.status !== undefined && !VALID_MESSAGE_STATUSES.includes(body.status)) {
     errors.status = `حالة الرسالة غير صالحة. الحالات المقبولة: ${VALID_MESSAGE_STATUSES.join(', ')}`;
   }
 
-  if (body.replyNotes !== undefined && typeof body.replyNotes !== 'string') {
+  if (body.replyNotes !== undefined && body.replyNotes !== null && typeof body.replyNotes !== 'string') {
     errors.replyNotes = 'ملاحظات الرد يجب أن تكون نصاً';
+  }
+
+  if (body.resolutionSummary !== undefined && body.resolutionSummary !== null && typeof body.resolutionSummary !== 'string') {
+    errors.resolutionSummary = 'ملخص المعالجة والحل يجب أن يكون نصاً';
+  }
+
+  if (body.priority !== undefined && !['NORMAL', 'HIGH', 'URGENT'].includes(body.priority)) {
+    errors.priority = 'درجة الأولوية غير صالحة (NORMAL, HIGH, URGENT)';
   }
 
   if (Object.keys(errors).length > 0) {
@@ -264,7 +304,10 @@ export function validateMessageStatusUpdate(body: any): ValidationResult<{ statu
     success: true,
     data: {
       status: body.status,
-      replyNotes: body.replyNotes ? body.replyNotes.trim() : null,
+      replyNotes: body.replyNotes !== undefined ? (body.replyNotes ? String(body.replyNotes).trim() : null) : undefined,
+      assignedToUserId: body.assignedToUserId !== undefined ? (body.assignedToUserId ? String(body.assignedToUserId).trim() : null) : undefined,
+      resolutionSummary: body.resolutionSummary !== undefined ? (body.resolutionSummary ? String(body.resolutionSummary).trim() : null) : undefined,
+      priority: body.priority,
     },
   };
 }
@@ -284,6 +327,14 @@ export const ALLOWED_SETTING_KEYS = [
   'SOCIAL_LINKEDIN',
   'SOCIAL_FACEBOOK',
   'ANNOUNCEMENT_TEXT',
+  // Package B: Configurable SLA Settings
+  'SLA_RESPONSE_CRITICAL_MINUTES',
+  'SLA_RESPONSE_HIGH_MINUTES',
+  'SLA_RESPONSE_MEDIUM_MINUTES',
+  'SLA_RESPONSE_LOW_MINUTES',
+  'SLA_WARNING_PERCENT',
+  'SLA_COMPLAINT_NORMAL_HOURS',
+  'SLA_COMPLAINT_URGENT_HOURS',
 ] as const;
 
 export type AllowedSettingKey = typeof ALLOWED_SETTING_KEYS[number];
@@ -334,6 +385,14 @@ export function validateSettingUpdate(body: any): ValidationResult<{ key: string
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedValue)) {
       errors.value = 'صيغة البريد الإلكتروني غير صحيحة';
+    }
+  }
+
+  // SLA numeric validation
+  if (normalizedKey.startsWith('SLA_')) {
+    const num = Number(trimmedValue);
+    if (isNaN(num) || num <= 0 || !Number.isInteger(num)) {
+      errors.value = 'قيمة زمن الاستجابة / النسبة لـ SLA يجب أن تكون رقماً صحيحاً موجباً';
     }
   }
 
@@ -886,3 +945,328 @@ export function validateRiskStatusChange(body: any): ValidationResult<RiskStatus
   };
 }
 
+// ----------------------------------------------------
+// 10. TRAINING SESSION VALIDATION
+// ----------------------------------------------------
+export interface SessionInput {
+  sessionNumber: number;
+  title: string;
+  sessionDate: string;
+  startTime?: string | null;
+  endTime?: string | null;
+  notes?: string | null;
+}
+
+export function validateSessionInput(body: any, isPartial = false): ValidationResult<SessionInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات الجلسة مفقودة' } };
+  }
+
+  if (!isPartial || body.sessionNumber !== undefined) {
+    const num = Number(body.sessionNumber);
+    if (isNaN(num) || num < 1 || !Number.isInteger(num)) {
+      errors.sessionNumber = 'رقم الجلسة يجب أن يكون رقماً صحيحاً موجباً (1 أو أكثر)';
+    }
+  }
+
+  if (!isPartial || body.title !== undefined) {
+    if (!body.title || typeof body.title !== 'string' || body.title.trim().length < 2) {
+      errors.title = 'عنوان الجلسة مطلوب ويجب ألا يقل عن حرفين';
+    }
+  }
+
+  if (!isPartial || body.sessionDate !== undefined) {
+    if (!body.sessionDate || isNaN(Date.parse(body.sessionDate))) {
+      errors.sessionDate = 'تاريخ الجلسة مطلوب ويجب أن يكون تاريخاً صحيحاً';
+    }
+  }
+
+  if (body.startTime && typeof body.startTime === 'string' && body.startTime.length > 20) {
+    errors.startTime = 'وقت البدء غير صالح';
+  }
+
+  if (body.endTime && typeof body.endTime === 'string' && body.endTime.length > 20) {
+    errors.endTime = 'وقت الانتهاء غير صالح';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      sessionNumber: Number(body.sessionNumber),
+      title: body.title ? String(body.title).trim() : '',
+      sessionDate: body.sessionDate ? new Date(body.sessionDate).toISOString() : new Date().toISOString(),
+      startTime: body.startTime ? String(body.startTime).trim() : null,
+      endTime: body.endTime ? String(body.endTime).trim() : null,
+      notes: body.notes ? String(body.notes).trim() : null,
+    },
+  };
+}
+
+// ----------------------------------------------------
+// 11. ATTENDANCE RECORD VALIDATION
+// ----------------------------------------------------
+export const VALID_ATTENDANCE_STATUSES = ['PRESENT', 'ABSENT', 'EXCUSED'] as const;
+export type AttendanceStatusType = typeof VALID_ATTENDANCE_STATUSES[number];
+
+export interface AttendanceInput {
+  registrationId: string;
+  sessionId?: string | null;
+  sessionDate?: string;
+  status: AttendanceStatusType;
+  notes?: string | null;
+  modifiedReason?: string | null;
+}
+
+export function validateAttendanceInput(body: any): ValidationResult<AttendanceInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات الحضور مفقودة' } };
+  }
+
+  if (!body.registrationId || typeof body.registrationId !== 'string') {
+    errors.registrationId = 'معرف التسجيل مطلوب';
+  }
+
+  if (!body.status || !VALID_ATTENDANCE_STATUSES.includes(body.status)) {
+    errors.status = `حالة الحضور غير صالحة. الحالات: ${VALID_ATTENDANCE_STATUSES.join(', ')}`;
+  }
+
+  if (body.sessionDate && isNaN(Date.parse(body.sessionDate))) {
+    errors.sessionDate = 'تاريخ الحضور غير صالح';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      registrationId: body.registrationId,
+      sessionId: body.sessionId ? String(body.sessionId).trim() : null,
+      sessionDate: body.sessionDate ? new Date(body.sessionDate).toISOString() : undefined,
+      status: body.status,
+      notes: body.notes ? String(body.notes).trim() : null,
+      modifiedReason: body.modifiedReason ? String(body.modifiedReason).trim() : null,
+    },
+  };
+}
+
+export interface BatchAttendanceRecordInput {
+  registrationId: string;
+  status: AttendanceStatusType;
+  notes?: string | null;
+}
+
+export interface BatchAttendanceInput {
+  sessionId: string;
+  sessionDate?: string;
+  records: BatchAttendanceRecordInput[];
+}
+
+export function validateBatchAttendanceInput(body: any): ValidationResult<BatchAttendanceInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات الحضور الجماعي مفقودة' } };
+  }
+
+  if (!body.sessionId || typeof body.sessionId !== 'string') {
+    errors.sessionId = 'معرف الجلسة مطلوب لتسجيل الحضور الجماعي';
+  }
+
+  if (!Array.isArray(body.records) || body.records.length === 0) {
+    errors.records = 'قائمة سجلات الحضور يجب أن تحتوي على سجل واحد على الأقل';
+  } else {
+    for (let i = 0; i < body.records.length; i++) {
+      const rec = body.records[i];
+      if (!rec.registrationId) {
+        errors[`records[${i}].registrationId`] = 'معرف التسجيل مطلوب لكل متدرب';
+      }
+      if (!rec.status || !VALID_ATTENDANCE_STATUSES.includes(rec.status)) {
+        errors[`records[${i}].status`] = 'حالة الحضور غير صالحة';
+      }
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      sessionId: body.sessionId,
+      sessionDate: body.sessionDate ? new Date(body.sessionDate).toISOString() : undefined,
+      records: body.records.map((r: any) => ({
+        registrationId: String(r.registrationId),
+        status: r.status,
+        notes: r.notes ? String(r.notes).trim() : null,
+      })),
+    },
+  };
+}
+
+// ----------------------------------------------------
+// 12. TRAINING EVALUATION VALIDATION
+// ----------------------------------------------------
+export const VALID_EVALUATION_TYPES = ['PRE', 'POST'] as const;
+export type EvaluationTypeType = typeof VALID_EVALUATION_TYPES[number];
+
+export const VALID_EVALUATION_STATUSES = ['NOT_REQUIRED', 'NOT_TAKEN', 'COMPLETED'] as const;
+export type EvaluationStatusType = typeof VALID_EVALUATION_STATUSES[number];
+
+export interface EvaluationInput {
+  registrationId: string;
+  type: EvaluationTypeType;
+  score?: number | null;
+  maxScore?: number;
+  status?: EvaluationStatusType;
+  notes?: string | null;
+}
+
+export function validateEvaluationInput(body: any, isPartial = false): ValidationResult<EvaluationInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات التقييم مفقودة' } };
+  }
+
+  if (!isPartial || body.registrationId !== undefined) {
+    if (!body.registrationId || typeof body.registrationId !== 'string') {
+      errors.registrationId = 'معرف التسجيل مطلوب';
+    }
+  }
+
+  if (!isPartial || body.type !== undefined) {
+    if (!body.type || !VALID_EVALUATION_TYPES.includes(body.type)) {
+      errors.type = `نوع التقييم غير صالح. الأنواع: ${VALID_EVALUATION_TYPES.join(', ')}`;
+    }
+  }
+
+  const max = body.maxScore !== undefined ? Number(body.maxScore) : 100;
+  if (isNaN(max) || max <= 0) {
+    errors.maxScore = 'الدرجة القصوى يجب أن تكون رقماً أكبر من صفر';
+  }
+
+  if (body.score !== undefined && body.score !== null && body.score !== '') {
+    const s = Number(body.score);
+    if (isNaN(s) || s < 0 || s > max) {
+      errors.score = `درجة التقييم يجب أن تكون بين 0 و ${max}`;
+    }
+  }
+
+  if (!isPartial || body.status !== undefined) {
+    if (body.status && !VALID_EVALUATION_STATUSES.includes(body.status)) {
+      errors.status = `حالة التقييم غير صالحة. الحالات: ${VALID_EVALUATION_STATUSES.join(', ')}`;
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  let finalStatus: EvaluationStatusType = body.status || 'NOT_TAKEN';
+  let finalScore: number | null = null;
+  if (body.score !== undefined && body.score !== null && body.score !== '') {
+    finalScore = Number(body.score);
+    finalStatus = 'COMPLETED';
+  }
+
+  return {
+    success: true,
+    data: {
+      registrationId: body.registrationId,
+      type: body.type,
+      score: finalScore,
+      maxScore: max,
+      status: finalStatus,
+      notes: body.notes ? String(body.notes).trim() : null,
+    },
+  };
+}
+
+// ----------------------------------------------------
+// 13. RESEARCH REVIEW WORKFLOW VALIDATION
+// ----------------------------------------------------
+export const VALID_RESEARCH_ACTIONS = [
+  'SUBMIT_FOR_REVIEW',
+  'START_REVIEW',
+  'APPROVE',
+  'REJECT',
+  'RETURN_FOR_REVISION',
+  'PUBLISH',
+] as const;
+export type ResearchActionType = typeof VALID_RESEARCH_ACTIONS[number];
+
+export interface ResearchReviewActionInput {
+  action: ResearchActionType;
+  comments?: string | null;
+}
+
+export function validateResearchReviewAction(body: any): ValidationResult<ResearchReviewActionInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات إجراء المراجعة مفقودة' } };
+  }
+
+  if (!body.action || !VALID_RESEARCH_ACTIONS.includes(body.action)) {
+    errors.action = `إجراء المراجعة غير صالح. الإجراءات المتاحة: ${VALID_RESEARCH_ACTIONS.join(', ')}`;
+  }
+
+  if ((body.action === 'REJECT' || body.action === 'RETURN_FOR_REVISION') && (!body.comments || typeof body.comments !== 'string' || body.comments.trim().length < 5)) {
+    errors.comments = 'ملاحظات وأسباب الرفض أو الإعادة للتعديل مطلوبة (5 أحرف على الأقل)';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      action: body.action,
+      comments: body.comments ? String(body.comments).trim() : null,
+    },
+  };
+}
+
+// ----------------------------------------------------
+// 14. RESEARCH ACCESS GRANT VALIDATION
+// ----------------------------------------------------
+export interface AccessGrantInput {
+  grantedToUserId: string;
+  notes?: string | null;
+}
+
+export function validateAccessGrantInput(body: any): ValidationResult<AccessGrantInput> {
+  const errors: Record<string, string> = {};
+
+  if (!body) {
+    return { success: false, errors: { form: 'بيانات منح التصريح مفقودة' } };
+  }
+
+  if (!body.grantedToUserId || typeof body.grantedToUserId !== 'string' || body.grantedToUserId.trim().length === 0) {
+    errors.grantedToUserId = 'معرف المستخدم/العميل المصرح له مطلوب';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { success: false, errors };
+  }
+
+  return {
+    success: true,
+    data: {
+      grantedToUserId: body.grantedToUserId.trim(),
+      notes: body.notes ? String(body.notes).trim() : null,
+    },
+  };
+}

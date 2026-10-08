@@ -5,7 +5,8 @@ import prisma from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const session = await getCurrentUser(true);
+  // Verify cryptographic JWT token first (without redundant DB round trip)
+  const session = await getCurrentUser(false);
   if (!session) {
     return NextResponse.json({ user: null });
   }

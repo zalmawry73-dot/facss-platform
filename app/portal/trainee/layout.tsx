@@ -40,6 +40,7 @@ export default function TraineePortalLayout({ children }: { children: React.Reac
   const links = [
     { href: '/portal/trainee', label: 'لوحة التدريب العامة', icon: LayoutDashboard },
     { href: '/portal/trainee/courses', label: 'دوراتي والبرامج المتاحة', icon: BookOpen },
+    { href: '/portal/trainee/attendance', label: 'سجل الحضور والجلسات', icon: Calendar },
     { href: '/portal/trainee/certificates', label: 'الشهادات الصادرة', icon: Award },
     { href: '/portal/trainee/profile', label: 'الملف الشخصي', icon: User },
   ];

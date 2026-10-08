@@ -2,7 +2,6 @@ import { redirect, notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { ROLES, CAPABILITIES, getUserCapabilities } from '@/lib/rbac';
-import AdminClientBar from '@/app/admin/AdminClientBar';
 import RiskDetailManager from '@/components/admin/RiskDetailManager';
 
 interface AdminRiskDetailPageProps {
@@ -96,8 +95,7 @@ export default async function AdminRiskDetailPage({ params }: AdminRiskDetailPag
     userCaps.includes(CAPABILITIES.ANALYZE_INCIDENT);
 
   return (
-    <div className="container-wide" style={{ padding: '2rem 1.5rem 4rem' }}>
-      <AdminClientBar user={{ fullName: session.fullName, role: session.role }} />
+    <div>
       <RiskDetailManager
         risk={JSON.parse(JSON.stringify(risk))}
         currentUser={{

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import prisma from '@/lib/prisma';
 import { requireCapability, CAPABILITIES } from '@/lib/rbac';
 import RequestsManager, { ServiceRequestItem } from '@/components/admin/RequestsManager';
@@ -59,7 +59,9 @@ export default async function AdminRequestsPage() {
 
   return (
     <div>
-      <RequestsManager initialRequests={serializedRequests} />
+      <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>جارٍ تحميل طلبات الخدمات...</div>}>
+        <RequestsManager initialRequests={serializedRequests} />
+      </Suspense>
     </div>
   );
 }

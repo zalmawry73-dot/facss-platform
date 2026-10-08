@@ -37,7 +37,7 @@ export async function GET(
 
     if (!certificate) {
       return NextResponse.json(
-        { valid: false, error: 'رمز التحقق غير صالح — لا توجد شهادة مطابقة في قاعدة بيانات مركز عدن الدولي للسلامة (AICSFA)' },
+        { valid: false, error: 'رمز التحقق غير صالح — لا توجد شهادة مطابقة في قاعدة بيانات المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية' },
         { status: 404 }
       );
     }
@@ -63,7 +63,7 @@ export async function GET(
       issueDate: certificate.issueDate,
       grade: certificate.grade,
       verificationCode: certificate.verificationCode,
-      message: 'شهادة صحيحة وسارية المفعول — صادرة رسمياً من مركز عدن الدولي للسلامة والدراسات الميدانية (AICSFA)',
+      message: 'شهادة صحيحة وسارية المفعول — صادرة رسمياً من المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
     });
   } catch (error: any) {
     console.error('Certificate verification error:', error);

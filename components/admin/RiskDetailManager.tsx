@@ -1,5 +1,6 @@
 'use client';
 
+import { tx, txLocale, useAdminT } from '@/lib/admin-i18n';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -19,10 +20,26 @@ import {
   MapPin,
   FileText,
   Link2,
-  X,
-  Sparkles,
-  ChevronDown
+  ExternalLink,
+  Layers,
 } from 'lucide-react';
+import {
+  AdminPageHeader,
+  AdminSection,
+  AdminStatCard,
+  AdminTabs,
+  AdminInput,
+  AdminTextarea,
+  AdminSelect,
+  AdminButton,
+  AdminIconButton,
+  AdminDataTable,
+  AdminStatusBadge,
+  AdminModal,
+  AdminAlert,
+  AdminEmptyState,
+} from '@/components/admin/ui';
+
 import {
   calculateRiskScore,
   getRiskLevelMeta,
@@ -45,6 +62,7 @@ interface RiskDetailManagerProps {
 }
 
 export default function RiskDetailManager({ risk: initialRisk, currentUser }: RiskDetailManagerProps) {
+  const { tx, txLocale } = useAdminT();
   const router = useRouter();
   const [risk, setRisk] = useState<any>(initialRisk);
   const [activeTab, setActiveTab] = useState<'mitigations' | 'history'>('mitigations');
@@ -112,7 +130,7 @@ export default function RiskDetailManager({ risk: initialRisk, currentUser }: Ri
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'فشل في تسجيل إعادة التقييم');
+        throw new Error(data.error || tx("فشل في تسجيل إعادة التقييم"));
       }
 
       setIsReassessOpen(false);
@@ -146,7 +164,7 @@ export default function RiskDetailManager({ risk: initialRisk, currentUser }: Ri
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'فشل في إضافة إجراء التخفيف');
+        throw new Error(data.error || tx("فشل في إضافة إجراء التخفيف"));
       }
 
       setIsAddMitigationOpen(false);
@@ -197,7 +215,7 @@ export default function RiskDetailManager({ risk: initialRisk, currentUser }: Ri
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'فشل في تغيير حالة الخطر');
+        throw new Error(data.error || tx("فشل في تغيير حالة الخطر"));
       }
 
       setIsStatusModalOpen(false);
@@ -210,195 +228,166 @@ export default function RiskDetailManager({ risk: initialRisk, currentUser }: Ri
     }
   };
 
+  const levelVariantMap: Record<string, 'danger' | 'warning' | 'info' | 'success'> = {
+    CRITICAL: 'danger',
+    HIGH: 'warning',
+    MEDIUM: 'info',
+    LOW: 'success',
+  };
+
+  const statusVariantMap: Record<string, 'danger' | 'warning' | 'info' | 'success' | 'neutral'> = {
+    IDENTIFIED: 'info',
+    ASSESSED: 'warning',
+    TREATMENT_IN_PROGRESS: 'warning',
+    MONITORED: 'info',
+    RESOLVED: 'success',
+    CLOSED: 'neutral',
+  };
+
+  const tabs = [
+    { id: 'mitigations', label: tx("إجراءات التخفيف والمعالجة ({0})", risk.mitigations?.length || 0), icon: Shield },
+    { id: 'history', label: tx("سجل التقييمات التاريخية ({0})", risk.assessments?.length || 0), icon: History },
+  ];
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Breadcrumb & Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.9rem' }}>
-          <Link href="/admin/risks" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--facss-gold-500)', fontWeight: 700 }}>
-            <ArrowRight size={16} />
-            العودة إلى سجل المخاطر
-          </Link>
-          <span style={{ color: 'var(--facss-text-muted)' }}>/</span>
-          <span style={{ fontWeight: 800, color: 'var(--facss-text-primary)' }}>{risk.riskNumber}</span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          {currentUser.canAssess && risk.status !== 'CLOSED' && (
-            <button
-              onClick={() => {
-                setReassessLikelihood(risk.likelihood);
-                setReassessImpact(risk.impact);
-                setReassessRationale('');
-                setReassessError(null);
-                setIsReassessOpen(true);
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* Header */}
+      <AdminPageHeader
+        title={risk.title}
+        description={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+            <span
+              dir="ltr"
+              style={{
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                color: 'var(--admin-primary)',
+                background: 'var(--admin-primary-subtle)',
+                padding: '2px 8px',
+                borderRadius: '6px',
               }}
-              className="btn btn-primary"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
             >
-              <RefreshCw size={16} />
-              إعادة التقييم
-            </button>
-          )}
+              {risk.riskNumber}
+            </span>
+            <AdminStatusBadge status={levelMeta.labelAr} variant={levelVariantMap[risk.riskLevel] || 'neutral'} dot />
+            <AdminStatusBadge status={statusMeta.labelAr} variant={statusVariantMap[risk.status] || 'neutral'} dot />
+            <span style={{ fontSize: '0.78rem', color: 'var(--admin-text-secondary)', fontWeight: 600 }}>
+              {categoryMeta.labelAr}
+            </span>
+          </div>
+        }
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <Link href="/admin/risks" style={{ textDecoration: 'none' }}>
+              <AdminButton variant="secondary" size="sm" icon={<ArrowRight size={13} />}>
+                {tx("سجل المخاطر")}
+              </AdminButton>
+            </Link>
 
-          {currentUser.canManage && (
-            <>
-              {risk.status !== 'CLOSED' ? (
-                <button
-                  onClick={() => {
-                    setTargetStatus('CLOSED');
-                    setStatusReason('');
-                    setStatusError(null);
-                    setIsStatusModalOpen(true);
-                  }}
-                  className="btn btn-outline"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#dc2626', borderColor: '#dc2626' }}
-                >
-                  <Lock size={16} />
-                  إغلاق الخطر
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setTargetStatus('MONITORED');
-                    setStatusReason('');
-                    setStatusError(null);
-                    setIsStatusModalOpen(true);
-                  }}
-                  className="btn btn-secondary"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#10b981', borderColor: '#10b981' }}
-                >
-                  <Unlock size={16} />
-                  إعادة فتح الخطر
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+            {currentUser.canAssess && risk.status !== 'CLOSED' && (
+              <AdminButton
+                variant="primary"
+                size="sm"
+                icon={<RefreshCw size={13} />}
+                onClick={() => {
+                  setReassessLikelihood(risk.likelihood);
+                  setReassessImpact(risk.impact);
+                  setReassessRationale('');
+                  setReassessError(null);
+                  setIsReassessOpen(true);
+                }}
+              >
+                {tx("إعادة التقييم")}
+              </AdminButton>
+            )}
 
-      {/* Main Risk Header Card */}
+            {currentUser.canManage && (
+              <>
+                {risk.status !== 'CLOSED' ? (
+                  <AdminButton
+                    variant="danger"
+                    size="sm"
+                    icon={<Lock size={13} />}
+                    onClick={() => {
+                      setTargetStatus('CLOSED');
+                      setStatusReason('');
+                      setStatusError(null);
+                      setIsStatusModalOpen(true);
+                    }}
+                  >
+                    {tx("إغلاق الخطر")}
+                  </AdminButton>
+                ) : (
+                  <AdminButton
+                    variant="secondary"
+                    size="sm"
+                    icon={<Unlock size={13} />}
+                    onClick={() => {
+                      setTargetStatus('MONITORED');
+                      setStatusReason('');
+                      setStatusError(null);
+                      setIsStatusModalOpen(true);
+                    }}
+                  >
+                    {tx("إعادة فتح الخطر")}
+                  </AdminButton>
+                )}
+              </>
+            )}
+          </div>
+        }
+      />
+
+      {/* Quick Metrics Overview */}
       <div
-        className="card"
         style={{
-          padding: '1.25rem 1.5rem',
-          background: 'var(--facss-card-bg)',
-          border: '1px solid var(--facss-border)',
-          borderRadius: '12px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+          gap: '1rem',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-          <div style={{ flex: '1 1 500px', minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--facss-gold-500)', letterSpacing: '0.5px' }}>
-                {risk.riskNumber}
-              </span>
-              <span
-                style={{
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: '6px',
-                  background: levelMeta.bg,
-                  color: levelMeta.color,
-                  border: `1px solid ${levelMeta.border}`,
-                  fontSize: '0.8rem',
-                  fontWeight: 800,
-                }}
-              >
-                {levelMeta.labelAr} (درجة {risk.riskScore}/25)
-              </span>
-              <span
-                style={{
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: '6px',
-                  background: statusMeta.bg,
-                  color: statusMeta.color,
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                }}
-              >
-                {statusMeta.labelAr}
-              </span>
-              <span
-                style={{
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: '6px',
-                  background: 'rgba(0,0,0,0.05)',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                }}
-              >
-                {categoryMeta.labelAr}
-              </span>
-            </div>
+        <AdminStatCard
+          title={tx("درجة الخطر المحسوبة")}
+          value={`${risk.riskScore} / 25`}
+          icon={AlertTriangle}
+          variant={levelVariantMap[risk.riskLevel]}
+          description={tx("احتمالية {0} × أثر {1}", risk.likelihood, risk.impact)}
+        />
+        <AdminStatCard
+          title={tx("النطاق الجغرافي")}
+          value={risk.governorate}
+          icon={MapPin}
+          description={risk.district ? `${risk.district} ${risk.generalLocation ? `(${risk.generalLocation})` : ''}` : tx("المحافظة بالكامل")}
+        />
+        <AdminStatCard
+          title={tx("تاريخ التسجيل والمستهدف")}
+          value={new Date(risk.createdAt).toLocaleDateString(txLocale("ar-YE"))}
+          icon={Calendar}
+          description={risk.targetResolutionDate ? tx("المستهدف: {0}", new Date(risk.targetResolutionDate).toLocaleDateString(txLocale("ar-YE"))) : tx("لم يحدد موعد حل")}
+        />
+        <AdminStatCard
+          title={tx("إجراءات التخفيف")}
+          value={`${risk.mitigations?.length || 0} تدبير`}
+          icon={Shield}
+          variant="info"
+          description={tx("{0} تقييم مسجل", risk.assessments?.length || 0)}
+        />
+      </div>
 
-            <h1 style={{ fontSize: '1.55rem', fontWeight: 900, margin: '0 0 1rem', color: 'var(--facss-text-primary)' }}>
-              {risk.title}
-            </h1>
+      {/* Operational Description & Linked Incident */}
+      <AdminSection title={tx("التوصيف التشغيلي والارتباطات الميدانية")} description={tx("سياق التهديد وتفاصيل البلاغ المرتبط")}>
+        <p style={{ margin: 0, fontSize: '0.92rem', lineHeight: 1.7, color: 'var(--admin-text-primary)' }}>
+          {risk.description}
+        </p>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', color: 'var(--facss-text-secondary)', fontSize: '0.88rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <MapPin size={16} color="var(--facss-gold-500)" />
-                <span>
-                  {risk.governorate}
-                  {risk.district && ` - ${risk.district}`}
-                  {risk.generalLocation && ` (${risk.generalLocation})`}
-                </span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Calendar size={16} />
-                <span>تاريخ التسجيل: {new Date(risk.createdAt).toLocaleDateString('ar-YE')}</span>
-              </div>
-              {risk.targetResolutionDate && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <Clock size={16} />
-                  <span>مستهدف المعالجة: {new Date(risk.targetResolutionDate).toLocaleDateString('ar-YE')}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Quick Score Visual */}
-          <div
-            style={{
-              padding: '1.25rem 1.75rem',
-              borderRadius: '12px',
-              background: levelMeta.bg,
-              border: `2px solid ${levelMeta.border}`,
-              textAlign: 'center',
-              minWidth: '150px',
-            }}
-          >
-            <div style={{ fontSize: '0.78rem', fontWeight: 800, color: levelMeta.color, textTransform: 'uppercase' }}>
-              الاحتمالية × الأثر
-            </div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 900, color: levelMeta.color, lineHeight: 1.1, margin: '0.25rem 0' }}>
-              {risk.likelihood} × {risk.impact}
-            </div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 800, color: levelMeta.color }}>
-              = درجة {risk.riskScore}
-            </div>
-          </div>
-        </div>
-
-        {/* Operational Description */}
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--facss-border)' }}>
-          <h4 style={{ fontSize: '0.95rem', fontWeight: 800, margin: '0 0 0.5rem', color: 'var(--facss-gold-500)' }}>
-            الوصف التشغيلي المنقح:
-          </h4>
-          <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--facss-text-primary)' }}>
-            {risk.description}
-          </p>
-        </div>
-
-        {/* Linked Incident Card (Confidentiality Protected) */}
         {risk.incident && (
           <div
             style={{
-              marginTop: '1.5rem',
-              padding: '1rem 1.25rem',
-              borderRadius: '8px',
-              background: 'rgba(201, 162, 39, 0.08)',
-              border: '1px solid rgba(201, 162, 39, 0.3)',
+              marginTop: '1rem',
+              padding: '0.85rem 1rem',
+              borderRadius: 'var(--admin-radius-md)',
+              background: 'var(--admin-primary-subtle)',
+              border: '1px solid var(--admin-border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -406,605 +395,575 @@ export default function RiskDetailManager({ risk: initialRisk, currentUser }: Ri
               gap: '0.75rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Link2 size={20} color="var(--facss-gold-500)" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Link2 size={16} style={{ color: 'var(--admin-primary)' }} />
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>
-                  مرتبط بالبلاغ الميداني المحقق: {risk.incident.incidentNumber}
+                <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--admin-text-primary)' }}>
+                  {tx("مرتبط بالبلاغ الميداني المحقق:")} <span dir="ltr" style={{ fontFamily: 'monospace' }}>{risk.incident.incidentNumber}</span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--facss-text-secondary)' }}>
-                  المحافظة: {risk.incident.governorate} • تاريخ الواقعة: {new Date(risk.incident.incidentDate).toLocaleDateString('ar-YE')}
+                <div style={{ fontSize: '0.78rem', color: 'var(--admin-text-secondary)' }}>
+                  {tx("المحافظة:")} {risk.incident.governorate} {tx("• تاريخ الواقعة:")} {new Date(risk.incident.incidentDate).toLocaleDateString(txLocale("ar-YE"))}
                 </div>
               </div>
             </div>
 
-            {/* Navigation link ONLY if user has incident capabilities */}
             {currentUser.canViewIncidents ? (
-              <Link
-                href={`/admin/incidents/${risk.incident.id}`}
-                className="btn btn-sm btn-outline"
-                style={{ fontSize: '0.8rem', fontWeight: 700 }}
-              >
-                عرض البلاغ المصرح به
+              <Link href={`/admin/incidents/${risk.incident.id}`} style={{ textDecoration: 'none' }}>
+                <AdminButton variant="outline" size="sm" icon={<ExternalLink size={12} />}>
+                  {tx("فتح البلاغ الميداني")}
+                </AdminButton>
               </Link>
             ) : (
-              <span style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)' }}>
-                (الارتباط مرجعي تشغيلي)
+              <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>
+                {tx("(الارتباط مرجعي تشغيلي)")}
               </span>
             )}
           </div>
         )}
 
-        {/* Status reason notes if closed or reopened */}
+        {/* Close/Reopen Notes */}
         {(risk.closeReason || risk.reopenReason) && (
-          <div style={{ marginTop: '1.25rem', padding: '0.85rem 1.25rem', borderRadius: '8px', background: 'rgba(0,0,0,0.03)', border: '1px solid var(--facss-border)' }}>
+          <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'var(--admin-bg-surface-subtle)', borderRadius: 'var(--admin-radius-md)', border: '1px solid var(--admin-border-subtle)', fontSize: '0.82rem' }}>
             {risk.status === 'CLOSED' && risk.closeReason && (
-              <div style={{ fontSize: '0.85rem', color: 'var(--facss-text-secondary)' }}>
-                <strong>مبرر إغلاق الخطر ({new Date(risk.closedAt).toLocaleDateString('ar-YE')}):</strong> {risk.closeReason}
+              <div style={{ color: 'var(--admin-text-secondary)' }}>
+                <strong>{tx("سبب إغلاق الخطر (")}{new Date(risk.closedAt).toLocaleDateString(txLocale("ar-YE"))}):</strong> {risk.closeReason}
               </div>
             )}
             {risk.reopenReason && (
-              <div style={{ fontSize: '0.85rem', color: 'var(--facss-text-secondary)' }}>
-                <strong>مبرر إعادة فتح الخطر ({new Date(risk.reopenedAt).toLocaleDateString('ar-YE')}):</strong> {risk.reopenReason}
+              <div style={{ color: 'var(--admin-text-secondary)' }}>
+                <strong>{tx("سبب إعادة فتح الخطر (")}{new Date(risk.reopenedAt).toLocaleDateString(txLocale("ar-YE"))}):</strong> {risk.reopenReason}
               </div>
             )}
           </div>
         )}
-      </div>
+      </AdminSection>
 
-      {/* Tabs: Mitigations vs History */}
-      <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid var(--facss-border)' }}>
-        <button
-          onClick={() => setActiveTab('mitigations')}
-          style={{
-            padding: '0.75rem 1.5rem',
-            fontWeight: 800,
-            fontSize: '0.95rem',
-            background: 'none',
-            border: 'none',
-            borderBottom: activeTab === 'mitigations' ? '3px solid var(--facss-gold-500)' : '3px solid transparent',
-            color: activeTab === 'mitigations' ? 'var(--facss-gold-500)' : 'var(--facss-text-secondary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <Shield size={18} />
-          إجراءات التخفيف والمعالجة ({risk.mitigations?.length || 0})
-        </button>
+      {/* Tabs */}
+      <AdminTabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onChange={(tabId) => setActiveTab(tabId as any)}
+      />
 
-        <button
-          onClick={() => setActiveTab('history')}
-          style={{
-            padding: '0.75rem 1.5rem',
-            fontWeight: 800,
-            fontSize: '0.95rem',
-            background: 'none',
-            border: 'none',
-            borderBottom: activeTab === 'history' ? '3px solid var(--facss-gold-500)' : '3px solid transparent',
-            color: activeTab === 'history' ? 'var(--facss-gold-500)' : 'var(--facss-text-secondary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <History size={18} />
-          سجل التقييمات التاريخية ({risk.assessments?.length || 0})
-        </button>
-      </div>
-
-      {/* TAB CONTENT: MITIGATIONS */}
+      {/* TAB 1: MITIGATIONS */}
       {activeTab === 'mitigations' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
-              مصفوفة إجراءات التخفيف والمعالجة (Treatment Matrix)
-            </h3>
-            {currentUser.canManage && risk.status !== 'CLOSED' && (
-              <button
-                onClick={() => {
-                  setMitigationTitle('');
-                  setMitigationDesc('');
-                  setMitigationAssignee('');
-                  setMitigationDueDate('');
-                  setMitigationError(null);
-                  setIsAddMitigationOpen(true);
-                }}
-                className="btn btn-sm btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
-              >
-                <Plus size={16} />
-                إضافة إجراء تخفيف جديد
-              </button>
-            )}
-          </div>
+          <AdminSection
+            title={tx("مصفوفة إجراءات التخفيف والمعالجة (Treatment Matrix)")}
+            description={tx("التدابير الوقائية وخطط الاستجابة الميدانية للحد من احتمالية الخطر وشدة تداعياته")}
+            actions={
+              currentUser.canManage && risk.status !== 'CLOSED' ? (
+                <AdminButton
+                  variant="primary"
+                  size="sm"
+                  icon={<Plus size={14} />}
+                  onClick={() => {
+                    setMitigationTitle('');
+                    setMitigationDesc('');
+                    setMitigationAssignee('');
+                    setMitigationDueDate('');
+                    setMitigationError(null);
+                    setIsAddMitigationOpen(true);
+                  }}
+                >
+                  {tx("إضافة تدبير تخفيف")}
+                </AdminButton>
+              ) : undefined
+            }
+          >
+            {(!risk.mitigations || risk.mitigations.length === 0) ? (
+              <AdminEmptyState
+                title={tx("لا توجد إجراءات تخفيف مسجلة")}
+                description={tx("قم بإضافة تدابير وقائية أو خطط استجابة للحد من احتمالية الخطر أو شدة أثره.")}
+                action={
+                  currentUser.canManage && risk.status !== 'CLOSED' ? (
+                    <AdminButton
+                      variant="primary"
+                      size="sm"
+                      icon={<Plus size={14} />}
+                      onClick={() => setIsAddMitigationOpen(true)}
+                    >
+                      {tx("إضافة إجراء تخفيف")}
+                    </AdminButton>
+                  ) : undefined
+                }
+              />
+            ) : (
+              <AdminDataTable
+                columns={[
+                  {
+                    key: 'actionTitle',
+                    header: tx("إجراء التخفيف والنوع"),
+                    render: (m: any) => {
+                      let typeLabel = tx("وقائي");
+                      if (m.actionType === 'CONTINGENCY') typeLabel = tx("طوارئ واستجابة");
+                      if (m.actionType === 'CORRECTIVE') typeLabel = tx("تصحيحي");
+                      return (
+                        <div style={{ maxWidth: '320px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                            <span style={{ fontSize: '0.72rem', background: 'var(--admin-primary-subtle)', color: 'var(--admin-primary)', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                              {typeLabel}
+                            </span>
+                            <strong style={{ fontSize: '0.88rem', color: 'var(--admin-text-primary)' }}>
+                              {m.actionTitle}
+                            </strong>
+                          </div>
+                          {m.description && (
+                            <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--admin-text-secondary)', lineHeight: 1.5 }}>
+                              {m.description}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    key: 'assignedTo',
+                    header: tx("المسؤول"),
+                    render: (m: any) => (
+                      <span style={{ fontSize: '0.82rem', color: 'var(--admin-text-primary)' }}>
+                        {m.assignedTo || tx("غير محدد")}
+                      </span>
+                    ),
+                  },
+                  {
+                    key: 'dueDate',
+                    header: tx("تاريخ الاستحقاق"),
+                    render: (m: any) => (
+                      <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>
+                        {m.dueDate ? new Date(m.dueDate).toLocaleDateString(txLocale("ar-YE")) : '—'}
+                      </span>
+                    ),
+                  },
+                  {
+                    key: 'status',
+                    header: tx("الحالة"),
+                    render: (m: any) => {
+                      const statusMap: Record<string, { label: string; variant: 'success' | 'warning' | 'danger' | 'info' | 'neutral' }> = {
+                        PLANNED: { label: tx("مخطط"), variant: 'info' },
+                        IN_PROGRESS: { label: tx("جاري التنفيذ"), variant: 'warning' },
+                        COMPLETED: { label: tx("مكتمل"), variant: 'success' },
+                        DELAYED: { label: tx("متأخر"), variant: 'danger' },
+                        CANCELLED: { label: tx("ملغى"), variant: 'neutral' },
+                      };
+                      const sm = statusMap[m.status] || { label: m.status, variant: 'neutral' as const };
 
-          {(!risk.mitigations || risk.mitigations.length === 0) ? (
-            <div
-              className="card"
-              style={{
-                padding: '3rem 2rem',
-                textAlign: 'center',
-                background: 'var(--facss-card-bg)',
-                border: '1px solid var(--facss-border)',
-                color: 'var(--facss-text-secondary)',
-              }}
-            >
-              <Shield size={40} style={{ opacity: 0.3, margin: '0 auto 1rem' }} />
-              <h5 style={{ fontWeight: 700, margin: 0 }}>لا توجد إجراءات تخفيف مسجلة لهذا الخطر حتى الآن</h5>
-              <p style={{ fontSize: '0.85rem', margin: '0.5rem 0 0' }}>
-                قم بإضافة تدابير وقائية أو خطط استجابة طوارئ للحد من احتمالية الخطر أو شدة أثره.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {risk.mitigations.map((action: any) => {
-                let actionTypeLabel = 'وقائي (Preventive)';
-                if (action.actionType === 'CONTINGENCY') actionTypeLabel = 'طوارئ واستجابة (Contingency)';
-                if (action.actionType === 'CORRECTIVE') actionTypeLabel = 'تصحيحي (Corrective)';
-
-                return (
-                  <div
-                    key={action.id}
-                    className="card"
-                    style={{
-                      padding: '1.25rem 1.5rem',
-                      background: 'var(--facss-card-bg)',
-                      border: '1px solid var(--facss-border)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      flexWrap: 'wrap',
-                      gap: '1rem',
-                    }}
-                  >
-                    <div style={{ flex: '1 1 450px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-                        <span
-                          style={{
-                            padding: '0.15rem 0.55rem',
-                            borderRadius: '4px',
-                            background: 'rgba(201, 162, 39, 0.12)',
-                            color: 'var(--facss-gold-600)',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
-                          }}
-                        >
-                          {actionTypeLabel}
-                        </span>
-                        <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--facss-text-primary)' }}>
-                          {action.actionTitle}
-                        </h4>
+                      if (currentUser.canManage && risk.status !== 'CLOSED') {
+                        return (
+                          <AdminSelect
+                            value={m.status}
+                            onChange={(e) => handleUpdateMitigationStatus(m.id, e.target.value)}
+                            options={[
+                              { value: 'PLANNED', label: tx("مخطط") },
+                              { value: 'IN_PROGRESS', label: tx("جاري التنفيذ") },
+                              { value: 'COMPLETED', label: tx("مكتمل") },
+                              { value: 'DELAYED', label: tx("متأخر") },
+                              { value: 'CANCELLED', label: tx("ملغى") },
+                            ]}
+                          />
+                        );
+                      }
+                      return <AdminStatusBadge status={sm.label} variant={sm.variant} dot />;
+                    },
+                  },
+                ]}
+                data={risk.mitigations}
+                keyExtractor={(m) => m.id}
+                mobileCardRender={(m: any) => {
+                  let typeLabel = tx("وقائي");
+                  if (m.actionType === 'CONTINGENCY') typeLabel = tx("طوارئ واستجابة");
+                  if (m.actionType === 'CORRECTIVE') typeLabel = tx("تصحيحي");
+                  const statusMap: Record<string, { label: string; variant: 'success' | 'warning' | 'danger' | 'info' | 'neutral' }> = {
+                    PLANNED: { label: tx("مخطط"), variant: 'info' },
+                    IN_PROGRESS: { label: tx("جاري التنفيذ"), variant: 'warning' },
+                    COMPLETED: { label: tx("مكتمل"), variant: 'success' },
+                    DELAYED: { label: tx("متأخر"), variant: 'danger' },
+                    CANCELLED: { label: tx("ملغى"), variant: 'neutral' },
+                  };
+                  const sm = statusMap[m.status] || { label: m.status, variant: 'neutral' as const };
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: '0.72rem', background: 'var(--admin-primary-subtle)', color: 'var(--admin-primary)', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                            {typeLabel}
+                          </span>
+                          <strong style={{ fontSize: '0.88rem', color: 'var(--admin-text-primary)' }}>
+                            {m.actionTitle}
+                          </strong>
+                        </div>
+                        {currentUser.canManage && risk.status !== 'CLOSED' ? (
+                          <AdminSelect
+                            value={m.status}
+                            onChange={(e: any) => handleUpdateMitigationStatus(m.id, e.target.value)}
+                            options={[
+                              { value: 'PLANNED', label: tx("مخطط") },
+                              { value: 'IN_PROGRESS', label: tx("جاري التنفيذ") },
+                              { value: 'COMPLETED', label: tx("مكتمل") },
+                              { value: 'DELAYED', label: tx("متأخر") },
+                              { value: 'CANCELLED', label: tx("ملغى") },
+                            ]}
+                          />
+                        ) : (
+                          <AdminStatusBadge status={sm.label} variant={sm.variant} dot />
+                        )}
                       </div>
-
-                      {action.description && (
-                        <p style={{ margin: '0 0 0.75rem', fontSize: '0.88rem', color: 'var(--facss-text-secondary)', lineHeight: 1.6 }}>
-                          {action.description}
+                      {m.description && (
+                        <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--admin-text-secondary)', lineHeight: 1.5 }}>
+                          {m.description}
                         </p>
                       )}
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.8rem', color: 'var(--facss-text-muted)' }}>
-                        {action.assignedTo && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                            <User size={14} />
-                            <span>المسؤول: {action.assignedTo}</span>
-                          </div>
-                        )}
-                        {action.dueDate && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                            <Calendar size={14} />
-                            <span>تاريخ الاستحقاق: {new Date(action.dueDate).toLocaleDateString('ar-YE')}</span>
-                          </div>
-                        )}
-                        {action.completedAt && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#10b981' }}>
-                            <CheckCircle2 size={14} />
-                            <span>تم الإنجاز: {new Date(action.completedAt).toLocaleDateString('ar-YE')}</span>
-                          </div>
-                        )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+                        <span style={{ color: 'var(--admin-text-primary)' }}>
+                          {m.assignedTo || tx("غير محدد")}
+                        </span>
+                        <span style={{ color: 'var(--admin-text-muted)' }}>
+                          {m.dueDate ? new Date(m.dueDate).toLocaleDateString(txLocale("ar-YE")) : '—'}
+                        </span>
                       </div>
                     </div>
-
-                    {/* Status Toggle Dropdown */}
-                    {currentUser.canManage ? (
-                      <div style={{ minWidth: '160px' }}>
-                        <select
-                          className="form-control"
-                          value={action.status}
-                          onChange={(e) => handleUpdateMitigationStatus(action.id, e.target.value)}
-                          style={{ fontSize: '0.85rem', fontWeight: 700 }}
-                        >
-                          <option value="PLANNED">مخطط (Planned)</option>
-                          <option value="IN_PROGRESS">جاري التنفيذ (In Progress)</option>
-                          <option value="COMPLETED">مكتمل (Completed)</option>
-                          <option value="DELAYED">متأخر (Delayed)</option>
-                          <option value="CANCELLED">ملغى (Cancelled)</option>
-                        </select>
-                      </div>
-                    ) : (
-                      <span
-                        style={{
-                          padding: '0.3rem 0.75rem',
-                          borderRadius: '6px',
-                          background: 'rgba(0,0,0,0.05)',
-                          fontSize: '0.8rem',
-                          fontWeight: 700,
-                        }}
-                      >
-                        {action.status}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                }}
+              />
+            )}
+          </AdminSection>
         </div>
       )}
 
-      {/* TAB CONTENT: ASSESSMENT HISTORY */}
+      {/* TAB 2: HISTORY */}
       {activeTab === 'history' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
-            السجل التاريخي للتقييمات وإعادة التقييم (Audit Trail)
-          </h3>
-
-          <div
-            className="card"
-            style={{
-              padding: 0,
-              background: 'var(--facss-card-bg)',
-              border: '1px solid var(--facss-border)',
-              overflow: 'hidden',
-            }}
+          <AdminSection
+            title={tx("السجل التاريخي للتقييمات وإعادة التقييم (Audit Trail)")}
+            description={tx("توثيق التغييرات على درجات الاحتمالية والأثر ومبررات التعديل المعتمدة")}
           >
-            <table className="table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-              <thead>
-                <tr style={{ background: 'rgba(0,0,0,0.03)', borderBottom: '1px solid var(--facss-border)', textAlign: 'right' }}>
-                  <th style={{ padding: '1rem' }}>تاريخ التقييم</th>
-                  <th style={{ padding: '1rem' }}>المسؤول / المقيم</th>
-                  <th style={{ padding: '1rem' }}>الاحتمالية × الأثر</th>
-                  <th style={{ padding: '1rem' }}>الدرجة والمستوى</th>
-                  <th style={{ padding: '1rem' }}>مبررات التقييم</th>
-                </tr>
-              </thead>
-              <tbody>
-                {risk.assessments?.map((item: any) => {
+            {(!risk.assessments || risk.assessments.length === 0) ? (
+              <AdminEmptyState
+                title={tx("لا يوجد سجل تقييمات سابق")}
+                description={tx("لم يتم تسجيل عمليات إعادة تقييم لهذا الخطر بعد.")}
+              />
+            ) : (
+              <AdminDataTable
+                columns={[
+                  {
+                    key: 'date',
+                    header: tx("تاريخ التقييم"),
+                    render: (item: any) => (
+                      <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>
+                        {new Date(item.assessedAt).toLocaleString(txLocale("ar-YE"))}
+                      </span>
+                    ),
+                  },
+                  {
+                    key: 'assessor',
+                    header: tx("المقيم / المسؤول"),
+                    render: (item: any) => (
+                      <span style={{ fontWeight: 700, color: 'var(--admin-text-primary)' }}>
+                        {item.assessedByName}
+                      </span>
+                    ),
+                  },
+                  {
+                    key: 'formula',
+                    header: tx("الاحتمالية × الأثر"),
+                    render: (item: any) => (
+                      <span dir="ltr" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
+                        {item.likelihood} × {item.impact}
+                      </span>
+                    ),
+                  },
+                  {
+                    key: 'level',
+                    header: tx("الدرجة والمستوى"),
+                    render: (item: any) => {
+                      const itemLevelMeta = getRiskLevelMeta(item.riskLevel);
+                      return (
+                        <AdminStatusBadge
+                          status={`${itemLevelMeta.labelAr} (${item.riskScore})`}
+                          variant={levelVariantMap[item.riskLevel] || 'neutral'}
+                          dot
+                        />
+                      );
+                    },
+                  },
+                  {
+                    key: 'rationale',
+                    header: tx("مبررات التقييم"),
+                    render: (item: any) => (
+                      <span style={{ fontSize: '0.82rem', color: 'var(--admin-text-secondary)' }}>
+                        {item.rationale || '—'}
+                      </span>
+                    ),
+                  },
+                ]}
+                data={risk.assessments}
+                keyExtractor={(item) => item.id}
+                mobileCardRender={(item: any) => {
                   const itemLevelMeta = getRiskLevelMeta(item.riskLevel);
                   return (
-                    <tr key={item.id} style={{ borderBottom: '1px solid var(--facss-border)' }}>
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap', fontWeight: 600 }}>
-                        {new Date(item.assessedAt).toLocaleString('ar-YE')}
-                      </td>
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap', fontWeight: 700 }}>
-                        {item.assessedByName}
-                      </td>
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap', fontWeight: 800 }}>
-                        {item.likelihood} × {item.impact}
-                      </td>
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>
-                        <span
-                          style={{
-                            padding: '0.25rem 0.65rem',
-                            borderRadius: '6px',
-                            background: itemLevelMeta.bg,
-                            color: itemLevelMeta.color,
-                            fontWeight: 800,
-                            fontSize: '0.8rem',
-                          }}
-                        >
-                          {itemLevelMeta.labelAr} ({item.riskScore})
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                        <strong style={{ color: 'var(--admin-text-primary)', fontSize: '0.88rem' }}>
+                          {item.assessedByName}
+                        </strong>
+                        <AdminStatusBadge
+                          status={`${itemLevelMeta.labelAr} (${item.riskScore})`}
+                          variant={levelVariantMap[item.riskLevel] || 'neutral'}
+                          dot
+                        />
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span dir="ltr" style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem' }}>
+                          {item.likelihood} × {item.impact}
                         </span>
-                      </td>
-                      <td style={{ padding: '1rem', color: 'var(--facss-text-secondary)', fontSize: '0.88rem' }}>
-                        {item.rationale || '—'}
-                      </td>
-                    </tr>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--admin-text-muted)' }}>
+                          {new Date(item.assessedAt).toLocaleString(txLocale("ar-YE"))}
+                        </span>
+                      </div>
+                      {item.rationale && (
+                        <span style={{ fontSize: '0.82rem', color: 'var(--admin-text-secondary)' }}>
+                          {item.rationale}
+                        </span>
+                      )}
+                    </div>
                   );
-                })}
-              </tbody>
-            </table>
-          </div>
+                }}
+              />
+            )}
+          </AdminSection>
         </div>
       )}
 
       {/* MODAL: REASSESS RISK */}
-      {isReassessOpen && (
-        <div className="facss-modal-overlay">
-          <div className="facss-modal-content" style={{ maxWidth: '560px' }}>
-            <div className="facss-modal-header">
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>إعادة تقييم الخطر الميداني</h3>
-              <button
-                onClick={() => setIsReassessOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--facss-text-muted)' }}
-              >
-                <X size={20} />
-              </button>
+      <AdminModal
+        isOpen={isReassessOpen}
+        onClose={() => setIsReassessOpen(false)}
+        title={tx("إعادة تقييم الخطر التشغيلي الميداني")}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <AdminButton variant="ghost" size="sm" onClick={() => setIsReassessOpen(false)}>
+              {tx("إلغاء")}
+            </AdminButton>
+            <AdminButton
+              variant="primary"
+              size="sm"
+              disabled={reassessing}
+              onClick={handleReassess}
+            >
+              {reassessing ? tx("جاري الحفظ...") : tx("اعتماد التقييم الجديد")}
+            </AdminButton>
+          </div>
+        }
+      >
+        <form onSubmit={handleReassess} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {reassessError && <AdminAlert variant="danger" message={reassessError} />}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("الاحتمالية الجديدة (1 إلى 5)")}
+              </label>
+              <AdminSelect
+                value={String(reassessLikelihood)}
+                onChange={(e) => setReassessLikelihood(parseInt(e.target.value, 10))}
+                options={[
+                  { value: '1', label: tx("1 - نادر (Rare)") },
+                  { value: '2', label: tx("2 - غير محتمل (Unlikely)") },
+                  { value: '3', label: tx("3 - متوسط (Possible)") },
+                  { value: '4', label: tx("4 - محتمل (Likely)") },
+                  { value: '5', label: tx("5 - شبه مؤكد (Almost Certain)") },
+                ]}
+              />
             </div>
 
-            <form onSubmit={handleReassess} className="facss-modal-body">
-              {reassessError && (
-                <div style={{ padding: '0.75rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#dc2626', borderRadius: '8px', fontSize: '0.85rem' }}>
-                  {reassessError}
-                </div>
-              )}
-
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">الاحتمالية الجديدة: <strong>{reassessLikelihood}</strong></label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="5"
-                    step="1"
-                    value={reassessLikelihood}
-                    onChange={(e) => setReassessLikelihood(parseInt(e.target.value, 10))}
-                    style={{ width: '100%' }}
-                  />
-                  <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)' }}>
-                    {reassessLikelihood === 1 && '1 - نادر'}
-                    {reassessLikelihood === 2 && '2 - غير محتمل'}
-                    {reassessLikelihood === 3 && '3 - متوسط'}
-                    {reassessLikelihood === 4 && '4 - محتمل'}
-                    {reassessLikelihood === 5 && '5 - شبه مؤكد'}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="form-label">شدة الأثر الجديدة: <strong>{reassessImpact}</strong></label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="5"
-                    step="1"
-                    value={reassessImpact}
-                    onChange={(e) => setReassessImpact(parseInt(e.target.value, 10))}
-                    style={{ width: '100%' }}
-                  />
-                  <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)' }}>
-                    {reassessImpact === 1 && '1 - طفيف'}
-                    {reassessImpact === 2 && '2 - محدود'}
-                    {reassessImpact === 3 && '3 - متوسط'}
-                    {reassessImpact === 4 && '4 - كبير'}
-                    {reassessImpact === 5 && '5 - كارثي'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Score Preview */}
-              <div
-                style={{
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: getRiskLevelMeta(calculatedPreviewScore.level).bg,
-                  border: `1px solid ${getRiskLevelMeta(calculatedPreviewScore.level).border}`,
-                }}
-              >
-                <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>
-                  الدرجة الجديدة: <strong>{calculatedPreviewScore.score} / 25</strong>
-                </span>
-                <span
-                  style={{
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '4px',
-                    background: getRiskLevelMeta(calculatedPreviewScore.level).color,
-                    color: '#FFF',
-                    fontSize: '0.8rem',
-                    fontWeight: 800,
-                  }}
-                >
-                  {getRiskLevelMeta(calculatedPreviewScore.level).labelAr}
-                </span>
-              </div>
-
-              <div>
-                <label className="form-label">مبررات إعادة التقييم والتغير الميداني *</label>
-                <textarea
-                  className="form-control"
-                  rows={3}
-                  placeholder="بيان أسباب التعديل (مثل: استكمال تدابير التخفيف، ظهور معطيات ميدانية جديدة، تقارير رصد دورية...)"
-                  value={reassessRationale}
-                  onChange={(e) => setReassessRationale(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsReassessOpen(false)}
-                  className="btn btn-secondary"
-                  disabled={reassessing}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={reassessing}
-                  style={{ fontWeight: 700 }}
-                >
-                  {reassessing ? 'جاري الحفظ...' : 'اعتماد التقييم الجديد'}
-                </button>
-              </div>
-            </form>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("شدة الأثر الجديدة (1 إلى 5)")}
+              </label>
+              <AdminSelect
+                value={String(reassessImpact)}
+                onChange={(e) => setReassessImpact(parseInt(e.target.value, 10))}
+                options={[
+                  { value: '1', label: tx("1 - طفيف (Insignificant)") },
+                  { value: '2', label: tx("2 - محدود (Minor)") },
+                  { value: '3', label: tx("3 - متوسط (Moderate)") },
+                  { value: '4', label: tx("4 - جسيم (Major)") },
+                  { value: '5', label: tx("5 - كارثي (Catastrophic)") },
+                ]}
+              />
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* MODAL: ADD MITIGATION ACTION */}
-      {isAddMitigationOpen && (
-        <div className="facss-modal-overlay">
-          <div className="facss-modal-content" style={{ maxWidth: '580px' }}>
-            <div className="facss-modal-header">
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>إضافة إجراء تخفيف ومعالجة</h3>
-              <button
-                onClick={() => setIsAddMitigationOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--facss-text-muted)' }}
-              >
-                <X size={20} />
-              </button>
+          {/* Calculated Score Preview */}
+          <div
+            style={{
+              padding: '0.75rem 1rem',
+              borderRadius: 'var(--admin-radius-md)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: 'var(--admin-bg-surface-subtle)',
+              border: '1px solid var(--admin-border-subtle)',
+            }}
+          >
+            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--admin-text-primary)' }}>
+              {tx("الدرجة المحسوبة الجديدة:")} <strong dir="ltr">{calculatedPreviewScore.score} / 25</strong>
+            </span>
+            <AdminStatusBadge
+              status={getRiskLevelMeta(calculatedPreviewScore.level).labelAr}
+              variant={levelVariantMap[calculatedPreviewScore.level] || 'neutral'}
+              dot
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("مبررات إعادة التقييم والتغير الميداني *")}
+            </label>
+            <AdminTextarea
+              rows={3}
+              required
+              placeholder={tx("بيان أسباب التعديل (مثل: استكمال تدابير التخفيف، ظهور معطيات ميدانية جديدة...)")}
+              value={reassessRationale}
+              onChange={(e) => setReassessRationale(e.target.value)}
+            />
+          </div>
+        </form>
+      </AdminModal>
+
+      {/* MODAL: ADD MITIGATION */}
+      <AdminModal
+        isOpen={isAddMitigationOpen}
+        onClose={() => setIsAddMitigationOpen(false)}
+        title={tx("إضافة إجراء تخفيف ومعالجة")}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <AdminButton variant="ghost" size="sm" onClick={() => setIsAddMitigationOpen(false)}>
+              {tx("إلغاء")}
+            </AdminButton>
+            <AdminButton
+              variant="primary"
+              size="sm"
+              disabled={addingMitigation}
+              onClick={handleAddMitigation}
+            >
+              {addingMitigation ? tx("جاري الإضافة...") : tx("حفظ تدبير التخفيف")}
+            </AdminButton>
+          </div>
+        }
+      >
+        <form onSubmit={handleAddMitigation} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          {mitigationError && <AdminAlert variant="danger" message={mitigationError} />}
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("عنوان إجراء التخفيف *")}
+            </label>
+            <AdminInput
+              required
+              placeholder={tx("مثال: التنسيق المسبق مع نقاط التفتيش واعتماد مسار عبور بديل...")}
+              value={mitigationTitle}
+              onChange={(e) => setMitigationTitle(e.target.value)}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("نوع الإجراء *")}
+              </label>
+              <AdminSelect
+                value={mitigationType}
+                onChange={(e) => setMitigationType(e.target.value as any)}
+                options={[
+                  { value: 'PREVENTIVE', label: tx("وقائي (Preventive)") },
+                  { value: 'CONTINGENCY', label: tx("طوارئ واستجابة (Contingency)") },
+                  { value: 'CORRECTIVE', label: tx("تصحيحي (Corrective)") },
+                ]}
+              />
             </div>
 
-            <form onSubmit={handleAddMitigation} className="facss-modal-body">
-              {mitigationError && (
-                <div style={{ padding: '0.75rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#dc2626', borderRadius: '8px', fontSize: '0.85rem' }}>
-                  {mitigationError}
-                </div>
-              )}
-
-              <div>
-                <label className="form-label">عنوان إجراء التخفيف *</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="مثال: التنسيق المسبق مع نقاط التفتيش واعتماد مسار عبور بديل..."
-                  value={mitigationTitle}
-                  onChange={(e) => setMitigationTitle(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">نوع الإجراء *</label>
-                  <select
-                    className="form-control"
-                    value={mitigationType}
-                    onChange={(e) => setMitigationType(e.target.value as any)}
-                  >
-                    <option value="PREVENTIVE">وقائي (Preventive)</option>
-                    <option value="CONTINGENCY">طوارئ واستجابة (Contingency)</option>
-                    <option value="CORRECTIVE">تصحيحي (Corrective)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="form-label">المسؤول عن التنفيذ</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="مثال: منسق الوصول الميداني..."
-                    value={mitigationAssignee}
-                    onChange={(e) => setMitigationAssignee(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="form-label">تاريخ الاستحقاق (اختياري)</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={mitigationDueDate}
-                  onChange={(e) => setMitigationDueDate(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="form-label">تفاصيل إضافية / خطوات التنفيذ</label>
-                <textarea
-                  className="form-control"
-                  rows={2}
-                  placeholder="شرح الإجراء أو الاشتراطات التشغيلية..."
-                  value={mitigationDesc}
-                  onChange={(e) => setMitigationDesc(e.target.value)}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsAddMitigationOpen(false)}
-                  className="btn btn-secondary"
-                  disabled={addingMitigation}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={addingMitigation}
-                  style={{ fontWeight: 700 }}
-                >
-                  {addingMitigation ? 'جاري الحفظ...' : 'إضافة الإجراء'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: CLOSE / REOPEN STATUS */}
-      {isStatusModalOpen && (
-        <div className="facss-modal-overlay">
-          <div className="facss-modal-content" style={{ maxWidth: '520px' }}>
-            <div className="facss-modal-header">
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>
-                {targetStatus === 'CLOSED' ? 'إغلاق قيد الخطر الميداني' : 'إعادة فتح الخطر الميداني'}
-              </h3>
-              <button
-                onClick={() => setIsStatusModalOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--facss-text-muted)' }}
-              >
-                <X size={20} />
-              </button>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("المسؤول عن التنفيذ")}
+              </label>
+              <AdminInput
+                placeholder={tx("مثال: منسق الوصول الميداني...")}
+                value={mitigationAssignee}
+                onChange={(e) => setMitigationAssignee(e.target.value)}
+              />
             </div>
-
-            <form onSubmit={handleStatusChange} className="facss-modal-body">
-              {statusError && (
-                <div style={{ padding: '0.75rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#dc2626', borderRadius: '8px', fontSize: '0.85rem' }}>
-                  {statusError}
-                </div>
-              )}
-
-              <div>
-                <label className="form-label">
-                  {targetStatus === 'CLOSED'
-                    ? 'سبب ومبرر إغلاق الخطر التشغيلي *'
-                    : 'سبب ومبرر إعادة فتح الخطر وتجدد التهديد *'}
-                </label>
-                <textarea
-                  className="form-control"
-                  rows={3}
-                  placeholder={
-                    targetStatus === 'CLOSED'
-                      ? 'مثال: زوال التهديد بالكامل وفتح المسار الإنساني بصورة آمنة...'
-                      : 'مثال: رصد توترات جديدة في المنطقة تتطلب إعادة التقييم والمراقبة...'
-                  }
-                  value={statusReason}
-                  onChange={(e) => setStatusReason(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsStatusModalOpen(false)}
-                  className="btn btn-secondary"
-                  disabled={updatingStatus}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className={targetStatus === 'CLOSED' ? 'btn btn-danger' : 'btn btn-primary'}
-                  disabled={updatingStatus}
-                  style={{ fontWeight: 700 }}
-                >
-                  {updatingStatus ? 'جاري الحفظ...' : targetStatus === 'CLOSED' ? 'تأكيد إغلاق الخطر' : 'تأكيد إعادة الفتح'}
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("تاريخ الاستحقاق (اختياري)")}
+            </label>
+            <AdminInput
+              type="date"
+              value={mitigationDueDate}
+              onChange={(e) => setMitigationDueDate(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("التفاصيل وخطة العمل")}
+            </label>
+            <AdminTextarea
+              rows={3}
+              placeholder={tx("وصف الإجراء والخطوات المتفق عليها...")}
+              value={mitigationDesc}
+              onChange={(e) => setMitigationDesc(e.target.value)}
+            />
+          </div>
+        </form>
+      </AdminModal>
+
+      {/* MODAL: CLOSE / REOPEN RISK */}
+      <AdminModal
+        isOpen={isStatusModalOpen}
+        onClose={() => setIsStatusModalOpen(false)}
+        title={targetStatus === 'CLOSED' ? tx("إغلاق الخطر التشغيلي") : tx("إعادة فتح الخطر التشغيلي")}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <AdminButton variant="ghost" size="sm" onClick={() => setIsStatusModalOpen(false)}>
+              {tx("إلغاء")}
+            </AdminButton>
+            <AdminButton
+              variant={targetStatus === 'CLOSED' ? 'danger' : 'primary'}
+              size="sm"
+              disabled={updatingStatus}
+              onClick={handleStatusChange}
+            >
+              {updatingStatus ? tx("جاري التحديث...") : targetStatus === 'CLOSED' ? tx("تأكيد إغلاق الخطر") : tx("تأكيد إعادة الفتح")}
+            </AdminButton>
+          </div>
+        }
+      >
+        <form onSubmit={handleStatusChange} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          {statusError && <AdminAlert variant="danger" message={statusError} />}
+
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-text-secondary)', lineHeight: 1.6 }}>
+            {targetStatus === 'CLOSED'
+              ? tx("هل تؤكد إغلاق قيد الخطر؟ يرجى بيان مبررات الإغلاق (مثل زوال التهديد أو استكمال المعالجة بنجاح).")
+              : tx("هل تؤكد إعادة فتح الخطر وتغيير حالته إلى قيد المراقبة النشطة؟")}
+          </p>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {targetStatus === 'CLOSED' ? tx("مبررات إغلاق الخطر *") : tx("أسباب إعادة فتح الخطر *")}
+            </label>
+            <AdminTextarea
+              rows={3}
+              required
+              placeholder={tx("اكتب التوضيح والأسباب الموجبة لهذا الإجراء...")}
+              value={statusReason}
+              onChange={(e) => setStatusReason(e.target.value)}
+            />
+          </div>
+        </form>
+      </AdminModal>
     </div>
   );
 }

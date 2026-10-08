@@ -1,7 +1,41 @@
 'use client';
 
+import { tx, txLocale, useAdminT } from '@/lib/admin-i18n';
 import React, { useState } from 'react';
-import { Users, Shield, CheckCircle2, AlertCircle, X, Search, Filter, ShieldCheck, Key, Lock, UserCheck, UserX } from 'lucide-react';
+import { 
+  Users, 
+  Shield, 
+  CheckCircle2, 
+  AlertCircle, 
+  X, 
+  Search, 
+  Filter, 
+  ShieldCheck, 
+  Key, 
+  Lock, 
+  UserCheck, 
+  UserX,
+  UserPlus,
+  Mail,
+  Phone,
+  Building,
+  Sliders
+} from 'lucide-react';
+import {
+  AdminPageHeader,
+  AdminSection,
+  AdminDataTable,
+  AdminStatusBadge,
+  AdminButton,
+  AdminFilterBar,
+  AdminSearchInput,
+  AdminModal,
+  AdminInput,
+  AdminSelect,
+  AdminCheckbox,
+  AdminAlert,
+  type ColumnDef,
+} from '@/components/admin/ui';
 
 export interface UserItem {
   id: string;
@@ -22,29 +56,29 @@ interface Props {
 }
 
 const CAPABILITY_DEFINITIONS = [
-  { id: 'manage_requests', label: 'إدارة طلبات الخدمات الأمنية', desc: 'استعراض وتحديث ومتابعة طلبات الحماية والاستشارات الأمنية' },
-  { id: 'manage_training', label: 'إدارة برامج التدريب والتأهيل', desc: 'إنشاء الدورات التدريبية وتحديث المحاضرين ومتابعة المتدربين' },
-  { id: 'manage_research', label: 'إدارة الدراسات والتقارير الاستراتيجية', desc: 'إعداد ونشر الأوراق البحثية والتقارير الأمنية الحصرية' },
-  { id: 'manage_messages', label: 'إدارة رسائل التواصل والاستفسارات', desc: 'مراجعة رسائل نموذج الاتصال وتوثيق الردود والأرشفة' },
-  { id: 'manage_settings', label: 'إدارة إعدادات وبيانات الاتصال الرسمية', desc: 'تحديث هواتف المركز، البريد الرسمي، وساعات الدوام' },
-  { id: 'view_audit_logs', label: 'استعراض سجلات التدقيق والنشاط الأمني', desc: 'مراقبة كافة العمليات الحساسة وتتبع نشاط الإداريين' },
-  { id: 'manage_users', label: 'إدارة المستخدمين وتعيين الصلاحيات', desc: 'تفعيل/تعطيل الحسابات ومنح الصلاحيات الدقيقة للكوادر' },
-  // Phase 2 Capabilities
-  { id: 'submit_incident', label: 'تقديم البلاغات الميدانية', desc: 'إرسال واستقبال تقارير الحوادث والبلاغات الميدانية الحساسة' },
-  { id: 'verify_incident', label: 'التحقق الميداني من البلاغات', desc: 'مراجعة وتقييم وتأكيد صحة البلاغات وإسنادات التحقق' },
-  { id: 'analyze_incident', label: 'تحليل وتقييم مخاطر البلاغات', desc: 'تصنيف وتحليل الأثر والمخاطر وإعداد النسخ المنقحة' },
-  { id: 'draft_incident_alert', label: 'صياغة مسودات التنبيهات الأمنية', desc: 'إعداد وصياغة مسودات التنبيهات ونطاق المستلمين' },
-  { id: 'approve_incident_alert', label: 'اعتماد وإصدار التنبيهات الأمنية', desc: 'الموافقة النهائية ونشر التنبيهات وتجميد المستلمين (إدارة عليا)' },
+  { id: 'manage_requests', get label() { return tx("إدارة طلبات الخدمات الأمنية"); }, get desc() { return tx("استعراض وتحديث ومتابعة طلبات الحماية والاستشارات الأمنية"); } },
+  { id: 'manage_training', get label() { return tx("إدارة برامج التدريب والتأهيل"); }, get desc() { return tx("إنشاء الدورات التدريبية وتحديث المحاضرين ومتابعة المتدربين"); } },
+  { id: 'manage_research', get label() { return tx("إدارة الدراسات والتقارير الاستراتيجية"); }, get desc() { return tx("إعداد ونشر الأوراق البحثية والتقارير الأمنية الحصرية"); } },
+  { id: 'manage_messages', get label() { return tx("إدارة رسائل التواصل والاستفسارات"); }, get desc() { return tx("مراجعة رسائل نموذج الاتصال وتوثيق الردود والأرشفة"); } },
+  { id: 'manage_settings', get label() { return tx("إدارة إعدادات وبيانات الاتصال الرسمية"); }, get desc() { return tx("تحديث هواتف المركز، البريد الرسمي، وساعات الدوام"); } },
+  { id: 'view_audit_logs', get label() { return tx("استعراض سجلات التدقيق والنشاط الأمني"); }, get desc() { return tx("مراقبة كافة العمليات الحساسة وتتبع نشاط الإداريين"); } },
+  { id: 'manage_users', get label() { return tx("إدارة المستخدمين وتعيين الصلاحيات"); }, get desc() { return tx("تفعيل/تعطيل الحسابات ومنح الصلاحيات الدقيقة للكوادر"); } },
+  { id: 'submit_incident', get label() { return tx("تقديم البلاغات الميدانية"); }, get desc() { return tx("إرسال واستقبال تقارير الحوادث والبلاغات الميدانية الحساسة"); } },
+  { id: 'verify_incident', get label() { return tx("التحقق الميداني من البلاغات"); }, get desc() { return tx("مراجعة وتقييم وتأكيد صحة البلاغات وإسنادات التحقق"); } },
+  { id: 'analyze_incident', get label() { return tx("تحليل وتقييم مخاطر البلاغات"); }, get desc() { return tx("تصنيف وتحليل الأثر والمخاطر وإعداد النسخ المنقحة"); } },
+  { id: 'draft_incident_alert', get label() { return tx("صياغة مسودات التنبيهات الأمنية"); }, get desc() { return tx("إعداد وصياغة مسودات التنبيهات ونطاق المستلمين"); } },
+  { id: 'approve_incident_alert', get label() { return tx("اعتماد وإصدار التنبيهات الأمنية"); }, get desc() { return tx("الموافقة النهائية ونشر التنبيهات وتجميد المستلمين (إدارة عليا)"); } },
 ];
 
 const FUNCTIONAL_AREAS = [
-  { id: 'PROGRAMS_OPERATIONS', label: 'دائرة البرامج والعمليات الميدانية' },
-  { id: 'MONITORING_ANALYSIS', label: 'وحدة الرصد والتحليل الأمني' },
-  { id: 'RESEARCH_FIELD_FOCAL', label: 'شبكة نقاط الاتصال الميداني والبحث' },
-  { id: 'TRAINING_CAPACITY', label: 'قطاع التدريب وبناء القدرات' },
+  { id: 'PROGRAMS_OPERATIONS', get label() { return tx("دائرة البرامج والعمليات الميدانية"); } },
+  { id: 'MONITORING_ANALYSIS', get label() { return tx("وحدة الرصد والتحليل الأمني"); } },
+  { id: 'RESEARCH_FIELD_FOCAL', get label() { return tx("شبكة نقاط الاتصال الميداني والبحث"); } },
+  { id: 'TRAINING_CAPACITY', get label() { return tx("قطاع التدريب وبناء القدرات"); } },
 ];
 
 export default function UsersManager({ initialUsers, currentUserRole, currentUserId }: Props) {
+  const { tx, txLocale } = useAdminT();
   const [users, setUsers] = useState<UserItem[]>(initialUsers);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
@@ -73,7 +107,7 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
   // Toggle user active status
   const handleToggleStatus = async (user: UserItem) => {
     if (user.id === currentUserId) {
-      setFeedback({ type: 'error', message: 'لا يمكن للمسؤول تعطيل حسابه الشخصي' });
+      setFeedback({ type: 'error', message: tx("لا يمكن للمسؤول تعطيل حسابه الشخصي") });
       return;
     }
 
@@ -88,7 +122,7 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'تعذر تحديث حالة الحساب');
+      if (!res.ok) throw new Error(data.error || tx("تعذر تحديث حالة الحساب"));
 
       setUsers((prev) =>
         prev.map((u) => (u.id === user.id ? { ...u, isActive: !user.isActive } : u))
@@ -96,7 +130,7 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
 
       setFeedback({
         type: 'success',
-        message: `تم ${!user.isActive ? 'تفعيل' : 'تجميد'} حساب [${user.fullName}] بنجاح`,
+        message: tx("تم {0} حساب [{1}] بنجاح", !user.isActive ? tx("تفعيل") : tx("تجميد"), user.fullName),
       });
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message });
@@ -105,61 +139,37 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
     }
   };
 
-  // Assign or revoke capability
-  const handleCapabilityToggle = async (userId: string, capability: string, currentlyAssigned: boolean) => {
-    setUpdatingCap(capability);
+  // Toggle capability for user
+  const handleToggleCapability = async (capabilityId: string) => {
+    if (!selectedUser) return;
+
+    const currentCaps = selectedUser.assignedCapabilities || [];
+    const hasCap = currentCaps.includes(capabilityId);
+    const newCaps = hasCap
+      ? currentCaps.filter((c) => c !== capabilityId)
+      : [...currentCaps, capabilityId];
+
+    setUpdatingCap(capabilityId);
     setFeedback(null);
 
     try {
-      if (currentlyAssigned) {
-        // Revoke
-        const res = await fetch(`/api/admin/users/${userId}/capabilities?capability=${capability}`, {
-          method: 'DELETE',
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'تعذر سحب الصلاحية');
+      const res = await fetch(`/api/admin/users/${selectedUser.id}/capabilities`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ capabilities: newCaps }),
+      });
 
-        setUsers((prev) =>
-          prev.map((u) => {
-            if (u.id !== userId) return u;
-            const updated = (u.assignedCapabilities || []).filter((c) => c !== capability);
-            return { ...u, assignedCapabilities: updated };
-          })
-        );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || tx("تعذر تحديث الصلاحية"));
 
-        if (selectedUser && selectedUser.id === userId) {
-          setSelectedUser((prev) =>
-            prev ? { ...prev, assignedCapabilities: (prev.assignedCapabilities || []).filter((c) => c !== capability) } : null
-          );
-        }
+      const updatedUser = { ...selectedUser, assignedCapabilities: newCaps };
+      setSelectedUser(updatedUser);
+      setUsers((prev) => prev.map((u) => (u.id === selectedUser.id ? updatedUser : u)));
 
-        setFeedback({ type: 'success', message: `تم سحب الصلاحية [${capability}] بنجاح` });
-      } else {
-        // Assign
-        const res = await fetch(`/api/admin/users/${userId}/capabilities`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ capability }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'تعذر منح الصلاحية');
-
-        setUsers((prev) =>
-          prev.map((u) => {
-            if (u.id !== userId) return u;
-            const updated = [...(u.assignedCapabilities || []), capability];
-            return { ...u, assignedCapabilities: updated };
-          })
-        );
-
-        if (selectedUser && selectedUser.id === userId) {
-          setSelectedUser((prev) =>
-            prev ? { ...prev, assignedCapabilities: [...(prev.assignedCapabilities || []), capability] } : null
-          );
-        }
-
-        setFeedback({ type: 'success', message: `تم منح الصلاحية [${capability}] بنجاح` });
-      }
+      setFeedback({
+        type: 'success',
+        message: tx("تم {0} الصلاحية [{1}] للمستخدم بنجاح", hasCap ? tx("سحب") : tx("منح"), capabilityId),
+      });
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message });
     } finally {
@@ -167,7 +177,7 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
     }
   };
 
-  // Create new user submit handler
+  // Submit new user
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingNewUser(true);
@@ -181,13 +191,9 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'تعذر إنشاء الحساب');
+      if (!res.ok) throw new Error(data.error || tx("تعذر إنشاء الحساب"));
 
-      const createdUser: UserItem = {
-        ...data.user,
-        assignedCapabilities: newUserForm.capabilities,
-      };
-
+      const createdUser: UserItem = data.user;
       setUsers((prev) => [createdUser, ...prev]);
       setShowCreateModal(false);
       setNewUserForm({
@@ -203,7 +209,7 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
 
       setFeedback({
         type: 'success',
-        message: `تم إنشاء حساب [${createdUser.fullName}] برتبة [${createdUser.role}] بنجاح`,
+        message: tx("تم إنشاء حساب [{0}] بنجاح", createdUser.fullName),
       });
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message });
@@ -227,626 +233,446 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  return (
-    <div>
-      {/* Feedback Alert */}
-      {feedback && (
-        <div
-          style={{
-            padding: '1rem 1.25rem',
-            marginBottom: '1.5rem',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: feedback.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-            border: `1px solid ${feedback.type === 'success' ? '#22c55e' : '#ef4444'}`,
-            color: '#FFF',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            {feedback.type === 'success' ? <CheckCircle2 size={20} color="#22c55e" /> : <AlertCircle size={20} color="#ef4444" />}
-            <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{feedback.message}</span>
-          </div>
-          <button
-            onClick={() => setFeedback(null)}
-            style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}
+  const columns: ColumnDef<UserItem>[] = [
+    {
+      key: 'user',
+      header: tx("المستخدم والحساب"),
+      render: (u) => (
+        <div>
+          <strong style={{ color: 'var(--text-primary)', display: 'block' }}>{u.fullName}</strong>
+          <span
+            style={{
+              fontSize: '0.74rem',
+              color: 'var(--text-muted)',
+              fontFamily: 'var(--font-en)',
+              direction: 'ltr',
+              display: 'inline-block',
+            }}
           >
-            <X size={18} />
-          </button>
-        </div>
-      )}
-
-      {/* Header Toolbar */}
-      <div className="card" style={{ marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-          <div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', marginBottom: '0.4rem' }}>
-              إدارة المستخدمين وشبكة الكوادر الميدانية (Users & Field Focal Points)
-            </h2>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              إدارة حسابات الكوادر التشغيلية ونقاط الاتصال الميدانية، وتعيين مجالات العمل والصلاحيات الدقيقة وفق مبدأ الاستحقاق الأمني
-            </span>
-          </div>
-
-          {isSuperAdmin && (
-            <button
-              type="button"
-              className="btn btn-gold"
-              onClick={() => setShowCreateModal(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+            {u.email}
+          </span>
+          {u.phone && (
+            <span
+              style={{
+                fontSize: '0.72rem',
+                color: 'var(--text-muted)',
+                fontFamily: 'var(--font-en)',
+                direction: 'ltr',
+                display: 'block',
+              }}
             >
-              <ShieldCheck size={18} />
-              <span>إضافة كادر أو نقطة اتصال</span>
-            </button>
+              {u.phone}
+            </span>
           )}
         </div>
-
-        {/* Filter Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <input
-              type="text"
-              className="form-control"
-              placeholder="بحث بالاسم أو البريد أو مجال العمل..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ paddingRight: '2.5rem' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Filter size={16} color="var(--color-gold)" />
-            <select
-              className="form-control"
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              style={{ minWidth: '160px' }}
+      ),
+    },
+    {
+      key: 'organization',
+      header: tx("المؤسسة / المحافظة"),
+      render: (u) => <span style={{ color: 'var(--text-secondary)' }}>{u.organization || '—'}</span>,
+    },
+    {
+      key: 'role',
+      header: tx("الدور والرتبة"),
+      render: (u) => <AdminStatusBadge status={u.role} />,
+    },
+    {
+      key: 'capabilities',
+      header: tx("الصلاحيات الدقيقة"),
+      render: (u) => {
+        if (u.role === 'SUPER_ADMIN') {
+          return <AdminStatusBadge status="ACTIVE" variant="warning" label={tx("صلاحيات مطلقة (SUPER_ADMIN)")} icon={ShieldCheck} />;
+        }
+        const count = u.assignedCapabilities?.length || 0;
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <span
+              style={{
+                fontSize: '0.74rem',
+                padding: '0.15rem 0.5rem',
+                borderRadius: '4px',
+                background: count > 0 ? 'var(--admin-status-info-bg)' : 'var(--surface-bg)',
+                color: count > 0 ? 'var(--admin-status-info-text)' : 'var(--text-muted)',
+                fontWeight: 700,
+                border: count > 0 ? '1px solid var(--admin-status-info-border)' : '1px solid var(--admin-card-border)',
+              }}
             >
-              <option value="ALL">جميع الأدوار</option>
-              <option value="SUPER_ADMIN">إدارة عليا (SUPER_ADMIN)</option>
-              <option value="ADMIN">مسؤول إداري (ADMIN)</option>
-              <option value="STAFF">كادر تشغيلي (STAFF)</option>
-              <option value="FIELD_FOCAL_POINT">نقطة اتصال ميدانية</option>
-              <option value="SERVICE_MANAGER">مدير خدمات</option>
-              <option value="TRAINING_MANAGER">مدير تدريب</option>
-              <option value="RESEARCH_MANAGER">مدير أبحاث</option>
-              <option value="CLIENT">عميل مؤسسي (CLIENT)</option>
-              <option value="TRAINEE">متدرب (TRAINEE)</option>
-            </select>
-
-            <select
-              className="form-control"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ minWidth: '130px' }}
-            >
-              <option value="ALL">جميع الحالات</option>
-              <option value="ACTIVE">نشط فقط</option>
-              <option value="INACTIVE">معطل فقط</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Users Table */}
-      <div className="card">
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
-            <Users size={36} style={{ margin: '0 auto 0.75rem', opacity: 0.6 }} />
-            <p style={{ margin: 0, fontWeight: 600 }}>لم يتم العثور على مستخدمين يطابقون خيارات البحث.</p>
-          </div>
-        ) : (
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>المستخدم</th>
-                  <th>مجال العمل / المؤسسة</th>
-                  <th>الدور (Role)</th>
-                  <th>الصلاحيات الدقيقة (Capabilities)</th>
-                  <th>الحالة</th>
-                  <th>الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((u) => {
-                  const isStaffUser = ['STAFF', 'EMPLOYEE', 'SERVICE_MANAGER', 'TRAINING_MANAGER', 'RESEARCH_MANAGER', 'CONTENT_MANAGER'].includes(u.role);
-                  const isFocalPoint = u.role === 'FIELD_FOCAL_POINT';
-
-                  return (
-                    <tr key={u.id}>
-                      <td>
-                        <strong style={{ display: 'block', color: '#FFF' }}>{u.fullName}</strong>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{u.email}</span>
-                        {u.phone && <span style={{ fontSize: '0.72rem', color: 'var(--text-subtle)', display: 'block' }}>{u.phone}</span>}
-                      </td>
-                      <td style={{ fontSize: '0.85rem' }}>{u.organization || '—'}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            u.role === 'SUPER_ADMIN'
-                              ? 'badge-red'
-                              : u.role === 'ADMIN'
-                              ? 'badge-gold'
-                              : isFocalPoint
-                              ? 'badge-blue'
-                              : isStaffUser
-                              ? 'badge-yellow'
-                              : u.role === 'CLIENT'
-                              ? 'badge-blue'
-                              : 'badge-green'
-                          }`}
-                        >
-                          {isFocalPoint ? 'نقطة اتصال ميدانية' : u.role}
-                        </span>
-                      </td>
-                      <td>
-                        {u.role === 'SUPER_ADMIN' ? (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--color-gold-light)', fontWeight: 600 }}>
-                            كافة الصلاحيات (إدارة عليا)
-                          </span>
-                        ) : u.role === 'ADMIN' ? (
-                          <span style={{ fontSize: '0.8rem', color: '#22c55e', fontWeight: 600 }}>
-                            صلاحيات تشغيلية كاملة
-                          </span>
-                        ) : isFocalPoint ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <span className="badge badge-blue" style={{ fontSize: '0.75rem' }}>
-                              {(u.assignedCapabilities || []).includes('submit_incident')
-                                ? 'مصرح بتقديم البلاغات'
-                                : 'معطل صلاحية التقديم'}
-                            </span>
-                            <button
-                              type="button"
-                              className="btn btn-outline btn-sm"
-                              style={{ padding: '2px 8px', fontSize: '0.75rem' }}
-                              onClick={() => setSelectedUser(u)}
-                            >
-                              <Key size={12} />
-                              <span>إدارة الصلاحية</span>
-                            </button>
-                          </div>
-                        ) : isStaffUser ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <span className="badge badge-gold" style={{ fontSize: '0.75rem' }}>
-                              {(u.assignedCapabilities || []).length} صلاحيات مخصصة
-                            </span>
-                            <button
-                              type="button"
-                              className="btn btn-outline btn-sm"
-                              style={{ padding: '2px 8px', fontSize: '0.75rem' }}
-                              onClick={() => setSelectedUser(u)}
-                            >
-                              <Key size={12} />
-                              <span>تخصيص</span>
-                            </button>
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>
-                            بوابة مستفيد (بدون صلاحيات إدارية)
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <span className={`badge ${u.isActive ? 'badge-green' : 'badge-red'}`}>
-                          {u.isActive ? 'نشط' : 'معطل'}
-                        </span>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <button
-                            type="button"
-                            className={`btn btn-sm ${u.isActive ? 'btn-outline' : 'btn-gold'}`}
-                            disabled={togglingUserId === u.id || u.id === currentUserId || (u.role === 'SUPER_ADMIN' && !isSuperAdmin)}
-                            onClick={() => handleToggleStatus(u)}
-                            title={u.id === currentUserId ? 'لا يمكن تعطيل الحساب الشخصي' : u.isActive ? 'تجميد الحساب' : 'تفعيل الحساب'}
-                            style={{ fontSize: '0.78rem', padding: '4px 10px' }}
-                          >
-                            {u.isActive ? (
-                              <>
-                                <UserX size={13} />
-                                <span>تعطيل</span>
-                              </>
-                            ) : (
-                              <>
-                                <UserCheck size={13} />
-                                <span>تفعيل</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Create New User Modal */}
-      {showCreateModal && (
-        <div
-          className="facss-modal-overlay"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '1rem',
-          }}
-        >
-          <div
-            className="card facss-modal-content"
-            style={{
-              maxWidth: '650px',
-              width: '100%',
-              maxHeight: '92vh',
-              overflowY: 'auto',
-              border: '1px solid var(--color-gold)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-              <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFF', margin: 0 }}>
-                  إنشاء حساب كادر تشغيلي / نقطة اتصال ميدانية
-                </h3>
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  إسناد الدور ومجال العمل الميداني والصلاحيات الأولية المعتمدة
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowCreateModal(false)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              {count} {tx("صلاحية ممنوحة")}
+            </span>
+            {isSuperAdmin && (
+              <AdminButton
+                variant="ghost"
+                size="sm"
+                icon={Sliders}
+                onClick={() => setSelectedUser(u)}
               >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label className="form-label">الاسم الكامل *</label>
-                <input
-                  type="text"
-                  required
-                  className="form-control"
-                  placeholder="مثال: صالح محمد اليافعي"
-                  value={newUserForm.fullName}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, fullName: e.target.value })}
-                />
-              </div>
-
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">البريد الإلكتروني *</label>
-                  <input
-                    type="email"
-                    required
-                    className="form-control"
-                    placeholder="user@facss.org"
-                    value={newUserForm.email}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="form-label">كلمة المرور (8 خانات على الأقل) *</label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    className="form-control"
-                    placeholder="********"
-                    value={newUserForm.password}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">الرتبة / الدور *</label>
-                  <select
-                    className="form-control"
-                    value={newUserForm.role}
-                    onChange={(e) => {
-                      const newRole = e.target.value;
-                      setNewUserForm({
-                        ...newUserForm,
-                        role: newRole,
-                        // If focal point, restrict capabilities to submit_incident only
-                        capabilities: newRole === 'FIELD_FOCAL_POINT' ? ['submit_incident'] : newUserForm.capabilities,
-                      });
-                    }}
-                  >
-                    <option value="STAFF">كادر تشغيلي (STAFF)</option>
-                    <option value="FIELD_FOCAL_POINT">نقطة اتصال ميدانية (FIELD_FOCAL_POINT)</option>
-                    <option value="ADMIN">مسؤول إداري (ADMIN)</option>
-                    <option value="SERVICE_MANAGER">مدير خدمات أمنية</option>
-                    <option value="TRAINING_MANAGER">مدير برامج تدريب</option>
-                    <option value="RESEARCH_MANAGER">مدير أبحاث ودراسات</option>
-                    <option value="EMPLOYEE">موظف إداري</option>
-                    <option value="CLIENT">عميل مؤسسي</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">مجال العمل التخصصي</label>
-                  <select
-                    className="form-control"
-                    value={newUserForm.functionalArea}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, functionalArea: e.target.value })}
-                  >
-                    {FUNCTIONAL_AREAS.map((fa) => (
-                      <option key={fa.id} value={fa.id}>{fa.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">رقم الهاتف للتواصل</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="+967 77X XXX XXX"
-                    value={newUserForm.phone}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, phone: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="form-label">الجهة / المؤسسة / المحافظة</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="مثال: عدن - خور مكسر"
-                    value={newUserForm.organization}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, organization: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Initial Capabilities */}
-              <div>
-                <label className="form-label" style={{ marginBottom: '0.5rem', display: 'block' }}>
-                  الصلاحيات المبدئية الممنوحة:
-                </label>
-                {newUserForm.role === 'FIELD_FOCAL_POINT' ? (
-                  <div
-                    style={{
-                      padding: '0.85rem',
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                      borderRadius: '8px',
-                      fontSize: '0.85rem',
-                      color: '#93c5fd',
-                    }}
-                  >
-                    نقطة الاتصال الميدانية معزولة عن أي صلاحيات إدارية أو وصول لبوابة الإدارة (/admin)، وتُمنح حصراً صلاحية <strong>تقديم البلاغات الميدانية (submit_incident)</strong> عبر البوابة الميدانية المستقلة.
-                  </div>
-                ) : (
-                  <div
-                    className="facss-form-grid-2"
-                    style={{
-                      maxHeight: '180px',
-                      overflowY: 'auto',
-                      padding: '0.5rem',
-                      background: 'rgba(0,0,0,0.3)',
-                      borderRadius: '8px',
-                      gap: '0.5rem',
-                    }}
-                  >
-                    {CAPABILITY_DEFINITIONS.filter((c) => c.id !== 'approve_incident_alert' || isSuperAdmin).map((cap) => {
-                      const isChecked = newUserForm.capabilities.includes(cap.id);
-                      return (
-                        <label
-                          key={cap.id}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            fontSize: '0.8rem',
-                            color: '#FFF',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setNewUserForm({
-                                  ...newUserForm,
-                                  capabilities: [...newUserForm.capabilities, cap.id],
-                                });
-                              } else {
-                                setNewUserForm({
-                                  ...newUserForm,
-                                  capabilities: newUserForm.capabilities.filter((c) => c !== cap.id),
-                                });
-                              }
-                            }}
-                          />
-                          <span>{cap.label}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
-                <button
-                  type="button"
-                  className="btn btn-outline btn-sm"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-gold btn-sm"
-                  disabled={isSubmittingNewUser}
-                >
-                  {isSubmittingNewUser ? 'جاري الإنشاء...' : 'إنشاء المستخدم وتأكيد الصلاحيات'}
-                </button>
-              </div>
-            </form>
+                {tx("تعديل")}
+              </AdminButton>
+            )}
           </div>
-        </div>
+        );
+      },
+    },
+    {
+      key: 'status',
+      header: tx("الحالة"),
+      render: (u) => (
+        <AdminStatusBadge
+          status={u.isActive ? 'ACTIVE' : 'INACTIVE'}
+          variant={u.isActive ? 'success' : 'danger'}
+          label={u.isActive ? tx("حساب نشط") : tx("حساب معطل")}
+        />
+      ),
+    },
+    {
+      key: 'actions',
+      header: tx("الإجراءات"),
+      align: 'center',
+      render: (u) => {
+        if (!isSuperAdmin) return null;
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', justifyContent: 'center' }}>
+            <AdminButton
+              variant={u.isActive ? 'danger' : 'secondary'}
+              size="sm"
+              icon={u.isActive ? UserX : UserCheck}
+              loading={togglingUserId === u.id}
+              disabled={u.id === currentUserId}
+              onClick={() => handleToggleStatus(u)}
+            >
+              {u.isActive ? tx("تجميد") : tx("تفعيل")}
+            </AdminButton>
+          </div>
+        );
+      },
+    },
+  ];
+
+  return (
+    <div>
+      <AdminPageHeader
+        title={tx("إدارة المستخدمين والصلاحيات (Users & RBAC)")}
+        description={tx("إدارة حسابات الكوادر التشغيلية، بوابات العملاء والمتدربين، وتعيين الصلاحيات الدقيقة وفق مبدأ الاستحقاق الأمني")}
+        actions={
+          isSuperAdmin ? (
+            <AdminButton
+              variant="primary"
+              size="sm"
+              icon={UserPlus}
+              onClick={() => setShowCreateModal(true)}
+            >
+              {tx("إضافة كادر أو حساب جديد")}
+            </AdminButton>
+          ) : undefined
+        }
+      />
+
+      {feedback && (
+        <AdminAlert
+          variant={feedback.type === 'success' ? 'success' : 'danger'}
+          onDismiss={() => setFeedback(null)}
+        >
+          {feedback.message}
+        </AdminAlert>
       )}
 
-      {/* Capabilities Assignment Modal */}
-      {selectedUser && (
-        <div
-          className="facss-modal-overlay"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.75)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '1rem',
-          }}
-        >
-          <div
-            className="card facss-modal-content"
-            style={{
-              maxWidth: '650px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              border: '1px solid var(--color-gold)',
-            }}
+      <AdminFilterBar
+        hasActiveFilters={Boolean(search || roleFilter !== 'ALL' || statusFilter !== 'ALL')}
+        onReset={() => {
+          setSearch('');
+          setRoleFilter('ALL');
+          setStatusFilter('ALL');
+        }}
+      >
+        <AdminSearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder={tx("البحث بالاسم، البريد الإلكتروني، أو المؤسسة...")}
+        />
+
+        <div style={{ minWidth: '160px' }}>
+          <select
+            className="admin-select"
+            style={{ height: 'var(--admin-control-height-md)', margin: 0 }}
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-              <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFF', margin: 0 }}>
-                  تخصيص الصلاحيات الدقيقة (Granular Capabilities)
-                </h3>
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  للمستخدم: <strong style={{ color: 'var(--color-gold-light)' }}>{selectedUser.fullName}</strong> ({selectedUser.email}) — [{selectedUser.role}]
-                </span>
+            <option value="ALL">{tx("جميع الأدوار")}</option>
+            <option value="SUPER_ADMIN">{tx("إدارة عليا (SUPER_ADMIN)")}</option>
+            <option value="ADMIN">{tx("مسؤول إداري (ADMIN)")}</option>
+            <option value="STAFF">{tx("كادر تشغيلي (STAFF)")}</option>
+            <option value="FIELD_FOCAL_POINT">{tx("نقطة اتصال ميدانية")}</option>
+            <option value="SERVICE_MANAGER">{tx("مدير خدمات")}</option>
+            <option value="TRAINING_MANAGER">{tx("مدير تدريب")}</option>
+            <option value="RESEARCH_MANAGER">{tx("مدير أبحاث")}</option>
+            <option value="CLIENT">{tx("عميل مؤسسي (CLIENT)")}</option>
+            <option value="TRAINEE">{tx("متدرب (TRAINEE)")}</option>
+          </select>
+        </div>
+
+        <div style={{ minWidth: '130px' }}>
+          <select
+            className="admin-select"
+            style={{ height: 'var(--admin-control-height-md)', margin: 0 }}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="ALL">{tx("جميع الحالات")}</option>
+            <option value="ACTIVE">{tx("حسابات نشطة")}</option>
+            <option value="INACTIVE">{tx("حسابات معطلة")}</option>
+          </select>
+        </div>
+      </AdminFilterBar>
+
+      <AdminDataTable
+        columns={columns}
+        data={filtered}
+        keyExtractor={(u) => u.id}
+        emptyTitle={tx("لم يتم العثور على مستخدمين")}
+        emptyDescription={tx("جرّب تعديل مصطلح البحث أو تفريغ الفلاتر الحالية.")}
+        mobileCardRender={(u) => {
+          const capCount = u.assignedCapabilities?.length || 0;
+          return (
+            <div className="admin-card-inner">
+              <div className="admin-card-top">
+                <div>
+                  <strong className="admin-card-title">{u.fullName}</strong>
+                  <span className="admin-card-sub" dir="ltr">{u.email}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                  <AdminStatusBadge status={u.role} />
+                  <AdminStatusBadge status={u.isActive ? 'ACTIVE' : 'INACTIVE'} />
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedUser(null)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-              >
-                <X size={20} />
-              </button>
+
+              <div className="admin-card-body">
+                {u.organization && (
+                  <div className="admin-card-row">
+                    <span className="admin-card-label">{tx("المؤسسة:")}</span>
+                    <span className="admin-card-value">{u.organization}</span>
+                  </div>
+                )}
+                {u.phone && (
+                  <div className="admin-card-row">
+                    <span className="admin-card-label">{tx("الهاتف:")}</span>
+                    <span className="admin-card-value" dir="ltr">{u.phone}</span>
+                  </div>
+                )}
+                <div className="admin-card-row">
+                  <span className="admin-card-label">{tx("الصلاحيات:")}</span>
+                  {u.role === 'SUPER_ADMIN' ? (
+                    <span style={{ fontSize: '0.72rem', color: 'var(--brand-gold-600)', fontWeight: 700 }}>
+                      {tx("صلاحيات مطلقة (SUPER_ADMIN)")}
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        padding: '0.12rem 0.45rem',
+                        borderRadius: '4px',
+                        background: capCount > 0 ? 'var(--admin-status-info-bg)' : 'var(--surface-bg)',
+                        color: capCount > 0 ? 'var(--admin-status-info-text)' : 'var(--text-muted)',
+                        fontWeight: 700,
+                        border: '1px solid var(--admin-card-border)',
+                      }}
+                    >
+                      {capCount} {tx("صلاحية ممنوحة")}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="admin-card-footer">
+                <AdminButton
+                  variant="secondary"
+                  size="sm"
+                  icon={Sliders}
+                  onClick={() => setSelectedUser(u)}
+                >
+                  {tx("إدارة الصلاحيات")}
+                </AdminButton>
+                {isSuperAdmin && u.id !== currentUserId && (
+                  <AdminButton
+                    variant={u.isActive ? 'danger' : 'outline'}
+                    size="sm"
+                    loading={togglingUserId === u.id}
+                    onClick={() => handleToggleStatus(u)}
+                  >
+                    {u.isActive ? tx("تجميد الحساب") : tx("تفعيل الحساب")}
+                  </AdminButton>
+                )}
+              </div>
             </div>
+          );
+        }}
+      />
 
-            {selectedUser.role === 'FIELD_FOCAL_POINT' ? (
-              <div
-                style={{
-                  padding: '1rem',
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                  borderRadius: '8px',
-                  marginBottom: '1.5rem',
-                  fontSize: '0.88rem',
-                  color: '#93c5fd',
-                  lineHeight: 1.6,
-                }}
-              >
-                <strong>ضوابط العزل الأمني لنقاط الاتصال الميدانية:</strong>
-                <p style={{ margin: '0.5rem 0 0' }}>
-                  نقاط الاتصال الميدانية معزولة بالكامل عن البوابة الإدارية (/admin) ولا تملك صلاحيات استعراض إدارية أو إسنادات. الصلاحية المسموح بمنحها أو سحبها هي صلاحية تقديم البلاغات الميدانية (submit_incident) فقط.
-                </p>
-              </div>
-            ) : (
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
-                مبدأ الحد الأدنى من الامتيازات (Principle of Least Privilege): لا يملك الكادر التشغيلي أي صلاحيات افتراضية، ويتم تفعيل الصلاحيات المناسبة لمهامه الوظيفية فقط.
-              </p>
-            )}
+      {/* Edit Capabilities Modal */}
+      {selectedUser && (
+        <AdminModal
+          isOpen={Boolean(selectedUser)}
+          onClose={() => setSelectedUser(null)}
+          title={tx("تعديل الصلاحيات: {0}", selectedUser.fullName)}
+          description={tx("الرتبة: {0} • البريد: {1}", selectedUser.role, selectedUser.email)}
+          maxWidth="640px"
+        >
+          {selectedUser.role === 'SUPER_ADMIN' ? (
+            <AdminAlert variant="warning">
+              {tx("حساب الإدارة العليا (SUPER_ADMIN) يمتلك كافة الصلاحيات التشغيلية والأمنية تلقائياً وبشكل دائم.")}
+            </AdminAlert>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>
+                {tx("حدد الصلاحيات التشغيلية الممنوحة لهذا الحساب:")}
+              </span>
 
-            {/* Capabilities Checkboxes List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
-              {CAPABILITY_DEFINITIONS.filter((cap) => {
-                if (selectedUser.role === 'FIELD_FOCAL_POINT') {
-                  return cap.id === 'submit_incident';
-                }
-                return true;
-              }).map((cap) => {
+              {CAPABILITY_DEFINITIONS.map((cap) => {
                 const isAssigned = (selectedUser.assignedCapabilities || []).includes(cap.id);
-                const isRestrictedForAdmin =
-                  ((cap.id === 'manage_users' || cap.id === 'manage_settings' || cap.id === 'approve_incident_alert') &&
-                    !isSuperAdmin);
+                const isUpdating = updatingCap === cap.id;
 
                 return (
                   <div
                     key={cap.id}
                     style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      justifyContent: 'space-between',
-                      padding: '0.85rem 1rem',
-                      background: isAssigned ? 'rgba(197, 155, 39, 0.1)' : 'rgba(5, 14, 9, 0.7)',
+                      padding: '0.75rem 1rem',
+                      background: isAssigned ? 'rgba(217, 119, 6, 0.05)' : 'var(--surface-bg)',
+                      border: isAssigned ? '1px solid var(--brand-gold-500)' : '1px solid var(--admin-card-border)',
                       borderRadius: '8px',
-                      border: `1px solid ${isAssigned ? 'rgba(197, 155, 39, 0.3)' : 'rgba(255,255,255,0.06)'}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.85rem',
                     }}
                   >
-                    <div style={{ flex: 1, paddingLeft: '1rem' }}>
-                      <strong style={{ display: 'block', color: '#FFF', fontSize: '0.92rem', marginBottom: '0.2rem' }}>
+                    <div>
+                      <strong style={{ fontSize: '0.86rem', color: 'var(--text-primary)', display: 'block' }}>
                         {cap.label}
                       </strong>
-                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block' }}>
+                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                         {cap.desc}
                       </span>
-                      {isRestrictedForAdmin && (
-                        <span style={{ fontSize: '0.72rem', color: '#ef4444', marginTop: '0.2rem', display: 'block' }}>
-                          * يتطلب صلاحيات الإدارة العليا (SUPER_ADMIN) لمنح هذا الامتياز
-                        </span>
-                      )}
                     </div>
 
-                    <button
-                      type="button"
-                      className={`btn btn-sm ${isAssigned ? 'btn-gold' : 'btn-outline'}`}
-                      disabled={updatingCap === cap.id || isRestrictedForAdmin}
-                      onClick={() => handleCapabilityToggle(selectedUser.id, cap.id, isAssigned)}
-                      style={{ minWidth: '95px', fontSize: '0.8rem' }}
+                    <AdminButton
+                      variant={isAssigned ? 'danger' : 'primary'}
+                      size="sm"
+                      loading={isUpdating}
+                      onClick={() => handleToggleCapability(cap.id)}
                     >
-                      {updatingCap === cap.id ? (
-                        'جاري التحديث...'
-                      ) : isAssigned ? (
-                        <>
-                          <ShieldCheck size={14} />
-                          <span>ممنوحة</span>
-                        </>
-                      ) : (
-                        <span>منح الإذن</span>
-                      )}
-                    </button>
+                      {isAssigned ? tx("سحب") : tx("منح")}
+                    </AdminButton>
                   </div>
                 );
               })}
             </div>
+          )}
+        </AdminModal>
+      )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1rem' }}>
-              <button
-                type="button"
-                className="btn btn-outline btn-sm"
-                onClick={() => setSelectedUser(null)}
-              >
-                إغلاق
-              </button>
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <AdminModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          title={tx("إضافة كادر أو حساب مستخدم جديد")}
+          description={tx("إسناد الدور ومجال العمل الميداني والصلاحيات الأولية المعتمدة")}
+          maxWidth="640px"
+        >
+          <form onSubmit={handleCreateUser}>
+            <AdminInput
+              label={tx("الاسم الكامل")}
+              required
+              placeholder={tx("مثال: صالح محمد اليافعي")}
+              value={newUserForm.fullName}
+              onChange={(e) => setNewUserForm({ ...newUserForm, fullName: e.target.value })}
+            />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+              <AdminInput
+                label={tx("البريد الإلكتروني")}
+                required
+                type="email"
+                isLtr
+                placeholder="user@facss.org"
+                value={newUserForm.email}
+                onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+              />
+
+              <AdminInput
+                label={tx("كلمة المرور المؤقتة")}
+                required
+                type="password"
+                minLength={8}
+                placeholder="********"
+                value={newUserForm.password}
+                onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+              />
             </div>
-          </div>
-        </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+              <AdminSelect
+                label={tx("الرتبة / الدور")}
+                required
+                value={newUserForm.role}
+                onChange={(e) => {
+                  const newRole = e.target.value;
+                  setNewUserForm({
+                    ...newUserForm,
+                    role: newRole,
+                    capabilities: newRole === 'FIELD_FOCAL_POINT' ? ['submit_incident'] : newUserForm.capabilities,
+                  });
+                }}
+              >
+                <option value="STAFF">{tx("كادر تشغيلي (STAFF)")}</option>
+                <option value="FIELD_FOCAL_POINT">{tx("نقطة اتصال ميدانية (FIELD_FOCAL_POINT)")}</option>
+                <option value="ADMIN">{tx("مسؤول إداري (ADMIN)")}</option>
+                <option value="SERVICE_MANAGER">{tx("مدير خدمات أمنية")}</option>
+                <option value="TRAINING_MANAGER">{tx("مدير برامج تدريب")}</option>
+                <option value="RESEARCH_MANAGER">{tx("مدير أبحاث ودراسات")}</option>
+                <option value="EMPLOYEE">{tx("موظف إداري")}</option>
+                <option value="CLIENT">{tx("عميل مؤسسي")}</option>
+              </AdminSelect>
+
+              <AdminSelect
+                label={tx("مجال العمل التخصصي")}
+                value={newUserForm.functionalArea}
+                onChange={(e) => setNewUserForm({ ...newUserForm, functionalArea: e.target.value })}
+              >
+                {FUNCTIONAL_AREAS.map((fa) => (
+                  <option key={fa.id} value={fa.id}>{fa.label}</option>
+                ))}
+              </AdminSelect>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+              <AdminInput
+                label={tx("رقم الهاتف للتواصل")}
+                isLtr
+                placeholder="+967 77X XXX XXX"
+                value={newUserForm.phone}
+                onChange={(e) => setNewUserForm({ ...newUserForm, phone: e.target.value })}
+              />
+
+              <AdminInput
+                label={tx("الجهة / المحافظة")}
+                placeholder={tx("مثال: عدن - خور مكسر")}
+                value={newUserForm.organization}
+                onChange={(e) => setNewUserForm({ ...newUserForm, organization: e.target.value })}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
+              <AdminButton variant="secondary" onClick={() => setShowCreateModal(false)}>
+                {tx("إلغاء")}
+              </AdminButton>
+              <AdminButton variant="primary" type="submit" loading={isSubmittingNewUser}>
+                {tx("تأكيد وإنشاء الحساب")}
+              </AdminButton>
+            </div>
+          </form>
+        </AdminModal>
       )}
     </div>
   );
 }
-

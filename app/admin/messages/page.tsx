@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import prisma from '@/lib/prisma';
 import { requireCapability, CAPABILITIES } from '@/lib/rbac';
 import MessagesManager, { MessageItem } from '@/components/admin/MessagesManager';
@@ -28,7 +28,9 @@ export default async function AdminMessagesPage() {
 
   return (
     <div>
-      <MessagesManager initialMessages={serializedMessages} />
+      <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>جارٍ تحميل الرسائل...</div>}>
+        <MessagesManager initialMessages={serializedMessages} />
+      </Suspense>
     </div>
   );
 }

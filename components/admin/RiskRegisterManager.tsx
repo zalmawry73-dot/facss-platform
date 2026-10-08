@@ -1,8 +1,9 @@
 'use client';
 
+import { tx, txLocale, useAdminT } from '@/lib/admin-i18n';
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   AlertTriangle,
   Plus,
@@ -15,11 +16,30 @@ import {
   Clock,
   Shield,
   Layers,
-  ArrowUpDown,
   MapPin,
   X,
-  Sparkles
+  Sparkles,
+  ExternalLink,
 } from 'lucide-react';
+import {
+  AdminPageHeader,
+  AdminSection,
+  AdminStatCard,
+  AdminFilterBar,
+  AdminSearchInput,
+  AdminSelect,
+  AdminInput,
+  AdminTextarea,
+  AdminDataTable,
+  AdminStatusBadge,
+  AdminButton,
+  AdminIconButton,
+  AdminModal,
+  AdminAlert,
+  AdminEmptyState,
+  AdminLoadingState,
+} from '@/components/admin/ui';
+
 import {
   calculateRiskScore,
   getRiskLevelMeta,
@@ -40,7 +60,41 @@ interface RiskRegisterManagerProps {
   };
 }
 
+const CATEGORY_OPTIONS: Array<{ value: RiskCategoryType; label: string }> = [
+  { value: 'ARMED_CONFLICT_SECURITY', get label() { return tx("نزاع مسلح وتوترات أمنية"); } },
+  { value: 'ACCESS_ROADBLOCK_DENIAL', get label() { return tx("قطع طرق وإعاقة وصول"); } },
+  { value: 'EXPLOSIVE_HAZARD_UXO', get label() { return tx("مخاطر ألغام ومخلفات حرب"); } },
+  { value: 'CRIMINALITY_THEFT', get label() { return tx("جرائم جنائية وسرقات"); } },
+  { value: 'STAFF_DETENTION_THREAT', get label() { return tx("احتجاز وتهديد موظفين"); } },
+  { value: 'FACILITY_DAMAGE', get label() { return tx("أضرار منشآت ومرافق"); } },
+  { value: 'ENVIRONMENTAL_NATURAL', get label() { return tx("كوارث طبيعية ومخاطر بيئية"); } },
+  { value: 'HEALTH_SAFETY', get label() { return tx("صحة وسلامة عامة"); } },
+];
+
+const LEVEL_OPTIONS = [
+  { value: 'CRITICAL', get label() { return tx("خطر حرج (Critical)"); } },
+  { value: 'HIGH', get label() { return tx("خطر عالي (High)"); } },
+  { value: 'MEDIUM', get label() { return tx("خطر متوسط (Medium)"); } },
+  { value: 'LOW', get label() { return tx("خطر منخفض (Low)"); } },
+];
+
+const STATUS_OPTIONS = [
+  { value: 'IDENTIFIED', get label() { return tx("تم الرصد (Identified)"); } },
+  { value: 'ASSESSED', get label() { return tx("تم التقييم (Assessed)"); } },
+  { value: 'TREATMENT_IN_PROGRESS', get label() { return tx("قيد المعالجة (In Treatment)"); } },
+  { value: 'MONITORED', get label() { return tx("تحت المراقبة (Monitored)"); } },
+  { value: 'RESOLVED', get label() { return tx("تمت المعالجة (Resolved)"); } },
+  { value: 'CLOSED', get label() { return tx("مغلق (Closed)"); } },
+];
+
+const YEMEN_GOVERNORATES = [
+  'عدن', 'لحج', 'أبين', 'الضالع', 'شبوة', 'حضرموت', 'المهرة', 'سقطرى',
+  'تعز', 'الحديدة', 'مأرب', 'الجوف', 'صنعاء', 'عمران', 'ذمار', 'إب',
+  'البيضاء', 'حجة', 'صعدة', 'المحويت', 'ريمة', 'أمانة العاصمة'
+];
+
 export default function RiskRegisterManager({ currentUser }: RiskRegisterManagerProps) {
+  const { tx, txLocale } = useAdminT();
   const router = useRouter();
   const [risks, setRisks] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({
@@ -59,6 +113,8 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+
   // Filters
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -66,6 +122,21 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
   const [statusFilter, setStatusFilter] = useState('');
   const [governorateFilter, setGovernorateFilter] = useState('');
   const [matrixCellFilter, setMatrixCellFilter] = useState<{ l: number; i: number } | null>(null);
+
+  useEffect(() => {
+    const levelParam = searchParams?.get('level')?.toUpperCase();
+    if (levelParam && ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].includes(levelParam)) {
+      setLevelFilter(levelParam);
+    }
+    const statusParam = searchParams?.get('status')?.toUpperCase();
+    if (statusParam && ['IDENTIFIED', 'ASSESSED', 'TREATMENT_IN_PROGRESS', 'MONITORED', 'RESOLVED', 'CLOSED'].includes(statusParam)) {
+      setStatusFilter(statusParam);
+    }
+    const categoryParam = searchParams?.get('category');
+    if (categoryParam) {
+      setCategoryFilter(categoryParam);
+    }
+  }, [searchParams]);
 
   // Modals
   const [isStandaloneModalOpen, setIsStandaloneModalOpen] = useState(false);
@@ -96,26 +167,14 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams();
-      if (search) params.set('search', search);
-      if (categoryFilter) params.set('category', categoryFilter);
-      if (levelFilter) params.set('riskLevel', levelFilter);
-      if (statusFilter) params.set('status', statusFilter);
-      if (governorateFilter) params.set('governorate', governorateFilter);
-      if (matrixCellFilter) {
-        params.set('likelihood', String(matrixCellFilter.l));
-        params.set('impact', String(matrixCellFilter.i));
-      }
-
-      const res = await fetch(`/api/admin/risks?${params.toString()}`);
+      const res = await fetch('/api/admin/risks');
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'فشل في تحميل سجل المخاطر');
+        throw new Error(data.error || tx("تعذر جلب سجل المخاطر"));
       }
-
       setRisks(data.risks || []);
-      if (data.stats) setStats(data.stats);
-      if (data.matrixCounts) setMatrixCounts(data.matrixCounts);
+      setStats(data.stats || {});
+      setMatrixCounts(data.matrixCounts || {});
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -125,20 +184,45 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
 
   useEffect(() => {
     fetchRisks();
-  }, [search, categoryFilter, levelFilter, statusFilter, governorateFilter, matrixCellFilter]);
+  }, []);
 
-  // Fetch verified incidents when opening modal
+  // Filtered Risks
+  const filteredRisks = useMemo(() => {
+    return risks.filter((r) => {
+      if (search) {
+        const query = search.toLowerCase();
+        const matchTitle = r.title.toLowerCase().includes(query);
+        const matchNum = r.riskNumber.toLowerCase().includes(query);
+        const matchGov = r.governorate?.toLowerCase().includes(query) || false;
+        const matchDist = r.district?.toLowerCase().includes(query) || false;
+        if (!matchTitle && !matchNum && !matchGov && !matchDist) return false;
+      }
+      if (categoryFilter && r.category !== categoryFilter) return false;
+      if (levelFilter && r.riskLevel !== levelFilter) return false;
+      if (statusFilter && r.status !== statusFilter) return false;
+      if (governorateFilter && r.governorate !== governorateFilter) return false;
+      if (matrixCellFilter) {
+        if (r.likelihood !== matrixCellFilter.l || r.impact !== matrixCellFilter.i) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [risks, search, categoryFilter, levelFilter, statusFilter, governorateFilter, matrixCellFilter]);
+
+  // Open modal to derive from incident
   const openFromIncidentModal = async () => {
-    setIsFromIncidentModalOpen(true);
-    setLoadingIncidents(true);
+    setFormError(null);
     setSelectedIncidentId('');
     setIncidentPreviewData(null);
-    setFormError(null);
+    setIsFromIncidentModalOpen(true);
+    setLoadingIncidents(true);
+
     try {
       const res = await fetch('/api/admin/risks/verified-incidents');
       const data = await res.json();
-      if (res.ok && data.incidents) {
-        setVerifiedIncidents(data.incidents);
+      if (res.ok) {
+        setVerifiedIncidents(data.incidents || []);
       }
     } catch (err) {
       console.error('Error fetching verified incidents:', err);
@@ -147,42 +231,38 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
     }
   };
 
-  // Handle incident selection for preview
-  const handleSelectIncident = async (incidentId: string) => {
-    setSelectedIncidentId(incidentId);
-    if (!incidentId) {
+  // When an incident is selected in derivation modal
+  const handleSelectIncident = async (incId: string) => {
+    setSelectedIncidentId(incId);
+    if (!incId) {
       setIncidentPreviewData(null);
       return;
     }
+
     try {
-      const res = await fetch(`/api/admin/incidents/${incidentId}/risk-preview`);
+      const res = await fetch(`/api/admin/incidents/${incId}/risk-preview`);
       const data = await res.json();
-      if (res.ok && data.data) {
-        setIncidentPreviewData(data.data);
+      if (res.ok && data.preview) {
+        setIncidentPreviewData(data.preview);
         setFormData({
-          title: data.data.title,
-          description: data.data.description,
-          category: data.data.category,
-          governorate: data.data.governorate,
-          district: data.data.district || '',
-          generalLocation: data.data.generalLocation || '',
-          likelihood: data.data.suggestedLikelihood || 3,
-          impact: data.data.suggestedImpact || 3,
+          title: data.preview.suggestedTitle,
+          description: data.preview.suggestedDescription,
+          category: data.preview.suggestedCategory,
+          governorate: data.preview.governorate,
+          district: data.preview.district || '',
+          generalLocation: data.preview.generalLocation || '',
+          likelihood: data.preview.suggestedLikelihood || 3,
+          impact: data.preview.suggestedImpact || 3,
           targetResolutionDate: '',
         });
       }
     } catch (err) {
-      console.error('Error loading incident preview:', err);
+      console.error('Error loading incident risk preview:', err);
     }
   };
 
-  // Calculated score for the form
-  const calculatedScore = useMemo(() => {
-    return calculateRiskScore(Number(formData.likelihood), Number(formData.impact));
-  }, [formData.likelihood, formData.impact]);
-
-  // Submit Standalone or From Incident Risk
-  const handleCreateRisk = async (e: React.FormEvent) => {
+  // Submit Risk Form (Standalone or From Incident)
+  const handleSubmitRisk = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
     setSubmitting(true);
@@ -212,23 +292,11 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'فشل في حفظ قيد الخطر');
+        throw new Error(data.error || tx("فشل في حفظ قيد الخطر"));
       }
 
       setIsStandaloneModalOpen(false);
       setIsFromIncidentModalOpen(false);
-      // Reset form
-      setFormData({
-        title: '',
-        description: '',
-        category: 'ARMED_CONFLICT_SECURITY',
-        governorate: '',
-        district: '',
-        generalLocation: '',
-        likelihood: 3,
-        impact: 3,
-        targetResolutionDate: '',
-      });
       fetchRisks();
     } catch (err: any) {
       setFormError(err.message);
@@ -237,7 +305,6 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
     }
   };
 
-  // Matrix cell click
   const handleMatrixCellClick = (l: number, i: number) => {
     if (matrixCellFilter?.l === l && matrixCellFilter?.i === i) {
       setMatrixCellFilter(null);
@@ -256,295 +323,325 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
   };
 
   const hasActiveFilters =
-    search || categoryFilter || levelFilter || statusFilter || governorateFilter || matrixCellFilter;
+    Boolean(search || categoryFilter || levelFilter || statusFilter || governorateFilter || matrixCellFilter);
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Top Header */}
-      <div
-        className="card"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1.25rem',
-          background: 'var(--facss-card-bg)',
-          padding: '1.25rem 1.5rem',
-          borderRadius: '12px',
-          border: '1px solid var(--facss-border)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div
+  const previewScore = calculateRiskScore(Number(formData.likelihood), Number(formData.impact));
+  const previewLevelMeta = getRiskLevelMeta(previewScore.level);
+
+  const columns = [
+    {
+      key: 'riskNumber',
+      header: tx("رقم الخطر وتاريخ المستهدف"),
+      render: (r: any) => (
+        <div>
+          <span
+            dir="ltr"
             style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '12px',
-              background: 'rgba(234, 88, 12, 0.12)',
-              color: '#ea580c',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              color: 'var(--admin-primary)',
+              display: 'block',
             }}
           >
-            <AlertTriangle size={28} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: 'var(--facss-text-primary)' }}>
-              سجل المخاطر التشغيلية الميدانية (Operational Risk Register)
-            </h1>
-            <p style={{ margin: '0.25rem 0 0', color: 'var(--facss-text-secondary)', fontSize: '0.9rem' }}>
-              منظومة الرصد والتقييم المنهجي للمخاطر الميدانية، متابعة إجراءات التخفيف، والمصفوفة التفاعلية 5×5
-            </p>
+            {r.riskNumber}
+          </span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--admin-text-muted)' }}>
+            {r.targetResolutionDate
+              ? tx("المستهدف: {0}", new Date(r.targetResolutionDate).toLocaleDateString(txLocale("ar-YE")))
+              : tx("لم يحدد موعد حل")}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: 'title',
+      header: tx("عنوان الخطر والنطاق"),
+      render: (r: any) => (
+        <div style={{ maxWidth: '360px' }}>
+          <strong style={{ display: 'block', color: 'var(--admin-text-primary)', fontSize: '0.88rem', marginBottom: '2px' }}>
+            {r.title}
+          </strong>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.78rem', color: 'var(--admin-text-muted)' }}>
+            <MapPin size={12} style={{ color: 'var(--admin-primary)' }} />
+            <span>{r.governorate} {r.district ? `(${r.district})` : ''}</span>
+            {r.generalLocation && <span>— {r.generalLocation}</span>}
           </div>
         </div>
+      ),
+    },
+    {
+      key: 'category',
+      header: tx("التصنيف التشغيلي"),
+      render: (r: any) => {
+        const catMeta = getRiskCategoryMeta(r.category);
+        return (
+          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--admin-text-secondary)' }}>
+            {catMeta.labelAr}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'score',
+      header: tx("الاحتمالية × الأثر"),
+      render: (r: any) => (
+        <div style={{ fontSize: '0.82rem', color: 'var(--admin-text-primary)' }}>
+          <span dir="ltr" style={{ fontFamily: 'monospace', fontWeight: 700 }}>
+            {r.likelihood} × {r.impact} = {r.riskScore}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: 'level',
+      header: tx("مستوى الخطورة"),
+      render: (r: any) => {
+        const levelMeta = getRiskLevelMeta(r.riskLevel);
+        const variantMap: Record<string, 'danger' | 'warning' | 'info' | 'success'> = {
+          CRITICAL: 'danger',
+          HIGH: 'warning',
+          MEDIUM: 'info',
+          LOW: 'success',
+        };
+        return <AdminStatusBadge status={levelMeta.labelAr} variant={variantMap[r.riskLevel] || 'neutral'} dot />;
+      },
+    },
+    {
+      key: 'status',
+      header: tx("الحالة"),
+      render: (r: any) => {
+        const statusMeta = getRiskStatusMeta(r.status);
+        const variantMap: Record<string, 'danger' | 'warning' | 'info' | 'success' | 'neutral'> = {
+          IDENTIFIED: 'info',
+          ASSESSED: 'warning',
+          TREATMENT_IN_PROGRESS: 'warning',
+          MONITORED: 'info',
+          RESOLVED: 'success',
+          CLOSED: 'neutral',
+        };
+        return <AdminStatusBadge status={statusMeta.labelAr} variant={variantMap[r.status] || 'neutral'} dot />;
+      },
+    },
+    {
+      key: 'incident',
+      header: tx("البلاغ الميداني المصدر"),
+      render: (r: any) => {
+        if (!r.incident) {
+          return <span style={{ color: 'var(--admin-text-muted)', fontSize: '0.78rem' }}>{tx("مستقل")}</span>;
+        }
+        return (
+          <Link
+            href={`/admin/incidents/${r.incident.id}`}
+            style={{
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontFamily: 'monospace',
+              fontSize: '0.78rem',
+              color: 'var(--admin-primary)',
+              background: 'var(--admin-primary-subtle)',
+              padding: '2px 7px',
+              borderRadius: '6px',
+              fontWeight: 600,
+            }}
+          >
+            <span dir="ltr">{r.incident.incidentNumber}</span>
+            <ExternalLink size={11} />
+          </Link>
+        );
+      },
+    },
+    {
+      key: 'actions',
+      header: tx("الإجراء"),
+      render: (r: any) => (
+        <Link href={`/admin/risks/${r.id}`} style={{ textDecoration: 'none' }}>
+          <AdminButton variant="secondary" size="sm" icon={<Eye size={13} />}>
+            {tx("تفاصيل")}
+          </AdminButton>
+        </Link>
+      ),
+    },
+  ];
 
-        {currentUser.canManage && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => {
-                setFormError(null);
-                setFormData({
-                  title: '',
-                  description: '',
-                  category: 'ARMED_CONFLICT_SECURITY',
-                  governorate: '',
-                  district: '',
-                  generalLocation: '',
-                  likelihood: 3,
-                  impact: 3,
-                  targetResolutionDate: '',
-                });
-                setIsStandaloneModalOpen(true);
-              }}
-              className="btn btn-primary"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* Header */}
+      <AdminPageHeader
+        title={tx("سجل المخاطر التشغيلية الميدانية")}
+        description={tx("منظومة الرصد والتقييم المنهجي للمخاطر الميدانية، متابعة إجراءات التخفيف، والمصفوفة التفاعلية 5×5")}
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <AdminButton
+              variant="secondary"
+              size="sm"
+              icon={<RefreshCw size={14} className={loading ? 'spin' : ''} />}
+              disabled={loading}
+              onClick={fetchRisks}
             >
-              <Plus size={18} />
-              تسجيل خطر مستقل
-            </button>
+              {tx("تحديث")}
+            </AdminButton>
 
-            <button
-              onClick={openFromIncidentModal}
-              className="btn btn-secondary"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                fontWeight: 700,
-                borderColor: 'var(--facss-gold-500)',
-                color: 'var(--facss-gold-600)',
-              }}
-            >
-              <Link2 size={18} />
-              اشتقاق من بلاغ محقق
-            </button>
+            {currentUser.canManage && (
+              <>
+                <AdminButton
+                  variant="primary"
+                  size="sm"
+                  icon={<Plus size={14} />}
+                  onClick={() => {
+                    setFormError(null);
+                    setFormData({
+                      title: '',
+                      description: '',
+                      category: 'ARMED_CONFLICT_SECURITY',
+                      governorate: '',
+                      district: '',
+                      generalLocation: '',
+                      likelihood: 3,
+                      impact: 3,
+                      targetResolutionDate: '',
+                    });
+                    setIsStandaloneModalOpen(true);
+                  }}
+                >
+                  {tx("تسجيل خطر مستقل")}
+                </AdminButton>
+
+                <AdminButton
+                  variant="secondary"
+                  size="sm"
+                  icon={<Link2 size={14} />}
+                  onClick={openFromIncidentModal}
+                >
+                  {tx("اشتقاق من بلاغ محقق")}
+                </AdminButton>
+              </>
+            )}
           </div>
-        )}
-      </div>
+        }
+      />
 
-      {/* Metrics Summary Cards */}
+      {error && (
+        <AdminAlert
+          variant="danger"
+          title={tx("خطأ في استرجاع سجل المخاطر")}
+          message={error}
+          onClose={() => setError(null)}
+        />
+      )}
+
+      {/* Key Risk Indicators - Above The Fold */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.25rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+          gap: '1rem',
         }}
       >
-        <div
-          className="card"
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderRight: '4px solid #3b82f6',
-            background: 'var(--facss-card-bg)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--facss-text-secondary)', fontWeight: 600 }}>
-              إجمالي المخاطر المسجلة
-            </span>
-            <Layers size={20} color="#3b82f6" />
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, marginTop: '0.5rem', color: 'var(--facss-text-primary)' }}>
-            {stats.total}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: '#10b981', marginTop: '0.25rem' }}>
-            {stats.active} قيد المتابعة النشطة
-          </div>
-        </div>
-
-        <div
-          className="card"
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderRight: '4px solid #dc2626',
-            background: 'var(--facss-card-bg)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--facss-text-secondary)', fontWeight: 600 }}>
-              المخاطر الحرجة (Critical)
-            </span>
-            <AlertTriangle size={20} color="#dc2626" />
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, marginTop: '0.5rem', color: '#dc2626' }}>
-            {stats.critical}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: '#ea580c', marginTop: '0.25rem' }}>
-            + {stats.high} مخاطر عالية الخطورة
-          </div>
-        </div>
-
-        <div
-          className="card"
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderRight: '4px solid #f59e0b',
-            background: 'var(--facss-card-bg)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--facss-text-secondary)', fontWeight: 600 }}>
-              قيد المعالجة والتخفيف
-            </span>
-            <Clock size={20} color="#f59e0b" />
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, marginTop: '0.5rem', color: '#d97706' }}>
-            {stats.inTreatment}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--facss-text-secondary)', marginTop: '0.25rem' }}>
-            {stats.monitored} تحت المراقبة
-          </div>
-        </div>
-
-        <div
-          className="card"
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderRight: '4px solid #10b981',
-            background: 'var(--facss-card-bg)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--facss-text-secondary)', fontWeight: 600 }}>
-              المعالجة والمغلقة
-            </span>
-            <CheckCircle2 size={20} color="#10b981" />
-          </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, marginTop: '0.5rem', color: '#10b981' }}>
-            {stats.resolved + stats.closed}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--facss-text-secondary)', marginTop: '0.25rem' }}>
-            {stats.resolved} تمت معالجتها • {stats.closed} مغلقة
-          </div>
-        </div>
+        <AdminStatCard
+          title={tx("إجمالي المخاطر المسجلة")}
+          value={stats.total || 0}
+          icon={Layers}
+          description={tx("{0} قيد المتابعة النشطة", stats.active || 0)}
+        />
+        <AdminStatCard
+          title={tx("مخاطر حرجة (Critical)")}
+          value={stats.critical || 0}
+          icon={AlertTriangle}
+          variant="danger"
+          description={tx("+ {0} مخاطر عالية", stats.high || 0)}
+        />
+        <AdminStatCard
+          title={tx("قيد المعالجة والتخفيف")}
+          value={stats.inTreatment || 0}
+          icon={Clock}
+          variant="warning"
+          description={tx("{0} تحت المراقبة", stats.monitored || 0)}
+        />
+        <AdminStatCard
+          title={tx("المعالجة والمغلقة")}
+          value={(stats.resolved || 0) + (stats.closed || 0)}
+          icon={CheckCircle2}
+          variant="success"
+          description={tx("{0} معالجة • {1} مغلقة", stats.resolved || 0, stats.closed || 0)}
+        />
       </div>
 
-      {/* Visual 5x5 Interactive Risk Matrix */}
-      <div
-        className="card"
-        style={{
-          padding: '1.75rem',
-          background: 'var(--facss-card-bg)',
-          border: '1px solid var(--facss-border)',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '1.25rem',
-            flexWrap: 'wrap',
-            gap: '1rem',
-          }}
-        >
-          <div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles size={18} color="var(--facss-gold-500)" />
-              مصفوفة المخاطر الميدانية 5×5 (Interactive 5×5 Risk Matrix)
-            </h3>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--facss-text-secondary)' }}>
-              انقر على أي خلية لتصفية قائمة المخاطر الميدانية النشطة حسب إحداثيات الاحتمالية والأثر
-            </p>
-          </div>
-
-          {matrixCellFilter && (
-            <button
+      {/* Compact Interactive 5x5 Matrix */}
+      <AdminSection
+        title={tx("مصفوفة المخاطر الميدانية 5×5 (Interactive 5×5 Risk Matrix)")}
+        description={tx("انقر على أي خلية لتصفية قائمة المخاطر الميدانية النشطة حسب إحداثيات الاحتمالية والأثر")}
+        actions={
+          matrixCellFilter ? (
+            <AdminButton
+              variant="ghost"
+              size="sm"
+              icon={<X size={13} />}
               onClick={() => setMatrixCellFilter(null)}
-              className="btn btn-sm btn-outline"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#dc2626' }}
             >
-              <X size={14} />
-              إلغاء تصفية الخلية [احتمالية: {matrixCellFilter.l} × أثر: {matrixCellFilter.i}]
-            </button>
-          )}
-        </div>
-
-        <div className="matrix-hint">
-          <span>← مرر أفقياً لمعاينة كامل خلايا مصفوفة المخاطر 5×5 →</span>
-        </div>
-
-        <div className="matrix-scroll-container">
-          <div style={{ minWidth: '580px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {/* Rows from Likelihood 5 down to 1 */}
+              {tx("إلغاء تصفية الخلية [")}{matrixCellFilter.l} × {matrixCellFilter.i}]
+            </AdminButton>
+          ) : undefined
+        }
+      >
+        <div style={{ overflowX: 'auto', maxWidth: '100%', minWidth: 0 }}>
+          <div style={{ minWidth: '540px', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {[5, 4, 3, 2, 1].map((l) => (
-              <div key={`row-${l}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div key={`row-${l}`} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <div
                   style={{
-                    width: '130px',
-                    textAlign: 'left',
-                    fontSize: '0.8rem',
+                    width: '120px',
+                    fontSize: '0.78rem',
                     fontWeight: 700,
-                    color: 'var(--facss-text-secondary)',
+                    color: 'var(--admin-text-secondary)',
+                    textAlign: 'left',
                     paddingLeft: '0.5rem',
                   }}
                 >
-                  {l === 5 && '5 - شبه مؤكد'}
-                  {l === 4 && '4 - محتمل'}
-                  {l === 3 && '3 - متوسط'}
-                  {l === 2 && '2 - غير محتمل'}
-                  {l === 1 && '1 - نادر'}
+                  {l === 5 && tx("5 - شبه مؤكد")}
+                  {l === 4 && tx("4 - محتمل")}
+                  {l === 3 && tx("3 - متوسط")}
+                  {l === 2 && tx("2 - غير محتمل")}
+                  {l === 1 && tx("1 - نادر")}
                 </div>
 
-                {/* 5 columns of Impact */}
                 {[1, 2, 3, 4, 5].map((i) => {
                   const score = l * i;
                   const count = matrixCounts[`${l},${i}`] || 0;
                   const isSelected = matrixCellFilter?.l === l && matrixCellFilter?.i === i;
 
-                  // Color scheme
-                  let bgColor = 'rgba(22, 163, 74, 0.18)';
-                  let textColor = '#16a34a';
-                  let borderColor = 'rgba(22, 163, 74, 0.35)';
+                  let bgColor = '#dcfce7';
+                  let textColor = '#15803d';
+                  let borderColor = '#86efac';
 
                   if (score >= 17) {
-                    bgColor = 'rgba(220, 38, 38, 0.22)';
-                    textColor = '#dc2626';
-                    borderColor = 'rgba(220, 38, 38, 0.5)';
+                    bgColor = '#fee2e2';
+                    textColor = '#b91c1c';
+                    borderColor = '#fca5a5';
                   } else if (score >= 10) {
-                    bgColor = 'rgba(234, 88, 12, 0.22)';
-                    textColor = '#ea580c';
-                    borderColor = 'rgba(234, 88, 12, 0.5)';
+                    bgColor = '#ffedd5';
+                    textColor = '#c2410c';
+                    borderColor = '#fdba74';
                   } else if (score >= 5) {
-                    bgColor = 'rgba(217, 119, 6, 0.20)';
-                    textColor = '#d97706';
-                    borderColor = 'rgba(217, 119, 6, 0.45)';
+                    bgColor = '#fef3c7';
+                    textColor = '#b45309';
+                    borderColor = '#fde68a';
                   }
 
                   return (
                     <button
                       key={`cell-${l}-${i}`}
+                      type="button"
                       onClick={() => handleMatrixCellClick(l, i)}
                       style={{
                         flex: 1,
-                        height: '52px',
+                        height: '44px',
                         background: bgColor,
-                        border: isSelected ? '2px solid #FFFFFF' : `1px solid ${borderColor}`,
-                        boxShadow: isSelected ? '0 0 10px rgba(0,0,0,0.3)' : 'none',
-                        borderRadius: '8px',
+                        border: isSelected ? '2px solid var(--admin-primary)' : `1px solid ${borderColor}`,
+                        boxShadow: isSelected ? '0 0 0 3px rgba(15, 43, 72, 0.25)' : 'none',
+                        borderRadius: 'var(--admin-radius-sm)',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -552,19 +649,11 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
                         cursor: 'pointer',
                         transition: 'all 0.15s ease',
                       }}
-                      title={`احتمالية ${l} × أثر ${i} = درجة ${score}`}
+                      title={tx("احتمالية {0} × أثر {1} = درجة {2}", l, i, score)}
                     >
-                      <span style={{ fontSize: '0.72rem', color: textColor, fontWeight: 700 }}>
-                        درجة {score}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '1rem',
-                          fontWeight: 900,
-                          color: count > 0 ? textColor : 'rgba(150,150,150,0.5)',
-                        }}
-                      >
-                        {count}
+                      <span style={{ fontSize: '0.8rem', fontWeight: 800, color: textColor }}>{score}</span>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textColor, opacity: 0.85 }}>
+                        ({count})
                       </span>
                     </button>
                   );
@@ -572,779 +661,422 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
               </div>
             ))}
 
-            {/* Matrix X-Axis (Impact) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-              <div style={{ width: '130px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: 'var(--facss-gold-500)' }}>
-                الاحتمالية ↓ / الأثر ←
-              </div>
-              {['1 - طفيف', '2 - محدود', '3 - متوسط', '4 - كبير', '5 - كارثي'].map((label, idx) => (
+            {/* Impact Horizontal Axis Labels */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.2rem' }}>
+              <div style={{ width: '120px' }} />
+              {[tx("1 - طفيف"), tx("2 - محدود"), tx("3 - متوسط"), tx("4 - جسيم"), tx("5 - كارثي")].map((lbl, idx) => (
                 <div
-                  key={`col-label-${idx}`}
+                  key={idx}
                   style={{
                     flex: 1,
                     textAlign: 'center',
-                    fontSize: '0.8rem',
+                    fontSize: '0.72rem',
                     fontWeight: 700,
-                    color: 'var(--facss-text-secondary)',
+                    color: 'var(--admin-text-secondary)',
                   }}
                 >
-                  {label}
+                  {lbl}
                 </div>
               ))}
             </div>
           </div>
         </div>
+      </AdminSection>
 
-        {/* Legend */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '1.5rem',
-            marginTop: '1.25rem',
-            paddingTop: '1rem',
-            borderTop: '1px solid var(--facss-border)',
-            flexWrap: 'wrap',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ width: '14px', height: '14px', background: '#16a34a', borderRadius: '3px' }} />
-            <span>منخفض (1-4)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ width: '14px', height: '14px', background: '#d97706', borderRadius: '3px' }} />
-            <span>متوسط (5-9)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ width: '14px', height: '14px', background: '#ea580c', borderRadius: '3px' }} />
-            <span>مرتفع (10-16)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ width: '14px', height: '14px', background: '#dc2626', borderRadius: '3px' }} />
-            <span>حرج / شديد الخطورة (17-25)</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div
-        className="card"
-        style={{
-          padding: '1.25rem 1.5rem',
-          background: 'var(--facss-card-bg)',
-          border: '1px solid var(--facss-border)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 280px', position: 'relative' }}>
-            <Search
-              size={18}
-              style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--facss-text-muted)' }}
-            />
-            <input
-              type="text"
-              className="form-control"
-              placeholder="بحث بالرمز (RSK)، العنوان، الوصف، أو الموقع..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ paddingRight: '2.5rem' }}
-            />
-          </div>
-
-          <div style={{ flex: '1 1 180px' }}>
-            <select
-              className="form-control"
+      {/* Filter Bar */}
+      <AdminFilterBar
+        search={
+          <AdminSearchInput
+            placeholder={tx("بحث برقم الخطر، العنوان، المحافظة...")}
+            value={search}
+            onChange={(val) => setSearch(val)}
+          />
+        }
+        filters={
+          <>
+            <AdminSelect
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="">كافة التصنيفات</option>
-              <option value="ARMED_CONFLICT_SECURITY">نزاع مسلح وتهديدات أمنية</option>
-              <option value="ACCESS_ROADBLOCK_DENIAL">إعاقة وصول ونقاط تفتيش</option>
-              <option value="EXPLOSIVE_HAZARD_UXO">ألغام ومخلفات حرب (UXO)</option>
-              <option value="CRIMINALITY_THEFT">سطو مسلح وجريمة وسرقة</option>
-              <option value="STAFF_DETENTION_THREAT">احتجاز واعتداء على الطواقم</option>
-              <option value="FACILITY_DAMAGE">أضرار المقرات والمرافق</option>
-              <option value="ENVIRONMENTAL_NATURAL">كوارث طبيعية وبيئية</option>
-              <option value="HEALTH_SAFETY">صحة وسلامة مهنية</option>
-            </select>
-          </div>
+              options={[
+                { value: '', label: tx("جميع التصنيفات") },
+                ...CATEGORY_OPTIONS,
+              ]}
+            />
 
-          <div style={{ flex: '1 1 150px' }}>
-            <select
-              className="form-control"
+            <AdminSelect
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-            >
-              <option value="">كافة المستويات</option>
-              <option value="CRITICAL">حرج (Critical)</option>
-              <option value="HIGH">مرتفع (High)</option>
-              <option value="MEDIUM">متوسط (Medium)</option>
-              <option value="LOW">منخفض (Low)</option>
-            </select>
-          </div>
+              options={[
+                { value: '', label: tx("جميع المستويات") },
+                ...LEVEL_OPTIONS,
+              ]}
+            />
 
-          <div style={{ flex: '1 1 150px' }}>
-            <select
-              className="form-control"
+            <AdminSelect
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="">كافة الحالات</option>
-              <option value="IDENTIFIED">تم الرصد</option>
-              <option value="ASSESSED">تم التقييم</option>
-              <option value="TREATMENT_IN_PROGRESS">قيد المعالجة</option>
-              <option value="MONITORED">تحت المراقبة</option>
-              <option value="RESOLVED">تمت المعالجة</option>
-              <option value="CLOSED">مغلق</option>
-            </select>
-          </div>
+              options={[
+                { value: '', label: tx("جميع الحالات") },
+                ...STATUS_OPTIONS,
+              ]}
+            />
 
-          <div style={{ flex: '1 1 150px' }}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="تصفية بالمحافظة..."
+            <AdminSelect
               value={governorateFilter}
               onChange={(e) => setGovernorateFilter(e.target.value)}
+              options={[
+                { value: '', label: tx("جميع المحافظات") },
+                ...YEMEN_GOVERNORATES.map((g) => ({ value: g, label: g })),
+              ]}
+            />
+          </>
+        }
+        actions={
+          hasActiveFilters ? (
+            <AdminButton variant="ghost" size="sm" onClick={clearAllFilters}>
+              {tx("إعادة تعيين الفلاتر")}
+            </AdminButton>
+          ) : undefined
+        }
+      />
+
+      {/* Table / Empty / Loading */}
+      {loading ? (
+        <AdminSection>
+          <AdminLoadingState message={tx("جاري استرجاع سجل المخاطر التشغيلية...")} />
+        </AdminSection>
+      ) : filteredRisks.length === 0 ? (
+        <AdminSection>
+          <AdminEmptyState
+            title={tx("لا توجد مخاطر مطابقة")}
+            description={
+              hasActiveFilters
+                ? tx("لم يتم العثور على أي مخاطر مسجلة تطابق خيارات التصفية والبحث.")
+                : tx("لم يتم تسجيل أي مخاطر تشغيلية ميدانية حتى الآن.")
+            }
+            action={
+              hasActiveFilters ? (
+                <AdminButton variant="secondary" size="sm" onClick={clearAllFilters}>
+                  {tx("إلغاء خيارات التصفية")}
+                </AdminButton>
+              ) : currentUser.canManage ? (
+                <AdminButton
+                  variant="primary"
+                  size="sm"
+                  icon={<Plus size={14} />}
+                  onClick={() => setIsStandaloneModalOpen(true)}
+                >
+                  {tx("تسجيل خطر مستقل")}
+                </AdminButton>
+              ) : undefined
+            }
+          />
+        </AdminSection>
+      ) : (
+        <AdminDataTable
+          columns={columns}
+          data={filteredRisks}
+          keyExtractor={(r) => r.id}
+          mobileCardRender={(r: any) => {
+            const levelMeta = getRiskLevelMeta(r.riskLevel);
+            const statusMeta = getRiskStatusMeta(r.status);
+            const variantMap: Record<string, 'danger' | 'warning' | 'info' | 'success' | 'neutral'> = {
+              CRITICAL: 'danger', HIGH: 'warning', MEDIUM: 'info', LOW: 'success',
+            };
+            const statusVariantMap: Record<string, 'danger' | 'warning' | 'info' | 'success' | 'neutral'> = {
+              IDENTIFIED: 'info', ASSESSED: 'warning', TREATMENT_IN_PROGRESS: 'warning', MONITORED: 'info', RESOLVED: 'success', CLOSED: 'neutral',
+            };
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <span dir="ltr" style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem', color: 'var(--admin-primary)' }}>
+                    {r.riskNumber}
+                  </span>
+                  <AdminStatusBadge status={levelMeta.labelAr} variant={variantMap[r.riskLevel] || 'neutral'} dot />
+                </div>
+                <strong style={{ fontSize: '0.88rem', color: 'var(--admin-text-primary)', lineHeight: 1.4 }}>
+                  {r.title}
+                </strong>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+                  <span dir="ltr" style={{ fontFamily: 'monospace', fontSize: '0.82rem', fontWeight: 700, color: 'var(--admin-text-primary)' }}>
+                    {r.likelihood} × {r.impact} = {r.riskScore}
+                  </span>
+                  <AdminStatusBadge status={statusMeta.labelAr} variant={statusVariantMap[r.status] || 'neutral'} dot />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem', color: 'var(--admin-text-muted)' }}>
+                  <MapPin size={13} style={{ color: 'var(--admin-primary)' }} />
+                  <span>{r.governorate} {r.district ? `(${r.district})` : ''}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
+                  <Link href={`/admin/risks/${r.id}`} style={{ textDecoration: 'none' }}>
+                    <AdminButton variant="secondary" size="sm" icon={<Eye size={13} />}>
+                      {tx("تفاصيل")}
+                    </AdminButton>
+                  </Link>
+                </div>
+              </div>
+            );
+          }}
+        />
+      )}
+
+      {/* Standalone Risk Modal */}
+      <AdminModal
+        isOpen={isStandaloneModalOpen}
+        onClose={() => setIsStandaloneModalOpen(false)}
+        title={tx("تسجيل خطر تشغيلي ميداني مستقل")}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <AdminButton variant="ghost" size="sm" onClick={() => setIsStandaloneModalOpen(false)}>
+              {tx("إلغاء")}
+            </AdminButton>
+            <AdminButton
+              variant="primary"
+              size="sm"
+              disabled={submitting}
+              onClick={handleSubmitRisk}
+            >
+              {submitting ? tx("جاري الحفظ...") : tx("حفظ وتسجيل الخطر")}
+            </AdminButton>
+          </div>
+        }
+      >
+        <form onSubmit={handleSubmitRisk} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          {formError && <AdminAlert variant="danger" message={formError} />}
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("عنوان الخطر التشغيلي *")}
+            </label>
+            <AdminInput
+              required
+              placeholder={tx("مثال: قطع طريق الإمداد الإنساني في نقيل طور الباحة...")}
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
 
-          {hasActiveFilters && (
-            <button
-              onClick={clearAllFilters}
-              className="btn btn-outline"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#dc2626' }}
-            >
-              <RefreshCw size={16} />
-              إعادة ضبط
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Risks Table / List View */}
-      <div
-        className="card"
-        style={{
-          padding: 0,
-          background: 'var(--facss-card-bg)',
-          border: '1px solid var(--facss-border)',
-          overflow: 'hidden',
-        }}
-      >
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--facss-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>
-            قائمة قيود المخاطر التشغيلية ({risks.length})
-          </h4>
-          <span style={{ fontSize: '0.8rem', color: 'var(--facss-text-secondary)' }}>
-            مرتبة حسب درجة الخطر تنازلياً
-          </span>
-        </div>
-
-        {loading ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--facss-text-secondary)' }}>
-            <div className="spinner" style={{ margin: '0 auto 1rem' }} />
-            جاري تحميل سجل المخاطر...
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("التصنيف التشغيلي *")}
+            </label>
+            <AdminSelect
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value as RiskCategoryType })}
+              options={CATEGORY_OPTIONS}
+            />
           </div>
-        ) : error ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#dc2626' }}>
-            {error}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("المحافظة *")}
+              </label>
+              <AdminSelect
+                required
+                value={formData.governorate}
+                onChange={(e) => setFormData({ ...formData, governorate: e.target.value })}
+                options={[
+                  { value: '', label: tx("-- اختر المحافظة --") },
+                  ...YEMEN_GOVERNORATES.map((g) => ({ value: g, label: g })),
+                ]}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("المديرية")}
+              </label>
+              <AdminInput
+                placeholder={tx("المديرية...")}
+                value={formData.district}
+                onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+              />
+            </div>
           </div>
-        ) : risks.length === 0 ? (
-          <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--facss-text-secondary)' }}>
-            <AlertTriangle size={48} style={{ opacity: 0.3, margin: '0 auto 1rem' }} />
-            <h5 style={{ fontWeight: 700, margin: 0 }}>لا توجد مخاطر مطابقة لشروط البحث</h5>
-            <p style={{ fontSize: '0.85rem', margin: '0.5rem 0 0' }}>
-              جرّب تغيير فلاتر البحث أو إضافة قيد خطر ميداني جديد.
-            </p>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("وصف الخطر والتهديد المحتمل *")}
+            </label>
+            <AdminTextarea
+              required
+              rows={3}
+              placeholder={tx("اكتب التوصيف الدقيق للخطر وتداعياته على العمليات الإنسانية أو الميدانية...")}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
           </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-              <thead>
-                <tr style={{ background: 'rgba(0,0,0,0.03)', borderBottom: '1px solid var(--facss-border)', textAlign: 'right' }}>
-                  <th style={{ padding: '1rem' }}>رقم الخطر</th>
-                  <th style={{ padding: '1rem' }}>العنوان والتصنيف</th>
-                  <th style={{ padding: '1rem' }}>الموقع الميداني</th>
-                  <th style={{ padding: '1rem' }}>التقييم (احتمالية × أثر)</th>
-                  <th style={{ padding: '1rem' }}>مستوى الخطر</th>
-                  <th style={{ padding: '1rem' }}>الحالة</th>
-                  <th style={{ padding: '1rem' }}>إجراءات التخفيف</th>
-                  <th style={{ padding: '1rem', textAlign: 'center' }}>الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {risks.map((risk) => {
-                  const levelMeta = getRiskLevelMeta(risk.riskLevel);
-                  const statusMeta = getRiskStatusMeta(risk.status);
-                  const categoryMeta = getRiskCategoryMeta(risk.category);
 
-                  return (
-                    <tr
-                      key={risk.id}
-                      style={{
-                        borderBottom: '1px solid var(--facss-border)',
-                        transition: 'background 0.15s ease',
-                      }}
-                    >
-                      <td style={{ padding: '1rem', fontWeight: 800, whiteSpace: 'nowrap' }}>
-                        <span style={{ color: 'var(--facss-gold-500)' }}>{risk.riskNumber}</span>
-                        {risk.incident && (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)', marginTop: '0.2rem' }}>
-                            بلاغ: {risk.incident.incidentNumber}
-                          </div>
-                        )}
-                      </td>
-
-                      <td style={{ padding: '1rem', maxWidth: '300px' }}>
-                        <div style={{ fontWeight: 700, color: 'var(--facss-text-primary)', marginBottom: '0.25rem' }}>
-                          {risk.title}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.78rem',
-                            color: 'var(--facss-text-secondary)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.35rem',
-                          }}
-                        >
-                          <span
-                            style={{
-                              padding: '0.15rem 0.5rem',
-                              borderRadius: '4px',
-                              background: 'rgba(0,0,0,0.05)',
-                              fontSize: '0.75rem',
-                            }}
-                          >
-                            {categoryMeta.labelAr}
-                          </span>
-                        </div>
-                      </td>
-
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
-                          <MapPin size={14} color="var(--facss-gold-500)" />
-                          {risk.governorate}
-                          {risk.district && ` - ${risk.district}`}
-                        </div>
-                        {risk.generalLocation && (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)', marginTop: '0.2rem' }}>
-                            {risk.generalLocation}
-                          </div>
-                        )}
-                      </td>
-
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>
-                          {risk.likelihood} × {risk.impact} = <span style={{ color: levelMeta.color }}>{risk.riskScore}</span>
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)' }}>
-                          من 25
-                        </div>
-                      </td>
-
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>
-                        <span
-                          style={{
-                            padding: '0.3rem 0.75rem',
-                            borderRadius: '6px',
-                            background: levelMeta.bg,
-                            color: levelMeta.color,
-                            border: `1px solid ${levelMeta.border}`,
-                            fontWeight: 800,
-                            fontSize: '0.8rem',
-                            display: 'inline-block',
-                          }}
-                        >
-                          {levelMeta.labelAr}
-                        </span>
-                      </td>
-
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>
-                        <span
-                          style={{
-                            padding: '0.25rem 0.65rem',
-                            borderRadius: '6px',
-                            background: statusMeta.bg,
-                            color: statusMeta.color,
-                            fontWeight: 700,
-                            fontSize: '0.78rem',
-                            display: 'inline-block',
-                          }}
-                        >
-                          {statusMeta.labelAr}
-                        </span>
-                      </td>
-
-                      <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
-                          <Shield size={16} color="var(--facss-gold-500)" />
-                          {risk._count?.mitigations || 0} إجراءات
-                        </div>
-                      </td>
-
-                      <td style={{ padding: '1rem', textAlign: 'center', whiteSpace: 'nowrap' }}>
-                        <Link
-                          href={`/admin/risks/${risk.id}`}
-                          className="btn btn-sm btn-primary"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.85rem' }}
-                        >
-                          <Eye size={14} />
-                          التفاصيل والمعالجة
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* MODAL 1: CREATE STANDALONE RISK */}
-      {isStandaloneModalOpen && (
-        <div className="facss-modal-overlay">
-          <div className="facss-modal-content" style={{ maxWidth: '680px' }}>
-            <div className="facss-modal-header">
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>تسجيل قيد خطر تشغيلي جديد (مستقل)</h3>
-              <button
-                onClick={() => setIsStandaloneModalOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--facss-text-muted)' }}
-              >
-                <X size={20} />
-              </button>
+          {/* Likelihood and Impact */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("الاحتمالية (1 إلى 5)")}
+              </label>
+              <AdminSelect
+                value={String(formData.likelihood)}
+                onChange={(e) => setFormData({ ...formData, likelihood: Number(e.target.value) })}
+                options={[
+                  { value: '1', label: tx("1 - نادر (Rare)") },
+                  { value: '2', label: tx("2 - غير محتمل (Unlikely)") },
+                  { value: '3', label: tx("3 - متوسط (Possible)") },
+                  { value: '4', label: tx("4 - محتمل (Likely)") },
+                  { value: '5', label: tx("5 - شبه مؤكد (Almost Certain)") },
+                ]}
+              />
             </div>
 
-            <form onSubmit={handleCreateRisk} className="facss-modal-body">
-              {formError && (
-                <div style={{ padding: '0.75rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#dc2626', borderRadius: '8px', fontSize: '0.85rem' }}>
-                  {formError}
-                </div>
-              )}
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("شدة الأثر (1 إلى 5)")}
+              </label>
+              <AdminSelect
+                value={String(formData.impact)}
+                onChange={(e) => setFormData({ ...formData, impact: Number(e.target.value) })}
+                options={[
+                  { value: '1', label: tx("1 - طفيف (Insignificant)") },
+                  { value: '2', label: tx("2 - محدود (Minor)") },
+                  { value: '3', label: tx("3 - متوسط (Moderate)") },
+                  { value: '4', label: tx("4 - جسيم (Major)") },
+                  { value: '5', label: tx("5 - كارثي (Catastrophic)") },
+                ]}
+              />
+            </div>
+          </div>
 
+          {/* Calculated Preview Badge */}
+          <div
+            style={{
+              padding: '0.65rem 0.9rem',
+              background: 'var(--admin-bg-surface-subtle)',
+              border: '1px solid var(--admin-border-subtle)',
+              borderRadius: 'var(--admin-radius-md)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)' }}>{tx("درجة الخطر التقديرية:")}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span dir="ltr" style={{ fontFamily: 'monospace', fontWeight: 800 }}>
+                {previewScore.score}
+              </span>
+              <AdminStatusBadge status={previewLevelMeta.labelAr} variant={previewLevelMeta.color as any} dot />
+            </div>
+          </div>
+        </form>
+      </AdminModal>
+
+      {/* From Incident Modal */}
+      <AdminModal
+        isOpen={isFromIncidentModalOpen}
+        onClose={() => setIsFromIncidentModalOpen(false)}
+        title={tx("اشتقاق خطر تشغيلي من بلاغ ميداني محقق")}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <AdminButton variant="ghost" size="sm" onClick={() => setIsFromIncidentModalOpen(false)}>
+              {tx("إلغاء")}
+            </AdminButton>
+            <AdminButton
+              variant="primary"
+              size="sm"
+              disabled={submitting || !selectedIncidentId}
+              onClick={handleSubmitRisk}
+            >
+              {submitting ? tx("جاري الاشتقاق...") : tx("اشتقاق وتسجيل الخطر")}
+            </AdminButton>
+          </div>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          {formError && <AdminAlert variant="danger" message={formError} />}
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("اختر البلاغ الميداني المحقق *")}
+            </label>
+            {loadingIncidents ? (
+              <AdminLoadingState message={tx("جاري جلب البلاغات المحققة...")} />
+            ) : verifiedIncidents.length === 0 ? (
+              <div style={{ padding: '1rem', background: 'var(--admin-warning-subtle)', color: 'var(--admin-warning)', borderRadius: '6px', fontSize: '0.8rem' }}>
+                {tx("لا توجد بلاغات ميدانية محققة مؤهلة للاشتقاق حالياً.")}
+              </div>
+            ) : (
+              <AdminSelect
+                value={selectedIncidentId}
+                onChange={(e) => handleSelectIncident(e.target.value)}
+                options={[
+                  { value: '', label: tx("-- اختر بلاغاً محققاً --") },
+                  ...verifiedIncidents.map((inc) => ({
+                    value: inc.id,
+                    label: `${inc.incidentNumber} — ${inc.governorate} [${inc.currentRedacted?.redactedTitleAr || inc.category}]`,
+                  })),
+                ]}
+              />
+            )}
+          </div>
+
+          {incidentPreviewData && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginTop: '0.5rem' }}>
               <div>
-                <label className="form-label">عنوان الخطر التشغيلي *</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="مثال: قطع طريق القوافل الإغاثية في نقيل هيجة العبد..."
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                  {tx("عنوان الخطر المشتق")}
+                </label>
+                <AdminInput
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
                 />
               </div>
 
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">تصنيف الخطر *</label>
-                  <select
-                    className="form-control"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                  >
-                    <option value="ARMED_CONFLICT_SECURITY">نزاع مسلح وتهديدات أمنية</option>
-                    <option value="ACCESS_ROADBLOCK_DENIAL">إعاقة وصول وقطع طرق ونقاط تفتيش</option>
-                    <option value="EXPLOSIVE_HAZARD_UXO">ألغام ومخلفات حرب (UXO)</option>
-                    <option value="CRIMINALITY_THEFT">سطو مسلح وجريمة وسرقة قوافل</option>
-                    <option value="STAFF_DETENTION_THREAT">احتجاز واعتداء على الطواقم الإنسانية</option>
-                    <option value="FACILITY_DAMAGE">أضرار المقرات والمرافق والمخازن</option>
-                    <option value="ENVIRONMENTAL_NATURAL">كوارث طبيعية وسيول وانهيارات</option>
-                    <option value="HEALTH_SAFETY">صحة وسلامة مهنية وحوادث سير</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="form-label">المحافظة *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="مثال: لحج، عدن، تعز..."
-                    value={formData.governorate}
-                    onChange={(e) => setFormData({ ...formData, governorate: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="facss-form-grid-2">
-                <div>
-                  <label className="form-label">المديرية (اختياري)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="مثال: المقاطرة، طور الباحة..."
-                    value={formData.district}
-                    onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <label className="form-label">الموقع العام غير الحساس</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="مثال: ممر العبور الإنساني الرئيسي..."
-                    value={formData.generalLocation}
-                    onChange={(e) => setFormData({ ...formData, generalLocation: e.target.value })}
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="form-label">الوصف التشغيلي المنقح *</label>
-                <textarea
-                  className="form-control"
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                  {tx("وصف الخطر")}
+                </label>
+                <AdminTextarea
                   rows={3}
-                  placeholder="وصف الخطر وطبيعته والتهديد المترتب على الفرق الإنسانية بدون تفاصيل سرية أو إحداثيات حساسة..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  required
                 />
               </div>
 
-              {/* Assessment Sliders & Score Preview */}
-              <div
-                style={{
-                  background: 'rgba(0,0,0,0.03)',
-                  padding: '1.25rem',
-                  borderRadius: '10px',
-                  border: '1px solid var(--facss-border)',
-                }}
-              >
-                <h5 style={{ margin: '0 0 1rem', fontSize: '0.95rem', fontWeight: 800 }}>
-                  تقييم الخطر الأولي (Likelihood × Impact)
-                </h5>
-
-                <div className="facss-form-grid-2">
-                  <div>
-                    <label className="form-label">
-                      الاحتمالية: <strong>{formData.likelihood}</strong>
-                    </label>
-                    <input
-                      type="range"
-                      min="1"
-                      max="5"
-                      step="1"
-                      value={formData.likelihood}
-                      onChange={(e) => setFormData({ ...formData, likelihood: parseInt(e.target.value, 10) })}
-                      style={{ width: '100%' }}
-                    />
-                    <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-secondary)', marginTop: '0.25rem' }}>
-                      {formData.likelihood === 1 && '1 - نادر الحدوث'}
-                      {formData.likelihood === 2 && '2 - غير محتمل'}
-                      {formData.likelihood === 3 && '3 - متوسط الاحتمال'}
-                      {formData.likelihood === 4 && '4 - محتمل الحدوث'}
-                      {formData.likelihood === 5 && '5 - شبه مؤكد الحدوث'}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="form-label">
-                      شدة الأثر: <strong>{formData.impact}</strong>
-                    </label>
-                    <input
-                      type="range"
-                      min="1"
-                      max="5"
-                      step="1"
-                      value={formData.impact}
-                      onChange={(e) => setFormData({ ...formData, impact: parseInt(e.target.value, 10) })}
-                      style={{ width: '100%' }}
-                    />
-                    <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-secondary)', marginTop: '0.25rem' }}>
-                      {formData.impact === 1 && '1 - طفيف / مهمل'}
-                      {formData.impact === 2 && '2 - محدود'}
-                      {formData.impact === 3 && '3 - متوسط'}
-                      {formData.impact === 4 && '4 - كبير / جسيم'}
-                      {formData.impact === 5 && '5 - كارثي'}
-                    </div>
-                  </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                    {tx("الاحتمالية (1 إلى 5)")}
+                  </label>
+                  <AdminSelect
+                    value={String(formData.likelihood)}
+                    onChange={(e) => setFormData({ ...formData, likelihood: Number(e.target.value) })}
+                    options={[
+                      { value: '1', label: tx("1 - نادر") },
+                      { value: '2', label: tx("2 - غير محتمل") },
+                      { value: '3', label: tx("3 - متوسط") },
+                      { value: '4', label: tx("4 - محتمل") },
+                      { value: '5', label: tx("5 - شبه مؤكد") },
+                    ]}
+                  />
                 </div>
-
-                {/* Score Preview */}
-                <div
-                  style={{
-                    marginTop: '1rem',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    background: getRiskLevelMeta(calculatedScore.level).bg,
-                    border: `1px solid ${getRiskLevelMeta(calculatedScore.level).border}`,
-                  }}
-                >
-                  <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>
-                    الدرجة الناتجة: <strong>{calculatedScore.score} / 25</strong>
-                  </span>
-                  <span
-                    style={{
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '4px',
-                      background: getRiskLevelMeta(calculatedScore.level).color,
-                      color: '#FFF',
-                      fontSize: '0.8rem',
-                      fontWeight: 800,
-                    }}
-                  >
-                    {getRiskLevelMeta(calculatedScore.level).labelAr}
-                  </span>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                    {tx("شدة الأثر (1 إلى 5)")}
+                  </label>
+                  <AdminSelect
+                    value={String(formData.impact)}
+                    onChange={(e) => setFormData({ ...formData, impact: Number(e.target.value) })}
+                    options={[
+                      { value: '1', label: tx("1 - طفيف") },
+                      { value: '2', label: tx("2 - محدود") },
+                      { value: '3', label: tx("3 - متوسط") },
+                      { value: '4', label: tx("4 - جسيم") },
+                      { value: '5', label: tx("5 - كارثي") },
+                    ]}
+                  />
                 </div>
               </div>
-
-              <div>
-                <label className="form-label">تاريخ الاستهداف لمعالجة الخطر (اختياري)</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={formData.targetResolutionDate}
-                  onChange={(e) => setFormData({ ...formData, targetResolutionDate: e.target.value })}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsStandaloneModalOpen(false)}
-                  className="btn btn-secondary"
-                  disabled={submitting}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={submitting}
-                  style={{ fontWeight: 700 }}
-                >
-                  {submitting ? 'جاري الحفظ...' : 'اعتماد وتسجيل الخطر'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 2: CREATE RISK FROM VERIFIED INCIDENT */}
-      {isFromIncidentModalOpen && (
-        <div className="facss-modal-overlay">
-          <div className="facss-modal-content" style={{ maxWidth: '750px' }}>
-            <div className="facss-modal-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <Link2 size={22} color="var(--facss-gold-500)" />
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>
-                  اشتقاق قيد خطر من بلاغ ميداني تم التحقق منه
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsFromIncidentModalOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--facss-text-muted)' }}
-              >
-                <X size={20} />
-              </button>
             </div>
-
-            <div className="facss-modal-body">
-              {/* Step 1: Select verified incident */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label className="form-label" style={{ fontWeight: 800 }}>
-                  اختر البلاغ المحقق للربط والاشتقاق:
-                </label>
-                {loadingIncidents ? (
-                  <div style={{ padding: '1rem', color: 'var(--facss-text-muted)' }}>جاري استرجاع البلاغات المحققة...</div>
-                ) : verifiedIncidents.length === 0 ? (
-                  <div style={{ padding: '1rem', background: 'rgba(234, 88, 12, 0.1)', color: '#ea580c', borderRadius: '8px', fontSize: '0.85rem' }}>
-                    لا توجد بلاغات ميدانية محققة متاحة للربط حالياً.
-                  </div>
-                ) : (
-                  <select
-                    className="form-control"
-                    value={selectedIncidentId}
-                    onChange={(e) => handleSelectIncident(e.target.value)}
-                    style={{ fontWeight: 600 }}
-                  >
-                    <option value="">-- اضغط لاختيار بلاغ محقق --</option>
-                    {verifiedIncidents.map((inc) => (
-                      <option key={inc.id} value={inc.id}>
-                        {inc.incidentNumber} - {inc.title} ({inc.governorate})
-                      </option>
-                    ))}
-                  </select>
-                )}
-                <div style={{ fontSize: '0.75rem', color: 'var(--facss-text-muted)', marginTop: '0.35rem' }}>
-                  * الضابط الأمني: يتم استيراد المعلومات المنقحة والمصرح بها فقط. أصول البلاغات وهويات المصادر المشفرة محجوبة تماماً.
-                </div>
-              </div>
-
-              {/* Step 2: Form with preview data */}
-              {selectedIncidentId && (
-                <form onSubmit={handleCreateRisk} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  {formError && (
-                    <div style={{ padding: '0.75rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#dc2626', borderRadius: '8px', fontSize: '0.85rem' }}>
-                      {formError}
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="form-label">عنوان الخطر التشغيلي *</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="facss-form-grid-2">
-                    <div>
-                      <label className="form-label">التصنيف المشتق *</label>
-                      <select
-                        className="form-control"
-                        value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                      >
-                        <option value="ARMED_CONFLICT_SECURITY">نزاع مسلح وتهديدات أمنية</option>
-                        <option value="ACCESS_ROADBLOCK_DENIAL">إعاقة وصول وقطع طرق ونقاط تفتيش</option>
-                        <option value="EXPLOSIVE_HAZARD_UXO">ألغام ومخلفات حرب (UXO)</option>
-                        <option value="CRIMINALITY_THEFT">سطو مسلح وجريمة وسرقة قوافل</option>
-                        <option value="STAFF_DETENTION_THREAT">احتجاز واعتداء على الطواقم الإنسانية</option>
-                        <option value="FACILITY_DAMAGE">أضرار المقرات والمرافق والمخازن</option>
-                        <option value="ENVIRONMENTAL_NATURAL">كوارث طبيعية وسيول وانهيارات</option>
-                        <option value="HEALTH_SAFETY">صحة وسلامة مهنية وحوادث سير</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="form-label">المحافظة *</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={formData.governorate}
-                        onChange={(e) => setFormData({ ...formData, governorate: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="form-label">الوصف التشغيلي المنقح *</label>
-                    <textarea
-                      className="form-control"
-                      rows={3}
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  {/* Assessment */}
-                  <div
-                    style={{
-                      background: 'rgba(0,0,0,0.03)',
-                      padding: '1.25rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--facss-border)',
-                    }}
-                  >
-                    <h5 style={{ margin: '0 0 1rem', fontSize: '0.95rem', fontWeight: 800 }}>
-                      التقييم المقترح للخطر (Likelihood × Impact)
-                    </h5>
-
-                    <div className="facss-form-grid-2">
-                      <div>
-                        <label className="form-label">
-                          الاحتمالية: <strong>{formData.likelihood}</strong>
-                        </label>
-                        <input
-                          type="range"
-                          min="1"
-                          max="5"
-                          step="1"
-                          value={formData.likelihood}
-                          onChange={(e) => setFormData({ ...formData, likelihood: parseInt(e.target.value, 10) })}
-                          style={{ width: '100%' }}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="form-label">
-                          شدة الأثر: <strong>{formData.impact}</strong>
-                        </label>
-                        <input
-                          type="range"
-                          min="1"
-                          max="5"
-                          step="1"
-                          value={formData.impact}
-                          onChange={(e) => setFormData({ ...formData, impact: parseInt(e.target.value, 10) })}
-                          style={{ width: '100%' }}
-                        />
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        marginTop: '1rem',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        background: getRiskLevelMeta(calculatedScore.level).bg,
-                        border: `1px solid ${getRiskLevelMeta(calculatedScore.level).border}`,
-                      }}
-                    >
-                      <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>
-                        الدرجة الناتجة: <strong>{calculatedScore.score} / 25</strong>
-                      </span>
-                      <span
-                        style={{
-                          padding: '0.2rem 0.6rem',
-                          borderRadius: '4px',
-                          background: getRiskLevelMeta(calculatedScore.level).color,
-                          color: '#FFF',
-                          fontSize: '0.8rem',
-                          fontWeight: 800,
-                        }}
-                      >
-                        {getRiskLevelMeta(calculatedScore.level).labelAr}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => setIsFromIncidentModalOpen(false)}
-                      className="btn btn-secondary"
-                      disabled={submitting}
-                    >
-                      إلغاء
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={submitting}
-                      style={{ fontWeight: 700 }}
-                    >
-                      {submitting ? 'جاري الحفظ...' : 'اعتماد وتسجيل الخطر المشتق'}
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
+          )}
         </div>
-      )}
+      </AdminModal>
     </div>
   );
 }

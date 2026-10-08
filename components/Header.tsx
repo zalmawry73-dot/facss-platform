@@ -80,6 +80,10 @@ export default function Header() {
     return t.navClientPortal;
   };
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <header className="site-header">
       <div className="container-wide">
@@ -93,10 +97,10 @@ export default function Header() {
             />
             <div className="brand-title-wrap">
               <span className="brand-name-primary">
-                {locale === 'ar' ? 'مركز عدن الدولي' : 'Aden International Center'}
+                {locale === 'ar' ? 'المركز المتكامل' : 'Integrated Center'}
               </span>
               <span className="brand-name-secondary">
-                {locale === 'ar' ? 'للسلامة والدراسات الميدانية' : 'for Safety & Field Assessment'}
+                {locale === 'ar' ? 'لخدمات الأمن والسلامة والدراسات الميدانية' : 'for Security, Safety & Field Studies'}
               </span>
             </div>
           </Link>

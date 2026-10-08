@@ -56,8 +56,8 @@ export default async function CertificateVerificationPage({ params }: PageProps)
           </h1>
           <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1rem', maxWidth: '700px', marginInline: 'auto' }}>
             {isAr
-              ? 'تحقق من صحة الوثائق والشهادات الصادرة عن مركز عدن الدولي للسلامة والدراسات الميدانية'
-              : 'Official validation of training certificates and credentials issued by Aden International Center for Safety and Field Assessment.'}
+              ? 'تحقق من صحة الوثائق والشهادات الصادرة عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية'
+              : 'Official validation of training certificates and credentials issued by Integrated Center for Security, Safety & Field Studies.'}
           </p>
         </div>
       </section>

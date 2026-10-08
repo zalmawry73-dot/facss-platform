@@ -30,6 +30,11 @@ export default async function TraineeDashboardPage() {
           location: true,
           status: true,
           hasCertificate: true,
+          minAttendancePct: true,
+          requiresPostEval: true,
+          sessions: {
+            select: { id: true },
+          },
         },
       },
       certificate: {
@@ -40,6 +45,10 @@ export default async function TraineeDashboardPage() {
           isRevoked: true,
         },
       },
+      attendanceRecords: {
+        select: { status: true },
+      },
+      evaluations: true,
     },
     orderBy: { createdAt: 'desc' },
   });
@@ -48,13 +57,25 @@ export default async function TraineeDashboardPage() {
     (r) => r.certificate && !r.certificate.isRevoked
   ).length;
 
-  const acceptedCount = registrations.filter((r) => r.status === 'ACCEPTED').length;
   const completedCount = registrations.filter((r) => r.status === 'COMPLETED').length;
+
+  // Compute overall average attendance
+  let totalPctSum = 0;
+  let coursesWithSessions = 0;
+  registrations.forEach((reg) => {
+    const totalSessions = reg.course.sessions.length;
+    if (totalSessions > 0) {
+      const presentCount = reg.attendanceRecords.filter((a) => a.status === 'PRESENT').length;
+      totalPctSum += Math.round((presentCount / totalSessions) * 100);
+      coursesWithSessions++;
+    }
+  });
+  const avgAttendancePct = coursesWithSessions > 0 ? Math.round(totalPctSum / coursesWithSessions) : 100;
 
   return (
     <div>
-      {/* 3 Metrics */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
+      {/* 4 Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
         <div className="card" style={{ borderInlineStart: '4px solid var(--facss-green-800)' }}>
           <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
             {isAr ? 'البرامج التدريبية المسجل بها' : 'Enrolled Training Programs'}
@@ -62,11 +83,11 @@ export default async function TraineeDashboardPage() {
           <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--facss-green-800)' }}>{registrations.length}</span>
         </div>
 
-        <div className="card" style={{ borderInlineStart: '4px solid var(--facss-gold-600)' }}>
+        <div className="card" style={{ borderInlineStart: '4px solid #22c55e' }}>
           <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            {isAr ? 'الشهادات الصادرة' : 'Issued Certificates'}
+            {isAr ? 'متوسط نسبة الحضور' : 'Average Attendance Rate'}
           </span>
-          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--facss-gold-700)' }}>{totalCertificates}</span>
+          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: '#22c55e' }}>{avgAttendancePct}%</span>
         </div>
 
         <div className="card" style={{ borderInlineStart: '4px solid #059669' }}>
@@ -74,6 +95,13 @@ export default async function TraineeDashboardPage() {
             {isAr ? 'الدورات المكتملة بنجاح' : 'Successfully Completed Courses'}
           </span>
           <span style={{ fontSize: '2.2rem', fontWeight: 900, color: '#059669' }}>{completedCount}</span>
+        </div>
+
+        <div className="card" style={{ borderInlineStart: '4px solid var(--facss-gold-600)' }}>
+          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
+            {isAr ? 'الشهادات الصادرة' : 'Issued Certificates'}
+          </span>
+          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--facss-gold-700)' }}>{totalCertificates}</span>
         </div>
       </div>
 
@@ -83,10 +111,16 @@ export default async function TraineeDashboardPage() {
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
             {isAr ? 'سجل الدورات والتأهيل الأمني' : 'Course & Security Training Record'}
           </h2>
-          <Link href="/portal/trainee/courses" className="btn btn-outline btn-sm" style={{ fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-            <span>{isAr ? 'تصفح الدورات المتاحة' : 'Browse Available Courses'}</span>
-            <ArrowIcon size={14} />
-          </Link>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <Link href="/portal/trainee/attendance" className="btn btn-outline btn-sm" style={{ fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span>{isAr ? 'كشف الحضور الكامل' : 'Attendance Log'}</span>
+              <ArrowIcon size={14} />
+            </Link>
+            <Link href="/portal/trainee/courses" className="btn btn-outline btn-sm" style={{ fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span>{isAr ? 'تصفح الدورات المتاحة' : 'Browse Available Courses'}</span>
+              <ArrowIcon size={14} />
+            </Link>
+          </div>
         </div>
 
         {registrations.length === 0 ? (
@@ -101,13 +135,35 @@ export default async function TraineeDashboardPage() {
             {registrations.map((reg) => {
               const courseTitle = isAr ? reg.course.titleAr : (reg.course.titleEn || reg.course.titleAr);
               const altTitle = isAr ? reg.course.titleEn : reg.course.titleAr;
+              const totalSessions = reg.course.sessions.length;
+              const presentCount = reg.attendanceRecords.filter((a) => a.status === 'PRESENT').length;
+              const attendancePct = totalSessions > 0 ? Math.round((presentCount / totalSessions) * 100) : 100;
+              const minRequired = reg.course.minAttendancePct ?? 75;
+              const isEligible = attendancePct >= minRequired;
+              const postEval = reg.evaluations.find((e) => e.type === 'POST');
 
               return (
                 <div key={reg.id} style={{ padding: '1.5rem', background: 'var(--surface-sunken)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
                     <div>
-                      <div style={{ marginBottom: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
                         <StatusBadge type="trainingRegistration" status={reg.status} locale={locale} />
+                        <span
+                          className="badge"
+                          style={{
+                            background: isEligible ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                            color: isEligible ? '#22c55e' : '#ef4444',
+                            border: `1px solid ${isEligible ? '#22c55e' : '#ef4444'}40`,
+                            fontSize: '0.75rem',
+                          }}
+                        >
+                          {isAr ? `الحضور: ${attendancePct}% (${presentCount}/${totalSessions})` : `Attendance: ${attendancePct}%`}
+                        </span>
+                        {postEval && postEval.score !== null && (
+                          <span className="badge" style={{ background: 'rgba(197,155,39,0.15)', color: 'var(--color-gold-light)', fontSize: '0.75rem' }}>
+                            {isAr ? `التقييم: ${postEval.score}/${postEval.maxScore}` : `Eval: ${postEval.score}/${postEval.maxScore}`}
+                          </span>
+                        )}
                       </div>
                       <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
                         {courseTitle}
@@ -117,12 +173,17 @@ export default async function TraineeDashboardPage() {
                       )}
                     </div>
 
-                    {reg.certificate && !reg.certificate.isRevoked && (
-                      <Link href="/portal/trainee/certificates" className="btn btn-gold btn-sm">
-                        <Award size={15} />
-                        <span>{isAr ? 'عرض الشهادة' : 'View Certificate'}</span>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <Link href="/portal/trainee/attendance" className="btn btn-outline btn-sm">
+                        <span>{isAr ? 'تفاصيل الجلسات' : 'Session Details'}</span>
                       </Link>
-                    )}
+                      {reg.certificate && !reg.certificate.isRevoked && (
+                        <Link href="/portal/trainee/certificates" className="btn btn-gold btn-sm">
+                          <Award size={15} />
+                          <span>{isAr ? 'عرض الشهادة' : 'View Certificate'}</span>
+                        </Link>
+                      )}
+                    </div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', padding: '0.85rem', background: 'var(--surface-card)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>

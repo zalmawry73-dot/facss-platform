@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       data: {
         requestId: newRequest.id,
         authorId: session?.userId || null,
-        authorName: 'نظام الاستقبال الآلي لمركز عدن الدولي للسلامة والدراسات الميدانية',
+        authorName: 'نظام الاستقبال الآلي للمركز المتكامل لخدمات الأمن والسلامة',
         note: `تم تسجيل طلب الخدمة رقم ${requestNumber} بنجاح وإحالته إلى إدارة العمليات للمراجعة.`,
         isClientVisible: true,
       }
@@ -110,6 +110,11 @@ export async function POST(request: Request) {
 
     // If user is logged in, send notification
     if (session?.userId) {
+      const isStaff = STAFF_ROLES.includes(session.role as any);
+      const notifLink = isStaff
+        ? `/admin/requests?id=${newRequest.id}`
+        : `/portal/client/requests/${newRequest.id}`;
+
       await prisma.notification.create({
         data: {
           userId: session.userId,
@@ -118,7 +123,7 @@ export async function POST(request: Request) {
           messageAr: `تم تسجيل طلبكم رقم ${requestNumber} بنجاح. سنقوم بالتواصل معكم بعد المراجعة.`,
           messageEn: `Your request ${requestNumber} has been logged. Our operations team will contact you shortly.`,
           type: 'SUCCESS',
-          link: `/portal/client/requests/${newRequest.id}`,
+          link: notifLink,
         }
       });
     }

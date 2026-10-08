@@ -105,19 +105,21 @@ export default function VerifyPortalLandingPage() {
               background: 'rgba(201, 162, 39, 0.15)',
               border: '1px solid rgba(201, 162, 39, 0.35)',
               borderRadius: '20px',
-              fontSize: '0.82rem',
+              fontSize: 'clamp(0.75rem, 2.5vw, 0.82rem)',
               color: 'var(--facss-gold-300)',
               fontWeight: 700,
               marginBottom: '1.25rem',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
             }}
           >
-            <ShieldCheck size={16} />
+            <ShieldCheck size={16} style={{ flexShrink: 0 }} />
             <span>{isAr ? 'البوابة الرسمية للتحقق الرقمي' : 'Official Digital Verification Portal'}</span>
           </div>
 
           <h1
             style={{
-              fontSize: '2.4rem',
+              fontSize: 'clamp(1.45rem, 5.5vw, 2.4rem)',
               fontWeight: 900,
               color: '#FFFFFF',
               marginBottom: '0.8rem',
@@ -132,7 +134,7 @@ export default function VerifyPortalLandingPage() {
           <p
             style={{
               color: 'var(--facss-ivory-300)',
-              fontSize: '1.05rem',
+              fontSize: 'clamp(0.88rem, 2.8vw, 1.05rem)',
               maxWidth: '680px',
               marginInline: 'auto',
               lineHeight: 1.7,
@@ -140,8 +142,8 @@ export default function VerifyPortalLandingPage() {
             }}
           >
             {isAr
-              ? 'تتيح هذه البوابة للمنظمات الإنسانية والجهات الشريكة التحقق الفوري من صحة وسريان الشهادات والوثائق الصادرة عن مركز عدن الدولي للسلامة والدراسات الميدانية.'
-              : 'Empowering humanitarian organizations and partners to instantly verify credentials and certificates issued by Aden International Center for Safety and Field Assessment.'}
+              ? 'تتيح هذه البوابة للمنظمات والجهات الشريكة التحقق الفوري من صحة وسريان الشهادات والوثائق الصادرة عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية.'
+              : 'Empowering organizations and partners to instantly verify credentials and certificates issued by the Integrated Center for Security, Safety & Field Studies.'}
           </p>
 
           {/* Verification Search Card */}
@@ -188,8 +190,8 @@ export default function VerifyPortalLandingPage() {
                     className="form-input"
                     placeholder={
                       isAr
-                        ? 'مثال: V-ABC123 أو FACSS-CERT-2026-0045'
-                        : 'e.g. V-ABC123 or FACSS-CERT-2026-0045'
+                        ? 'مثال: V-ABC123 أو 2026-0045'
+                        : 'e.g. V-ABC123 or 2026-0045'
                     }
                     value={code}
                     onChange={(e) => {
@@ -198,15 +200,17 @@ export default function VerifyPortalLandingPage() {
                     }}
                     style={{
                       height: '52px',
-                      fontSize: '1rem',
+                      fontSize: 'clamp(0.85rem, 2.5vw, 1rem)',
                       fontWeight: 600,
                       letterSpacing: '0.05em',
-                      paddingInlineStart: '1rem',
+                      paddingInline: '1rem',
                       textTransform: 'uppercase',
                       borderRadius: '10px',
                       border: error
                         ? '2px solid #EF4444'
                         : '1.5px solid var(--border-color)',
+                      width: '100%',
+                      boxSizing: 'border-box',
                     }}
                     autoComplete="off"
                     autoFocus
@@ -370,13 +374,13 @@ export default function VerifyPortalLandingPage() {
                   }}
                 >
                   {isAr
-                    ? 'مركز عدن الدولي للسلامة والدراسات الميدانية'
-                    : 'Aden International Center for Safety and Field Assessment'}
+                    ? 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية'
+                    : 'Integrated Center for Security, Safety & Field Studies'}
                 </strong>
                 <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                   {isAr
-                    ? 'الجهة التخصصية الرائدة في تأهيل الكوادر الإنسانية وتحليل مخاطر الوصول في الجمهورية اليمنية.'
-                    : 'The specialized entity for humanitarian field qualification and access risk assessment.'}
+                    ? 'الجهة التخصصية في خدمات الأمن والسلامة والتأهيل والدراسات الميدانية في الجمهورية اليمنية.'
+                    : 'The specialized entity for security, safety, capacity building, and field studies.'}
                 </span>
               </div>
             </div>

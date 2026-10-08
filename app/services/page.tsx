@@ -14,6 +14,7 @@ import {
   ArrowRight,
   CheckCircle2
 } from 'lucide-react';
+import { getContentSection } from '@/lib/content';
 
 export const revalidate = 0;
 
@@ -35,6 +36,56 @@ export default async function ServicesPage() {
       }
     }
   });
+
+  const dbBeneficiaries = await getContentSection('beneficiaries');
+
+  const fallbackBeneficiaries = [
+    {
+      titleAr: 'المنظمات الإنسانية الدولية (INGOs)',
+      titleEn: 'International Humanitarian NGOs (INGOs)',
+      descAr: 'تقييم مخاطر الوصول الإنساني، دراسات السياق الميداني، وخطط التحرك الآمن للقوافل والبعثات الميدانية.',
+      descEn: 'Humanitarian access risk assessments, local context studies, and safe movement plans for aid missions.',
+    },
+    {
+      titleAr: 'وكالات الأمم المتحدة والبعثات الإغاثية',
+      titleEn: 'UN Agencies & Relief Missions',
+      descAr: 'موجزات دورية لحالة المسارات والمعابر، تحليلات أصحاب المصلحة، وتيسير قنوات التواصل الميداني غير السياسي.',
+      descEn: 'Periodic transit route and corridor risk briefs, stakeholder mapping, and non-political field access dialogue.',
+    },
+    {
+      titleAr: 'المنظمات والمؤسسات المحلية غير الحكومية',
+      titleEn: 'National & Local NGOs',
+      descAr: 'بناء قدرات الكوادر في إدارة المخاطر، بروتوكولات السلامة الميدانية، واستراتيجيات كسب القبول المجتمعي.',
+      descEn: 'Capacity building in field risk management, personal safety protocols, and community acceptance strategies.',
+    },
+    {
+      titleAr: 'الفرق الميدانية وكوادر الاستجابة الإنسانية',
+      titleEn: 'Field Response Teams & Aid Personnel',
+      descAr: 'توعية بالدعم النفسي الأولي، التعامل مع ضغوط بيئات النزاع، وتصميم مسارات الإحالة التخصصية المعتمدة.',
+      descEn: 'Psychological first aid sensitization, acute stress management, and vetted specialized referral pathways.',
+    },
+    {
+      titleAr: 'مجموعات الإمداد والخدمات اللوجستية الإنسانية',
+      titleEn: 'Humanitarian Logistics & Supply Clusters',
+      descAr: 'تقييم أمان سلاسل الإمداد ونقاط الاختناق الحركي، وتحديثات سجل المخاطر التشغيلية على المعابر.',
+      descEn: 'Supply chain corridor safety assessments, movement bottleneck reviews, and transit risk register updates.',
+    },
+    {
+      titleAr: 'الشبكات والجهات المجتمعية المحلية',
+      titleEn: 'Local Community Networks & Mediators',
+      descAr: 'تعزيز الحوار المجتمعي المشترك، ترسيخ مبادئ عدم الإضرار والحياد، وتيسير وصول المساعدات للمجتمعات الأشد احتياجاً.',
+      descEn: 'Fostering local dialogue, reinforcing do-no-harm and neutrality principles, and facilitating aid delivery to vulnerable communities.',
+    },
+  ];
+
+  const beneficiariesList = dbBeneficiaries.length > 0
+    ? dbBeneficiaries.map((b) => ({
+        titleAr: b.titleAr || b.titleEn || '',
+        titleEn: b.titleEn || b.titleAr || '',
+        descAr: b.descriptionAr || b.descriptionEn || '',
+        descEn: b.descriptionEn || b.descriptionAr || '',
+      }))
+    : fallbackBeneficiaries;
 
   return (
     <div>
@@ -74,7 +125,7 @@ export default async function ServicesPage() {
           ) : (
             categories.map((cat) => {
             const catTitle = isAr ? cat.titleAr : (cat.titleEn || cat.titleAr);
-            const catSub = isAr ? cat.titleEn : cat.titleAr;
+            const catSub = isAr ? cat.titleEn : null;
 
             return (
               <div key={cat.id} style={{ marginBottom: '4rem' }}>
@@ -90,17 +141,18 @@ export default async function ServicesPage() {
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
                   {cat.services.map((srv) => {
                     let features: string[] = [];
                     try {
-                      features = JSON.parse(srv.featuresAr || '[]');
+                      const rawFeatures = isAr ? srv.featuresAr : (srv.featuresEn || srv.featuresAr);
+                      features = JSON.parse(rawFeatures || '[]');
                     } catch {
                       features = [];
                     }
 
                     const srvTitle = isAr ? srv.titleAr : (srv.titleEn || srv.titleAr);
-                    const srvSub = isAr ? srv.titleEn : srv.titleAr;
+                    const srvSub = isAr ? srv.titleEn : null;
                     const srvDesc = isAr ? srv.shortDescAr : (srv.shortDescEn || srv.shortDescAr);
 
                     return (
@@ -184,45 +236,8 @@ export default async function ServicesPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.75rem' }}>
-            {[
-              {
-                titleAr: 'المنظمات الإنسانية الدولية (INGOs)',
-                titleEn: 'International Humanitarian NGOs (INGOs)',
-                descAr: 'تقييم مخاطر الوصول الإنساني، دراسات السياق الميداني، وخطط التحرك الآمن للقوافل والبعثات الميدانية.',
-                descEn: 'Humanitarian access risk assessments, local context studies, and safe movement plans for aid missions.',
-              },
-              {
-                titleAr: 'وكالات الأمم المتحدة والبعثات الإغاثية',
-                titleEn: 'UN Agencies & Relief Missions',
-                descAr: 'موجزات دورية لحالة المسارات والمعابر، تحليلات أصحاب المصلحة، وتيسير قنوات التواصل الميداني غير السياسي.',
-                descEn: 'Periodic transit route and corridor risk briefs, stakeholder mapping, and non-political field access dialogue.',
-              },
-              {
-                titleAr: 'المنظمات والمؤسسات المحلية غير الحكومية',
-                titleEn: 'National & Local NGOs',
-                descAr: 'بناء قدرات الكوادر في إدارة المخاطر، بروتوكولات السلامة الميدانية، واستراتيجيات كسب القبول المجتمعي.',
-                descEn: 'Capacity building in field risk management, personal safety protocols, and community acceptance strategies.',
-              },
-              {
-                titleAr: 'الفرق الميدانية وكوادر الاستجابة الإنسانية',
-                titleEn: 'Field Response Teams & Aid Personnel',
-                descAr: 'توعية بالدعم النفسي الأولي، التعامل مع ضغوط بيئات النزاع، وتصميم مسارات الإحالة التخصصية المعتمدة.',
-                descEn: 'Psychological first aid sensitization, acute stress management, and vetted specialized referral pathways.',
-              },
-              {
-                titleAr: 'مجموعات الإمداد والخدمات اللوجستية الإنسانية',
-                titleEn: 'Humanitarian Logistics & Supply Clusters',
-                descAr: 'تقييم أمان سلاسل الإمداد ونقاط الاختناق الحركي، وتحديثات سجل المخاطر التشغيلية على المعابر.',
-                descEn: 'Supply chain corridor safety assessments, movement bottleneck reviews, and transit risk register updates.',
-              },
-              {
-                titleAr: 'الشبكات والجهات المجتمعية المحلية',
-                titleEn: 'Local Community Networks & Mediators',
-                descAr: 'تعزيز الحوار المجتمعي المشترك، ترسيخ مبادئ عدم الإضرار والحياد، وتيسير وصول المساعدات للمجتمعات الأشد احتياجاً.',
-                descEn: 'Fostering local dialogue, reinforcing do-no-harm and neutrality principles, and facilitating aid delivery to vulnerable communities.',
-              },
-            ].map((sec, idx) => (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+            {beneficiariesList.map((sec, idx) => (
               <div key={idx} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
@@ -235,9 +250,11 @@ export default async function ServicesPage() {
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
                     {isAr ? sec.titleAr : sec.titleEn}
                   </h3>
-                  <h4 style={{ fontSize: '0.82rem', color: 'var(--facss-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
-                    {isAr ? sec.titleEn : sec.titleAr}
-                  </h4>
+                  {isAr && sec.titleEn && (
+                    <h4 style={{ fontSize: '0.82rem', color: 'var(--facss-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
+                      {sec.titleEn}
+                    </h4>
+                  )}
 
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7 }}>
                     {isAr ? sec.descAr : sec.descEn}

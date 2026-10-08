@@ -109,7 +109,7 @@ export default function PortalAlertsPage() {
           <div className="mt-4 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-400">
             <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
             <span>
-              جميع التنبيهات منقحة ومراجعة ومحققة أمنياً وفق منهجيات مركز عدن الدولي. المحتوى المعروض مقيد بنطاق تصريح حسابك.
+              جميع التنبيهات منقحة ومراجعة ومحققة أمنياً وفق منهجيات المركز المتكامل. المحتوى المعروض مقيد بنطاق تصريح حسابك.
             </span>
           </div>
         </div>

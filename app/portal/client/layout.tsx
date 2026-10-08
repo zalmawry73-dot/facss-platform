@@ -44,6 +44,7 @@ export default function ClientPortalLayout({ children }: { children: React.React
   const links = [
     { href: '/portal/client', label: 'لوحة المتابعة العامة', icon: LayoutDashboard },
     { href: '/portal/client/requests', label: 'طلبات الخدمات والمستندات', icon: Shield },
+    { href: '/portal/client/research', label: 'الدراسات والتقارير المقيدة', icon: FolderLock },
     { href: '/portal/client/profile', label: 'الملف المؤسسي والأمان', icon: User },
   ];
 

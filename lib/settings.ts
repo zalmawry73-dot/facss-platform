@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: PublicSettings = {
   SOCIAL_TWITTER: '',
   SOCIAL_LINKEDIN: '',
   SOCIAL_FACEBOOK: '',
-  ANNOUNCEMENT_TEXT: 'مركز عدن الدولي للسلامة والدراسات الميدانية — دعم سلامة العاملين في المجال الإنساني وتعزيز الوصول الآمن',
+  ANNOUNCEMENT_TEXT: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية — السلامة أولاً',
 };
 
 /**

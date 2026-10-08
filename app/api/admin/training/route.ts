@@ -13,10 +13,32 @@ export async function GET(request: Request) {
     const gate = await assertApiCapability(session, CAPABILITIES.MANAGE_TRAINING);
     if (!gate.authorized) return gate.response!;
 
+    const { searchParams } = new URL(request.url);
+    const typeFilter = searchParams.get('type');
+    const clientFilter = searchParams.get('clientId');
+
+    const where: any = {};
+    if (typeFilter) {
+      where.courseType = typeFilter;
+    }
+    if (clientFilter) {
+      where.clientId = clientFilter;
+    }
+
     const [courses, categories] = await Promise.all([
       prisma.course.findMany({
+        where,
         include: {
           category: { select: { id: true, titleAr: true, titleEn: true } },
+          client: { select: { id: true, fullName: true, organization: true, email: true } },
+          trainers: {
+            include: {
+              trainer: {
+                select: { id: true, fullNameAr: true, fullNameEn: true, professionalTitleAr: true },
+              },
+            },
+          },
+          materials: { select: { id: true } },
           registrations: { select: { id: true, status: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -32,6 +54,7 @@ export async function GET(request: Request) {
       courses: courses.map((c) => ({
         ...c,
         registrationsCount: c.registrations.length,
+        materialsCount: c.materials.length,
       })),
       categories,
     });
@@ -72,6 +95,16 @@ export async function POST(request: Request) {
       requirementsAr,
       requirementsEn,
       hasCertificate,
+      requiresPreEval,
+      requiresPostEval,
+      minAttendancePct,
+      courseType,
+      deliveryMode,
+      clientId,
+      objectivesAr,
+      objectivesEn,
+      targetAudienceAr,
+      targetAudienceEn,
     } = validation.data;
 
     // Verify category exists
@@ -81,6 +114,16 @@ export async function POST(request: Request) {
 
     if (!categoryExists) {
       return NextResponse.json({ error: 'تصنيف الدورة التدريبية غير موجود' }, { status: 400 });
+    }
+
+    // If private client course, verify client exists if clientId provided
+    if (courseType === 'PRIVATE_CLIENT' && clientId) {
+      const clientExists = await prisma.user.findUnique({
+        where: { id: clientId },
+      });
+      if (!clientExists) {
+        return NextResponse.json({ error: 'العميل المحدد للدورة الخاصة غير موجود' }, { status: 400 });
+      }
     }
 
     // Generate unique slug
@@ -112,19 +155,32 @@ export async function POST(request: Request) {
         requirementsAr,
         requirementsEn,
         hasCertificate,
+        requiresPreEval: requiresPreEval ?? false,
+        requiresPostEval: requiresPostEval ?? false,
+        minAttendancePct: minAttendancePct ?? 75,
+        courseType: courseType ?? 'PUBLIC',
+        deliveryMode: deliveryMode ?? 'IN_PERSON',
+        clientId: clientId || null,
+        objectivesAr: objectivesAr || null,
+        objectivesEn: objectivesEn || null,
+        targetAudienceAr: targetAudienceAr || null,
+        targetAudienceEn: targetAudienceEn || null,
       },
       include: {
         category: true,
+        client: { select: { id: true, fullName: true, organization: true } },
       },
     });
 
     await logActivity({
       userId: session?.userId,
       userName: session?.fullName,
-      action: 'CREATE_TRAINING_COURSE',
+      action: courseType === 'PRIVATE_CLIENT' ? 'CREATE_PRIVATE_COURSE' : 'CREATE_TRAINING_COURSE',
       entityType: 'Course',
       entityId: course.id,
-      details: `إنشاء برنامج تدريبي جديد: [${course.titleAr}] بالحالة [${course.status}]`,
+      details: courseType === 'PRIVATE_CLIENT'
+        ? `إنشاء دورة تدريبية خاصة لعميل: [${course.titleAr}]`
+        : `إنشاء برنامج تدريبي جديد: [${course.titleAr}] بالحالة [${course.status}]`,
     });
 
     return NextResponse.json({ success: true, course }, { status: 201 });
