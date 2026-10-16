@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   ShieldAlert, 
   CheckCircle2, 
@@ -80,9 +81,11 @@ export default function AdminDashboardOverview({
   recentRequests,
   recentLogs,
   initialKpis,
-  locale = 'ar',
+  locale: propLocale = 'ar',
 }: Props) {
-  const isAr = locale === 'ar';
+  const { locale: contextLocale } = useLanguage();
+  const currentLocale = (contextLocale || propLocale || 'ar') as 'ar' | 'en';
+  const isAr = currentLocale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   // Time Filtering State (C4)
@@ -166,7 +169,7 @@ export default function AdminDashboardOverview({
         <Link
           href={`/admin/requests?id=${r.id}`}
           style={{
-            color: 'var(--brand-gold-600)',
+            color: 'var(--color-gold-600)',
             fontWeight: 800,
             textDecoration: 'none',
             fontFamily: 'var(--font-en)',
@@ -262,7 +265,7 @@ export default function AdminDashboardOverview({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-gold-600)', fontWeight: 700, fontSize: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-gold-700)', fontWeight: 700, fontSize: '0.85rem' }}>
             <Calendar size={18} />
             <span>{isAr ? 'النطاق الزمني:' : 'Period Range:'}</span>
           </div>
@@ -291,7 +294,7 @@ export default function AdminDashboardOverview({
                     padding: '0.35rem 0.85rem',
                     borderRadius: '6px',
                     border: 'none',
-                    background: active ? 'var(--brand-gold-600)' : 'transparent',
+                    background: active ? 'var(--color-primary-900)' : 'transparent',
                     color: active ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: active ? 700 : 500,
                     fontSize: '0.82rem',
@@ -328,7 +331,7 @@ export default function AdminDashboardOverview({
             padding: '1rem 1.25rem',
             marginBottom: '1.5rem',
             background: 'var(--surface-bg)',
-            border: '1px solid var(--brand-gold-500)',
+            border: '1px solid var(--color-gold-500)',
             borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
@@ -387,6 +390,39 @@ export default function AdminDashboardOverview({
         </div>
       )}
 
+      {/* Actionable Operations Grid (Prioritized First) */}
+      <div style={{ marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--color-primary-950)', margin: 0 }}>
+            {isAr ? 'العمليات والطلبات التي تتطلب إجراءً' : 'Actionable Requests & Operational Backlog'}
+          </h3>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            {isAr ? 'تحديث لحظي حسب صلاحيات الإدارة' : 'Live operational queue'}
+          </span>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '1.25rem',
+          }}
+        >
+          {actionableMetrics.map((m, idx) => (
+            <AdminStatCard
+              key={idx}
+              label={m.label}
+              value={m.value}
+              icon={m.icon}
+              color={m.color}
+              bg={m.bg}
+              badge={m.badge}
+              helper={m.helper}
+              href={m.href}
+            />
+          ))}
+        </div>
+      </div>
+
       {/* C3 & C5: Executive Operations & Incident KPI Cards */}
       {kpis && (
         <div style={{ marginBottom: '2rem' }}>
@@ -442,7 +478,7 @@ export default function AdminDashboardOverview({
                   alignItems: 'center',
                   gap: '0.25rem',
                   fontSize: '0.75rem',
-                  color: 'var(--brand-gold-600)',
+                  color: 'var(--color-gold-600)',
                   fontWeight: 600,
                   marginTop: '0.6rem',
                   textDecoration: 'none',
@@ -607,7 +643,7 @@ export default function AdminDashboardOverview({
                 padding: '1.1rem',
                 background: 'var(--surface-bg)',
                 border: '1px solid var(--admin-card-border)',
-                borderTop: '4px solid var(--brand-gold-500)',
+                borderTop: '4px solid var(--color-gold-500)',
                 borderRadius: '12px',
               }}
             >
@@ -615,7 +651,7 @@ export default function AdminDashboardOverview({
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                   {isAr ? 'بلاغات مصعّدة / غير مسندة' : 'Escalated / Unassigned'}
                 </span>
-                <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(217, 119, 6, 0.1)', color: 'var(--brand-gold-600)', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(181, 146, 84, 0.12)', color: 'var(--color-gold-700)', fontWeight: 700 }}>
                   Queue
                 </span>
               </div>
@@ -628,7 +664,7 @@ export default function AdminDashboardOverview({
                 </div>
                 <div style={{ borderLeft: '1px solid var(--admin-card-border)', paddingLeft: '0.75rem' }}>
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>{isAr ? 'غير مسندة' : 'Unassigned'}</span>
-                  <Link href="/admin/incidents?filter=UNASSIGNED" style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--brand-gold-600)', textDecoration: 'none' }}>
+                  <Link href="/admin/incidents?filter=UNASSIGNED" style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-gold-600)', textDecoration: 'none' }}>
                     {kpis.operations.unassignedIncidents.displayValue}
                   </Link>
                 </div>
@@ -670,10 +706,10 @@ export default function AdminDashboardOverview({
                     alignItems: 'center',
                     gap: '0.45rem',
                     padding: '0.6rem 1rem',
-                    background: active ? 'rgba(217, 119, 6, 0.08)' : 'transparent',
+                    background: active ? 'rgba(181, 146, 84, 0.1)' : 'transparent',
                     border: 'none',
-                    borderBottom: active ? '3px solid var(--brand-gold-600)' : '3px solid transparent',
-                    color: active ? 'var(--brand-gold-600)' : 'var(--text-secondary)',
+                    borderBottom: active ? '3px solid var(--color-gold-600)' : '3px solid transparent',
+                    color: active ? 'var(--color-gold-700)' : 'var(--text-secondary)',
                     fontWeight: active ? 700 : 500,
                     fontSize: '0.86rem',
                     cursor: 'pointer',
@@ -751,7 +787,7 @@ export default function AdminDashboardOverview({
                 <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.3rem', fontFamily: 'var(--font-en)' }}>
                   {kpis.risks.totalActiveRisks.displayValue}
                 </div>
-                <Link href="/admin/risks" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.76rem', color: 'var(--brand-gold-600)', marginTop: '0.6rem', textDecoration: 'none' }}>
+                <Link href="/admin/risks" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.76rem', color: 'var(--color-gold-600)', marginTop: '0.6rem', textDecoration: 'none' }}>
                   <span>{isAr ? 'الانتقال لسجل المخاطر' : 'View Risk Register'}</span>
                   <ArrowIcon size={12} />
                 </Link>
@@ -815,7 +851,7 @@ export default function AdminDashboardOverview({
                 <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#16A34A', marginTop: '0.3rem', fontFamily: 'var(--font-en)' }}>
                   {kpis.complaintsAndServices.complaintSlaComplianceRate.displayValue}
                 </div>
-                <Link href="/admin/messages?type=COMPLAINT" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.76rem', color: 'var(--brand-gold-600)', marginTop: '0.6rem', textDecoration: 'none' }}>
+                <Link href="/admin/messages?type=COMPLAINT" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.76rem', color: 'var(--color-gold-600)', marginTop: '0.6rem', textDecoration: 'none' }}>
                   <span>{isAr ? 'سجل الشكاوى العام' : 'All Complaints'}</span>
                   <ArrowIcon size={12} />
                 </Link>
@@ -910,7 +946,7 @@ export default function AdminDashboardOverview({
                 <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#16A34A', marginTop: '0.3rem', fontFamily: 'var(--font-en)' }}>
                   {kpis.training.attendanceRate.displayValue}
                 </div>
-                <Link href="/admin/training" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.76rem', color: 'var(--brand-gold-600)', marginTop: '0.6rem', textDecoration: 'none' }}>
+                <Link href="/admin/training" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.76rem', color: 'var(--color-gold-600)', marginTop: '0.6rem', textDecoration: 'none' }}>
                   <span>{isAr ? 'إدارة البرامج التدريبية' : 'Manage Training'}</span>
                   <ArrowIcon size={12} />
                 </Link>
@@ -931,11 +967,11 @@ export default function AdminDashboardOverview({
                   <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                     {isAr ? 'معدل التحسن المعرفي المكتسب (Pre/Post Test Gain)' : 'Average Knowledge Improvement Gain'}
                   </span>
-                  <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(217, 119, 6, 0.1)', color: 'var(--brand-gold-600)', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(181, 146, 84, 0.12)', color: 'var(--color-gold-700)', fontWeight: 700 }}>
                     Formula: Normalized Post% - Pre%
                   </span>
                 </div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--brand-gold-600)', marginTop: '0.3rem' }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-gold-600)', marginTop: '0.3rem' }}>
                   {kpis.training.averageImprovementRate.displayValue}
                 </div>
                 {kpis.training.averageImprovementRate.notes && (
@@ -1005,30 +1041,6 @@ export default function AdminDashboardOverview({
         </div>
       )}
 
-      {/* 4 Actionable Legacy Metric Cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '1.25rem',
-          marginBottom: '1.75rem',
-        }}
-      >
-        {actionableMetrics.map((m, idx) => (
-          <AdminStatCard
-            key={idx}
-            label={m.label}
-            value={m.value}
-            icon={m.icon}
-            color={m.color}
-            bg={m.bg}
-            badge={m.badge}
-            helper={m.helper}
-            href={m.href}
-          />
-        ))}
-      </div>
-
       {/* Secondary Platform Totals Strip */}
       <div
         className="admin-card"
@@ -1048,7 +1060,7 @@ export default function AdminDashboardOverview({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'rgba(217, 119, 6, 0.1)', color: 'var(--brand-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'rgba(181, 146, 84, 0.12)', color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Users size={20} />
             </div>
             <div>
@@ -1126,7 +1138,7 @@ export default function AdminDashboardOverview({
                 alignItems: 'center',
                 gap: '0.35rem',
                 fontSize: '0.85rem',
-                color: 'var(--brand-gold-600)',
+                color: 'var(--color-gold-600)',
                 fontWeight: 700,
                 textDecoration: 'none',
               }}
@@ -1149,13 +1161,13 @@ export default function AdminDashboardOverview({
           description={isAr ? 'أحدث العمليات الإدارية والميدانية الموثقة' : 'Latest administrative & field actions'}
           actions={
             <Link
-              href="/admin/audit-logs"
+              href="/admin/logs"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
                 fontSize: '0.85rem',
-                color: 'var(--brand-gold-600)',
+                color: 'var(--color-gold-600)',
                 fontWeight: 700,
                 textDecoration: 'none',
               }}
@@ -1165,7 +1177,12 @@ export default function AdminDashboardOverview({
             </Link>
           }
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {recentLogs.length === 0 ? (
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '1rem 0' }}>
+              {isAr ? 'لا توجد أنشطة موثقة حديثاً في سجل التدقيق' : 'No recent activity recorded in audit log'}
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {recentLogs.map((l) => (
               <div
                 key={l.id}
@@ -1199,7 +1216,8 @@ export default function AdminDashboardOverview({
               </div>
             ))}
           </div>
-        </AdminSection>
+        )}
+      </AdminSection>
       </div>
     </div>
   );

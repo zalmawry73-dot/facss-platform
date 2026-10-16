@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import StatusBadge from '@/components/StatusBadge';
-import { BookOpen, Clock, MapPin, Users, Award, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { BookOpen, Clock, MapPin, Users, Award, CheckCircle2, AlertCircle, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface Course {
   id: string;
@@ -38,8 +38,6 @@ const LOCATION_TRANSLATIONS: Record<string, string> = {
   'مقر المركز - عدن': 'Center HQ - Aden',
   'قاعة المؤتمرات الرئيسية': 'Main Conference Hall',
   'ميدان التدريب التكتيكي - عدن': 'Tactical Training Grounds - Aden',
-  'مركز التدريب الميداني التابع لـ AICSFA - عدن': 'Center Field Training Academy - Aden',
-  'قاعات المحاكاة الطبية بمركز AICSFA - عدن': 'Security & Safety Simulation Halls - Aden',
 };
 
 function formatCourseDuration(val: string, isAr: boolean): string {
@@ -59,9 +57,8 @@ function formatCourseLocation(val: string, isAr: boolean): string {
   if (isAr) return val;
   if (LOCATION_TRANSLATIONS[val]) return LOCATION_TRANSLATIONS[val];
   return val
-    .replace(/مركز التدريب الميداني التابع لـ\s*(AICSFA)?/g, 'Field Training Academy - ')
-    .replace(/قاعات المحاكاة الطبية بمركز\s*(AICSFA)?/g, 'Medical Simulation Halls - ')
-    .replace(/قاعات المحاكاة بمركز\s*/g, 'Simulation Halls at ')
+    .replace(/مركز التدريب الميداني التابع للمركز/g, 'Center Field Training Academy')
+    .replace(/قاعات المحاكاة بمركز الأمن والسلامة/g, 'Security & Safety Simulation Halls')
     .replace(/قاعات المحاكاة\s*/g, 'Simulation Halls ')
     .replace(/ميدان التدريب التكتيكي\s*/g, 'Tactical Training Grounds ')
     .replace(/مركز تدريب\s*/g, 'Training Center ')
@@ -77,6 +74,7 @@ interface MyRegistration {
 export default function TraineeCoursesPage() {
   const { locale } = useLanguage();
   const isAr = locale === 'ar';
+  const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [myRegistrations, setMyRegistrations] = useState<MyRegistration[]>([]);
@@ -103,16 +101,15 @@ export default function TraineeCoursesPage() {
         );
       }
 
-      // Load courses from the training data
-      const publicRes = await fetch('/api/training/available-courses');
-      if (publicRes.ok) {
-        const data = await publicRes.json();
-        if (data.success) {
-          setCourses(data.courses);
-        }
+      // Load available courses
+      const coursesRes = await fetch('/api/training/available-courses');
+      const coursesData = await coursesRes.json();
+
+      if (coursesData.success) {
+        setCourses(coursesData.courses);
       }
     } catch (err) {
-      console.error('Error loading data:', err);
+      console.error('Error loading training data:', err);
     } finally {
       setLoading(false);
     }
@@ -128,25 +125,30 @@ export default function TraineeCoursesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courseId: course.id,
-          fullName: '', // Auto-filled from session
-          email: '',
-          phone: '',
         }),
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || (isAr ? 'فشلت عملية التسجيل' : 'Registration failed'));
+      if (data.success) {
+        setFeedback({
+          type: 'success',
+          message: isAr
+            ? `تم تقديم طلب التسجيل بنجاح في دورة: ${course.titleAr}. سيتم إشعارك فور المراجعة والاعتماد.`
+            : `Registration submitted successfully for: ${course.titleEn || course.titleAr}. You will be notified upon review.`,
+        });
+        setMyRegistrations([...myRegistrations, { courseId: course.id, status: 'PENDING' }]);
+      } else {
+        setFeedback({
+          type: 'error',
+          message: data.error || (isAr ? 'فشل التسجيل في الدورة' : 'Enrollment failed'),
+        });
       }
-
-      setFeedback({ 
-        type: 'success', 
-        message: data.message || (isAr ? 'تم التسجيل بنجاح!' : 'Successfully registered!') 
-      });
-      setMyRegistrations((prev) => [...prev, { courseId: course.id, status: 'PENDING' }]);
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message });
+      setFeedback({
+        type: 'error',
+        message: err.message || (isAr ? 'حدث خطأ أثناء إرسال طلب التسجيل' : 'An error occurred during enrollment'),
+      });
     } finally {
       setRegistering(null);
     }
@@ -158,10 +160,10 @@ export default function TraineeCoursesPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center' }}>
-        <Loader2 size={32} style={{ color: 'var(--facss-gold-600)', animation: 'spin 1s linear infinite' }} />
-        <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>
-          {isAr ? 'جارٍ تحميل الدورات المتاحة...' : 'Loading available courses...'}
+      <div className="portal-card" style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
+        <Loader2 size={36} style={{ color: 'var(--color-gold-600)', animation: 'spin 1s linear infinite', marginInline: 'auto', marginBottom: '1rem' }} />
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+          {isAr ? 'جارٍ تحميل البرامج التدريبية المتاحة...' : 'Loading available courses...'}
         </p>
       </div>
     );
@@ -169,48 +171,62 @@ export default function TraineeCoursesPage() {
 
   return (
     <div>
-      {/* Feedback */}
+      {/* Feedback banner */}
       {feedback && (
         <div
           style={{
             padding: '1rem 1.25rem',
             marginBottom: '1.5rem',
-            borderRadius: '8px',
+            borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            background: feedback.type === 'success' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.1)',
-            border: `1px solid ${feedback.type === 'success' ? '#10B981' : '#EF4444'}`,
-            color: feedback.type === 'success' ? '#065F46' : '#991B1B',
-            fontWeight: 600,
+            background: feedback.type === 'success' ? 'rgba(21, 128, 61, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+            border: `1.5px solid ${feedback.type === 'success' ? '#15803D' : '#DC2626'}`,
+            color: feedback.type === 'success' ? '#15803D' : '#DC2626',
+            fontWeight: 700,
           }}
         >
           {feedback.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-          <span style={{ fontSize: '0.9rem' }}>{feedback.message}</span>
+          <span style={{ fontSize: '0.88rem' }}>{feedback.message}</span>
         </div>
       )}
 
-      <div className="card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
-          {isAr ? 'الدورات التدريبية المتاحة للتسجيل' : 'Available Training Courses for Enrollment'}
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-          {isAr
-            ? 'استعرض البرامج والتخصصات الأمنية وسجّل في الدورات القادمة لترقية مهاراتك الميدانية.'
-            : 'Explore certified security programs and enroll in upcoming sessions to advance your field competencies.'}
-        </p>
+      <div className="portal-card" style={{ marginBottom: '1.75rem' }}>
+        <div className="portal-card-header">
+          <div>
+            <h2 className="portal-card-title">
+              <BookOpen size={22} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'دليل البرامج والدورات التدريبية المفتوحة' : 'Available Training Courses for Enrollment'}</span>
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', margin: '0.25rem 0 0' }}>
+              {isAr
+                ? 'استعرض البرامج والتخصصات الميدانية وسجّل في الدورات المفتوحة لترقية كفاءتك المهنية.'
+                : 'Explore certified security programs and enroll in upcoming sessions to advance your field competencies.'}
+            </p>
+          </div>
+          <Link href="/portal/trainee" className="btn btn-outline btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span>{isAr ? 'لوحة المتدرب' : 'Dashboard'}</span>
+            <ArrowIcon size={14} />
+          </Link>
+        </div>
       </div>
 
       {courses.length === 0 ? (
-        <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <BookOpen size={48} style={{ color: 'var(--facss-gold-600)', marginInline: 'auto', marginBottom: '1rem', opacity: 0.5 }} />
-          <p>{isAr ? 'لا توجد دورات مفتوحة للتسجيل حالياً. تابعنا للمزيد من البرامج القادمة.' : 'No courses currently open for enrollment. Check back soon for new programs.'}</p>
-          <Link href="/training" className="btn btn-gold btn-sm" style={{ marginTop: '1rem' }}>
-            {isAr ? 'استعراض جميع الدورات' : 'View All Courses'}
+        <div className="portal-empty-state">
+          <BookOpen size={46} style={{ color: 'var(--color-gold-500)', marginInline: 'auto', marginBottom: '0.85rem', opacity: 0.6 }} />
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+            {isAr ? 'لا توجد دورات مفتوحة للتسجيل حالياً' : 'No courses currently open for enrollment'}
+          </h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '440px', marginInline: 'auto', marginBottom: '1.25rem' }}>
+            {isAr ? 'يتم تحديث جدول الدورات دورياً. تفقد هذه الصفحة لاحقاً أو استعرض الأرشيف.' : 'New courses are scheduled regularly. Check back soon for new programs.'}
+          </p>
+          <Link href="/training" className="btn btn-gold btn-sm">
+            {isAr ? 'استعراض الدليل الأكاديمي العام' : 'View Full Catalog'}
           </Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 310px), 1fr))', gap: '1.5rem' }}>
           {courses.map((c) => {
             const myReg = getRegistrationForCourse(c.id);
             const remainingSeats = c.capacity - (c.activeRegistrations || 0);
@@ -218,59 +234,101 @@ export default function TraineeCoursesPage() {
             const categoryName = isAr ? (c.category?.titleAr || 'عام') : (c.category?.titleEn || c.category?.titleAr || 'General');
 
             return (
-              <div key={c.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div 
+                key={c.id} 
+                className="portal-card" 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  justifyContent: 'space-between',
+                  padding: '1.4rem',
+                  marginBottom: 0
+                }}
+              >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-                    <span className="badge badge-gold">{categoryName}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span 
+                      style={{ 
+                        fontSize: '0.74rem', 
+                        fontWeight: 700, 
+                        padding: '0.15rem 0.55rem', 
+                        borderRadius: '4px',
+                        background: 'rgba(181, 146, 84, 0.12)', 
+                        color: 'var(--color-gold-700)', 
+                        border: '1px solid rgba(181, 146, 84, 0.3)'
+                      }}
+                    >
+                      {categoryName}
+                    </span>
                     {remainingSeats > 0 ? (
-                      <span className="badge badge-green">
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          fontWeight: 700, 
+                          padding: '0.15rem 0.5rem', 
+                          borderRadius: '4px',
+                          background: 'rgba(21, 128, 61, 0.1)', 
+                          color: '#15803D', 
+                          border: '1px solid rgba(21, 128, 61, 0.25)' 
+                        }}
+                      >
                         {isAr ? `متاح (${remainingSeats} مقعد)` : `Open (${remainingSeats} seats)`}
                       </span>
                     ) : (
-                      <span className="badge badge-red">
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          fontWeight: 700, 
+                          padding: '0.15rem 0.5rem', 
+                          borderRadius: '4px',
+                          background: 'rgba(220, 38, 38, 0.1)', 
+                          color: '#DC2626', 
+                          border: '1px solid rgba(220, 38, 38, 0.25)' 
+                        }}
+                      >
                         {isAr ? 'مكتمل العدد' : 'Full'}
                       </span>
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.35rem', lineHeight: 1.4 }}>
                     {title}
                   </h3>
-                  {isAr && (
-                    <h4 style={{ fontSize: '0.82rem', color: 'var(--facss-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
+                  {isAr && c.titleEn && (
+                    <h4 style={{ fontSize: '0.8rem', color: 'var(--color-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
                       {c.titleEn}
                     </h4>
                   )}
 
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '1.2rem' }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '1.2rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {isAr ? c.descriptionAr : (c.descriptionEn || c.descriptionAr)}
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', padding: '0.85rem', background: 'var(--surface-sunken)', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', border: '1px solid var(--border-color)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', padding: '0.85rem', background: 'var(--surface-bg)', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', border: '1px solid var(--admin-card-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Clock size={14} style={{ color: 'var(--facss-gold-600)' }} />
+                      <Clock size={14} style={{ color: 'var(--color-gold-600)' }} />
                       <span>{formatCourseDuration(c.duration, isAr)}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <MapPin size={14} style={{ color: 'var(--facss-gold-600)' }} />
+                      <MapPin size={14} style={{ color: 'var(--color-gold-600)' }} />
                       <span>{formatCourseLocation(c.location, isAr)}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Users size={14} style={{ color: 'var(--facss-green-700)' }} />
-                      <span>{isAr ? `السعة: ${c.capacity} متدرب` : `Capacity: ${c.capacity}`}</span>
+                      <Users size={14} style={{ color: 'var(--color-primary-900)' }} />
+                      <span>{isAr ? `السعة: ${c.capacity}` : `Cap: ${c.capacity}`}</span>
                     </div>
                     {c.hasCertificate && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <Award size={14} style={{ color: 'var(--facss-green-700)' }} />
-                        <span>{isAr ? 'شهادة إتمام' : 'Completion Certificate'}</span>
+                        <Award size={14} style={{ color: '#15803D' }} />
+                        <span>{isAr ? 'شهادة إتمام' : 'Certificate'}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {isAr ? `إشراف: ${c.trainerName}` : `Lead: ${c.trainerName}`}
+                <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--admin-card-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    {isAr ? `إشراف: ${c.trainerName}` : `Trainer: ${c.trainerName}`}
                   </span>
 
                   {myReg ? (
@@ -281,13 +339,14 @@ export default function TraineeCoursesPage() {
                       className="btn btn-gold btn-sm"
                       disabled={registering === c.id}
                       onClick={() => handleRegister(c)}
+                      style={{ fontWeight: 700, padding: '0.4rem 0.95rem' }}
                     >
                       {registering === c.id 
                         ? (isAr ? 'جارٍ التسجيل...' : 'Enrolling...') 
                         : (isAr ? 'التسجيل في الدورة' : 'Enroll Now')}
                     </button>
                   ) : (
-                    <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                       {isAr ? 'مكتمل العدد' : 'Full'}
                     </span>
                   )}

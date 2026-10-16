@@ -20,6 +20,7 @@ import {
   AdminTextarea,
   AdminAlert,
 } from '@/components/admin/ui';
+import { useAdminT } from '@/lib/admin-i18n';
 
 interface TnaItem {
   id: string;
@@ -42,6 +43,7 @@ interface TnaItem {
 interface CourseOption {
   id: string;
   titleAr: string;
+  titleEn?: string | null;
 }
 
 interface Props {
@@ -65,6 +67,7 @@ const TNA_STATUS_LABELS: Record<string, string> = {
 };
 
 export default function TnaManager({ courses }: Props) {
+  const { tx, isAr, locale } = useAdminT();
   const [assessments, setAssessments] = useState<TnaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -106,7 +109,7 @@ export default function TnaManager({ courses }: Props) {
         setAssessments(data.assessments);
       }
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'فشل تحميل تقييمات الاحتياج' });
+      setFeedback({ type: 'error', message: err.message || tx('فشل تحميل تقييمات الاحتياج') });
     } finally {
       setLoading(false);
     }
@@ -123,9 +126,9 @@ export default function TnaManager({ courses }: Props) {
         body: JSON.stringify(createForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل حفظ تقييم الاحتياج');
+      if (!res.ok) throw new Error(data.error || tx('فشل حفظ تقييم الاحتياج'));
 
-      setFeedback({ type: 'success', message: 'تم حفظ تقييم الاحتياج التدريبي بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم حفظ تقييم الاحتياج التدريبي بنجاح') });
       setIsCreateOpen(false);
       setCreateForm({
         title: '',
@@ -168,9 +171,9 @@ export default function TnaManager({ courses }: Props) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل تحديث التقييم');
+      if (!res.ok) throw new Error(data.error || tx('فشل تحديث التقييم'));
 
-      setFeedback({ type: 'success', message: 'تم تحديث حالة وتوصيات تقييم الاحتياج بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم تحديث حالة وتوصيات تقييم الاحتياج بنجاح') });
       setEditingTna(null);
       await loadTnas();
     } catch (err: any) {
@@ -208,10 +211,10 @@ export default function TnaManager({ courses }: Props) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--admin-text-primary)', margin: 0 }}>
-              تقييم الاحتياجات التدريبية (Training Needs Assessment - TNA)
+              {tx("تقييم الاحتياجات التدريبية (Training Needs Assessment - TNA)")}
             </h3>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              تحليل الفجوات المهارية والكفاءات المستهدفة للمؤسسات والشركاء وتحويلها إلى برامج تدريبية تنفيذية
+              {tx("تحليل الفجوات المهارية والكفاءات المستهدفة للمؤسسات والشركاء وتحويلها إلى برامج تدريبية تنفيذية")}
             </span>
           </div>
           <AdminButton
@@ -220,21 +223,21 @@ export default function TnaManager({ courses }: Props) {
             icon={<Plus size={16} />}
             onClick={() => setIsCreateOpen(true)}
           >
-            إنشاء تقييم احتياج جديد
+            {tx("إنشاء تقييم احتياج جديد")}
           </AdminButton>
         </div>
 
         {/* Filters */}
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <Search size={16} style={{ position: 'absolute', insetInlineEnd: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
               className="form-control"
-              placeholder="البحث بالعنوان، الكود المرجعي، أو الجهة..."
+              placeholder={tx("البحث بالعنوان، الكود المرجعي، أو الجهة...")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ paddingRight: '2.5rem' }}
+              style={{ paddingInlineEnd: '2.5rem' }}
             />
           </div>
           <select
@@ -243,11 +246,11 @@ export default function TnaManager({ courses }: Props) {
             onChange={(e) => setFilterStatus(e.target.value)}
             style={{ width: '200px' }}
           >
-            <option value="ALL">جميع الحالات</option>
-            <option value="SUBMITTED">مقدم للدراسة</option>
-            <option value="REVIEWED">تمت المراجعة</option>
-            <option value="APPROVED">معتمد للتنفيذ</option>
-            <option value="IMPLEMENTED">تم تنفيذ البرنامج</option>
+            <option value="ALL">{tx("جميع الحالات")}</option>
+            <option value="SUBMITTED">{tx("مقدم للدراسة")}</option>
+            <option value="REVIEWED">{tx("تمت المراجعة")}</option>
+            <option value="APPROVED">{tx("معتمد للتنفيذ")}</option>
+            <option value="IMPLEMENTED">{tx("تم تنفيذ البرنامج")}</option>
           </select>
         </div>
       </div>
@@ -256,24 +259,24 @@ export default function TnaManager({ courses }: Props) {
       <div className="card">
         {loading ? (
           <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            جاري تحميل سجل الاحتياجات التدريبية...
+            {tx("جاري تحميل سجل الاحتياجات التدريبية...")}
           </div>
         ) : filteredTnas.length === 0 ? (
           <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            لا توجد تقييمات احتياج تدريبي مطابقة
+            {tx("لا توجد تقييمات احتياج تدريبي مطابقة")}
           </div>
         ) : (
           <div className="table-responsive">
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>الرقم المرجعي والعنوان</th>
-                  <th>الجهة المستفيدة</th>
-                  <th>الفئة المستهدفة والعدد</th>
-                  <th>المواضيع والكفاءات</th>
-                  <th>الدورة المرتبطة</th>
-                  <th>الحالة</th>
-                  <th>الإجراءات</th>
+                  <th>{tx("الرقم المرجعي والعنوان")}</th>
+                  <th>{tx("الجهة المستفيدة")}</th>
+                  <th>{tx("الفئة المستهدفة والعدد")}</th>
+                  <th>{tx("المواضيع والكفاءات")}</th>
+                  <th>{tx("الدورة المرتبطة")}</th>
+                  <th>{tx("الحالة")}</th>
+                  <th>{tx("الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -284,7 +287,7 @@ export default function TnaManager({ courses }: Props) {
                       <div style={{ fontSize: '0.78rem', color: 'var(--color-gold)' }}>{t.referenceNumber}</div>
                     </td>
                     <td>
-                      <div style={{ fontSize: '0.85rem' }}>{t.client?.fullName || 'طلب داخلي / عام'}</div>
+                      <div style={{ fontSize: '0.85rem' }}>{t.client?.fullName || tx("طلب داخلي / عام")}</div>
                       {t.client?.organization && (
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{t.client.organization}</div>
                       )}
@@ -292,7 +295,7 @@ export default function TnaManager({ courses }: Props) {
                     <td>
                       <div style={{ fontSize: '0.85rem' }}>{t.targetAudience}</div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                        {t.participantCount} مشارك
+                        {t.participantCount} {tx("مشارك")}
                       </div>
                     </td>
                     <td>
@@ -306,7 +309,7 @@ export default function TnaManager({ courses }: Props) {
                           {t.course.titleAr}
                         </span>
                       ) : (
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>لم يتم الربط بعد</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{tx("لم يتم الربط بعد")}</span>
                       )}
                     </td>
                     <td>
@@ -317,7 +320,7 @@ export default function TnaManager({ courses }: Props) {
                           color: TNA_STATUS_COLORS[t.status] || '#FFF',
                         }}
                       >
-                        {TNA_STATUS_LABELS[t.status] || t.status}
+                        {tx(TNA_STATUS_LABELS[t.status] || t.status)}
                       </span>
                     </td>
                     <td>
@@ -326,7 +329,7 @@ export default function TnaManager({ courses }: Props) {
                         size="sm"
                         icon={<Edit2 size={13} />}
                         onClick={() => openReviewModal(t)}
-                        title="مراجعة التقييم وتحديث الحالة"
+                        title={tx("مراجعة التقييم وتحديث الحالة")}
                       />
                     </td>
                   </tr>
@@ -342,26 +345,26 @@ export default function TnaManager({ courses }: Props) {
         <AdminModal
           isOpen={isCreateOpen}
           onClose={() => setIsCreateOpen(false)}
-          title="إنشاء تقييم احتياج تدريبي (TNA)"
+          title={tx("إنشاء تقييم احتياج تدريبي (TNA)")}
         >
           <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <AdminInput
-              label="عنوان التقييم / البرنامج المطلوب *"
+              label={tx("عنوان التقييم / البرنامج المطلوب *")}
               value={createForm.title}
               onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
-              placeholder="تقييم احتياجات السلامة الميدانية لفرق الاستجابة السريعة..."
+              placeholder={tx("تقييم احتياجات السلامة الميدانية لفرق الاستجابة السريعة...")}
               required
             />
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
               <AdminInput
-                label="الفئة المستهدفة *"
+                label={tx("الفئة المستهدفة *")}
                 value={createForm.targetAudience}
                 onChange={(e) => setCreateForm({ ...createForm, targetAudience: e.target.value })}
-                placeholder="ضباط الأمن، فرق الحراسة، مسؤولو السلامة..."
+                placeholder={tx("ضباط الأمن، فرق الحراسة، مسؤولو السلامة...")}
                 required
               />
               <AdminInput
-                label="العدد المتوقع للمشاركين"
+                label={tx("العدد المتوقع للمشاركين")}
                 type="number"
                 value={String(createForm.participantCount)}
                 onChange={(e) => setCreateForm({ ...createForm, participantCount: Number(e.target.value) || 1 })}
@@ -369,7 +372,7 @@ export default function TnaManager({ courses }: Props) {
               />
             </div>
             <AdminTextarea
-              label="المهارات والمواضيع التدريبية المطلوبة *"
+              label={tx("المهارات والمواضيع التدريبية المطلوبة *")}
               value={createForm.requestedTopics}
               onChange={(e) => setCreateForm({ ...createForm, requestedTopics: e.target.value })}
               rows={2}
@@ -377,14 +380,14 @@ export default function TnaManager({ courses }: Props) {
             />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <AdminTextarea
-                label="مستوى الكفاءة الحالي (Current Competency) *"
+                label={tx("مستوى الكفاءة الحالي (Current Competency) *")}
                 value={createForm.currentCompetency}
                 onChange={(e) => setCreateForm({ ...createForm, currentCompetency: e.target.value })}
                 rows={2}
                 required
               />
               <AdminTextarea
-                label="مستوى الكفاءة المستهدف (Desired Competency) *"
+                label={tx("مستوى الكفاءة المستهدف (Desired Competency) *")}
                 value={createForm.desiredCompetency}
                 onChange={(e) => setCreateForm({ ...createForm, desiredCompetency: e.target.value })}
                 rows={2}
@@ -392,17 +395,17 @@ export default function TnaManager({ courses }: Props) {
               />
             </div>
             <AdminTextarea
-              label="السياق التشغيلي والتحديات الميدانية (اختياري)"
+              label={tx("السياق التشغيلي والتحديات الميدانية (اختياري)")}
               value={createForm.operationalContext}
               onChange={(e) => setCreateForm({ ...createForm, operationalContext: e.target.value })}
               rows={2}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <AdminButton variant="outline" size="md" onClick={() => setIsCreateOpen(false)}>
-                إلغاء
+                {tx("إلغاء")}
               </AdminButton>
               <AdminButton variant="primary" size="md" type="submit" disabled={submitting}>
-                {submitting ? 'جاري الحفظ...' : 'حفظ تقييم الاحتياج'}
+                {submitting ? tx("جاري الحفظ...") : tx("حفظ تقييم الاحتياج")}
               </AdminButton>
             </div>
           </form>
@@ -414,59 +417,59 @@ export default function TnaManager({ courses }: Props) {
         <AdminModal
           isOpen={Boolean(editingTna)}
           onClose={() => setEditingTna(null)}
-          title={`مراجعة واعتماد تقييم الاحتياج [${editingTna.referenceNumber}]`}
+          title={tx("مراجعة واعتماد تقييم الاحتياج [{0}]", editingTna.referenceNumber)}
         >
           <form onSubmit={handleSaveReview} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ background: 'var(--admin-card-bg)', padding: '0.75rem', borderRadius: '6px', fontSize: '0.85rem' }}>
-              <strong>العنوان:</strong> {editingTna.title}
+              <strong>{tx("العنوان:")}</strong> {editingTna.title}
               <br />
-              <strong>المواضيع:</strong> {editingTna.requestedTopics}
+              <strong>{tx("المواضيع:")}</strong> {editingTna.requestedTopics}
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>حالة التقييم *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("حالة التقييم *")}</label>
               <select
                 className="form-select"
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value)}
               >
-                <option value="SUBMITTED">مقدم للدراسة (Submitted)</option>
-                <option value="REVIEWED">تمت المراجعة والتحليل (Reviewed)</option>
-                <option value="APPROVED">معتمد للتنفيذ (Approved)</option>
-                <option value="IMPLEMENTED">تم تنفيذ البرنامج بالكامل (Implemented)</option>
+                <option value="SUBMITTED">{tx("مقدم للدراسة (Submitted)")}</option>
+                <option value="REVIEWED">{tx("تمت المراجعة والتحليل (Reviewed)")}</option>
+                <option value="APPROVED">{tx("معتمد للتنفيذ (Approved)")}</option>
+                <option value="IMPLEMENTED">{tx("تم تنفيذ البرنامج بالكامل (Implemented)")}</option>
               </select>
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>ربط بدورة تدريبية معتمدة</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("ربط بدورة تدريبية معتمدة")}</label>
               <select
                 className="form-select"
                 value={editCourseId}
                 onChange={(e) => setEditCourseId(e.target.value)}
               >
-                <option value="">-- بدون ربط مباشر --</option>
+                <option value="">{tx("-- بدون ربط مباشر --")}</option>
                 {courses.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.titleAr}
+                    {isAr ? c.titleAr : (c.titleEn || c.titleAr)}
                   </option>
                 ))}
               </select>
             </div>
 
             <AdminTextarea
-              label="توصيات الإدارة التدريبية وخطة التنفيذ"
+              label={tx("توصيات الإدارة التدريبية وخطة التنفيذ")}
               value={editRecommendations}
               onChange={(e) => setEditRecommendations(e.target.value)}
-              placeholder="يوصى بتنفيذ برنامج مكثف لمدة 3 أيام يتضمن محاكاة عملية..."
+              placeholder={tx("يوصى بتنفيذ برنامج مكثف لمدة 3 أيام يتضمن محاكاة عملية...")}
               rows={3}
             />
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <AdminButton variant="outline" size="md" onClick={() => setEditingTna(null)}>
-                إلغاء
+                {tx("إلغاء")}
               </AdminButton>
               <AdminButton variant="primary" size="md" type="submit" disabled={savingEdit}>
-                {savingEdit ? 'جاري الحفظ...' : 'تأكيد التحديث'}
+                {savingEdit ? tx("جاري الحفظ...") : tx("تأكيد التحديث")}
               </AdminButton>
             </div>
           </form>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { CheckCircle2, FileCheck2, Loader2 } from 'lucide-react';
 
 interface Props {
@@ -14,9 +15,10 @@ export default function ClientReportAcceptanceButton({
   documentId,
   initialQaStatus,
   initialAcceptedAt,
-  locale = 'ar',
+  locale: propLocale = 'ar',
 }: Props) {
-  const isAr = locale === 'ar';
+  const { locale: contextLocale } = useLanguage();
+  const isAr = (contextLocale || propLocale) === 'ar';
   const [qaStatus, setQaStatus] = useState(initialQaStatus);
   const [acceptedAt, setAcceptedAt] = useState(initialAcceptedAt);
   const [isLoading, setIsLoading] = useState(false);

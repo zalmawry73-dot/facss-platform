@@ -15,7 +15,10 @@ import {
   ArrowRight,
   FileText,
   Download,
-  Plus
+  Plus,
+  Bell,
+  ExternalLink,
+  ChevronRight
 } from 'lucide-react';
 
 const PRIORITY_LABEL: Record<string, { ar: string; en: string }> = {
@@ -32,7 +35,6 @@ export default async function ClientDashboardPage() {
   const cookieStore = cookies();
   const rawLocale = cookieStore.get('facss_locale')?.value;
   const locale: Locale = rawLocale === 'en' ? 'en' : 'ar';
-  const t = getTranslation(locale);
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
@@ -103,29 +105,34 @@ export default async function ClientDashboardPage() {
       {/* Ready Final Reports Alert Banner */}
       {readyReports.length > 0 && (
         <div 
-          className="card" 
+          className="portal-card" 
           style={{ 
             marginBottom: '2rem', 
-            background: 'linear-gradient(135deg, rgba(201,162,39,0.12) 0%, rgba(18,59,44,0.06) 100%)',
-            border: '1px solid var(--facss-gold-500)',
-            borderInlineStart: '5px solid var(--facss-gold-500)',
-            padding: '1.5rem 2rem',
+            background: 'linear-gradient(135deg, rgba(181, 146, 84, 0.12) 0%, rgba(11, 61, 46, 0.05) 100%)',
+            border: '1.5px solid var(--color-gold-500)',
+            borderInlineStart: '6px solid var(--color-gold-600)',
+            padding: '1.4rem 1.75rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'var(--facss-gold-500)', color: 'var(--facss-green-950)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <FileCheck2 size={24} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--color-gold-500)', color: 'var(--color-primary-950)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 8px rgba(181, 146, 84, 0.3)' }}>
+                <FileCheck2 size={26} />
               </div>
-              <div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                  {isAr ? 'التقرير الأمني النهائي متاح للتنزيل' : 'Final Security Report Available for Download'}
-                </h3>
-                <span style={{ fontSize: '0.85rem', color: 'var(--facss-green-900)', fontWeight: 600 }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                    {isAr ? 'التقرير الأمني النهائي معتمد ومتاح للتحميل' : 'Final Security Report Approved & Ready'}
+                  </h3>
+                  <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '4px', background: 'rgba(21, 128, 61, 0.12)', color: '#15803D', fontWeight: 700, border: '1px solid rgba(21, 128, 61, 0.25)' }}>
+                    {isAr ? 'معتمد رسمياً' : 'Official Deliverable'}
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.25rem 0 0', lineHeight: 1.5 }}>
                   {isAr 
                     ? `أصدر المركز التقرير الأمني لطلبكم رقم ${readyReports[0].request.requestNumber} (${readyReports[0].request.service.titleAr})`
                     : `Report issued for request ${readyReports[0].request.requestNumber} (${readyReports[0].request.service.titleEn || readyReports[0].request.service.titleAr})`}
-                </span>
+                </p>
               </div>
             </div>
 
@@ -133,8 +140,9 @@ export default async function ClientDashboardPage() {
               <Link 
                 href={`/portal/client/requests/${readyReports[0].request.id}`}
                 className="btn btn-gold btn-sm"
+                style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.55rem 1.15rem' }}
               >
-                <span>{isAr ? 'عرض تفاصيل التقرير' : 'View Report Details'}</span>
+                <span>{isAr ? 'عرض وتنزيل التقرير' : 'View & Download Report'}</span>
                 <ArrowIcon size={16} />
               </Link>
             </div>
@@ -142,50 +150,67 @@ export default async function ClientDashboardPage() {
         </div>
       )}
 
-      {/* 4 Metric Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-        <div className="card" style={{ borderInlineStart: '4px solid var(--facss-green-800)' }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            {isAr ? 'الطلبات النشطة' : 'Active Requests'}
+      {/* 4 Metrics Cards */}
+      <div className="portal-stat-grid">
+        <div className="portal-stat-card" style={{ borderInlineStart: '4px solid var(--color-primary-800)' }}>
+          <span className="portal-stat-label">
+            {isAr ? 'الطلبات النشطة وقيد التنفيذ' : 'Active & In-Progress Requests'}
           </span>
-          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--facss-green-800)' }}>{activeRequests}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <span className="portal-stat-value" style={{ color: 'var(--color-primary-900)' }}>{activeRequests}</span>
+            <Clock size={20} style={{ color: 'var(--color-primary-800)', opacity: 0.6 }} />
+          </div>
         </div>
 
-        <div className="card" style={{ borderInlineStart: '4px solid #059669' }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            {isAr ? 'الطلبات المكتملة' : 'Completed Requests'}
+        <div className="portal-stat-card" style={{ borderInlineStart: '4px solid #15803D' }}>
+          <span className="portal-stat-label">
+            {isAr ? 'الطلبات المنجزة والمكتملة' : 'Completed Requests'}
           </span>
-          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: '#059669' }}>{completedRequests}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <span className="portal-stat-value" style={{ color: '#15803D' }}>{completedRequests}</span>
+            <CheckCircle2 size={20} style={{ color: '#15803D', opacity: 0.6 }} />
+          </div>
         </div>
 
-        <div className="card" style={{ borderInlineStart: '4px solid var(--facss-gold-600)' }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            {isAr ? 'التقارير الأمنية الجاهزة' : 'Ready Security Reports'}
+        <div className="portal-stat-card" style={{ borderInlineStart: '4px solid var(--color-gold-600)' }}>
+          <span className="portal-stat-label">
+            {isAr ? 'التقارير الأمنية المعتمدة' : 'Ready Security Reports'}
           </span>
-          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--facss-gold-700)' }}>{finalReportsCount}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <span className="portal-stat-value" style={{ color: 'var(--color-gold-600)' }}>{finalReportsCount}</span>
+            <FileCheck2 size={20} style={{ color: 'var(--color-gold-600)', opacity: 0.6 }} />
+          </div>
         </div>
 
-        <div className="card" style={{ borderInlineStart: '4px solid var(--border-color-dark)' }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            {isAr ? 'إجمالي طلبات الخدمة' : 'Total Requests'}
+        <div className="portal-stat-card" style={{ borderInlineStart: '4px solid var(--admin-card-border)' }}>
+          <span className="portal-stat-label">
+            {isAr ? 'إجمالي الطلبات المسجلة' : 'Total Service Requests'}
           </span>
-          <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--text-primary)' }}>{totalRequests}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <span className="portal-stat-value" style={{ color: 'var(--text-primary)' }}>{totalRequests}</span>
+            <Shield size={20} style={{ color: 'var(--text-secondary)', opacity: 0.5 }} />
+          </div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '2rem' }}>
+      {/* Main Grid: Recent Requests & Operational Notifications */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.75rem', alignItems: 'start' }}>
         {/* Recent Requests Table Card */}
-        <div className="card" style={{ flex: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-              {isAr ? 'أحدث طلبات الخدمات الأمنية' : 'Recent Security Service Requests'}
+        <div className="portal-card" style={{ flex: 2 }}>
+          <div className="portal-card-header">
+            <h2 className="portal-card-title">
+              <Shield size={20} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'أحدث طلبات الخدمات الأمنية' : 'Recent Security Service Requests'}</span>
             </h2>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <Link href="/request-service" className="btn btn-gold btn-sm" style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem' }}>
+            <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
+              <Link href="/request-service" className="btn btn-gold btn-sm" style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}>
                 <Plus size={14} />
-                <span>{isAr ? 'تقديم طلب جديد' : 'New Request'}</span>
+                <span>{isAr ? 'طلب جديد' : 'New Request'}</span>
               </Link>
-              <Link href="/portal/client/requests" style={{ fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+              <Link 
+                href="/portal/client/requests" 
+                style={{ fontSize: '0.82rem', color: 'var(--color-primary-900)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem', textDecoration: 'none' }}
+              >
                 <span>{isAr ? 'عرض الكل' : 'View All'}</span>
                 <ArrowIcon size={14} />
               </Link>
@@ -193,22 +218,31 @@ export default async function ClientDashboardPage() {
           </div>
 
           {recentRequests.length === 0 ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <p>{isAr ? 'لا توجد طلبات مسجلة حتى الآن.' : 'No requests recorded yet.'}</p>
-              <Link href="/request-service" className="btn btn-gold btn-sm" style={{ marginTop: '1rem' }}>
-                {isAr ? 'تقديم أول طلب خدمة' : 'Submit First Service Request'}
+            <div className="portal-empty-state">
+              <Shield size={44} style={{ color: 'var(--color-gold-500)', marginInline: 'auto', marginBottom: '0.85rem', opacity: 0.6 }} />
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                {isAr ? 'لا توجد طلبات خدمات مسجلة حتى الآن' : 'No service requests recorded yet'}
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '420px', marginInline: 'auto', marginBottom: '1.25rem' }}>
+                {isAr 
+                  ? 'يمكنكم البدء بتقديم طلب تقييم مخاطر، رصد ميداني، أو استشارة أمنية عبر نموذج الطلبات المعتمد.' 
+                  : 'Submit a new risk assessment, field monitoring, or safety advisory request through the secure form.'}
+              </p>
+              <Link href="/request-service" className="btn btn-gold btn-sm">
+                <Plus size={16} />
+                <span>{isAr ? 'تقديم أول طلب خدمة' : 'Submit First Request'}</span>
               </Link>
             </div>
           ) : (
-            <div className="table-container">
-              <table className="data-table">
+            <div className="portal-table-container">
+              <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>{isAr ? 'رقم المتابعة' : 'Tracking #'}</th>
-                    <th>{isAr ? 'الخدمة' : 'Service'}</th>
+                    <th>{isAr ? 'رقم المتابعة' : 'Ref #'}</th>
+                    <th>{isAr ? 'نوع الخدمة' : 'Service'}</th>
                     <th>{isAr ? 'الأولوية' : 'Priority'}</th>
-                    <th>{isAr ? 'الحالة' : 'Status'}</th>
-                    <th>{isAr ? 'التاريخ' : 'Date'}</th>
+                    <th>{isAr ? 'الحالة التشغيلية' : 'Status'}</th>
+                    <th>{isAr ? 'تاريخ التقديم' : 'Submitted'}</th>
                     <th>{isAr ? 'الإجراء' : 'Action'}</th>
                   </tr>
                 </thead>
@@ -218,25 +252,35 @@ export default async function ClientDashboardPage() {
                     return (
                       <tr key={req.id}>
                         <td style={{ fontWeight: 800 }}>
-                          <Link href={`/portal/client/requests/${req.id}`} style={{ color: 'var(--facss-gold-700)', textDecoration: 'none' }}>
+                          <Link href={`/portal/client/requests/${req.id}`} style={{ color: 'var(--color-primary-900)', textDecoration: 'none', fontFamily: 'var(--font-en)' }}>
                             {req.requestNumber}
                           </Link>
                         </td>
                         <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{serviceTitle}</td>
                         <td>
-                          <span className={`badge ${req.priority === 'URGENT' ? 'badge-red' : req.priority === 'HIGH' ? 'badge-yellow' : 'badge-gold'}`}>
+                          <span 
+                            style={{ 
+                              fontSize: '0.72rem', 
+                              fontWeight: 700, 
+                              padding: '0.15rem 0.45rem', 
+                              borderRadius: '4px',
+                              background: req.priority === 'URGENT' ? 'rgba(220, 38, 38, 0.1)' : req.priority === 'HIGH' ? 'rgba(217, 119, 6, 0.1)' : 'var(--surface-bg)',
+                              color: req.priority === 'URGENT' ? '#DC2626' : req.priority === 'HIGH' ? '#B45309' : 'var(--text-secondary)',
+                              border: '1px solid var(--admin-card-border)'
+                            }}
+                          >
                             {PRIORITY_LABEL[req.priority]?.[locale] ?? req.priority}
                           </span>
                         </td>
                         <td>
                           <StatusBadge type="serviceRequest" status={req.status} locale={locale} />
                         </td>
-                        <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-en)' }}>
                           {formatDate(req.createdAt, locale)}
                         </td>
                         <td>
-                          <Link href={`/portal/client/requests/${req.id}`} className="btn btn-outline btn-sm" style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem' }}>
-                            {isAr ? 'متابعة الطلب' : 'View Request'}
+                          <Link href={`/portal/client/requests/${req.id}`} className="admin-btn admin-btn-outline admin-btn-sm" style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem' }}>
+                            {isAr ? 'متابعة الطلب' : 'Track'}
                           </Link>
                         </td>
                       </tr>
@@ -248,33 +292,49 @@ export default async function ClientDashboardPage() {
           )}
         </div>
 
-        {/* Notifications Card */}
-        <div className="card">
-          <div style={{ paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.2rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-              {isAr ? 'التنبيهات والإشعارات التشغيلية' : 'Operational Notifications'}
+        {/* Operational Notifications Card */}
+        <div className="portal-card">
+          <div className="portal-card-header">
+            <h3 className="portal-card-title">
+              <Bell size={18} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'الإشعارات والتحديثات الأمنية' : 'Security Notifications'}</span>
             </h3>
           </div>
 
           {notifications.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              {isAr ? 'لا توجد إشعارات جديدة.' : 'No new notifications.'}
-            </p>
+            <div className="portal-empty-state" style={{ padding: '2rem 1rem' }}>
+              <Bell size={32} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '0.5rem', opacity: 0.5 }} />
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', margin: 0 }}>
+                {isAr ? 'لا توجد إشعارات جديدة حالياً.' : 'No new notifications.'}
+              </p>
+            </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               {notifications.map((n) => {
                 const title = isAr ? (n.titleAr || n.titleEn) : (n.titleEn || n.titleAr);
                 const message = isAr ? (n.messageAr || n.messageEn) : (n.messageEn || n.messageAr);
                 return (
-                  <div key={n.id} style={{ padding: '0.85rem', background: 'var(--surface-sunken)', borderRadius: '8px', borderInlineStart: '3px solid var(--facss-gold-500)', border: '1px solid var(--border-color)' }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--facss-green-900)', marginBottom: '0.25rem' }}>
+                  <div 
+                    key={n.id} 
+                    style={{ 
+                      padding: '0.85rem 1rem', 
+                      background: 'var(--surface-bg)', 
+                      borderRadius: '8px', 
+                      borderInlineStart: '4px solid var(--color-gold-500)', 
+                      border: '1px solid var(--admin-card-border)' 
+                    }}
+                  >
+                    <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--color-primary-900)', margin: '0 0 0.25rem 0' }}>
                       {title}
                     </h4>
-                    <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
                       {message}
                     </p>
                     {n.link && (
-                      <Link href={n.link} style={{ fontSize: '0.75rem', color: 'var(--facss-gold-700)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginTop: '0.4rem', fontWeight: 700 }}>
+                      <Link 
+                        href={n.link} 
+                        style={{ fontSize: '0.75rem', color: 'var(--color-gold-700)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginTop: '0.45rem', fontWeight: 700, textDecoration: 'none' }}
+                      >
                         <span>{isAr ? 'الانتقال للطلب' : 'Go to request'}</span>
                         <ArrowIcon size={12} />
                       </Link>

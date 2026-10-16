@@ -1,95 +1,77 @@
 :root {
   /* ----------------------------------------------------
-     1. INSTITUTIONAL COLOR SYSTEM (AICSFA BRAND TOKENS)
-     Aden International Center for Safety and Field Assessment
+     1. INSTITUTIONAL BRAND COLOR SYSTEM (PHASE 1 SPEC)
+     Integrated Solutions Center for Safety and Security
+     مركز الحلول المتكاملة للأمن والسلامة
      ---------------------------------------------------- */
-  /* Primary Institutional Palette: Deep Field Navy & Analytical Slate */
-  --brand-navy-950: #0B1726;  /* Deep Institutional Navy — Header, Dark Surfaces, Hero Base */
-  --brand-navy-900: #0F1E2E;  /* Secondary Dark Surface / Foundation */
-  --brand-navy-800: #162A40;  /* Elevated Navy Card / Active States */
-  --brand-navy-700: #1E3A5F;  /* Interactive Navy Accent */
-  --brand-navy-600: #284D7B;  /* Muted Navy Accent */
-  --brand-navy-100: #E2E8F0;  /* Subtle Slate Surface */
-  --brand-navy-50:  #F1F5F9;  /* Crisp Off-White Base */
+  /* Primary Institutional Palette: Deep Forest Green */
+  --color-primary-950: #08281E;  /* Sovereign Forest Deep — Header Base, Dark Surfaces, App Shell */
+  --color-primary-900: #0B3D2E;  /* Core Brand Green (Matches Approved Shield Outline & Checkmark) */
+  --color-primary-800: #114D3B;  /* Elevated Interactive State / Hover */
+  --color-primary-700: #18604A;  /* Active Border & Institutional Marker */
+  --color-primary-600: #22765C;  /* Muted Institutional Accent */
+  --color-primary-200: #B5D4C7;  /* Soft Green Border / Ring */
+  --color-primary-100: #D6E8E0;  /* Subtle Green Surface */
+  --color-primary-50:  #EDF5F1;  /* Soft Tint Base */
 
-  /* Secondary Analytical Palette: Field Assessment Cyan & Route Teal */
-  --brand-teal-700: #0369A1;
-  --brand-teal-600: #0284C7;
-  --brand-teal-500: #0EA5E9;  /* Field Assessment Cyan */
-  --brand-teal-400: #38BDF8;  /* Focus Ring / Accent Highlight */
-  --brand-teal-100: #E0F2FE;  /* Light Teal Badge */
-  --brand-teal-50:  #F0F9FF;
+  /* Secondary Institutional Palette: Institutional Gold & Bronze Ochre */
+  --color-gold-700: #674C28;  /* High-Contrast Institutional Bronze (Matches Arabic Logo Text, WCAG AAA 7.2:1 on white) */
+  --color-gold-600: #8E6F37;  /* Deep Gold Border / Active Gold */
+  --color-gold-500: #B59254;  /* Core Brand Gold (Matches Approved Inner Shield Arch) */
+  --color-gold-400: #CAAB6E;  /* Gold Hover / Accent Highlight on Dark Surfaces */
+  --color-gold-200: #E8DBBD;  /* Soft Gold Border */
+  --color-gold-100: #F4EEDF;  /* Subtle Gold Badge & Honorific Surface */
+  --color-gold-50:  #FAF7F0;  /* Gold Tint Base */
 
-  /* Safety & Alert Accent: Humanitarian Safety Amber / Vigilance Gold */
-  --brand-gold-600: #B45309;  /* Deep Safety Amber */
-  --brand-gold-500: #D97706;  /* Primary Safety Gold */
-  --brand-gold-400: #F59E0B;  /* Safety Hover / Warning Marker */
-  --brand-gold-200: #FDE68A;
-  --brand-gold-100: #FEF3C7;  /* Subtle Amber Badge */
-  --brand-gold-50:  #FFFBEB;
+  /* Institutional Surfaces & Canvas */
+  --surface-bg:            #FAF9F6;  /* Warm Institutional Alabaster Base */
+  --surface-base:          #FAF9F6;  /* Canvas Foundation */
+  --surface-card:          #FFFFFF;  /* Crisp White Institutional Card */
+  --surface-soft:          #EAF1EC;  /* Soft Green Surface (Muted Sage Tint) */
+  --surface-subtle:        #F2F5F3;  /* Sub-panel / Secondary Surface */
+  --surface-sunken:        #EEF2F0;  /* Sunken Surface for inputs, inner panels & data grids */
+  --surface-hero:          var(--color-primary-950); /* Deep Forest Hero Base */
+  --surface-dark:          var(--color-primary-950); /* Institutional Sovereign Dark Surface */
+  --surface-dark-card:     #0D3327;  /* Elevated Card on Dark Surface */
+  --surface-dark-elevated: #123C2F;  /* Highlight Surface on Dark Canvas */
 
-  /* Backward Compatibility Aliases (Seamless zero-breakage mapping) */
-  --facss-green-950: var(--brand-navy-950);
-  --facss-green-900: var(--brand-navy-900);
-  --facss-green-800: var(--brand-navy-800);
-  --facss-green-700: var(--brand-navy-700);
-  --facss-green-600: var(--brand-navy-600);
-  --facss-green-100: var(--brand-navy-100);
-  --facss-green-50:  var(--brand-navy-50);
-
-  --facss-gold-600: var(--brand-gold-600);
-  --facss-gold-500: var(--brand-gold-500);
-  --facss-gold-400: var(--brand-gold-400);
-  --facss-gold-200: var(--brand-gold-200);
-  --facss-gold-100: var(--brand-gold-100);
-  --facss-gold-50:  var(--brand-gold-50);
-
-  /* Surfaces & Backgrounds */
-  --surface-bg: #F8FAFC;  /* Crisp Institutional Slate-50 */
-  --surface-card: #FFFFFF;  /* Pure White Card */
-  --surface-hero: var(--brand-navy-950);
-  --surface-subtle: #F1F5F9;  /* Muted Secondary Surface */
-  --surface-sunken: #EEF2F6;  /* Sunken Surface for inputs, inner containers, and sub-panels */
-  --surface-dark: #0B1726;  /* Institutional Dark Surface */
-  --surface-dark-card: #0F1E2E;  /* Card on Dark Surface */
-  --surface-dark-elevated: #162A40;
-
-  /* Typography Colors */
-  --text-primary: #0F172A;  /* Slate-900 High Contrast */
-  --text-secondary: #334155;  /* Slate-700 Body Text */
-  --text-muted: #4A5568;  /* Slate-600 — WCAG AA ≥ 4.5:1 on white (was #64748B = 3.47:1) */
-  --text-subtle: #64748B; /* Slate-500 — helper text / labels on dark surfaces; 7:1 on dark-bg */
-  --text-on-dark: #FFFFFF;  /* Pure White on Dark Surfaces */
-  --text-on-dark-muted: #94A3B8;  /* Slate-400 on Dark Surfaces */
-  --text-gold: #D97706;
+  /* Typography Colors (Calibrated for WCAG 2.2 AA / AAA Compliance) */
+  --text-primary:        #24312C;  /* Dark Forest Charcoal — 11.8:1 on #FAF9F6 (WCAG AAA) */
+  --text-secondary:      #52605A;  /* Muted Forest Slate — 5.2:1 on #FAF9F6 (WCAG AA) */
+  --text-muted:          #66736D;  /* Slate Muted Text — 4.6:1 on white (WCAG AA) */
+  --text-subtle:         #7A8781;  /* Helper Labels / Captions */
+  --text-gold:           var(--color-gold-700); /* High-Contrast Bronze Gold for Light Mode */
+  --text-on-dark:        #FFFFFF;  /* Pure White on Dark Surfaces */
+  --text-on-dark-muted:  #C2D1CA;  /* Muted Sage on Dark Surfaces */
+  --text-on-dark-subtle: #96AAA0;  /* Subtle Markers on Dark Surfaces */
 
   /* Borders & Dividers */
-  --border-color: #E2E8F0;
-  --border-subtle: #E2E8F0;
-  --border-medium: #CBD5E1;
-  --border-dark: rgba(217, 119, 6, 0.25);
+  --border-color:       #E2E8F0;
+  --border-subtle:      #E6ECE8;
+  --border-medium:      #CBD5D0;
+  --border-dark:        rgba(181, 146, 84, 0.28);
   --border-dark-subtle: rgba(255, 255, 255, 0.12);
 
-  /* Semantic Status Colors (WCAG Compliant) */
-  --status-success-text: #15803D;
-  --status-success-bg:   #DCFCE7;
-  --status-success-border:#86EFAC;
+  /* Semantic Operational Status Colors (Independent from Brand Tokens) */
+  --status-success-text:   #15803D;
+  --status-success-bg:     #F0FDF4;
+  --status-success-border: #BBF7D0;
 
-  --status-warning-text: #B45309;
-  --status-warning-bg:   #FEF3C7;
-  --status-warning-border:#FDE68A;
+  --status-warning-text:   #B45309;
+  --status-warning-bg:     #FFFBEB;
+  --status-warning-border: #FDE68A;
 
-  --status-danger-text:  #B91C1C;
-  --status-danger-bg:    #FEE2E2;
-  --status-danger-border:#FCA5A5;
+  --status-danger-text:    #B91C1C;
+  --status-danger-bg:      #FEF2F2;
+  --status-danger-border:  #FECACA;
 
-  --status-info-text:    #0369A1;
-  --status-info-bg:      #E0F2FE;
-  --status-info-border:  #7DD3FC;
+  --status-info-text:      #1E3A5F;
+  --status-info-bg:        #F0F9FF;
+  --status-info-border:    #BAE6FD;
 
-  --status-neutral-text: #475569;
-  --status-neutral-bg:   #F1F5F9;
-  --status-neutral-border:#CBD5E1;
+  --status-neutral-text:   #475569;
+  --status-neutral-bg:     #F8FAFC;
+  --status-neutral-border: #E2E8F0;
 
   /* Typography Scale */
   --font-ar: var(--font-cairo), 'Cairo', system-ui, -apple-system, sans-serif;
@@ -102,28 +84,75 @@
   --radius-xl:   16px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(11, 23, 38, 0.07), 0 2px 4px -1px rgba(11, 23, 38, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(11, 23, 38, 0.1), 0 4px 6px -2px rgba(11, 23, 38, 0.05);
+  --shadow-sm: 0 1px 2px rgba(11, 61, 46, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(11, 61, 46, 0.07), 0 2px 4px -1px rgba(11, 61, 46, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(11, 61, 46, 0.1), 0 4px 6px -2px rgba(11, 61, 46, 0.05);
 
   /* Focus Ring */
-  --focus-ring: 0 0 0 3px rgba(14, 165, 233, 0.35);
+  --focus-ring: 0 0 0 3px rgba(11, 61, 46, 0.25);
 
   /* Transitions */
   --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Backwards compatibility aliases for existing components */
-  --color-primary-dark: var(--brand-navy-950);
-  --color-primary: var(--brand-navy-900);
-  --color-primary-light: var(--brand-navy-800);
-  --color-primary-lighter: var(--brand-navy-700);
-  --color-gold: var(--brand-gold-500);
-  --color-gold-light: var(--brand-gold-400);
-  --color-gold-dark: var(--brand-gold-600);
-  --bg-dark-base: var(--brand-navy-950);
-  --bg-card: var(--surface-card);
-  --bg-card-border: var(--border-subtle);
-  --text-main: var(--text-primary);
+  /* ----------------------------------------------------
+     BACKWARD COMPATIBILITY ALIASES (ZERO BREAKAGE MAP)
+     Seamless zero-breakage mapping for all legacy tokens
+     ---------------------------------------------------- */
+  /* Legacy facss-green-* aliases */
+  --facss-green-950: var(--color-primary-950);
+  --facss-green-900: var(--color-primary-900);
+  --facss-green-800: var(--color-primary-800);
+  --facss-green-700: var(--color-primary-700);
+  --facss-green-600: var(--color-primary-600);
+  --facss-green-100: var(--color-primary-100);
+  --facss-green-50:  var(--color-primary-50);
+
+  /* Legacy brand-navy-* aliases */
+  --brand-navy-950: var(--color-primary-950);
+  --brand-navy-900: var(--color-primary-900);
+  --brand-navy-800: var(--color-primary-800);
+  --brand-navy-700: var(--color-primary-700);
+  --brand-navy-600: var(--color-primary-600);
+  --brand-navy-100: var(--color-primary-100);
+  --brand-navy-50:  var(--color-primary-50);
+
+  /* Legacy brand-teal-* aliases */
+  --brand-teal-700: var(--color-primary-800);
+  --brand-teal-600: var(--color-primary-700);
+  --brand-teal-500: var(--color-primary-600);
+  --brand-teal-400: var(--color-primary-200);
+  --brand-teal-100: var(--color-primary-100);
+  --brand-teal-50:  var(--color-primary-50);
+
+  /* Legacy facss-gold-* aliases */
+  --facss-gold-700: var(--color-gold-700);
+  --facss-gold-600: var(--color-gold-600);
+  --facss-gold-500: var(--color-gold-500);
+  --facss-gold-400: var(--color-gold-400);
+  --facss-gold-200: var(--color-gold-200);
+  --facss-gold-100: var(--color-gold-100);
+  --facss-gold-50:  var(--color-gold-50);
+
+  /* Legacy brand-gold-* aliases */
+  --brand-gold-600: var(--color-gold-600);
+  --brand-gold-500: var(--color-gold-500);
+  --brand-gold-400: var(--color-gold-400);
+  --brand-gold-200: var(--color-gold-200);
+  --brand-gold-100: var(--color-gold-100);
+  --brand-gold-50:  var(--color-gold-50);
+
+  /* Legacy component helpers */
+  --color-primary-dark:    var(--color-primary-950);
+  --color-primary:         var(--color-primary-900);
+  --color-primary-light:   var(--color-primary-800);
+  --color-primary-lighter: var(--color-primary-700);
+  --color-gold:            var(--color-gold-500);
+  --color-gold-light:      var(--color-gold-400);
+  --color-gold-dark:       var(--color-gold-600);
+  --bg-dark-base:          var(--color-primary-950);
+  --bg-card:               var(--surface-card);
+  --bg-card-border:        var(--border-subtle);
+  --text-main:             var(--text-primary);
 }
 
 /* ----------------------------------------------------
@@ -154,6 +183,17 @@ body {
 [lang="en"] body,
 [dir="ltr"] body {
   font-family: var(--font-en);
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
 }
 
 a {
@@ -1057,6 +1097,176 @@ img {
   display: none;
 }
 
+/* ----------------------------------------------------
+   10B. PHASE 3 MODERN INSTITUTIONAL / PREMIUM CORPORATE
+   مركز الحلول المتكاملة للأمن والسلامة
+   ---------------------------------------------------- */
+.hero-institutional {
+  background: radial-gradient(circle at 50% 15%, #0F4534 0%, #08281E 65%, #051A13 100%);
+  border-bottom: 1px solid rgba(181, 146, 84, 0.28);
+  padding-top: clamp(3.5rem, 6vw, 5.5rem);
+  padding-bottom: clamp(3.5rem, 6vw, 5rem);
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-institutional::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(rgba(181, 146, 84, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, transparent 60%, rgba(8, 40, 30, 0.95) 100%);
+  background-size: 32px 32px, 100% 100%;
+  pointer-events: none;
+}
+
+.hero-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 1.25rem;
+  border-radius: var(--radius-full);
+  background: rgba(181, 146, 84, 0.12);
+  border: 1px solid rgba(181, 146, 84, 0.35);
+  color: var(--color-gold-400);
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+.page-header-institutional {
+  background: radial-gradient(circle at 50% 20%, #114D3B 0%, #0B3D2E 50%, #08281E 100%);
+  border-bottom: 1px solid rgba(181, 146, 84, 0.25);
+  padding-top: clamp(3.2rem, 5vw, 4.5rem);
+  padding-bottom: clamp(3.2rem, 5vw, 4.5rem);
+  text-align: center;
+  color: #FFFFFF;
+  position: relative;
+}
+
+.page-header-institutional::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(181, 146, 84, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.card-institutional {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.4rem, 3vw, 2rem);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+}
+
+.card-institutional:hover {
+  border-color: var(--color-primary-200);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-institutional-dark {
+  background: var(--surface-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.4rem, 3vw, 2rem);
+  color: var(--text-on-dark);
+  transition: var(--transition);
+}
+
+.card-institutional-dark:hover {
+  border-color: rgba(181, 146, 84, 0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.principle-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.principle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline-start: 1.5rem;
+  width: 38px;
+  height: 3px;
+  background: var(--color-gold-500);
+  border-radius: 0 0 3px 3px;
+  opacity: 0.85;
+}
+
+.principle-card:hover {
+  border-color: var(--color-primary-200);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.principle-num {
+  font-family: var(--font-en);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-gold-700);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+  display: inline-block;
+}
+
+.service-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.service-card:hover {
+  border-color: var(--color-primary-200);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.quick-verify-banner {
+  background: linear-gradient(135deg, #0B3D2E 0%, #08281E 100%);
+  border: 1px solid rgba(181, 146, 84, 0.35);
+  border-radius: var(--radius-xl);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-verify-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(181, 146, 84, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
 @media (max-width: 1180px) {
   .desktop-nav {
     display: none;
@@ -1359,52 +1569,52 @@ img {
   --admin-sidebar-width: 260px;
   --admin-sidebar-collapsed-width: 72px;
   --admin-topbar-height: 56px;
-  --admin-sidebar-bg: var(--brand-navy-950);
-  --admin-sidebar-hover: var(--brand-navy-800);
-  --admin-sidebar-active-bg: rgba(217, 119, 6, 0.16);
-  --admin-sidebar-active-text: var(--brand-gold-400);
+  --admin-sidebar-bg: var(--color-primary-950);
+  --admin-sidebar-hover: var(--color-primary-800);
+  --admin-sidebar-active-bg: rgba(181, 146, 84, 0.16);
+  --admin-sidebar-active-text: var(--color-gold-400);
   --admin-sidebar-border: rgba(255, 255, 255, 0.08);
-  --admin-canvas-bg: #F8FAFC;
+  --admin-canvas-bg: var(--surface-bg);
 
   /* Phase B Unified Admin Design Tokens */
-  --admin-card-bg: #FFFFFF;
-  --admin-card-border: #E2E8F0;
-  --admin-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --admin-card-radius: 10px;
+  --admin-card-bg: var(--surface-card);
+  --admin-card-border: var(--border-color);
+  --admin-card-shadow: 0 1px 3px rgba(11, 61, 46, 0.05), 0 1px 2px rgba(11, 61, 46, 0.03);
+  --admin-card-radius: var(--radius-lg);
 
   --admin-control-bg: #FFFFFF;
-  --admin-control-border: #CBD5E1;
-  --admin-control-border-hover: #94A3B8;
-  --admin-control-radius: 8px;
+  --admin-control-border: var(--border-medium);
+  --admin-control-border-hover: var(--color-primary-700);
+  --admin-control-radius: var(--radius-md);
   --admin-control-height-sm: 32px;
   --admin-control-height-md: 40px;
   --admin-control-height-lg: 46px;
-  --admin-control-focus-ring: 0 0 0 3px rgba(217, 119, 6, 0.18);
-  --admin-control-focus-border: var(--brand-gold-500);
+  --admin-control-focus-ring: 0 0 0 3px rgba(11, 61, 46, 0.18);
+  --admin-control-focus-border: var(--color-primary-900);
 
-  --admin-table-header-bg: #F8FAFC;
-  --admin-table-row-hover: #F8FAFC;
-  --admin-table-border: #E2E8F0;
+  --admin-table-header-bg: var(--surface-sunken);
+  --admin-table-row-hover: var(--surface-subtle);
+  --admin-table-border: var(--border-subtle);
 
-  --admin-status-success-text: #15803D;
-  --admin-status-success-bg: #F0FDF4;
-  --admin-status-success-border: #BBF7D0;
+  --admin-status-success-text: var(--status-success-text);
+  --admin-status-success-bg: var(--status-success-bg);
+  --admin-status-success-border: var(--status-success-border);
 
-  --admin-status-warning-text: #B45309;
-  --admin-status-warning-bg: #FFFBEB;
-  --admin-status-warning-border: #FDE68A;
+  --admin-status-warning-text: var(--status-warning-text);
+  --admin-status-warning-bg: var(--status-warning-bg);
+  --admin-status-warning-border: var(--status-warning-border);
 
-  --admin-status-danger-text: #B91C1C;
-  --admin-status-danger-bg: #FEF2F2;
-  --admin-status-danger-border: #FECACA;
+  --admin-status-danger-text: var(--status-danger-text);
+  --admin-status-danger-bg: var(--status-danger-bg);
+  --admin-status-danger-border: var(--status-danger-border);
 
-  --admin-status-info-text: #0369A1;
-  --admin-status-info-bg: #F0F9FF;
-  --admin-status-info-border: #BAE6FD;
+  --admin-status-info-text: var(--status-info-text);
+  --admin-status-info-bg: var(--status-info-bg);
+  --admin-status-info-border: var(--status-info-border);
 
-  --admin-status-neutral-text: #475569;
-  --admin-status-neutral-bg: #F8FAFC;
-  --admin-status-neutral-border: #E2E8F0;
+  --admin-status-neutral-text: var(--status-neutral-text);
+  --admin-status-neutral-bg: var(--status-neutral-bg);
+  --admin-status-neutral-border: var(--status-neutral-border);
 }
 
 .admin-shell {
@@ -1529,13 +1739,13 @@ img {
 }
 
 .sidebar-group-title {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #64748B;
-  padding: 0.2rem 0.55rem;
-  margin-bottom: 0.15rem;
+  letter-spacing: 0.06em;
+  color: rgba(181, 146, 84, 0.85);
+  padding: 0.25rem 0.65rem;
+  margin-bottom: 0.2rem;
 }
 
 .sidebar-group-divider {
@@ -1585,8 +1795,8 @@ img {
   inset-inline-start: 0;
   top: 4px;
   bottom: 4px;
-  width: 3px;
-  background-color: var(--brand-gold-500);
+  width: 3.5px;
+  background-color: var(--color-gold-500);
   border-radius: 3px;
 }
 
@@ -1804,8 +2014,8 @@ img {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--brand-navy-900);
-  color: var(--brand-gold-400);
+  background: var(--color-primary-950);
+  color: var(--color-gold-400);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1831,11 +2041,12 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  background: rgba(217, 119, 6, 0.12);
-  color: var(--brand-gold-600);
+  background: rgba(181, 146, 84, 0.14);
+  color: var(--color-gold-700);
+  border: 1px solid rgba(181, 146, 84, 0.25);
   font-size: 0.68rem;
   font-weight: 800;
-  padding: 0.12rem 0.4rem;
+  padding: 0.12rem 0.45rem;
   border-radius: 4px;
 }
 
@@ -2325,16 +2536,30 @@ img {
     min-width: 100px;
   }
 
-  /* Tabs on Mobile */
+  /* Tabs on Mobile & Tablet */
+  .admin-tabs-scroll-container {
+    gap: 0.35rem;
+    width: 100%;
+    min-width: 0;
+  }
+
   .admin-tabs {
     gap: 0.35rem;
     margin-bottom: 1.15rem;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
 
   .admin-tab-item {
-    padding: 0.55rem 0.75rem;
+    padding: 0.55rem 0.8rem;
     font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .admin-tabs-nav-btn {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
   }
 }
 
@@ -2478,13 +2703,25 @@ img {
 
 /* Button Variants */
 .admin-btn-primary {
-  background: var(--brand-gold-500);
+  background: var(--color-primary-900);
   color: #FFFFFF;
-  border-color: var(--brand-gold-600);
+  border-color: var(--color-primary-950);
 }
 .admin-btn-primary:hover:not(:disabled) {
-  background: var(--brand-gold-600);
-  border-color: var(--brand-gold-700);
+  background: var(--color-primary-800);
+  border-color: var(--color-primary-900);
+  transform: translateY(-1px);
+}
+
+.admin-btn-gold {
+  background: var(--color-gold-500);
+  color: #08281E;
+  border-color: var(--color-gold-600);
+}
+.admin-btn-gold:hover:not(:disabled) {
+  background: var(--color-gold-400);
+  border-color: var(--color-gold-500);
+  transform: translateY(-1px);
 }
 
 .admin-btn-secondary {
@@ -2495,7 +2732,7 @@ img {
 .admin-btn-secondary:hover:not(:disabled) {
   background: var(--surface-bg);
   border-color: var(--admin-control-border-hover);
-  color: var(--brand-navy-950);
+  color: var(--color-primary-950);
 }
 
 .admin-btn-ghost {
@@ -2895,19 +3132,62 @@ img {
   margin-top: 0.25rem;
 }
 
-/* 9. Tabs */
-.admin-tabs {
+/* 9. Tabs with Robust Horizontal Scroll Architecture */
+.admin-tabs-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tabs-scroll-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border-bottom: 1px solid var(--admin-card-border);
-  margin-bottom: 1.5rem;
+}
+
+.admin-tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  border-bottom: 1.5px solid var(--admin-card-border, #E2E8F0);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
-  scrollbar-width: none;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
 }
 
 .admin-tabs::-webkit-scrollbar {
-  display: none;
+  height: 5px;
+}
+
+.admin-tabs::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+
+.admin-tabs::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.admin-tabs::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-500, #D4AF37);
 }
 
 .admin-tab-item {
@@ -2920,34 +3200,73 @@ img {
   color: var(--text-muted);
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 2.5px solid transparent;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0; /* CRITICAL: Prevent tab shrinkage and clipping */
+  user-select: none;
   transition: all 0.15s ease;
 }
 
 .admin-tab-item:hover {
   color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 6px 6px 0 0;
 }
 
 .admin-tab-item.active {
-  color: var(--brand-gold-600);
-  border-bottom-color: var(--brand-gold-500);
-  font-weight: 700;
+  color: var(--color-gold-700);
+  border-bottom-color: var(--color-gold-500);
+  font-weight: 800;
+  background: transparent;
 }
 
 .admin-tab-badge {
-  font-size: 0.7rem;
-  padding: 0.1rem 0.45rem;
+  font-size: 0.72rem;
+  padding: 0.1rem 0.5rem;
   border-radius: 10px;
-  background: var(--surface-bg);
+  background: var(--surface-bg, #F1F5F9);
   color: var(--text-secondary);
   font-weight: 700;
+  border: 1px solid var(--border-color, #E2E8F0);
+  flex-shrink: 0;
 }
 
 .admin-tab-item.active .admin-tab-badge {
-  background: rgba(217, 119, 6, 0.15);
-  color: var(--brand-gold-700);
+  background: rgba(181, 146, 84, 0.15);
+  color: var(--color-gold-700);
+  border-color: rgba(181, 146, 84, 0.3);
+}
+
+/* Scroll Arrow Controls for Desktop & Tablet */
+.admin-tabs-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color, #CBD5E1);
+  background: #FFFFFF;
+  color: var(--text-primary, #0F172A);
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+  transition: all 0.15s ease;
+  z-index: 5;
+}
+
+.admin-tabs-nav-btn:hover:not(:disabled) {
+  background: var(--surface-bg, #F8FAFC);
+  border-color: var(--color-gold-500, #D4AF37);
+  color: var(--color-gold-600, #B8860B);
+  transform: scale(1.06);
+}
+
+.admin-tabs-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* 10. Modals */
@@ -3317,4 +3636,271 @@ img {
   gap: 0.35rem;
 }
 
+/* ==========================================================================
+   PORTALS DESIGN SYSTEM (PHASE 5: CLIENT, TRAINEE, FIELD)
+   Modern Institutional / Premium Corporate Portal Styles
+   ========================================================================== */
 
+.portal-container {
+  padding-block: 2.25rem;
+  min-height: calc(100vh - 80px);
+}
+
+.portal-header-banner {
+  background: linear-gradient(135deg, var(--color-primary-950) 0%, var(--color-primary-900) 100%);
+  border: 1px solid rgba(181, 146, 84, 0.35);
+  border-radius: 14px;
+  padding: 1.35rem 1.75rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  box-shadow: 0 4px 18px rgba(8, 40, 30, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-header-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background: radial-gradient(circle at 100% 0%, rgba(181, 146, 84, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.portal-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.portal-header-emblem {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(181, 146, 84, 0.15);
+  border: 1.5px solid rgba(181, 146, 84, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.portal-header-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.portal-header-subtitle {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.portal-nav-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--admin-card-border);
+  padding-bottom: 0.65rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.portal-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  border: 1px solid var(--admin-card-border);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.portal-nav-item:hover {
+  color: var(--color-primary-900);
+  border-color: var(--color-gold-500);
+  background: var(--color-primary-50);
+}
+
+.portal-nav-item.active {
+  background: var(--color-primary-950);
+  color: #FFFFFF;
+  border-color: var(--color-gold-500);
+  box-shadow: 0 2px 8px rgba(11, 61, 46, 0.2);
+}
+
+.portal-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.portal-stat-card {
+  background: var(--surface-card);
+  border: 1px solid var(--admin-card-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.portal-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.portal-stat-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.portal-stat-value {
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-family: var(--font-en);
+}
+
+.portal-card {
+  background: var(--surface-card);
+  border: 1px solid var(--admin-card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  margin-bottom: 1.75rem;
+}
+
+.portal-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--admin-card-border);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.portal-card-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.portal-empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--surface-bg);
+  border: 1px dashed var(--admin-card-border);
+  border-radius: 10px;
+}
+
+.portal-table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  border: 1px solid var(--admin-card-border);
+}
+
+/* ==========================================================================
+   PHASE 6: INSTITUTIONAL PRINT STYLES & CERTIFICATE A4 CALIBRATION
+   ========================================================================== */
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 10pt !important;
+    line-height: 1.5 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide navigation, toolbars, buttons and interactive elements during print */
+  header,
+  footer,
+  nav,
+  .site-header,
+  .site-footer,
+  .admin-sidebar,
+  .admin-topbar,
+  .portal-header-banner,
+  .portal-nav-bar,
+  .btn,
+  button,
+  .no-print,
+  .portal-empty-state,
+  .hero-badge-pill,
+  .nav-inner {
+    display: none !important;
+  }
+
+  /* Printable Certificate Sheet */
+  .printable-certificate {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 18mm 14mm !important;
+    border: 2.5pt solid #B59254 !important;
+    outline: 1pt solid #0B3D2E !important;
+    outline-offset: -6pt !important;
+    background: #FFFFFF !important;
+    border-radius: 8pt !important;
+  }
+
+  /* Preserve links without printing raw URLs */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+
+  /* Ensure high-resolution imagery and SVGs print crisp */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid !important;
+  }
+}

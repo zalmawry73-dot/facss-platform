@@ -197,7 +197,7 @@ export default function LogsManager({ initialLogs }: LogsManagerProps) {
         title={tx("سجل الرقابة والنشاط الإداري (Audit Activity Logs)")}
         description={tx("سجل تتبعي زمني غير قابل للتعديل لتوثيق كافة العمليات الإدارية والتشغيلية الميدانية في المنظومة")}
         meta={
-          <span style={{ fontSize: '0.78rem', color: 'var(--brand-gold-600)', fontWeight: 700 }}>
+          <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-600)', fontWeight: 700 }}>
             {tx("إجمالي السجلات المسجلة:")} {logs.length} {tx("عملية")}
           </span>
         }

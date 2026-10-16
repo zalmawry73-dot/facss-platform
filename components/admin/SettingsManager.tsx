@@ -10,6 +10,7 @@ import {
   Save,
   ShieldCheck,
   Clock,
+  KeyRound,
 } from 'lucide-react';
 import {
   AdminPageHeader,
@@ -50,7 +51,7 @@ export default function SettingsManager({ initialSettings }: Props) {
     SOCIAL_TWITTER: settingsMap.SOCIAL_TWITTER || '',
     SOCIAL_LINKEDIN: settingsMap.SOCIAL_LINKEDIN || '',
     SOCIAL_FACEBOOK: settingsMap.SOCIAL_FACEBOOK || '',
-    ANNOUNCEMENT_TEXT: settingsMap.ANNOUNCEMENT_TEXT || tx("المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية — السلامة أولاً"),
+    ANNOUNCEMENT_TEXT: settingsMap.ANNOUNCEMENT_TEXT || tx("مركز الحلول المتكاملة للأمن والسلامة — السلامة أولاً"),
     SLA_RESPONSE_CRITICAL_MINUTES: settingsMap.SLA_RESPONSE_CRITICAL_MINUTES || '15',
     SLA_RESPONSE_HIGH_MINUTES: settingsMap.SLA_RESPONSE_HIGH_MINUTES || '60',
     SLA_RESPONSE_MEDIUM_MINUTES: settingsMap.SLA_RESPONSE_MEDIUM_MINUTES || '240',
@@ -115,15 +116,25 @@ export default function SettingsManager({ initialSettings }: Props) {
         title={tx("إعدادات النظام وبيانات التواصل الرسمي")}
         description={tx("تعديل أرقام الهواتف، عناوين البريد، الروابط، والنصوص الرسمية بقاعدة البيانات مباشرة دون تعديل الكود")}
         actions={
-          <AdminButton
-            variant="primary"
-            icon={<Save size={16} />}
-            loading={savingKey === 'ALL'}
-            disabled={savingKey !== null}
-            onClick={saveAll}
-          >
-            {savingKey === 'ALL' ? tx("جاري الحفظ الشامل...") : tx("حفظ جميع الإعدادات")}
-          </AdminButton>
+          <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+            <AdminButton
+              variant="outline"
+              href="/admin/change-password"
+              icon={<KeyRound size={16} />}
+              style={{ borderColor: 'rgba(212, 175, 55, 0.4)', color: 'var(--facss-gold-400)' }}
+            >
+              {tx("تغيير كلمة المرور")}
+            </AdminButton>
+            <AdminButton
+              variant="primary"
+              icon={<Save size={16} />}
+              loading={savingKey === 'ALL'}
+              disabled={savingKey !== null}
+              onClick={saveAll}
+            >
+              {savingKey === 'ALL' ? tx("جاري الحفظ الشامل...") : tx("حفظ جميع الإعدادات")}
+            </AdminButton>
+          </div>
         }
       />
 

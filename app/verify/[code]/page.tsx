@@ -39,25 +39,21 @@ export default async function CertificateVerificationPage({ params }: PageProps)
   }
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--surface-bg)' }}>
       {/* Header */}
-      <section
-        style={{
-          paddingBlock: '3rem',
-          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          textAlign: 'center',
-        }}
-      >
-        <div className="container">
-          <span className="section-tag">{t.verifyCertificate}</span>
-          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.5rem' }}>
+      <section className="page-header-institutional" style={{ paddingBlock: '3.5rem' }}>
+        <div className="container text-center">
+          <div className="hero-badge-pill" style={{ marginInline: 'auto', marginBottom: '1.25rem' }}>
+            <ShieldCheck size={14} color="var(--color-gold-400)" />
+            <span>{t.verifyCertificate}</span>
+          </div>
+          <h1 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.75rem', letterSpacing: '-0.02em' }}>
             {isAr ? 'نظام التحقق الإلكتروني من الوثائق والشهادات' : 'Digital Credential & Certificate Verification'}
           </h1>
-          <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1rem', maxWidth: '700px', marginInline: 'auto' }}>
+          <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '1rem', maxWidth: '720px', marginInline: 'auto', lineHeight: 1.75 }}>
             {isAr
-              ? 'تحقق من صحة الوثائق والشهادات الصادرة عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية'
-              : 'Official validation of training certificates and credentials issued by Integrated Center for Security, Safety & Field Studies.'}
+              ? 'التحقق الرسمي من صحة وسريان الشهادات والوثائق الصادرة عن مركز الحلول المتكاملة للأمن والسلامة.'
+              : 'Official validation of training certificates and credentials issued by the Integrated Solutions Center for Safety and Security.'}
           </p>
         </div>
       </section>
@@ -142,17 +138,18 @@ export default async function CertificateVerificationPage({ params }: PageProps)
           {/* Valid Screen */}
           {certificate && !certificate.isRevoked && (
             <div
-              className="card"
+              className="card-institutional"
               style={{
-                padding: '3rem 2.5rem',
-                borderTop: '4px solid var(--facss-green-700)',
-                border: '1px solid var(--border-color)',
+                padding: 'clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.5rem)',
+                borderTop: '4px solid var(--color-primary-900)',
                 borderRadius: '16px',
                 textAlign: 'center',
               }}
             >
-              <ShieldCheck size={56} style={{ color: 'var(--facss-green-700)', marginInline: 'auto', marginBottom: '1.5rem' }} />
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--facss-green-900)', marginBottom: '0.5rem' }}>
+              <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'rgba(11, 61, 46, 0.08)', border: '2px solid var(--color-primary-900)', color: 'var(--color-primary-900)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginInline: 'auto', marginBottom: '1.25rem' }}>
+                <ShieldCheck size={40} />
+              </div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-primary-950)', marginBottom: '0.5rem', letterSpacing: '-0.01em' }}>
                 {t.verificationValidTitle}
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '2rem' }}>
@@ -160,35 +157,35 @@ export default async function CertificateVerificationPage({ params }: PageProps)
               </p>
 
               {/* Certificate Details */}
-              <div style={{ textAlign: isAr ? 'right' : 'left', padding: '1.5rem', background: 'var(--surface-sunken)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+              <div style={{ textAlign: isAr ? 'right' : 'left', padding: '1.75rem', background: '#F4F1EA', borderRadius: '12px', border: '1px solid rgba(181, 146, 84, 0.3)' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>{t.certificateNumber}</span>
-                    <strong style={{ fontSize: '1rem', color: 'var(--facss-gold-700)' }}>{certificate.certificateNumber}</strong>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.25rem', fontWeight: 700 }}>{t.certificateNumber}</span>
+                    <strong style={{ fontSize: '1rem', color: 'var(--color-primary-950)' }}>{certificate.certificateNumber}</strong>
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>{t.traineeName}</span>
-                    <strong style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>{certificate.studentName}</strong>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.25rem', fontWeight: 700 }}>{t.traineeName}</span>
+                    <strong style={{ fontSize: '1.15rem', color: 'var(--color-primary-950)' }}>{certificate.studentName}</strong>
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>{t.trainingCourse}</span>
-                    <strong style={{ fontSize: '1rem', color: 'var(--facss-green-900)' }}>{certificate.courseTitle}</strong>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.25rem', fontWeight: 700 }}>{t.trainingCourse}</span>
+                    <strong style={{ fontSize: '1rem', color: 'var(--color-primary-900)' }}>{certificate.courseTitle}</strong>
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>{t.grade}</span>
-                    <strong style={{ fontSize: '1rem', color: 'var(--text-primary)' }}>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.25rem', fontWeight: 700 }}>{t.grade}</span>
+                    <strong style={{ fontSize: '1rem', color: 'var(--color-primary-950)' }}>
                       {certificate.grade || (isAr ? 'اجتياز بنجاح' : 'Successful Completion')}
                     </strong>
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>{t.issueDate}</span>
-                    <strong style={{ fontSize: '1rem', color: 'var(--text-primary)' }}>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.25rem', fontWeight: 700 }}>{t.issueDate}</span>
+                    <strong style={{ fontSize: '1rem', color: 'var(--color-primary-950)' }}>
                       {formatDate(certificate.issueDate, locale)}
                     </strong>
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>{t.verificationCode}</span>
-                    <strong style={{ fontSize: '0.95rem', color: 'var(--facss-green-800)', letterSpacing: '0.05em', fontFamily: 'monospace' }}>{certificate.verificationCode}</strong>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.25rem', fontWeight: 700 }}>{t.verificationCode}</span>
+                    <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary-900)', letterSpacing: '0.05em', fontFamily: 'monospace' }}>{certificate.verificationCode}</strong>
                   </div>
                 </div>
               </div>

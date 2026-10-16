@@ -1,4 +1,5 @@
 import { CAPABILITIES, ALL_CAPABILITIES, Capability } from '../rbac';
+import { vMsg, resolveLocale, ValidationLocale } from './common';
 
 export interface ValidationResult<T> {
   success: boolean;
@@ -40,80 +41,81 @@ export interface CourseInput {
   targetAudienceEn?: string | null;
 }
 
-export function validateCourseInput(body: any, isPartial = false): ValidationResult<CourseInput> {
+export function validateCourseInput(body: any, isPartial = false, locale?: string): ValidationResult<CourseInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!isPartial || body.titleAr !== undefined) {
     if (!body.titleAr || typeof body.titleAr !== 'string' || body.titleAr.trim().length < 3) {
-      errors.titleAr = 'عنوان الدورة بالعربية مطلوب ويجب أن يكون 3 أحرف على الأقل';
+      errors.titleAr = vMsg('عنوان الدورة بالعربية مطلوب ويجب أن يكون 3 أحرف على الأقل', 'Arabic course title is required (min 3 characters)', loc);
     }
   }
 
   if (!isPartial || body.titleEn !== undefined) {
     if (!body.titleEn || typeof body.titleEn !== 'string' || body.titleEn.trim().length < 3) {
-      errors.titleEn = 'عنوان الدورة بالإنجليزية مطلوب ويجب أن يكون 3 أحرف على الأقل';
+      errors.titleEn = vMsg('عنوان الدورة بالإنجليزية مطلوب ويجب أن يكون 3 أحرف على الأقل', 'English course title is required (min 3 characters)', loc);
     }
   }
 
   if (!isPartial || body.descriptionAr !== undefined) {
     if (!body.descriptionAr || typeof body.descriptionAr !== 'string' || body.descriptionAr.trim().length < 10) {
-      errors.descriptionAr = 'وصف الدورة بالعربية مطلوب (10 أحرف كحد أدنى)';
+      errors.descriptionAr = vMsg('وصف الدورة بالعربية مطلوب (10 أحرف كحد أدنى)', 'Arabic course description is required (min 10 characters)', loc);
     }
   }
 
   if (!isPartial || body.descriptionEn !== undefined) {
     if (!body.descriptionEn || typeof body.descriptionEn !== 'string' || body.descriptionEn.trim().length < 10) {
-      errors.descriptionEn = 'وصف الدورة بالإنجليزية مطلوب (10 أحرف كحد أدنى)';
+      errors.descriptionEn = vMsg('وصف الدورة بالإنجليزية مطلوب (10 أحرف كحد أدنى)', 'English course description is required (min 10 characters)', loc);
     }
   }
 
   if (!isPartial || body.trainerName !== undefined) {
     if (!body.trainerName || typeof body.trainerName !== 'string' || body.trainerName.trim().length < 2) {
-      errors.trainerName = 'اسم المدرب أو المحاضر مطلوب';
+      errors.trainerName = vMsg('اسم المدرب أو المحاضر مطلوب', 'Trainer / instructor name is required', loc);
     }
   }
 
   if (!isPartial || body.duration !== undefined) {
     if (!body.duration || typeof body.duration !== 'string' || body.duration.trim().length < 2) {
-      errors.duration = 'مدة الدورة مطلوبة (مثال: 5 أيام / 20 ساعة)';
+      errors.duration = vMsg('مدة الدورة مطلوبة (مثال: 5 أيام / 20 ساعة)', 'Course duration is required (e.g. 5 days / 20 hours)', loc);
     }
   }
 
   if (!isPartial || body.location !== undefined) {
     if (!body.location || typeof body.location !== 'string' || body.location.trim().length < 2) {
-      errors.location = 'مقر أو قاعة التدريب مطلوبة';
+      errors.location = vMsg('مقر أو قاعة التدريب مطلوبة', 'Training venue or room is required', loc);
     }
   }
 
   if (!isPartial || body.capacity !== undefined) {
     const capNum = Number(body.capacity);
     if (isNaN(capNum) || capNum < 1 || capNum > 1000) {
-      errors.capacity = 'سعة المقاعد يجب أن تكون رقماً صحيحاً بين 1 و 1000';
+      errors.capacity = vMsg('سعة المقاعد يجب أن تكون رقماً صحيحاً بين 1 و 1000', 'Seating capacity must be an integer between 1 and 1000', loc);
     }
   }
 
   if (!isPartial || body.status !== undefined) {
     if (!body.status || !VALID_COURSE_STATUSES.includes(body.status)) {
-      errors.status = `حالة الدورة غير صالحة. الحالات المقبولة: ${VALID_COURSE_STATUSES.join(', ')}`;
+      errors.status = vMsg(`حالة الدورة غير صالحة. الحالات المقبولة: ${VALID_COURSE_STATUSES.join(', ')}`, `Invalid course status. Accepted statuses: ${VALID_COURSE_STATUSES.join(', ')}`, loc);
     }
   }
 
   if (!isPartial || body.categoryId !== undefined) {
     if (!body.categoryId || typeof body.categoryId !== 'string') {
-      errors.categoryId = 'تصنيف الدورة التدريبية مطلوب';
+      errors.categoryId = vMsg('تصنيف الدورة التدريبية مطلوب', 'Course category is required', loc);
     }
   }
 
   if (body.startDate && isNaN(Date.parse(body.startDate))) {
-    errors.startDate = 'تاريخ البدء غير صالح';
+    errors.startDate = vMsg('تاريخ البدء غير صالح', 'Invalid start date', loc);
   }
 
   if (body.endDate && isNaN(Date.parse(body.endDate))) {
-    errors.endDate = 'تاريخ الانتهاء غير صالح';
+    errors.endDate = vMsg('تاريخ الانتهاء غير صالح', 'Invalid end date', loc);
   }
 
   if (body.startDate && body.endDate && Date.parse(body.startDate) > Date.parse(body.endDate)) {
-    errors.endDate = 'تاريخ الانتهاء لا يمكن أن يسبق تاريخ البدء';
+    errors.endDate = vMsg('تاريخ الانتهاء لا يمكن أن يسبق تاريخ البدء', 'End date cannot be earlier than start date', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -173,66 +175,71 @@ export interface ResearchInput {
   isFeatured?: boolean;
 }
 
-export function validateResearchInput(body: any, isPartial = false): ValidationResult<ResearchInput> {
+export function validateResearchInput(body: any, isPartial = false, locale?: string): ValidationResult<ResearchInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!isPartial || body.titleAr !== undefined) {
     if (!body.titleAr || typeof body.titleAr !== 'string' || body.titleAr.trim().length < 3) {
-      errors.titleAr = 'عنوان الدراسة بالعربية مطلوب (3 أحرف على الأقل)';
+      errors.titleAr = vMsg('عنوان الدراسة بالعربية مطلوب (3 أحرف على الأقل)', 'Arabic study title is required (min 3 characters)', loc);
     }
   }
 
   if (!isPartial || body.titleEn !== undefined) {
     if (!body.titleEn || typeof body.titleEn !== 'string' || body.titleEn.trim().length < 3) {
-      errors.titleEn = 'عنوان الدراسة بالإنجليزية مطلوب (3 أحرف على الأقل)';
+      errors.titleEn = vMsg('عنوان الدراسة بالإنجليزية مطلوب (3 أحرف على الأقل)', 'English study title is required (min 3 characters)', loc);
     }
   }
 
   if (!isPartial || body.summaryAr !== undefined) {
     if (!body.summaryAr || typeof body.summaryAr !== 'string' || body.summaryAr.trim().length < 10) {
-      errors.summaryAr = 'ملخص الدراسة بالعربية مطلوب (10 أحرف على الأقل)';
+      errors.summaryAr = vMsg('ملخص الدراسة بالعربية مطلوب (10 أحرف على الأقل)', 'Arabic study summary is required (min 10 characters)', loc);
     }
   }
 
   if (!isPartial || body.summaryEn !== undefined) {
     if (!body.summaryEn || typeof body.summaryEn !== 'string' || body.summaryEn.trim().length < 10) {
-      errors.summaryEn = 'ملخص الدراسة بالإنجليزية مطلوب (10 أحرف على الأقل)';
+      errors.summaryEn = vMsg('ملخص الدراسة بالإنجليزية مطلوب (10 أحرف على الأقل)', 'English study summary is required (min 10 characters)', loc);
     }
   }
 
   if (!isPartial || body.contentAr !== undefined) {
     if (!body.contentAr || typeof body.contentAr !== 'string' || body.contentAr.trim().length < 10) {
-      errors.contentAr = 'محتوى الدراسة بالعربية مطلوب';
+      errors.contentAr = vMsg('محتوى الدراسة بالعربية مطلوب', 'Arabic research content is required', loc);
     }
   }
 
   if (!isPartial || body.contentEn !== undefined) {
     if (!body.contentEn || typeof body.contentEn !== 'string' || body.contentEn.trim().length < 10) {
-      errors.contentEn = 'محتوى الدراسة بالإنجليزية مطلوب';
+      errors.contentEn = vMsg('محتوى الدراسة بالإنجليزية مطلوب', 'English research content is required', loc);
     }
   }
 
   if (!isPartial || body.author !== undefined) {
     if (!body.author || typeof body.author !== 'string' || body.author.trim().length < 2) {
-      errors.author = 'اسم الباحث أو المؤلف مطلوب';
+      errors.author = vMsg('اسم الباحث أو المؤلف مطلوب', 'Author / researcher name is required', loc);
     }
   }
 
   if (!isPartial || body.categoryId !== undefined) {
     if (!body.categoryId || typeof body.categoryId !== 'string') {
-      errors.categoryId = 'تصنيف البحث مطلوب';
+      errors.categoryId = vMsg('تصنيف البحث مطلوب', 'Research category is required', loc);
     }
   }
 
   if (!isPartial || body.visibility !== undefined) {
     if (!body.visibility || !VALID_RESEARCH_VISIBILITIES.includes(body.visibility)) {
-      errors.visibility = 'مستوى الرؤية يجب أن يكون إما PUBLIC أو CLIENT_ONLY';
+      errors.visibility = vMsg('مستوى الرؤية يجب أن يكون إما PUBLIC أو CLIENT_ONLY', 'Visibility level must be either PUBLIC or CLIENT_ONLY', loc);
     }
   }
 
   if (!isPartial || body.status !== undefined) {
     if (!body.status || !VALID_RESEARCH_STATUSES.includes(body.status)) {
-      errors.status = `حالة النشر غير صالحة. الحالات المتاحة: ${VALID_RESEARCH_STATUSES.join(', ')}`;
+      errors.status = vMsg(
+        `حالة النشر غير صالحة. الحالات المتاحة: ${VALID_RESEARCH_STATUSES.join(', ')}`,
+        `Invalid publication status. Available statuses: ${VALID_RESEARCH_STATUSES.join(', ')}`,
+        loc
+      );
     }
   }
 
@@ -273,27 +280,28 @@ export interface MessageUpdateInput {
   priority?: 'NORMAL' | 'HIGH' | 'URGENT';
 }
 
-export function validateMessageStatusUpdate(body: any): ValidationResult<MessageUpdateInput> {
+export function validateMessageStatusUpdate(body: any, locale?: string): ValidationResult<MessageUpdateInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || typeof body !== 'object') {
-    return { success: false, errors: { body: 'البيانات مطلوبة' } };
+    return { success: false, errors: { body: vMsg('البيانات مطلوبة', 'Request body data is required', loc) } };
   }
 
   if (body.status !== undefined && !VALID_MESSAGE_STATUSES.includes(body.status)) {
-    errors.status = `حالة الرسالة غير صالحة. الحالات المقبولة: ${VALID_MESSAGE_STATUSES.join(', ')}`;
+    errors.status = vMsg(`حالة الرسالة غير صالحة. الحالات المقبولة: ${VALID_MESSAGE_STATUSES.join(', ')}`, `Invalid message status. Accepted: ${VALID_MESSAGE_STATUSES.join(', ')}`, loc);
   }
 
   if (body.replyNotes !== undefined && body.replyNotes !== null && typeof body.replyNotes !== 'string') {
-    errors.replyNotes = 'ملاحظات الرد يجب أن تكون نصاً';
+    errors.replyNotes = vMsg('ملاحظات الرد يجب أن تكون نصاً', 'Reply notes must be a string', loc);
   }
 
   if (body.resolutionSummary !== undefined && body.resolutionSummary !== null && typeof body.resolutionSummary !== 'string') {
-    errors.resolutionSummary = 'ملخص المعالجة والحل يجب أن يكون نصاً';
+    errors.resolutionSummary = vMsg('ملخص المعالجة والحل يجب أن يكون نصاً', 'Resolution summary must be a string', loc);
   }
 
   if (body.priority !== undefined && !['NORMAL', 'HIGH', 'URGENT'].includes(body.priority)) {
-    errors.priority = 'درجة الأولوية غير صالحة (NORMAL, HIGH, URGENT)';
+    errors.priority = vMsg('درجة الأولوية غير صالحة (NORMAL, HIGH, URGENT)', 'Invalid priority level (NORMAL, HIGH, URGENT)', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -351,11 +359,12 @@ export const FORBIDDEN_CONFIG_PATTERNS = [
   'CREDENTIALS',
 ];
 
-export function validateSettingUpdate(body: any): ValidationResult<{ key: string; value: string }> {
+export function validateSettingUpdate(body: any, locale?: string): ValidationResult<{ key: string; value: string }> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || !body.key || typeof body.key !== 'string') {
-    errors.key = 'مفتاح الإعداد مطلوب';
+    errors.key = vMsg('مفتاح الإعداد مطلوب', 'Setting key is required', loc);
     return { success: false, errors };
   }
 
@@ -364,17 +373,21 @@ export function validateSettingUpdate(body: any): ValidationResult<{ key: string
   // Check against forbidden security keys
   const isForbidden = FORBIDDEN_CONFIG_PATTERNS.some((p) => normalizedKey.includes(p));
   if (isForbidden) {
-    errors.key = 'ممنوع تعديل أو إدخال مفاتيح التكوين الأمنية عبر واجهة الإعدادات';
+    errors.key = vMsg('ممنوع تعديل أو إدخال مفاتيح التكوين الأمنية عبر واجهة الإعدادات', 'Security configuration keys cannot be modified via settings interface', loc);
     return { success: false, errors };
   }
 
   if (!ALLOWED_SETTING_KEYS.includes(normalizedKey as AllowedSettingKey)) {
-    errors.key = `المفتاح غير مصرح به. المفاتيح المقبولة فقط: ${ALLOWED_SETTING_KEYS.join(', ')}`;
+    errors.key = vMsg(
+      `المفتاح غير مصرح به. المفاتيح المقبولة فقط: ${ALLOWED_SETTING_KEYS.join(', ')}`,
+      `Unauthorized key. Allowed keys only: ${ALLOWED_SETTING_KEYS.join(', ')}`,
+      loc
+    );
     return { success: false, errors };
   }
 
   if (body.value === undefined || typeof body.value !== 'string') {
-    errors.value = 'قيمة الإعداد مطلوبة كنص';
+    errors.value = vMsg('قيمة الإعداد مطلوبة كنص', 'Setting value is required as a string', loc);
     return { success: false, errors };
   }
 
@@ -384,7 +397,7 @@ export function validateSettingUpdate(body: any): ValidationResult<{ key: string
   if (normalizedKey.includes('EMAIL') && trimmedValue.length > 0) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedValue)) {
-      errors.value = 'صيغة البريد الإلكتروني غير صحيحة';
+      errors.value = vMsg('صيغة البريد الإلكتروني غير صحيحة', 'Invalid email address format', loc);
     }
   }
 
@@ -392,7 +405,7 @@ export function validateSettingUpdate(body: any): ValidationResult<{ key: string
   if (normalizedKey.startsWith('SLA_')) {
     const num = Number(trimmedValue);
     if (isNaN(num) || num <= 0 || !Number.isInteger(num)) {
-      errors.value = 'قيمة زمن الاستجابة / النسبة لـ SLA يجب أن تكون رقماً صحيحاً موجباً';
+      errors.value = vMsg('قيمة زمن الاستجابة / النسبة لـ SLA يجب أن تكون رقماً صحيحاً موجباً', 'SLA response time / percentage must be a positive integer', loc);
     }
   }
 
@@ -412,16 +425,17 @@ export function validateSettingUpdate(body: any): ValidationResult<{ key: string
 // ----------------------------------------------------
 // 5. USER CAPABILITY ASSIGNMENT VALIDATION
 // ----------------------------------------------------
-export function validateCapabilityAssignment(body: any): ValidationResult<{ capability: Capability }> {
+export function validateCapabilityAssignment(body: any, locale?: string): ValidationResult<{ capability: Capability }> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || !body.capability || typeof body.capability !== 'string') {
-    errors.capability = 'الصلاحية (capability) مطلوبة';
+    errors.capability = vMsg('الصلاحية (capability) مطلوبة', 'Capability is required', loc);
     return { success: false, errors };
   }
 
   if (!ALL_CAPABILITIES.includes(body.capability as Capability)) {
-    errors.capability = `صلاحية غير معروفة. الصلاحيات المتاحة: ${ALL_CAPABILITIES.join(', ')}`;
+    errors.capability = vMsg(`صلاحية غير معروفة. الصلاحيات المتاحة: ${ALL_CAPABILITIES.join(', ')}`, `Unknown capability. Available: ${ALL_CAPABILITIES.join(', ')}`, loc);
     return { success: false, errors };
   }
 
@@ -445,36 +459,37 @@ export interface RegistrationInput {
   qualification?: string | null;
 }
 
-export function validateRegistrationInput(body: any): ValidationResult<RegistrationInput> {
+export function validateRegistrationInput(body: any, locale?: string): ValidationResult<RegistrationInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || !body.courseId || typeof body.courseId !== 'string') {
-    errors.courseId = 'معرّف الدورة التدريبية مطلوب';
+    errors.courseId = vMsg('معرّف الدورة التدريبية مطلوب', 'Course ID is required', loc);
   }
 
   if (!body.fullName || typeof body.fullName !== 'string' || body.fullName.trim().length < 3) {
-    errors.fullName = 'الاسم الكامل مطلوب (3 أحرف على الأقل)';
+    errors.fullName = vMsg('الاسم الكامل مطلوب (3 أحرف على الأقل)', 'Full name is required (min 3 characters)', loc);
   }
 
   if (!body.email || typeof body.email !== 'string') {
-    errors.email = 'البريد الإلكتروني مطلوب';
+    errors.email = vMsg('البريد الإلكتروني مطلوب', 'Email address is required', loc);
   } else {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(body.email.trim())) {
-      errors.email = 'صيغة البريد الإلكتروني غير صحيحة';
+      errors.email = vMsg('صيغة البريد الإلكتروني غير صحيحة', 'Invalid email address format', loc);
     }
   }
 
   if (!body.phone || typeof body.phone !== 'string' || body.phone.trim().length < 6) {
-    errors.phone = 'رقم الهاتف مطلوب (6 أرقام على الأقل)';
+    errors.phone = vMsg('رقم الهاتف مطلوب (6 أرقام على الأقل)', 'Phone number is required (min 6 digits)', loc);
   }
 
   if (body.nationalId !== undefined && body.nationalId !== null && typeof body.nationalId !== 'string') {
-    errors.nationalId = 'رقم الهوية يجب أن يكون نصاً';
+    errors.nationalId = vMsg('رقم الهوية يجب أن يكون نصاً', 'National ID must be a string', loc);
   }
 
   if (body.qualification !== undefined && body.qualification !== null && typeof body.qualification !== 'string') {
-    errors.qualification = 'المؤهل يجب أن يكون نصاً';
+    errors.qualification = vMsg('المؤهل يجب أن يكون نصاً', 'Qualification must be a string', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -511,29 +526,31 @@ const REGISTRATION_TRANSITIONS: Record<string, string[]> = {
 
 export function validateRegistrationStatusUpdate(
   body: any,
-  currentStatus: string
+  currentStatus: string,
+  locale?: string
 ): ValidationResult<{ status: RegistrationStatusType; adminNotes?: string | null }> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || !body.status || typeof body.status !== 'string') {
-    errors.status = 'حالة التسجيل الجديدة مطلوبة';
+    errors.status = vMsg('حالة التسجيل الجديدة مطلوبة', 'New registration status is required', loc);
     return { success: false, errors };
   }
 
   if (!VALID_REGISTRATION_STATUSES.includes(body.status as RegistrationStatusType)) {
-    errors.status = `حالة التسجيل غير صالحة. الحالات المقبولة: ${VALID_REGISTRATION_STATUSES.join(', ')}`;
+    errors.status = vMsg(`حالة التسجيل غير صالحة. الحالات المقبولة: ${VALID_REGISTRATION_STATUSES.join(', ')}`, `Invalid registration status. Accepted: ${VALID_REGISTRATION_STATUSES.join(', ')}`, loc);
     return { success: false, errors };
   }
 
   // Check transition validity
   const allowedNext = REGISTRATION_TRANSITIONS[currentStatus];
   if (!allowedNext || !allowedNext.includes(body.status)) {
-    errors.status = `لا يمكن الانتقال من حالة [${currentStatus}] إلى [${body.status}]. الانتقالات المسموحة: ${allowedNext ? allowedNext.join(', ') : 'لا توجد (حالة نهائية)'}`;
+    errors.status = vMsg(`لا يمكن الانتقال من حالة [${currentStatus}] إلى [${body.status}]. الانتقالات المسموحة: ${allowedNext ? allowedNext.join(', ') : 'لا توجد (حالة نهائية)'}`, `Cannot transition from status [${currentStatus}] to [${body.status}]. Allowed: ${allowedNext ? allowedNext.join(', ') : 'None (terminal)'}`, loc);
     return { success: false, errors };
   }
 
   if (body.adminNotes !== undefined && typeof body.adminNotes !== 'string') {
-    errors.adminNotes = 'ملاحظات الإدارة يجب أن تكون نصاً';
+    errors.adminNotes = vMsg('ملاحظات الإدارة يجب أن تكون نصاً', 'Admin notes must be a string', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -557,17 +574,18 @@ export interface CertificateInput {
   grade?: string | null;
 }
 
-export function validateCertificateInput(body: any): ValidationResult<CertificateInput> {
+export function validateCertificateInput(body: any, locale?: string): ValidationResult<CertificateInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || !body.registrationId || typeof body.registrationId !== 'string') {
-    errors.registrationId = 'معرّف تسجيل المتدرب مطلوب';
+    errors.registrationId = vMsg('معرّف تسجيل المتدرب مطلوب', 'Trainee registration ID is required', loc);
     return { success: false, errors };
   }
 
   if (body.grade !== undefined && body.grade !== null) {
     if (typeof body.grade !== 'string' || body.grade.trim().length < 1) {
-      errors.grade = 'التقدير يجب أن يكون نصاً غير فارغ';
+      errors.grade = vMsg('التقدير يجب أن يكون نصاً غير فارغ', 'Grade must be a non-empty string', loc);
     }
   }
 
@@ -605,27 +623,28 @@ export const VALID_FUNCTIONAL_AREAS = [
   'TRAINING_CAPACITY',    // التدريب وبناء القدرات
 ] as const;
 
-export function validateCreateUserInput(body: any): ValidationResult<CreateUserInput> {
+export function validateCreateUserInput(body: any, locale?: string): ValidationResult<CreateUserInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body || typeof body !== 'object') {
-    return { success: false, errors: { body: 'بيانات المستخدم مطلوبة' } };
+    return { success: false, errors: { body: vMsg('بيانات المستخدم مطلوبة', 'User data is required', loc) } };
   }
 
   // Full Name
   if (!body.fullName || typeof body.fullName !== 'string' || body.fullName.trim().length < 3) {
-    errors.fullName = 'الاسم الكامل مطلوب ويجب ألا يقل عن 3 أحرف';
+    errors.fullName = vMsg('الاسم الكامل مطلوب ويجب ألا يقل عن 3 أحرف', 'Full name is required (min 3 characters)', loc);
   }
 
   // Email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!body.email || typeof body.email !== 'string' || !emailRegex.test(body.email.trim())) {
-    errors.email = 'البريد الإلكتروني غير صالح أو غير مدخل بالشكل الصحيح';
+    errors.email = vMsg('البريد الإلكتروني غير صالح أو غير مدخل بالشكل الصحيح', 'Valid email address is required', loc);
   }
 
   // Password
   if (!body.password || typeof body.password !== 'string' || body.password.length < 8) {
-    errors.password = 'كلمة المرور مطلوبة وتتطلب 8 خانات على الأقل';
+    errors.password = vMsg('كلمة المرور مطلوبة وتتطلب 8 خانات على الأقل', 'Password is required (min 8 characters)', loc);
   }
 
   // Role
@@ -643,23 +662,23 @@ export function validateCreateUserInput(body: any): ValidationResult<CreateUserI
   ];
 
   if (!body.role || !validRoles.includes(body.role)) {
-    errors.role = `الرتبة المحددة غير صالحة. الرتب المسموح إنشاؤها: ${validRoles.join(', ')}`;
+    errors.role = vMsg(`الرتبة المحددة غير صالحة. الرتب المسموح إنشاؤها: ${validRoles.join(', ')}`, `Invalid role. Allowed roles: ${validRoles.join(', ')}`, loc);
   }
 
   // Functional Area (optional)
   if (body.functionalArea && !VALID_FUNCTIONAL_AREAS.includes(body.functionalArea)) {
-    errors.functionalArea = `مجال العمل غير صالح. المجالات المعتمدة: ${VALID_FUNCTIONAL_AREAS.join(', ')}`;
+    errors.functionalArea = vMsg(`مجال العمل غير صالح. المجالات المعتمدة: ${VALID_FUNCTIONAL_AREAS.join(', ')}`, `Invalid functional area. Allowed: ${VALID_FUNCTIONAL_AREAS.join(', ')}`, loc);
   }
 
   // Capabilities
   let validatedCaps: Capability[] = [];
   if (body.capabilities) {
     if (!Array.isArray(body.capabilities)) {
-      errors.capabilities = 'قائمة الصلاحيات يجب أن تكون مصفوفة';
+      errors.capabilities = vMsg('قائمة الصلاحيات يجب أن تكون مصفوفة', 'Capabilities must be an array', loc);
     } else {
       const invalidCaps = body.capabilities.filter((c: any) => !ALL_CAPABILITIES.includes(c));
       if (invalidCaps.length > 0) {
-        errors.capabilities = `صلاحيات غير معروفة: ${invalidCaps.join(', ')}`;
+        errors.capabilities = vMsg(`صلاحيات غير معروفة: ${invalidCaps.join(', ')}`, `Unknown capabilities: ${invalidCaps.join(', ')}`, loc);
       } else {
         validatedCaps = body.capabilities as Capability[];
       }
@@ -670,7 +689,7 @@ export function validateCreateUserInput(body: any): ValidationResult<CreateUserI
   if (body.role === 'FIELD_FOCAL_POINT') {
     const forbiddenCaps = validatedCaps.filter((c) => c !== CAPABILITIES.SUBMIT_INCIDENT);
     if (forbiddenCaps.length > 0) {
-      errors.capabilities = `نقاط الاتصال الميدانية لا يمكن منحها صلاحيات إدارية [${forbiddenCaps.join(', ')}]. الصلاحية المسموحة حصراً هي submit_incident.`;
+      errors.capabilities = vMsg(`نقاط الاتصال الميدانية لا يمكن منحها صلاحيات إدارية [${forbiddenCaps.join(', ')}]. الصلاحية المسموحة حصراً هي submit_incident.`, `Field focal points cannot be granted admin capabilities [${forbiddenCaps.join(', ')}]. Allowed only: submit_incident.`, loc);
     }
   }
 
@@ -743,49 +762,50 @@ export interface RiskInputData {
   targetResolutionDate?: Date | null;
 }
 
-export function validateRiskInput(body: any): ValidationResult<RiskInputData> {
+export function validateRiskInput(body: any, locale?: string): ValidationResult<RiskInputData> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الإدخال مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات الإدخال مفقودة', 'Input data is missing', loc) } };
   }
 
   // Title
   if (!body.title || typeof body.title !== 'string' || body.title.trim().length < 5) {
-    errors.title = 'عنوان الخطر التشغيلي مطلوب ويجب أن يحتوي على 5 أحرف على الأقل';
+    errors.title = vMsg('عنوان الخطر التشغيلي مطلوب ويجب أن يحتوي على 5 أحرف على الأقل', 'Operational risk title is required (min 5 characters)', loc);
   }
 
   // Description
   if (!body.description || typeof body.description !== 'string' || body.description.trim().length < 10) {
-    errors.description = 'الوصف التشغيلي المنقح مطلوب ويجب أن يحتوي على 10 أحرف على الأقل';
+    errors.description = vMsg('الوصف التشغيلي المنقح مطلوب ويجب أن يحتوي على 10 أحرف على الأقل', 'Operational risk description is required (min 10 characters)', loc);
   }
 
   // Category
   if (!body.category || !VALID_RISK_CATEGORIES.includes(body.category)) {
-    errors.category = `تصنيف الخطر غير صالح. التصنيفات المعتمدة: ${VALID_RISK_CATEGORIES.join(', ')}`;
+    errors.category = vMsg(`تصنيف الخطر غير صالح. التصنيفات المعتمدة: ${VALID_RISK_CATEGORIES.join(', ')}`, `Invalid risk category. Allowed: ${VALID_RISK_CATEGORIES.join(', ')}`, loc);
   }
 
   // Governorate
   if (!body.governorate || typeof body.governorate !== 'string' || body.governorate.trim().length < 2) {
-    errors.governorate = 'المحافظة مطلوبة (مثال: عدن، لحج، أبين)';
+    errors.governorate = vMsg('المحافظة مطلوبة (مثال: عدن، لحج، أبين)', 'Governorate is required (e.g. Aden, Lahj, Abyan)', loc);
   }
 
   // Likelihood & Impact (1-5)
   const likelihood = Number(body.likelihood);
   if (isNaN(likelihood) || !Number.isInteger(likelihood) || likelihood < 1 || likelihood > 5) {
-    errors.likelihood = 'احتمالية الحدوث يجب أن تكون رقماً صحيحاً بين 1 (نادر) و 5 (شبه مؤكد)';
+    errors.likelihood = vMsg('احتمالية الحدوث يجب أن تكون رقماً صحيحاً بين 1 (نادر) و 5 (شبه مؤكد)', 'Likelihood must be an integer between 1 (Rare) and 5 (Almost Certain)', loc);
   }
 
   const impact = Number(body.impact);
   if (isNaN(impact) || !Number.isInteger(impact) || impact < 1 || impact > 5) {
-    errors.impact = 'شدة الأثر يجب أن تكون رقماً صحيحاً بين 1 (طفيف) و 5 (كارثي)';
+    errors.impact = vMsg('شدة الأثر يجب أن تكون رقماً صحيحاً بين 1 (طفيف) و 5 (كارثي)', 'Impact severity must be an integer between 1 (Minor) and 5 (Catastrophic)', loc);
   }
 
   let targetResolutionDate: Date | null = null;
   if (body.targetResolutionDate) {
     const d = new Date(body.targetResolutionDate);
     if (isNaN(d.getTime())) {
-      errors.targetResolutionDate = 'تاريخ الاستهداف غير صالح';
+      errors.targetResolutionDate = vMsg('تاريخ الاستهداف غير صالح', 'Invalid target resolution date', loc);
     } else {
       targetResolutionDate = d;
     }
@@ -818,25 +838,26 @@ export interface ReassessmentInputData {
   rationale: string;
 }
 
-export function validateReassessmentInput(body: any): ValidationResult<ReassessmentInputData> {
+export function validateReassessmentInput(body: any, locale?: string): ValidationResult<ReassessmentInputData> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات إعادة التقييم مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات إعادة التقييم مفقودة', 'Reassessment data is missing', loc) } };
   }
 
   const likelihood = Number(body.likelihood);
   if (isNaN(likelihood) || !Number.isInteger(likelihood) || likelihood < 1 || likelihood > 5) {
-    errors.likelihood = 'احتمالية الحدوث يجب أن تكون رقماً صحيحاً بين 1 و 5';
+    errors.likelihood = vMsg('احتمالية الحدوث يجب أن تكون رقماً صحيحاً بين 1 و 5', 'Likelihood must be an integer between 1 and 5', loc);
   }
 
   const impact = Number(body.impact);
   if (isNaN(impact) || !Number.isInteger(impact) || impact < 1 || impact > 5) {
-    errors.impact = 'شدة الأثر يجب أن تكون رقماً صحيحاً بين 1 و 5';
+    errors.impact = vMsg('شدة الأثر يجب أن تكون رقماً صحيحاً بين 1 و 5', 'Impact severity must be an integer between 1 and 5', loc);
   }
 
   if (!body.rationale || typeof body.rationale !== 'string' || body.rationale.trim().length < 5) {
-    errors.rationale = 'مبررات إعادة التقييم مطلوبة (5 أحرف على الأقل) لتوثيق السجل التدقيقي';
+    errors.rationale = vMsg('مبررات إعادة التقييم مطلوبة (5 أحرف على الأقل) لتوثيق السجل التدقيقي', 'Reassessment rationale is required (min 5 characters) for audit trail', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -863,27 +884,28 @@ export interface MitigationInputData {
   progressNotes?: string | null;
 }
 
-export function validateMitigationInput(body: any): ValidationResult<MitigationInputData> {
+export function validateMitigationInput(body: any, locale?: string): ValidationResult<MitigationInputData> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات إجراء التخفيف مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات إجراء التخفيف مفقودة', 'Mitigation action data is missing', loc) } };
   }
 
   if (!body.actionTitle || typeof body.actionTitle !== 'string' || body.actionTitle.trim().length < 3) {
-    errors.actionTitle = 'عنوان إجراء التخفيف مطلوب (3 أحرف على الأقل)';
+    errors.actionTitle = vMsg('عنوان إجراء التخفيف مطلوب (3 أحرف على الأقل)', 'Mitigation action title is required (min 3 characters)', loc);
   }
 
   const actionType = body.actionType || 'PREVENTIVE';
   if (!VALID_MITIGATION_TYPES.includes(actionType)) {
-    errors.actionType = `نوع الإجراء غير صالح. الأنواع المعتمدة: ${VALID_MITIGATION_TYPES.join(', ')}`;
+    errors.actionType = vMsg(`نوع الإجراء غير صالح. الأنواع المعتمدة: ${VALID_MITIGATION_TYPES.join(', ')}`, `Invalid mitigation action type. Allowed: ${VALID_MITIGATION_TYPES.join(', ')}`, loc);
   }
 
   let dueDate: Date | null = null;
   if (body.dueDate) {
     const d = new Date(body.dueDate);
     if (isNaN(d.getTime())) {
-      errors.dueDate = 'تاريخ الاستحقاق غير صالح';
+      errors.dueDate = vMsg('تاريخ الاستحقاق غير صالح', 'Invalid due date', loc);
     } else {
       dueDate = d;
     }
@@ -891,7 +913,7 @@ export function validateMitigationInput(body: any): ValidationResult<MitigationI
 
   const status = body.status || 'PLANNED';
   if (!VALID_MITIGATION_STATUSES.includes(status)) {
-    errors.status = `حالة الإجراء غير صالحة. الحالات: ${VALID_MITIGATION_STATUSES.join(', ')}`;
+    errors.status = vMsg(`حالة الإجراء غير صالحة. الحالات: ${VALID_MITIGATION_STATUSES.join(', ')}`, `Invalid action status. Allowed: ${VALID_MITIGATION_STATUSES.join(', ')}`, loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -917,19 +939,20 @@ export interface RiskStatusChangeData {
   reason: string;
 }
 
-export function validateRiskStatusChange(body: any): ValidationResult<RiskStatusChangeData> {
+export function validateRiskStatusChange(body: any, locale?: string): ValidationResult<RiskStatusChangeData> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات تغيير الحالة مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات تغيير الحالة مفقودة', 'Status change data is missing', loc) } };
   }
 
   if (!body.status || !VALID_RISK_STATUSES.includes(body.status)) {
-    errors.status = `الحالة التشغيلية غير صالحة. الحالات: ${VALID_RISK_STATUSES.join(', ')}`;
+    errors.status = vMsg(`الحالة التشغيلية غير صالحة. الحالات: ${VALID_RISK_STATUSES.join(', ')}`, `Invalid risk status. Allowed: ${VALID_RISK_STATUSES.join(', ')}`, loc);
   }
 
   if (!body.reason || typeof body.reason !== 'string' || body.reason.trim().length < 5) {
-    errors.reason = 'سبب ومبرر تغيير الحالة التشغيلية مطلوب لتوثيق القرار (5 أحرف على الأقل)';
+    errors.reason = vMsg('سبب ومبرر تغيير الحالة التشغيلية مطلوب لتوثيق القرار (5 أحرف على الأقل)', 'Operational rationale for status change is required (min 5 characters)', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -957,38 +980,39 @@ export interface SessionInput {
   notes?: string | null;
 }
 
-export function validateSessionInput(body: any, isPartial = false): ValidationResult<SessionInput> {
+export function validateSessionInput(body: any, isPartial = false, locale?: string): ValidationResult<SessionInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الجلسة مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات الجلسة مفقودة', 'Session data is missing', loc) } };
   }
 
   if (!isPartial || body.sessionNumber !== undefined) {
     const num = Number(body.sessionNumber);
     if (isNaN(num) || num < 1 || !Number.isInteger(num)) {
-      errors.sessionNumber = 'رقم الجلسة يجب أن يكون رقماً صحيحاً موجباً (1 أو أكثر)';
+      errors.sessionNumber = vMsg('رقم الجلسة يجب أن يكون رقماً صحيحاً موجباً (1 أو أكثر)', 'Session number must be a positive integer (1 or more)', loc);
     }
   }
 
   if (!isPartial || body.title !== undefined) {
     if (!body.title || typeof body.title !== 'string' || body.title.trim().length < 2) {
-      errors.title = 'عنوان الجلسة مطلوب ويجب ألا يقل عن حرفين';
+      errors.title = vMsg('عنوان الجلسة مطلوب ويجب ألا يقل عن حرفين', 'Session title is required (min 2 characters)', loc);
     }
   }
 
   if (!isPartial || body.sessionDate !== undefined) {
     if (!body.sessionDate || isNaN(Date.parse(body.sessionDate))) {
-      errors.sessionDate = 'تاريخ الجلسة مطلوب ويجب أن يكون تاريخاً صحيحاً';
+      errors.sessionDate = vMsg('تاريخ الجلسة مطلوب ويجب أن يكون تاريخاً صحيحاً', 'Session date is required and must be valid', loc);
     }
   }
 
   if (body.startTime && typeof body.startTime === 'string' && body.startTime.length > 20) {
-    errors.startTime = 'وقت البدء غير صالح';
+    errors.startTime = vMsg('وقت البدء غير صالح', 'Invalid start time', loc);
   }
 
   if (body.endTime && typeof body.endTime === 'string' && body.endTime.length > 20) {
-    errors.endTime = 'وقت الانتهاء غير صالح';
+    errors.endTime = vMsg('وقت الانتهاء غير صالح', 'Invalid end time', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -1023,23 +1047,24 @@ export interface AttendanceInput {
   modifiedReason?: string | null;
 }
 
-export function validateAttendanceInput(body: any): ValidationResult<AttendanceInput> {
+export function validateAttendanceInput(body: any, locale?: string): ValidationResult<AttendanceInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الحضور مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات الحضور مفقودة', 'Attendance data is missing', loc) } };
   }
 
   if (!body.registrationId || typeof body.registrationId !== 'string') {
-    errors.registrationId = 'معرف التسجيل مطلوب';
+    errors.registrationId = vMsg('معرف التسجيل مطلوب', 'Registration ID is required', loc);
   }
 
   if (!body.status || !VALID_ATTENDANCE_STATUSES.includes(body.status)) {
-    errors.status = `حالة الحضور غير صالحة. الحالات: ${VALID_ATTENDANCE_STATUSES.join(', ')}`;
+    errors.status = vMsg(`حالة الحضور غير صالحة. الحالات: ${VALID_ATTENDANCE_STATUSES.join(', ')}`, `Invalid attendance status. Allowed: ${VALID_ATTENDANCE_STATUSES.join(', ')}`, loc);
   }
 
   if (body.sessionDate && isNaN(Date.parse(body.sessionDate))) {
-    errors.sessionDate = 'تاريخ الحضور غير صالح';
+    errors.sessionDate = vMsg('تاريخ الحضور غير صالح', 'Invalid attendance date', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -1071,27 +1096,28 @@ export interface BatchAttendanceInput {
   records: BatchAttendanceRecordInput[];
 }
 
-export function validateBatchAttendanceInput(body: any): ValidationResult<BatchAttendanceInput> {
+export function validateBatchAttendanceInput(body: any, locale?: string): ValidationResult<BatchAttendanceInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الحضور الجماعي مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات الحضور الجماعي مفقودة', 'Batch attendance data is missing', loc) } };
   }
 
   if (!body.sessionId || typeof body.sessionId !== 'string') {
-    errors.sessionId = 'معرف الجلسة مطلوب لتسجيل الحضور الجماعي';
+    errors.sessionId = vMsg('معرف الجلسة مطلوب لتسجيل الحضور الجماعي', 'Session ID is required for batch attendance', loc);
   }
 
   if (!Array.isArray(body.records) || body.records.length === 0) {
-    errors.records = 'قائمة سجلات الحضور يجب أن تحتوي على سجل واحد على الأقل';
+    errors.records = vMsg('قائمة سجلات الحضور يجب أن تحتوي على سجل واحد على الأقل', 'Attendance records list must contain at least one entry', loc);
   } else {
     for (let i = 0; i < body.records.length; i++) {
       const rec = body.records[i];
       if (!rec.registrationId) {
-        errors[`records[${i}].registrationId`] = 'معرف التسجيل مطلوب لكل متدرب';
+        errors[`records[${i}].registrationId`] = vMsg('معرف التسجيل مطلوب لكل متدرب', 'Registration ID is required for each trainee', loc);
       }
       if (!rec.status || !VALID_ATTENDANCE_STATUSES.includes(rec.status)) {
-        errors[`records[${i}].status`] = 'حالة الحضور غير صالحة';
+        errors[`records[${i}].status`] = vMsg('حالة الحضور غير صالحة', 'Invalid attendance status', loc);
       }
     }
   }
@@ -1132,40 +1158,41 @@ export interface EvaluationInput {
   notes?: string | null;
 }
 
-export function validateEvaluationInput(body: any, isPartial = false): ValidationResult<EvaluationInput> {
+export function validateEvaluationInput(body: any, isPartial = false, locale?: string): ValidationResult<EvaluationInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات التقييم مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات التقييم مفقودة', 'Evaluation data is missing', loc) } };
   }
 
   if (!isPartial || body.registrationId !== undefined) {
     if (!body.registrationId || typeof body.registrationId !== 'string') {
-      errors.registrationId = 'معرف التسجيل مطلوب';
+      errors.registrationId = vMsg('معرف التسجيل مطلوب', 'Registration ID is required', loc);
     }
   }
 
   if (!isPartial || body.type !== undefined) {
     if (!body.type || !VALID_EVALUATION_TYPES.includes(body.type)) {
-      errors.type = `نوع التقييم غير صالح. الأنواع: ${VALID_EVALUATION_TYPES.join(', ')}`;
+      errors.type = vMsg(`نوع التقييم غير صالح. الأنواع: ${VALID_EVALUATION_TYPES.join(', ')}`, `Invalid evaluation type. Allowed: ${VALID_EVALUATION_TYPES.join(', ')}`, loc);
     }
   }
 
   const max = body.maxScore !== undefined ? Number(body.maxScore) : 100;
   if (isNaN(max) || max <= 0) {
-    errors.maxScore = 'الدرجة القصوى يجب أن تكون رقماً أكبر من صفر';
+    errors.maxScore = vMsg('الدرجة القصوى يجب أن تكون رقماً أكبر من صفر', 'Max score must be greater than zero', loc);
   }
 
   if (body.score !== undefined && body.score !== null && body.score !== '') {
     const s = Number(body.score);
     if (isNaN(s) || s < 0 || s > max) {
-      errors.score = `درجة التقييم يجب أن تكون بين 0 و ${max}`;
+      errors.score = vMsg(`درجة التقييم يجب أن تكون بين 0 و ${max}`, `Evaluation score must be between 0 and ${max}`, loc);
     }
   }
 
   if (!isPartial || body.status !== undefined) {
     if (body.status && !VALID_EVALUATION_STATUSES.includes(body.status)) {
-      errors.status = `حالة التقييم غير صالحة. الحالات: ${VALID_EVALUATION_STATUSES.join(', ')}`;
+      errors.status = vMsg(`حالة التقييم غير صالحة. الحالات: ${VALID_EVALUATION_STATUSES.join(', ')}`, `Invalid evaluation status. Allowed: ${VALID_EVALUATION_STATUSES.join(', ')}`, loc);
     }
   }
 
@@ -1211,19 +1238,20 @@ export interface ResearchReviewActionInput {
   comments?: string | null;
 }
 
-export function validateResearchReviewAction(body: any): ValidationResult<ResearchReviewActionInput> {
+export function validateResearchReviewAction(body: any, locale?: string): ValidationResult<ResearchReviewActionInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات إجراء المراجعة مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات إجراء المراجعة مفقودة', 'Review action data is missing', loc) } };
   }
 
   if (!body.action || !VALID_RESEARCH_ACTIONS.includes(body.action)) {
-    errors.action = `إجراء المراجعة غير صالح. الإجراءات المتاحة: ${VALID_RESEARCH_ACTIONS.join(', ')}`;
+    errors.action = vMsg(`إجراء المراجعة غير صالح. الإجراءات المتاحة: ${VALID_RESEARCH_ACTIONS.join(', ')}`, `Invalid review action. Available: ${VALID_RESEARCH_ACTIONS.join(', ')}`, loc);
   }
 
   if ((body.action === 'REJECT' || body.action === 'RETURN_FOR_REVISION') && (!body.comments || typeof body.comments !== 'string' || body.comments.trim().length < 5)) {
-    errors.comments = 'ملاحظات وأسباب الرفض أو الإعادة للتعديل مطلوبة (5 أحرف على الأقل)';
+    errors.comments = vMsg('ملاحظات وأسباب الرفض أو الإعادة للتعديل مطلوبة (5 أحرف على الأقل)', 'Review notes / rejection rationale is required (min 5 characters)', loc);
   }
 
   if (Object.keys(errors).length > 0) {
@@ -1247,15 +1275,16 @@ export interface AccessGrantInput {
   notes?: string | null;
 }
 
-export function validateAccessGrantInput(body: any): ValidationResult<AccessGrantInput> {
+export function validateAccessGrantInput(body: any, locale?: string): ValidationResult<AccessGrantInput> {
+  const loc: ValidationLocale = resolveLocale(locale, body);
   const errors: Record<string, string> = {};
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات منح التصريح مفقودة' } };
+    return { success: false, errors: { form: vMsg('بيانات منح التصريح مفقودة', 'Access grant data is missing', loc) } };
   }
 
   if (!body.grantedToUserId || typeof body.grantedToUserId !== 'string' || body.grantedToUserId.trim().length === 0) {
-    errors.grantedToUserId = 'معرف المستخدم/العميل المصرح له مطلوب';
+    errors.grantedToUserId = vMsg('معرف المستخدم/العميل المصرح له مطلوب', 'Authorized user / client ID is required', loc);
   }
 
   if (Object.keys(errors).length > 0) {

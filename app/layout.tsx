@@ -31,24 +31,30 @@ const outfit = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || 'http://localhost:3000'),
-  title: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية | Integrated Center for Security, Safety & Field Studies',
-  description: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية — صرح مهني واستشاري وتنفيذي يقدم خدمات الحراسات الأمنية، الرصد الميداني والتنبيه المبكر، الدراسات والتحليلات، التدريب والتأهيل، وأنظمة السلامة. السلامة أولاً.',
-  keywords: 'المركز المتكامل لخدمات الأمن والسلامة, حراسات أمنية عدن, دراسات ميدانية, رصد وتنبيه مبكر, أنظمة سلامة, تدريب أمني, Integrated Center Security Safety Field Studies Yemen',
+  title: 'مركز الحلول المتكاملة للأمن والسلامة | Integrated Solutions Center for Safety and Security',
+  description: 'مركز الحلول المتكاملة للأمن والسلامة — صرح مهني واستشاري وتنفيذي يقدم حلول الأمن والسلامة، الرصد الميداني والتنبيه المبكر، الدراسات والتحليلات، التدريب والتأهيل. السلامة أولاً.',
+  keywords: 'مركز الحلول المتكاملة للأمن والسلامة, أمن وسلامة, حراسات أمنية عدن, دراسات ميدانية, رصد وتنبيه مبكر, أنظمة سلامة, تدريب أمني, Integrated Solutions Center for Safety and Security',
   icons: {
-    icon: '/favicon.ico',
-    apple: '/images/logo-128.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   openGraph: {
-    title: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية | Integrated Center for Security, Safety & Field Studies',
-    description: '«السلامة أولاً» — منظومة متكاملة لخدمات الحراسات الأمنية والرصد والدراسات الميدانية وأنظمة السلامة والتدريب',
+    title: 'مركز الحلول المتكاملة للأمن والسلامة | Integrated Solutions Center for Safety and Security',
+    description: '«السلامة أولاً» — منظومة متكاملة لحلول وخدمات الأمن والسلامة والرصد والدراسات الميدانية وأنظمة التدريب',
     url: process.env.APP_URL || 'http://localhost:3000',
-    siteName: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    siteName: 'مركز الحلول المتكاملة للأمن والسلامة',
     images: [
       {
-        url: '/images/logo.png',
-        width: 800,
-        height: 800,
-        alt: 'شعار المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+        url: '/images/brand/logo-horizontal-light.png',
+        width: 951,
+        height: 210,
+        alt: 'شعار مركز الحلول المتكاملة للأمن والسلامة',
       },
     ],
     locale: 'ar_YE',
@@ -104,13 +110,13 @@ export default async function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
-        <AuthProvider>
-          <LanguageProvider initialLocale={initialLocale}>
+        <LanguageProvider initialLocale={initialLocale}>
+          <AuthProvider>
             <PublicSiteLayout contactSettings={contactSettings}>
               {children}
             </PublicSiteLayout>
-          </LanguageProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

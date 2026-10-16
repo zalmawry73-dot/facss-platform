@@ -34,12 +34,13 @@ export default function AdminStatCard({
   const displayLabel = title || label || '';
   const footerText = description || helperText || helper;
 
-  let accentColor = color || 'var(--admin-primary)';
+  let accentColor = color || 'var(--color-primary-900)';
   if (!color && variant) {
-    if (variant === 'danger') accentColor = 'var(--admin-danger)';
-    else if (variant === 'warning') accentColor = 'var(--admin-warning)';
-    else if (variant === 'success') accentColor = 'var(--admin-success)';
-    else if (variant === 'info') accentColor = 'var(--admin-info)';
+    if (variant === 'danger') accentColor = 'var(--status-danger-text)';
+    else if (variant === 'warning') accentColor = 'var(--status-warning-text)';
+    else if (variant === 'success') accentColor = 'var(--status-success-text)';
+    else if (variant === 'info') accentColor = 'var(--status-info-text)';
+    else if (variant === 'gold') accentColor = 'var(--color-gold-500)';
   }
   const iconElement = React.isValidElement(Icon)
     ? Icon

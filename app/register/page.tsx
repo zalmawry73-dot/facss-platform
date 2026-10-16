@@ -59,32 +59,32 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ paddingBlock: '4rem' }}>
+    <div style={{ paddingBlock: '4rem', background: 'var(--surface-bg)', minHeight: 'calc(100vh - 120px)', display: 'flex', alignItems: 'center' }}>
       <div className="container" style={{ maxWidth: '580px' }}>
-        <div className="card" style={{ padding: '2.5rem', borderTop: '4px solid var(--facss-gold-500)' }}>
+        <div className="card-institutional" style={{ padding: 'clamp(2rem, 4vw, 2.75rem)', borderTop: '4px solid var(--color-gold-500)', boxShadow: '0 20px 40px -15px rgba(11, 61, 46, 0.08)' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <img
-              src="/images/logo.png"
+              src="/images/brand/logo-symbol.png"
               alt={t.siteTitle}
-              style={{ width: '64px', height: '64px', marginInline: 'auto', marginBottom: '0.75rem', objectFit: 'contain' }}
+              style={{ width: '64px', height: 'auto', marginInline: 'auto', marginBottom: '1.25rem', objectFit: 'contain' }}
             />
-            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+            <h1 style={{ fontSize: '1.65rem', fontWeight: 900, color: 'var(--color-primary-950)', marginBottom: '0.4rem', letterSpacing: '-0.01em' }}>
               {t.registerTitle}
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
               {t.registerSubtitle}
             </p>
           </div>
 
           {/* Role Toggle Tab */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.75rem', background: 'var(--surface-sunken)', padding: '0.35rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.75rem', background: '#F4F1EA', padding: '0.4rem', borderRadius: '10px', border: '1px solid rgba(181, 146, 84, 0.25)' }}>
             <button
               type="button"
               onClick={() => setRole('CLIENT')}
               className={`btn btn-sm ${role === 'CLIENT' ? 'btn-gold' : 'btn-ghost'}`}
-              style={{ border: 'none', justifyContent: 'center' }}
+              style={{ border: 'none', justifyContent: 'center', fontWeight: role === 'CLIENT' ? 800 : 600, whiteSpace: 'normal', textAlign: 'center', height: 'auto', minHeight: '38px', padding: '0.4rem 0.5rem', lineHeight: 1.25 }}
             >
-              <Building2 size={16} />
+              <Building2 size={16} style={{ flexShrink: 0 }} />
               <span>{t.clientAccountType}</span>
             </button>
 
@@ -92,15 +92,15 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setRole('TRAINEE')}
               className={`btn btn-sm ${role === 'TRAINEE' ? 'btn-gold' : 'btn-ghost'}`}
-              style={{ border: 'none', justifyContent: 'center' }}
+              style={{ border: 'none', justifyContent: 'center', fontWeight: role === 'TRAINEE' ? 800 : 600, whiteSpace: 'normal', textAlign: 'center', height: 'auto', minHeight: '38px', padding: '0.4rem 0.5rem', lineHeight: 1.25 }}
             >
-              <GraduationCap size={16} />
+              <GraduationCap size={16} style={{ flexShrink: 0 }} />
               <span>{t.traineeAccountType}</span>
             </button>
           </div>
 
           {error && (
-            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 600 }}>
+            <div style={{ padding: '0.85rem 1rem', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 600 }}>
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
@@ -119,7 +119,7 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1rem' }}>
               <div className="form-group">
                 <label className="form-label">{t.emailAddress} <span className="required">*</span></label>
                 <input
@@ -145,7 +145,7 @@ export default function RegisterPage() {
             </div>
 
             {role === 'CLIENT' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1rem' }}>
                 <div className="form-group">
                   <label className="form-label">{locale === 'ar' ? 'اسم المنشأة / الشركة' : 'Company / Organization Name'} <span className="required">*</span></label>
                   <input
@@ -201,14 +201,19 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+          <div style={{ textAlign: 'center', paddingTop: '1.5rem', borderTop: '1px solid rgba(181, 146, 84, 0.2)' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>
               {t.alreadyHaveAccount}{' '}
-              <Link href="/login" style={{ color: 'var(--facss-green-900)', fontWeight: 700 }}>
+              <Link href="/login" style={{ color: 'var(--color-primary-900)', fontWeight: 800 }}>
                 {t.loginHere}
               </Link>
             </p>
           </div>
+        </div>
+
+        {/* Security Reassurance */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '1.5rem', color: 'var(--color-gold-700)', fontSize: '0.8rem', fontWeight: 600 }}>
+          <span>{locale === 'ar' ? 'التسجيل مخصص للشركاء والجهات المعتمدة والمتدربين الرسميين' : 'Registration reserved for verified partners, agencies, and official trainees'}</span>
         </div>
       </div>
     </div>

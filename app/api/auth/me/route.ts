@@ -5,8 +5,8 @@ import prisma from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  // Verify cryptographic JWT token first (without redundant DB round trip)
-  const session = await getCurrentUser(false);
+  // Requirement 2: Centralized validation via getCurrentUser(true) enforcing tokenVersion & isActive
+  const session = await getCurrentUser(true);
   if (!session) {
     return NextResponse.json({ user: null });
   }
@@ -23,6 +23,7 @@ export async function GET() {
       avatar: true,
       isActive: true,
       clientProfile: true,
+      tokenVersion: true,
     }
   });
 

@@ -58,12 +58,14 @@ export default async function ClientRestrictedStudyDetailPage({ params }: PagePr
 
   if (!activeGrant && publication.visibility === 'CLIENT_ONLY') {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: '4rem 1.5rem', border: '1px solid #ef4444' }}>
-        <ShieldAlert size={48} color="#ef4444" style={{ margin: '0 auto 1rem' }} />
-        <h2 style={{ color: '#FFF', fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.75rem' }}>
+      <div className="portal-card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem', maxWidth: '520px', marginInline: 'auto', border: '1.5px solid #DC2626' }}>
+        <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(220, 38, 38, 0.1)', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', marginInline: 'auto', marginBottom: '1rem' }}>
+          <ShieldAlert size={26} />
+        </div>
+        <h2 style={{ color: 'var(--text-primary)', fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
           {isAr ? 'عذراً، تصريح الوصول غير مفعل' : 'Access Authorization Required'}
         </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
           {isAr
             ? 'هذه الدراسة الأمنية مصنفة كـ [خاص بالعملاء المصرح لهم]، ولا يتوفر لحسابكم حالياً تصريح وصول سارٍ للاطلاع عليها.'
             : 'This study is classified as restricted client-only content and your account does not hold an active authorization grant.'}
@@ -89,7 +91,7 @@ export default async function ClientRestrictedStudyDetailPage({ params }: PagePr
   return (
     <div>
       {/* Header & Back Link */}
-      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+      <div style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <Link href="/portal/client/research" className="btn btn-outline btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
           <ChevronIcon size={15} />
           <span>{isAr ? 'العودة لقائمة الدراسات' : 'Back to Studies'}</span>
@@ -97,12 +99,14 @@ export default async function ClientRestrictedStudyDetailPage({ params }: PagePr
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span
-            className="badge"
             style={{
-              background: 'rgba(197, 155, 39, 0.15)',
-              color: 'var(--color-gold-light)',
-              border: '1px solid rgba(197, 155, 39, 0.3)',
-              fontSize: '0.8rem',
+              background: 'rgba(181, 146, 84, 0.12)',
+              color: 'var(--color-gold-700)',
+              border: '1px solid rgba(181, 146, 84, 0.35)',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              padding: '0.2rem 0.65rem',
+              borderRadius: '6px',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.4rem',
@@ -115,27 +119,37 @@ export default async function ClientRestrictedStudyDetailPage({ params }: PagePr
       </div>
 
       {/* Main Article Container */}
-      <article className="card" style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)', marginBottom: '2rem', border: '1px solid rgba(197, 155, 39, 0.25)' }}>
-        <header style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1.75rem', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-            <span className="badge" style={{ background: 'rgba(255,255,255,0.08)', color: 'var(--color-gold)' }}>
+      <article className="portal-card" style={{ padding: 'clamp(1.25rem, 3vw, 2.25rem)', marginBottom: '2rem' }}>
+        <header style={{ borderBottom: '1px solid var(--admin-card-border)', paddingBottom: '1.5rem', marginBottom: '1.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+            <span 
+              style={{ 
+                background: 'rgba(11, 61, 46, 0.08)', 
+                color: 'var(--color-primary-900)',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                padding: '0.15rem 0.55rem',
+                borderRadius: '4px',
+                border: '1px solid var(--admin-card-border)'
+              }}
+            >
               {categoryTitle}
             </span>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
               {isAr ? `تاريخ الإصدار: ${formatDate(publication.publicationDate, locale)}` : `Published: ${formatDate(publication.publicationDate, locale)}`}
             </span>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               • {publication.viewsCount + 1} {isAr ? 'قراءة' : 'views'}
             </span>
           </div>
 
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFF', margin: '0 0 1rem 0', lineHeight: 1.3 }}>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', margin: '0 0 1rem 0', lineHeight: 1.35 }}>
             {title}
           </h1>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              <User size={16} color="var(--color-gold)" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+              <User size={16} style={{ color: 'var(--color-gold-600)' }} />
               <span>{isAr ? `إعداد الباحث: ${publication.author}` : `Author: ${publication.author}`}</span>
             </div>
 
@@ -145,54 +159,47 @@ export default async function ClientRestrictedStudyDetailPage({ params }: PagePr
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-gold btn-sm"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
               >
                 <Download size={15} />
-                <span>{isAr ? 'تحميل نسخة PDF الرسمية' : 'Download Official PDF'}</span>
+                <span>{isAr ? 'تحميل وثيقة الدراسة (PDF)' : 'Download PDF Study'}</span>
               </a>
             )}
           </div>
         </header>
 
-        {/* Confidentiality Watermark Alert */}
-        <div
-          style={{
-            padding: '1rem 1.25rem',
-            background: 'rgba(197, 155, 39, 0.08)',
-            border: '1px solid rgba(197, 155, 39, 0.25)',
-            borderRadius: '8px',
-            marginBottom: '2rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            fontSize: '0.85rem',
-            color: 'var(--color-gold-light)',
-          }}
-        >
-          <ShieldCheck size={20} style={{ flexShrink: 0 }} />
-          <span>
-            {isAr
-              ? 'تنبيه سرية وأمان: هذه الدراسة والمعلومات الواردة فيها مخصصة حصرياً للمؤسسة المصرح لها بموجب الترخيص الرقمي للمنصة. يُحظر إعادة التوزيع دون إذن خطي مسبق.'
-              : 'Confidentiality Notice: This report is exclusively authorized for your organization. Unauthorized redistribution is strictly prohibited.'}
-          </span>
-        </div>
-
-        {/* Executive Summary Section */}
+        {/* Executive Summary */}
         {summary && (
-          <section style={{ marginBottom: '2.5rem', padding: '1.5rem', background: 'var(--surface-sunken)', borderRadius: '10px', borderRight: isAr ? '4px solid var(--color-gold)' : undefined, borderLeft: !isAr ? '4px solid var(--color-gold)' : undefined }}>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-gold-light)', margin: '0 0 0.75rem 0' }}>
+          <div
+            style={{
+              padding: '1.25rem 1.4rem',
+              background: 'var(--surface-bg)',
+              borderInlineStart: '4px solid var(--color-gold-500)',
+              border: '1px solid var(--admin-card-border)',
+              borderRadius: '8px',
+              marginBottom: '2rem',
+            }}
+          >
+            <h3 style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--color-primary-950)', margin: '0 0 0.5rem 0' }}>
               {isAr ? 'الملخص التنفيذي للدراسة' : 'Executive Summary'}
-            </h2>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.8, margin: 0, whiteSpace: 'pre-line' }}>
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
               {summary}
             </p>
-          </section>
+          </div>
         )}
 
-        {/* Full Content Body */}
-        <section style={{ fontSize: '1rem', color: '#E2E8F0', lineHeight: 1.9, whiteSpace: 'pre-line' }}>
+        {/* Main Body */}
+        <div
+          style={{
+            fontSize: '0.95rem',
+            lineHeight: 1.85,
+            color: 'var(--text-primary)',
+            whiteSpace: 'pre-line',
+          }}
+        >
           {content}
-        </section>
+        </div>
       </article>
     </div>
   );

@@ -85,13 +85,17 @@ export default function FieldPortalShell({ children }: FieldPortalShellProps) {
           {/* Brand & Terminal Identity */}
           <div className="field-brand-group">
             <div className="field-brand-logo" aria-hidden="true">
-              <Shield size={22} color="var(--brand-gold-400, #f59e0b)" />
+              <img 
+                src="/images/brand/logo-symbol-dark.png" 
+                alt="درع مركز الحلول المتكاملة" 
+                style={{ width: '26px', height: 'auto', objectFit: 'contain' }} 
+              />
             </div>
             <div className="field-brand-text">
               <h1>
                 {isAr
-                  ? 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية'
-                  : 'Integrated Center for Security, Safety & Field Studies'}
+                  ? 'مركز الحلول المتكاملة للأمن والسلامة'
+                  : 'Integrated Solutions Center for Safety and Security'}
               </h1>
               <div className="field-brand-badges">
                 <span className="field-badge-terminal">
@@ -145,9 +149,9 @@ export default function FieldPortalShell({ children }: FieldPortalShellProps) {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  background: 'rgba(217, 119, 6, 0.2)',
-                  color: 'var(--brand-gold-400, #f59e0b)',
-                  border: '1px solid rgba(217, 119, 6, 0.4)',
+                  background: 'rgba(181, 146, 84, 0.15)',
+                  color: 'var(--color-gold-400)',
+                  border: '1px solid rgba(181, 146, 84, 0.3)',
                   borderRadius: '6px',
                   padding: '0.4rem 0.75rem',
                   fontSize: '0.8rem',
@@ -189,8 +193,8 @@ export default function FieldPortalShell({ children }: FieldPortalShellProps) {
           <div>
             <strong>
               {isAr
-                ? 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية'
-                : 'Integrated Center for Security, Safety & Field Studies'}
+                ? 'مركز الحلول المتكاملة للأمن والسلامة'
+                : 'Integrated Solutions Center for Safety and Security'}
             </strong>{' '}
             &copy; {new Date().getFullYear()} —{' '}
             {isAr ? 'بوابة العمليات الميدانية' : 'Field Operations Portal'}

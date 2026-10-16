@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { type LucideIcon } from 'lucide-react';
 
-export type AdminButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'outline';
+export type AdminButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'outline' | 'gold';
 export type AdminButtonSize = 'sm' | 'md' | 'lg';
 
 interface AdminButtonBaseProps {

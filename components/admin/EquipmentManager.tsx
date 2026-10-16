@@ -38,7 +38,9 @@ import {
   AdminSelect,
   AdminTextarea,
   AdminCheckbox,
+  AdminStatusBadge,
 } from '@/components/admin/ui';
+import { useAdminT } from '@/lib/admin-i18n';
 
 interface EquipmentManagerProps {
   initialCategories: any[];
@@ -53,6 +55,7 @@ export default function EquipmentManager({
   initialSuppliers,
   initialKpis,
 }: EquipmentManagerProps) {
+  const { tx, isAr, locale } = useAdminT();
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'suppliers' | 'procurement' | 'inventory' | 'inspections' | 'deliveries'>('overview');
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -206,9 +209,9 @@ export default function EquipmentManager({
         body: JSON.stringify(productForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ في حفظ الصنف');
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ في حفظ الصنف'));
 
-      setFeedback({ type: 'success', message: 'تم حفظ صنف المعدات بنجاح في السجل المركزي' });
+      setFeedback({ type: 'success', message: tx('تم حفظ صنف المعدات بنجاح في السجل المركزي') });
       setShowProductModal(false);
       setEditingProduct(null);
       fetchTabData('products');
@@ -226,9 +229,9 @@ export default function EquipmentManager({
         body: JSON.stringify(supplierForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ في تسجيل المورد');
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ في تسجيل المورد'));
 
-      setFeedback({ type: 'success', message: 'تم تسجيل المورد المعتمد بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم تسجيل المورد المعتمد بنجاح') });
       setShowSupplierModal(false);
       fetchTabData('suppliers');
     } catch (err: any) {
@@ -245,9 +248,9 @@ export default function EquipmentManager({
         body: JSON.stringify(poForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ في إنشاء أمر الشراء');
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ في إنشاء أمر الشراء'));
 
-      setFeedback({ type: 'success', message: 'تم إنشاء أمر الشراء والتوريد بنجاح (المخزون لم يتغير لحين الاستلام الفعلي)' });
+      setFeedback({ type: 'success', message: tx('تم إنشاء أمر الشراء والتوريد بنجاح (المخزون لم يتغير لحين الاستلام الفعلي)') });
       setShowPoModal(false);
       fetchTabData('procurement');
     } catch (err: any) {
@@ -262,7 +265,7 @@ export default function EquipmentManager({
       notes: '',
       items: po.items.map((it: any) => ({
         productId: it.productId,
-        productName: it.product.nameAr,
+        productName: isAr ? it.product.nameAr : (it.product.nameEn || it.product.nameAr),
         quantityOrdered: it.quantityOrdered,
         quantityReceived: it.quantityOrdered - it.quantityReceived,
         quantityAccepted: it.quantityOrdered - it.quantityReceived,
@@ -283,9 +286,9 @@ export default function EquipmentManager({
         body: JSON.stringify(receivingForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ أثناء استلام الشحنة');
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ أثناء استلام الشحنة'));
 
-      setFeedback({ type: 'success', message: data.message || 'تم استلام الشحنة وزيادة المخزون بالكميات المقبولة فقط' });
+      setFeedback({ type: 'success', message: data.message || tx('تم استلام الشحنة وزيادة المخزون بالكميات المقبولة فقط') });
       setShowReceivingModal(false);
       fetchTabData('procurement');
       fetchTabData('inventory');
@@ -303,9 +306,9 @@ export default function EquipmentManager({
         body: JSON.stringify(adjustForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ أثناء تعديل المخزون');
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ أثناء تعديل المخزون'));
 
-      setFeedback({ type: 'success', message: 'تم توثيق التعديل المخزني والحركة بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم توثيق التعديل المخزني والحركة بنجاح') });
       setShowAdjustModal(false);
       fetchTabData('inventory');
     } catch (err: any) {
@@ -322,9 +325,9 @@ export default function EquipmentManager({
         body: JSON.stringify(inspectionForm),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ في تسجيل الفحص الفني');
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ في تسجيل الفحص الفني'));
 
-      setFeedback({ type: 'success', message: 'تم توثيق محضر الفحص الفني بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم توثيق محضر الفحص الفني بنجاح') });
       setShowInspectionModal(false);
       fetchTabData('inspections');
     } catch (err: any) {
@@ -336,7 +339,7 @@ export default function EquipmentManager({
     try {
       const res = await fetch(`/api/admin/equipment/deliveries/${deliveryId}/handover`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'تعذر جلب وثيقة التسليم');
+      if (!res.ok) throw new Error(data.error || tx('تعذر جلب وثيقة التسليم'));
 
       setSelectedHandover(data.handoverDocument);
       setShowHandoverModal(true);
@@ -364,8 +367,8 @@ export default function EquipmentManager({
   return (
     <div style={{ width: '100%', maxWidth: '100%' }}>
       <AdminPageHeader
-        title="منظومة تجهيزات السلامة والمشتريات والمخزون"
-        description="الإدارة التشغيلية الشاملة لدورة حياة المعدات: التوريد، الفحص الفني، المخزون، الحجز، والتسليم الرسمي للعملاء"
+        title={tx("منظومة تجهيزات السلامة والمشتريات والمخزون")}
+        description={tx("الإدارة التشغيلية الشاملة لدورة حياة المعدات: التوريد، الفحص الفني، المخزون، الحجز، والتسليم الرسمي للعملاء")}
         actions={
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <AdminButton
@@ -374,7 +377,7 @@ export default function EquipmentManager({
               icon={<RefreshCw size={14} className={loading ? 'animate-spin' : ''} />}
               onClick={() => fetchTabData(activeTab)}
             >
-              تحديث البيانات
+              {tx("تحديث البيانات")}
             </AdminButton>
             {activeTab === 'products' && (
               <AdminButton
@@ -400,7 +403,7 @@ export default function EquipmentManager({
                   setShowProductModal(true);
                 }}
               >
-                إضافة صنف جديد
+                {tx("إضافة صنف جديد")}
               </AdminButton>
             )}
             {activeTab === 'suppliers' && (
@@ -410,7 +413,7 @@ export default function EquipmentManager({
                 icon={<Plus size={14} />}
                 onClick={() => setShowSupplierModal(true)}
               >
-                تسجيل مورد معتمد
+                {tx("تسجيل مورد معتمد")}
               </AdminButton>
             )}
             {activeTab === 'procurement' && (
@@ -420,7 +423,7 @@ export default function EquipmentManager({
                 icon={<Plus size={14} />}
                 onClick={() => setShowPoModal(true)}
               >
-                إنشاء أمر شراء
+                {tx("إنشاء أمر شراء")}
               </AdminButton>
             )}
             {activeTab === 'inventory' && (
@@ -430,7 +433,7 @@ export default function EquipmentManager({
                 icon={<SlidersHorizontal size={14} />}
                 onClick={() => setShowAdjustModal(true)}
               >
-                تعديل يدوي للمخزون
+                {tx("تعديل يدوي للمخزون")}
               </AdminButton>
             )}
             {activeTab === 'inspections' && (
@@ -440,7 +443,7 @@ export default function EquipmentManager({
                 icon={<Plus size={14} />}
                 onClick={() => setShowInspectionModal(true)}
               >
-                تسجيل فحص فني
+                {tx("تسجيل فحص فني")}
               </AdminButton>
             )}
           </div>
@@ -459,16 +462,16 @@ export default function EquipmentManager({
       )}
 
       {/* Tabs Bar */}
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.5rem', width: '100%', minWidth: 0 }}>
         <AdminTabs
           tabs={[
-            { id: 'overview', label: 'المؤشرات التشغيلية', icon: Layers },
-            { id: 'products', label: 'دليل المعدات والأصناف', icon: Package, count: products.length },
-            { id: 'suppliers', label: 'سجل الموردين', icon: Truck, count: suppliers.length },
-            { id: 'procurement', label: 'أوامر الشراء والاستلام', icon: ShoppingCart, count: procurements.length },
-            { id: 'inventory', label: 'المخزون وسجل الحركات', icon: SlidersHorizontal },
-            { id: 'inspections', label: 'الفحص الفني والصيانة', icon: ShieldCheck, count: inspections.length },
-            { id: 'deliveries', label: 'محاضر التسليم والتسليم', icon: ClipboardCheck, count: deliveries.length },
+            { id: 'overview', label: tx('المؤشرات التشغيلية'), icon: Layers },
+            { id: 'products', label: tx('دليل المعدات والأصناف'), icon: Package, count: products.length },
+            { id: 'suppliers', label: tx('سجل الموردين'), icon: Truck, count: suppliers.length },
+            { id: 'procurement', label: tx('أوامر الشراء والاستلام'), icon: ShoppingCart, count: procurements.length },
+            { id: 'inventory', label: tx('المخزون وسجل الحركات'), icon: SlidersHorizontal },
+            { id: 'inspections', label: tx('الفحص الفني والصيانة'), icon: ShieldCheck, count: inspections.length },
+            { id: 'deliveries', label: tx('محاضر التسليم والتسليم'), icon: ClipboardCheck, count: deliveries.length },
           ]}
           activeTab={activeTab}
           onChange={(tabId) => setActiveTab(tabId as any)}
@@ -488,43 +491,43 @@ export default function EquipmentManager({
               gap: '1rem',
             }}
           >
-            <div className="card" style={{ padding: '1.25rem', borderRight: '4px solid #10B981' }}>
-              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>معدل جاهزية المعدات (KPI)</div>
+            <div className="card" style={{ padding: '1.25rem', borderInlineEnd: '4px solid #10B981' }}>
+              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>{tx("معدل جاهزية المعدات (KPI)")}</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10B981' }}>
                 {kpis?.equipment?.equipmentReadinessRate?.displayValue || '100%'}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
-                المعدات الجاهزة المطابقة للفحص والصلاحية
+                {tx("المعدات الجاهزة المطابقة للفحص والصلاحية")}
               </div>
             </div>
 
-            <div className="card" style={{ padding: '1.25rem', borderRight: '4px solid #3B82F6' }}>
-              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>إجمالي الأصناف النشطة</div>
+            <div className="card" style={{ padding: '1.25rem', borderInlineEnd: '4px solid #3B82F6' }}>
+              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>{tx("إجمالي الأصناف النشطة")}</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFFFFF' }}>
-                {products.filter((p) => p.isActive).length} صنف
+                {products.filter((p) => p.isActive).length} {tx("صنف")}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
-                موزعة على {categories.length} تصنيفات معتمدة
+                {tx("موزعة على {0} تصنيفات معتمدة", categories.length)}
               </div>
             </div>
 
-            <div className="card" style={{ padding: '1.25rem', borderRight: '4px solid #F59E0B' }}>
-              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>المخزون المتاح للطلب</div>
+            <div className="card" style={{ padding: '1.25rem', borderInlineEnd: '4px solid #F59E0B' }}>
+              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>{tx("المخزون المتاح للطلب")}</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#F59E0B' }}>
-                {products.reduce((s, p) => s + (p.quantityAvailable || 0), 0)} وحدة
+                {products.reduce((s, p) => s + (p.quantityAvailable || 0), 0)} {tx("وحدة")}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
-                (الفعلي: {products.reduce((s, p) => s + p.quantityOnHand, 0)} - المحجوز: {products.reduce((s, p) => s + p.quantityReserved, 0)})
+                {tx("(الفعلي: {0} - المحجوز: {1})", products.reduce((s, p) => s + p.quantityOnHand, 0), products.reduce((s, p) => s + p.quantityReserved, 0))}
               </div>
             </div>
 
-            <div className="card" style={{ padding: '1.25rem', borderRight: '4px solid #EF4444' }}>
-              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>أصناف منخفضة / نفدت</div>
+            <div className="card" style={{ padding: '1.25rem', borderInlineEnd: '4px solid #EF4444' }}>
+              <div style={{ fontSize: '0.82rem', color: '#9CA3AF', marginBottom: '0.35rem' }}>{tx("أصناف منخفضة / نفدت")}</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#EF4444' }}>
-                {products.filter((p) => p.isLowStock || p.isOutOfStock).length} صنف
+                {products.filter((p) => p.isLowStock || p.isOutOfStock).length} {tx("صنف")}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
-                تتطلب إصدار أوامر شراء عاجلة
+                {tx("تتطلب إصدار أوامر شراء عاجلة")}
               </div>
             </div>
           </div>
@@ -540,19 +543,19 @@ export default function EquipmentManager({
             <div className="card" style={{ padding: '1.25rem' }}>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <ShoppingCart size={18} color="#3B82F6" />
-                حالة التوريد والشراء
+                {tx("حالة التوريد والشراء")}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>أوامر الشراء قيد التنفيذ:</span>
+                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>{tx("أوامر الشراء قيد التنفيذ:")}</span>
                   <span style={{ fontWeight: 700, color: '#FFFFFF' }}>{procurements.filter((p) => p.status !== 'RECEIVED' && p.status !== 'CANCELLED').length}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>شحنات بانتظار الاستلام:</span>
+                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>{tx("شحنات بانتظار الاستلام:")}</span>
                   <span style={{ fontWeight: 700, color: '#F59E0B' }}>{procurements.filter((p) => p.status === 'ORDERED' || p.status === 'PARTIALLY_RECEIVED').length}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0' }}>
-                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>الموردون المعتمدون النشطون:</span>
+                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>{tx("الموردون المعتمدون النشطون:")}</span>
                   <span style={{ fontWeight: 700, color: '#10B981' }}>{suppliers.filter((s) => s.status === 'ACTIVE').length}</span>
                 </div>
               </div>
@@ -561,19 +564,19 @@ export default function EquipmentManager({
             <div className="card" style={{ padding: '1.25rem' }}>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <ShieldCheck size={18} color="#10B981" />
-                الفحص الفني والتسليم
+                {tx("الفحص الفني والتسليم")}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>عمليات الفحص المعتمدة (PASS):</span>
+                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>{tx("عمليات الفحص المعتمدة (PASS):")}</span>
                   <span style={{ fontWeight: 700, color: '#10B981' }}>{inspections.filter((i) => i.result === 'PASS').length}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>عمليات فحص رسبت (FAIL):</span>
+                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>{tx("عمليات فحص رسبت (FAIL):")}</span>
                   <span style={{ fontWeight: 700, color: '#EF4444' }}>{inspections.filter((i) => i.result === 'FAIL').length}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0' }}>
-                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>محاضر التسليم المكتملة للعملاء:</span>
+                  <span style={{ color: '#D1D5DB', fontSize: '0.85rem' }}>{tx("محاضر التسليم المكتملة للعملاء:")}</span>
                   <span style={{ fontWeight: 700, color: '#3B82F6' }}>{deliveries.filter((d) => d.status === 'DELIVERED').length}</span>
                 </div>
               </div>
@@ -592,12 +595,12 @@ export default function EquipmentManager({
             <div style={{ flex: '1 1 250px', position: 'relative' }}>
               <input
                 type="text"
-                placeholder="بحث برمز SKU أو اسم الصنف أو الصانع..."
+                placeholder={tx("بحث برمز SKU أو اسم الصنف أو الصانع...")}
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '0.5rem 2rem 0.5rem 0.75rem',
+                  padding: isAr ? '0.5rem 2rem 0.5rem 0.75rem' : '0.5rem 0.75rem 0.5rem 2rem',
                   background: 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '6px',
@@ -605,7 +608,7 @@ export default function EquipmentManager({
                   fontSize: '0.85rem',
                 }}
               />
-              <Search size={16} style={{ position: 'absolute', right: '0.65rem', top: '0.65rem', color: '#6B7280' }} />
+              <Search size={16} style={{ position: 'absolute', insetInlineEnd: '0.65rem', top: '0.65rem', color: '#6B7280' }} />
             </div>
 
             <select
@@ -620,9 +623,9 @@ export default function EquipmentManager({
                 fontSize: '0.85rem',
               }}
             >
-              <option value="">جميع التصنيفات</option>
+              <option value="">{tx("جميع التصنيفات")}</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.nameAr}</option>
+                <option key={c.id} value={c.id}>{isAr ? c.nameAr : (c.nameEn || c.nameAr)}</option>
               ))}
             </select>
 
@@ -638,34 +641,34 @@ export default function EquipmentManager({
                 fontSize: '0.85rem',
               }}
             >
-              <option value="">جميع حالات المخزون</option>
-              <option value="AVAILABLE">متوفر في المخزون</option>
-              <option value="LOW">مخزون منخفض</option>
-              <option value="OUT">نفد المخزون</option>
+              <option value="">{tx("جميع حالات المخزون")}</option>
+              <option value="AVAILABLE">{tx("متوفر في المخزون")}</option>
+              <option value="LOW">{tx("مخزون منخفض")}</option>
+              <option value="OUT">{tx("نفد المخزون")}</option>
             </select>
           </div>
 
           {/* Table */}
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#9CA3AF', fontSize: '0.82rem' }}>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>رمز الصنف (SKU)</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>اسم الصنف</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>التصنيف</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الرصيد الفعلي</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>المحجوز</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>المتاح</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>ضوابط التتبع</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الحالة</th>
-                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>الإجراءات</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رمز الصنف (SKU)")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("اسم الصنف")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("التصنيف")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الرصيد الفعلي")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("المحجوز")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("المتاح")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("ضوابط التتبع")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الحالة")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>{tx("الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProducts.length === 0 ? (
                   <tr>
                     <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>
-                      لا توجد أصناف مطابقة لمعايير البحث
+                      {tx("لا توجد أصناف مطابقة لمعايير البحث")}
                     </td>
                   </tr>
                 ) : (
@@ -675,14 +678,14 @@ export default function EquipmentManager({
                         {p.sku}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem' }}>
-                        <div style={{ fontWeight: 600, color: '#FFFFFF' }}>{p.nameAr}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{p.nameEn}</div>
+                        <div style={{ fontWeight: 600, color: '#FFFFFF' }}>{isAr ? p.nameAr : (p.nameEn || p.nameAr)}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{isAr ? p.nameEn : p.nameAr}</div>
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#D1D5DB' }}>
-                        {p.category?.nameAr}
+                        {isAr ? p.category?.nameAr : (p.category?.nameEn || p.category?.nameAr)}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: '#FFFFFF' }}>
-                        {p.quantityOnHand} {p.unit}
+                        {p.quantityOnHand} {isAr ? (p.unit === 'piece' ? 'قطعة' : p.unit === 'set' ? 'طقم' : p.unit) : p.unit}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#F59E0B' }}>
                         {p.quantityReserved}
@@ -698,32 +701,33 @@ export default function EquipmentManager({
                             color: p.quantityAvailable === 0 ? '#EF4444' : p.isLowStock ? '#F59E0B' : '#10B981',
                           }}
                         >
-                          {p.quantityAvailable} {p.unit}
+                          {p.quantityAvailable} {isAr ? (p.unit === 'piece' ? 'قطعة' : p.unit === 'set' ? 'طقم' : p.unit) : p.unit}
                         </span>
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem' }}>
                         <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                           {p.inspectionRequired && (
                             <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.35rem', background: 'rgba(59,130,246,0.2)', color: '#3B82F6', borderRadius: '3px' }}>
-                              فحص
+                              {tx("فحص")}
                             </span>
                           )}
                           {p.serialTrackingRequired && (
                             <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.35rem', background: 'rgba(139,92,246,0.2)', color: '#8B5CF6', borderRadius: '3px' }}>
-                              تسلسلي
+                              {tx("تسلسلي")}
                             </span>
                           )}
                           {p.expiryTrackingRequired && (
                             <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.35rem', background: 'rgba(236,72,153,0.2)', color: '#EC4899', borderRadius: '3px' }}>
-                              صلاحية
+                              {tx("صلاحية")}
                             </span>
                           )}
                         </div>
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem' }}>
-                        <span style={{ color: p.isActive ? '#10B981' : '#6B7280', fontSize: '0.78rem' }}>
-                          {p.isActive ? 'نشط' : 'موقف'}
-                        </span>
+                        <AdminStatusBadge
+                          status={p.isActive ? "ACTIVE" : "INACTIVE"}
+                          label={p.isActive ? tx("نشط") : tx("موقف")}
+                        />
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>
                         <AdminButton
@@ -748,7 +752,7 @@ export default function EquipmentManager({
                             setShowProductModal(true);
                           }}
                         >
-                          تعديل
+                          {tx("تعديل")}
                         </AdminButton>
                       </td>
                     </tr>
@@ -766,23 +770,23 @@ export default function EquipmentManager({
       {activeTab === 'suppliers' && (
         <div className="card" style={{ padding: '1.25rem' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#9CA3AF', fontSize: '0.82rem' }}>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>كود المورد</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>اسم المورد</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>مسؤول الاتصال</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>رقم الهاتف</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>البريد الإلكتروني</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>أوامر الشراء</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الحالة</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("كود المورد")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("اسم المورد")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("مسؤول الاتصال")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رقم الهاتف")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("البريد الإلكتروني")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("أوامر الشراء")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الحالة")}</th>
                 </tr>
               </thead>
               <tbody>
                 {suppliers.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>
-                      لم يتم تسجيل أي موردين بعد
+                      {tx("لم يتم تسجيل أي موردين بعد")}
                     </td>
                   </tr>
                 ) : (
@@ -807,17 +811,10 @@ export default function EquipmentManager({
                         {s.procurementsCount || 0}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem' }}>
-                        <span
-                          style={{
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '4px',
-                            fontSize: '0.75rem',
-                            background: s.status === 'ACTIVE' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
-                            color: s.status === 'ACTIVE' ? '#10B981' : '#EF4444',
-                          }}
-                        >
-                          {s.status === 'ACTIVE' ? 'معتمد' : 'موقف'}
-                        </span>
+                        <AdminStatusBadge
+                          status={s.status}
+                          label={s.status === 'ACTIVE' ? tx("معتمد") : tx("موقف")}
+                        />
                       </td>
                     </tr>
                   ))
@@ -834,23 +831,23 @@ export default function EquipmentManager({
       {activeTab === 'procurement' && (
         <div className="card" style={{ padding: '1.25rem' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#9CA3AF', fontSize: '0.82rem' }}>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>رقم أمر الشراء</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>المورد</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>تاريخ الأمر</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الكمية المطلوبة</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الكمية المستلمة</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الحالة</th>
-                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>الإجراءات</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رقم أمر الشراء")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("المورد")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("تاريخ الأمر")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الكمية المطلوبة")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الكمية المستلمة")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الحالة")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>{tx("الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
                 {procurements.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>
-                      لا توجد أوامر شراء مسجلة
+                      {tx("لا توجد أوامر شراء مسجلة")}
                     </td>
                   </tr>
                 ) : (
@@ -863,7 +860,7 @@ export default function EquipmentManager({
                         {po.supplier?.name}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#9CA3AF' }}>
-                        {new Date(po.orderDate).toLocaleDateString('ar-EG')}
+                        {new Date(po.orderDate).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: '#FFFFFF' }}>
                         {po.totalQuantityOrdered}
@@ -872,27 +869,7 @@ export default function EquipmentManager({
                         {po.totalQuantityReceived}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem' }}>
-                        <span
-                          style={{
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '4px',
-                            fontSize: '0.75rem',
-                            background:
-                              po.status === 'RECEIVED'
-                                ? 'rgba(16,185,129,0.2)'
-                                : po.status === 'PARTIALLY_RECEIVED'
-                                ? 'rgba(245,158,11,0.2)'
-                                : 'rgba(59,130,246,0.2)',
-                            color:
-                              po.status === 'RECEIVED'
-                                ? '#10B981'
-                                : po.status === 'PARTIALLY_RECEIVED'
-                                ? '#F59E0B'
-                                : '#3B82F6',
-                          }}
-                        >
-                          {po.status}
-                        </span>
+                        <AdminStatusBadge status={po.status} />
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>
                         {po.status !== 'RECEIVED' && po.status !== 'CANCELLED' && (
@@ -902,7 +879,7 @@ export default function EquipmentManager({
                             icon={<CheckCircle2 size={13} />}
                             onClick={() => handleOpenReceiving(po)}
                           >
-                            استلام شحنة
+                            {tx("استلام شحنة")}
                           </AdminButton>
                         )}
                       </td>
@@ -924,28 +901,28 @@ export default function EquipmentManager({
           <div className="card" style={{ padding: '1.25rem' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <SlidersHorizontal size={18} color="var(--facss-gold-400)" />
-              سجل حركات المخزون التتبعي (Append-Oriented Movement Ledger)
+              {tx("سجل حركات المخزون التتبعي (Append-Oriented Movement Ledger)")}
             </h3>
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#9CA3AF', fontSize: '0.82rem' }}>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>رقم الحركة</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>نوع الحركة</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>الصنف</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>الرصيد السابق</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>التغيير (Delta)</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>الرصيد اللاحق</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>المسؤول</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>السبب والبيان</th>
-                    <th style={{ padding: '0.75rem 0.5rem' }}>التاريخ والوقت</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رقم الحركة")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("نوع الحركة")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الصنف")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الرصيد السابق")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("التغيير (Delta)")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الرصيد اللاحق")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("المسؤول")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("السبب والبيان")}</th>
+                    <th style={{ padding: '0.75rem 0.5rem' }}>{tx("التاريخ والوقت")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {movements.length === 0 ? (
                     <tr>
                       <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>
-                        لا توجد حركات مخزنية مسجلة
+                        {tx("لا توجد حركات مخزنية مسجلة")}
                       </td>
                     </tr>
                   ) : (
@@ -955,30 +932,10 @@ export default function EquipmentManager({
                           {m.movementNumber}
                         </td>
                         <td style={{ padding: '0.75rem 0.5rem' }}>
-                          <span
-                            style={{
-                              padding: '0.2rem 0.5rem',
-                              borderRadius: '4px',
-                              fontSize: '0.72rem',
-                              background:
-                                m.movementType === 'RECEIPT'
-                                  ? 'rgba(16,185,129,0.2)'
-                                  : m.movementType === 'ISSUE_DELIVERY'
-                                  ? 'rgba(239,68,68,0.2)'
-                                  : 'rgba(59,130,246,0.2)',
-                              color:
-                                m.movementType === 'RECEIPT'
-                                  ? '#10B981'
-                                  : m.movementType === 'ISSUE_DELIVERY'
-                                  ? '#EF4444'
-                                  : '#3B82F6',
-                            }}
-                          >
-                            {m.movementType}
-                          </span>
+                          <AdminStatusBadge status={m.movementType} />
                         </td>
                         <td style={{ padding: '0.75rem 0.5rem', color: '#FFFFFF' }}>
-                          {m.product?.nameAr}
+                          {isAr ? m.product?.nameAr : (m.product?.nameEn || m.product?.nameAr)}
                         </td>
                         <td style={{ padding: '0.75rem 0.5rem', color: '#9CA3AF' }}>{m.quantityBefore}</td>
                         <td style={{ padding: '0.75rem 0.5rem', fontWeight: 700, color: m.quantityDelta > 0 ? '#10B981' : m.quantityDelta < 0 ? '#EF4444' : '#9CA3AF' }}>
@@ -988,7 +945,7 @@ export default function EquipmentManager({
                         <td style={{ padding: '0.75rem 0.5rem', color: '#D1D5DB' }}>{m.actorName}</td>
                         <td style={{ padding: '0.75rem 0.5rem', color: '#9CA3AF', maxWidth: '250px' }}>{m.reason}</td>
                         <td style={{ padding: '0.75rem 0.5rem', color: '#6B7280', fontSize: '0.75rem' }}>
-                          {new Date(m.timestamp).toLocaleString('ar-EG')}
+                          {new Date(m.timestamp).toLocaleString(isAr ? 'ar-YE' : 'en-US')}
                         </td>
                       </tr>
                     ))
@@ -1006,23 +963,23 @@ export default function EquipmentManager({
       {activeTab === 'inspections' && (
         <div className="card" style={{ padding: '1.25rem' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#9CA3AF', fontSize: '0.82rem' }}>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>رقم الفحص</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الصنف</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>نوع الفحص</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>النتيجة الفنية</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>المفتش / الفاحص</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الملخص والملاحظات</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>التاريخ</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رقم الفحص")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الصنف")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("نوع الفحص")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("النتيجة الفنية")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("المفتش / الفاحص")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الملخص والملاحظات")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("التاريخ")}</th>
                 </tr>
               </thead>
               <tbody>
                 {inspections.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>
-                      لا توجد سجلات فحص فني مسجلة
+                      {tx("لا توجد سجلات فحص فني مسجلة")}
                     </td>
                   </tr>
                 ) : (
@@ -1032,34 +989,21 @@ export default function EquipmentManager({
                         {i.inspectionNumber}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#FFFFFF' }}>
-                        {i.product?.nameAr}
+                        {isAr ? i.product?.nameAr : (i.product?.nameEn || i.product?.nameAr)}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#D1D5DB' }}>
-                        {i.inspectionType}
+                        {i.inspectionType === 'RECEIVING'
+                          ? tx('فحص استلام شحنة جديدة')
+                          : i.inspectionType === 'PRE_DELIVERY'
+                          ? tx('فحص ما قبل التسليم للعميل')
+                          : i.inspectionType === 'PERIODIC'
+                          ? tx('فحص ومعايرة دورية')
+                          : i.inspectionType === 'RETURN'
+                          ? tx('فحص معدات مرتجعة')
+                          : i.inspectionType}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem' }}>
-                        <span
-                          style={{
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '4px',
-                            fontWeight: 700,
-                            fontSize: '0.75rem',
-                            background:
-                              i.result === 'PASS'
-                                ? 'rgba(16,185,129,0.2)'
-                                : i.result === 'FAIL'
-                                ? 'rgba(239,68,68,0.2)'
-                                : 'rgba(245,158,11,0.2)',
-                            color:
-                              i.result === 'PASS'
-                                ? '#10B981'
-                                : i.result === 'FAIL'
-                                ? '#EF4444'
-                                : '#F59E0B',
-                          }}
-                        >
-                          {i.result}
-                        </span>
+                        <AdminStatusBadge status={i.result} />
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#D1D5DB' }}>
                         {i.inspector?.fullName}
@@ -1068,7 +1012,7 @@ export default function EquipmentManager({
                         {i.findings || i.checklistSummary || '—'}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#6B7280' }}>
-                        {new Date(i.inspectionDate).toLocaleDateString('ar-EG')}
+                        {new Date(i.inspectionDate).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}
                       </td>
                     </tr>
                   ))
@@ -1085,23 +1029,23 @@ export default function EquipmentManager({
       {activeTab === 'deliveries' && (
         <div className="card" style={{ padding: '1.25rem' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#9CA3AF', fontSize: '0.82rem' }}>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>رقم محضر التسليم</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>الجهة / العميل</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>رقم طلب الخدمة</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>المستلم (ممثل العميل)</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>إجمالي القطع</th>
-                  <th style={{ padding: '0.75rem 0.5rem' }}>تاريخ التسليم</th>
-                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>وثيقة التسليم</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رقم محضر التسليم")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("الجهة / العميل")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("رقم طلب الخدمة")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("المستلم (ممثل العميل)")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("إجمالي القطع")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem' }}>{tx("تاريخ التسليم")}</th>
+                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>{tx("وثيقة التسليم")}</th>
                 </tr>
               </thead>
               <tbody>
                 {deliveries.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>
-                      لا توجد محاضر تسليم مسجلة
+                      {tx("لا توجد محاضر تسليم مسجلة")}
                     </td>
                   </tr>
                 ) : (
@@ -1123,7 +1067,7 @@ export default function EquipmentManager({
                         {d.totalItemsCount || 0}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', color: '#6B7280' }}>
-                        {new Date(d.deliveryDate).toLocaleDateString('ar-EG')}
+                        {new Date(d.deliveryDate).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}
                       </td>
                       <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center' }}>
                         <AdminButton
@@ -1132,7 +1076,7 @@ export default function EquipmentManager({
                           icon={<Printer size={13} />}
                           onClick={() => handleViewHandover(d.id)}
                         >
-                          عرض المحضر الرسمي
+                          {tx("عرض المحضر الرسمي")}
                         </AdminButton>
                       </td>
                     </tr>
@@ -1150,85 +1094,85 @@ export default function EquipmentManager({
       <AdminModal
         isOpen={showProductModal}
         onClose={() => setShowProductModal(false)}
-        title={editingProduct ? 'تعديل بيانات صنف المعدات' : 'إضافة صنف جديد للسجل المركزي'}
+        title={editingProduct ? tx('تعديل بيانات صنف المعدات') : tx('إضافة صنف جديد للسجل المركزي')}
       >
         <form onSubmit={handleSaveProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <AdminInput
-            label="رمز الصنف الداخلي (SKU)"
+            label={tx("رمز الصنف الداخلي (SKU)")}
             required
             value={productForm.sku}
             onChange={(e) => setProductForm({ ...productForm, sku: e.target.value })}
           />
           <AdminInput
-            label="اسم الصنف (بالعربية)"
+            label={tx("اسم الصنف (بالعربية)")}
             required
             value={productForm.nameAr}
             onChange={(e) => setProductForm({ ...productForm, nameAr: e.target.value })}
           />
           <AdminInput
-            label="اسم الصنف (بالإنجليزية)"
+            label={tx("اسم الصنف (بالإنجليزية)")}
             required
             value={productForm.nameEn}
             onChange={(e) => setProductForm({ ...productForm, nameEn: e.target.value })}
           />
           <AdminSelect
-            label="التصنيف"
+            label={tx("التصنيف")}
             required
             value={productForm.categoryId}
             onChange={(e) => setProductForm({ ...productForm, categoryId: e.target.value })}
-            options={categories.map((c) => ({ value: c.id, label: c.nameAr }))}
+            options={categories.map((c) => ({ value: c.id, label: isAr ? c.nameAr : (c.nameEn || c.nameAr) }))}
           />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <AdminInput
-              label="وحدة القياس"
+              label={tx("وحدة القياس")}
               value={productForm.unit}
               onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })}
             />
             <AdminInput
-              label="الحد الأدنى للمخزون"
+              label={tx("الحد الأدنى للمخزون")}
               type="number"
               value={String(productForm.minimumStockLevel)}
               onChange={(e) => setProductForm({ ...productForm, minimumStockLevel: Number(e.target.value) })}
             />
           </div>
           <AdminInput
-            label="الشركة المصنعة / العلامة التجارية"
+            label={tx("الشركة المصنعة / العلامة التجارية")}
             value={productForm.manufacturer}
             onChange={(e) => setProductForm({ ...productForm, manufacturer: e.target.value })}
           />
           <AdminTextarea
-            label="المواصفات الفنية"
+            label={tx("المواصفات الفنية")}
             value={productForm.specifications}
             onChange={(e) => setProductForm({ ...productForm, specifications: e.target.value })}
           />
 
           <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>ضوابط التتبع التشغيلية:</div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>{tx("ضوابط التتبع التشغيلية:")}</div>
             <AdminCheckbox
-              label="يتطلب فحص فني معتمد قبل التسليم (Delivery Inspection Gate)"
+              label={tx("يتطلب فحص فني معتمد قبل التسليم (Delivery Inspection Gate)")}
               checked={productForm.inspectionRequired}
               onChange={(checked) => setProductForm({ ...productForm, inspectionRequired: checked })}
             />
             <AdminCheckbox
-              label="يتطلب تتبع تاريخ الصلاحية (Expiry Tracking)"
+              label={tx("يتطلب تتبع تاريخ الصلاحية (Expiry Tracking)")}
               checked={productForm.expiryTrackingRequired}
               onChange={(checked) => setProductForm({ ...productForm, expiryTrackingRequired: checked })}
             />
             <AdminCheckbox
-              label="يتطلب تتبع الأرقام التسلسلية الفردية (Serial Tracking)"
+              label={tx("يتطلب تتبع الأرقام التسلسلية الفردية (Serial Tracking)")}
               checked={productForm.serialTrackingRequired}
               onChange={(checked) => setProductForm({ ...productForm, serialTrackingRequired: checked })}
             />
             <AdminCheckbox
-              label="يتطلب صيانة ومعايرة دورية (Maintenance Tracking)"
+              label={tx("يتطلب صيانة ومعايرة دورية (Maintenance Tracking)")}
               checked={productForm.maintenanceRequired}
               onChange={(checked) => setProductForm({ ...productForm, maintenanceRequired: checked })}
             />
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <AdminButton variant="outline" onClick={() => setShowProductModal(false)}>إلغاء</AdminButton>
-            <AdminButton variant="primary" type="submit">حفظ الصنف</AdminButton>
+            <AdminButton variant="outline" onClick={() => setShowProductModal(false)}>{tx("إلغاء")}</AdminButton>
+            <AdminButton variant="primary" type="submit">{tx("حفظ الصنف")}</AdminButton>
           </div>
         </form>
       </AdminModal>
@@ -1239,43 +1183,130 @@ export default function EquipmentManager({
       <AdminModal
         isOpen={showSupplierModal}
         onClose={() => setShowSupplierModal(false)}
-        title="تسجيل مورد معتمد جديد"
+        title={tx("تسجيل مورد معتمد جديد")}
       >
         <form onSubmit={handleSaveSupplier} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <AdminInput
-            label="اسم المورد التجاري"
+            label={tx("اسم المورد التجاري")}
             required
             value={supplierForm.name}
             onChange={(e) => setSupplierForm({ ...supplierForm, name: e.target.value })}
           />
           <AdminInput
-            label="مسؤول الاتصال"
+            label={tx("مسؤول الاتصال")}
             value={supplierForm.contactPerson}
             onChange={(e) => setSupplierForm({ ...supplierForm, contactPerson: e.target.value })}
           />
           <AdminInput
-            label="رقم الهاتف"
+            label={tx("رقم الهاتف")}
             required
             value={supplierForm.phone}
             onChange={(e) => setSupplierForm({ ...supplierForm, phone: e.target.value })}
           />
           <AdminInput
-            label="البريد الإلكتروني"
+            label={tx("البريد الإلكتروني")}
             type="email"
             value={supplierForm.email}
             onChange={(e) => setSupplierForm({ ...supplierForm, email: e.target.value })}
           />
           <AdminTextarea
-            label="العنوان والمقر"
+            label={tx("العنوان والمقر")}
             value={supplierForm.address}
             onChange={(e) => setSupplierForm({ ...supplierForm, address: e.target.value })}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <AdminButton variant="outline" onClick={() => setShowSupplierModal(false)}>إلغاء</AdminButton>
-            <AdminButton variant="primary" type="submit">تسجيل المورد</AdminButton>
+            <AdminButton variant="outline" onClick={() => setShowSupplierModal(false)}>{tx("إلغاء")}</AdminButton>
+            <AdminButton variant="primary" type="submit">{tx("تسجيل المورد")}</AdminButton>
           </div>
         </form>
       </AdminModal>
+
+      {/* ==============================================================
+          MODAL: CREATE PURCHASE ORDER (E6)
+          ============================================================== */}
+      {showPoModal && (
+        <AdminModal
+          isOpen={showPoModal}
+          onClose={() => setShowPoModal(false)}
+          title={tx("إنشاء أمر شراء وتوريد جديد")}
+        >
+          <form onSubmit={handleSavePo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <AdminSelect
+              label={tx("اختر المورد المعتمد")}
+              required
+              value={poForm.supplierId}
+              onChange={(e) => setPoForm({ ...poForm, supplierId: e.target.value })}
+              options={[
+                { value: '', label: tx('— غير مخصص —') },
+                ...suppliers.map((s) => ({ value: s.id, label: s.name }))
+              ]}
+            />
+            <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.75rem' }}>
+                {tx("بنود أمر الشراء:")}
+              </div>
+              {poForm.items.map((it, idx) => (
+                <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <AdminSelect
+                    label={tx("اختر الصنف")}
+                    required
+                    value={it.productId}
+                    onChange={(e) => {
+                      const newItems = [...poForm.items];
+                      newItems[idx].productId = e.target.value;
+                      setPoForm({ ...poForm, items: newItems });
+                    }}
+                    options={[
+                      { value: '', label: tx('اختر الصنف') },
+                      ...products.map((p) => ({ value: p.id, label: `${p.sku} - ${isAr ? p.nameAr : (p.nameEn || p.nameAr)}` }))
+                    ]}
+                  />
+                  <AdminInput
+                    label={tx("الكمية:")}
+                    type="number"
+                    min="1"
+                    required
+                    value={String(it.quantityOrdered)}
+                    onChange={(e) => {
+                      const newItems = [...poForm.items];
+                      newItems[idx].quantityOrdered = Math.max(1, Number(e.target.value));
+                      setPoForm({ ...poForm, items: newItems });
+                    }}
+                  />
+                  <AdminInput
+                    label={tx("سعر الوحدة:")}
+                    type="number"
+                    min="0"
+                    value={String(it.unitPrice)}
+                    onChange={(e) => {
+                      const newItems = [...poForm.items];
+                      newItems[idx].unitPrice = Number(e.target.value);
+                      setPoForm({ ...poForm, items: newItems });
+                    }}
+                  />
+                </div>
+              ))}
+              <AdminButton
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPoForm({ ...poForm, items: [...poForm.items, { productId: '', quantityOrdered: 1, unitPrice: 0 }] })}
+              >
+                {tx("إضافة بند آخر")}
+              </AdminButton>
+            </div>
+            <AdminTextarea
+              label={tx("ملاحظات أمر الشراء...")}
+              value={poForm.notes}
+              onChange={(e) => setPoForm({ ...poForm, notes: e.target.value })}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
+              <AdminButton variant="outline" onClick={() => setShowPoModal(false)}>{tx("إلغاء")}</AdminButton>
+              <AdminButton variant="primary" type="submit">{tx("إرسال واعتماد أمر الشراء")}</AdminButton>
+            </div>
+          </form>
+        </AdminModal>
+      )}
 
       {/* ==============================================================
           MODAL: RECEIVE SHIPMENT (E7)
@@ -1284,27 +1315,27 @@ export default function EquipmentManager({
         <AdminModal
           isOpen={showReceivingModal}
           onClose={() => setShowReceivingModal(false)}
-          title={`استلام شحنة توريد لأمر الشراء [${receivingPo.referenceNumber}]`}
+          title={tx("استلام شحنة توريد لأمر الشراء [{0}]", receivingPo.referenceNumber)}
         >
           <form onSubmit={handleSaveReceiving} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <AdminInput
-              label="رقم إشعار التسليم / فاتورة المورد (Delivery Note #)"
+              label={tx("رقم إشعار التسليم / فاتورة المورد (Delivery Note #)")}
               value={receivingForm.deliveryNoteNumber}
               onChange={(e) => setReceivingForm({ ...receivingForm, deliveryNoteNumber: e.target.value })}
             />
 
             <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
               <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.5rem' }}>
-                قاعدة الاستلام: زيادة المخزون تحسب حصراً للكميات المقبولة فقط
+                {tx("قاعدة الاستلام: زيادة المخزون تحسب حصراً للكميات المقبولة فقط")}
               </div>
               {receivingForm.items.map((it: any, idx: number) => (
                 <div key={idx} style={{ padding: '0.75rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ fontWeight: 600, color: 'var(--facss-gold-400)', marginBottom: '0.35rem' }}>
-                    {it.productName} (المتبقي للطلب: {it.quantityOrdered})
+                    {it.productName} ({tx("المتبقي للطلب: {0}", it.quantityOrdered)})
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                     <AdminInput
-                      label="المستلم كلياً"
+                      label={tx("المستلم كلياً")}
                       type="number"
                       value={String(it.quantityReceived)}
                       onChange={(e) => {
@@ -1316,7 +1347,7 @@ export default function EquipmentManager({
                       }}
                     />
                     <AdminInput
-                      label="المقبول (يدخل المخزون)"
+                      label={tx("المقبول (يدخل المخزون)")}
                       type="number"
                       value={String(it.quantityAccepted)}
                       onChange={(e) => {
@@ -1328,7 +1359,7 @@ export default function EquipmentManager({
                       }}
                     />
                     <AdminInput
-                      label="المرفوض"
+                      label={tx("المرفوض")}
                       type="number"
                       value={String(it.quantityRejected)}
                       onChange={(e) => {
@@ -1342,9 +1373,9 @@ export default function EquipmentManager({
                   </div>
                   {it.quantityRejected > 0 && (
                     <AdminInput
-                      label="سبب الرفض"
+                      label={tx("سبب الرفض")}
                       required
-                      placeholder="تلف أثناء النقل / عدم مطابقة المواصفات..."
+                      placeholder={tx("تلف أثناء النقل / عدم مطابقة المواصفات...")}
                       value={it.rejectionReason}
                       onChange={(e) => {
                         const newItems = [...receivingForm.items];
@@ -1358,8 +1389,8 @@ export default function EquipmentManager({
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-              <AdminButton variant="outline" onClick={() => setShowReceivingModal(false)}>إلغاء</AdminButton>
-              <AdminButton variant="primary" type="submit">تأكيد الاستلام وإيداع المقبول</AdminButton>
+              <AdminButton variant="outline" onClick={() => setShowReceivingModal(false)}>{tx("إلغاء")}</AdminButton>
+              <AdminButton variant="primary" type="submit">{tx("تأكيد الاستلام وإيداع المقبول")}</AdminButton>
             </div>
           </form>
         </AdminModal>
@@ -1371,36 +1402,36 @@ export default function EquipmentManager({
       <AdminModal
         isOpen={showAdjustModal}
         onClose={() => setShowAdjustModal(false)}
-        title="تعديل يدوي موثق لأرصدة المخزون"
+        title={tx("تعديل يدوي موثق لأرصدة المخزون")}
       >
         <form onSubmit={handleSaveAdjustment} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <AdminSelect
-            label="اختر الصنف"
+            label={tx("اختر الصنف")}
             required
             value={adjustForm.productId}
             onChange={(e) => setAdjustForm({ ...adjustForm, productId: e.target.value })}
             options={products.map((p) => ({
               value: p.id,
-              label: `${p.sku} - ${p.nameAr} (الرصيد الفعلي: ${p.quantityOnHand}، المحجوز: ${p.quantityReserved})`,
+              label: `${p.sku} - ${isAr ? p.nameAr : (p.nameEn || p.nameAr)} (${tx("الرصيد الفعلي: {0}، المحجوز: {1}", p.quantityOnHand, p.quantityReserved)})`,
             }))}
           />
           <AdminInput
-            label="قيمة التعديل (Delta) - موجب للإضافة، سالب للخصم"
+            label={tx("قيمة التعديل (Delta) - موجب للإضافة، سالب للخصم")}
             type="number"
             required
             value={String(adjustForm.delta)}
             onChange={(e) => setAdjustForm({ ...adjustForm, delta: Number(e.target.value) })}
           />
           <AdminTextarea
-            label="سبب التعديل الإلزامي (مطلوب للتدقيق الرقابي)"
+            label={tx("سبب التعديل الإلزامي (مطلوب للتدقيق الرقابي)")}
             required
-            placeholder="تسوية جرد سنوي، استبعاد تالف، تصحيح خطأ مدخلات..."
+            placeholder={tx("تسوية جرد سنوي، استبعاد تالف، تصحيح خطأ مدخلات...")}
             value={adjustForm.reason}
             onChange={(e) => setAdjustForm({ ...adjustForm, reason: e.target.value })}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <AdminButton variant="outline" onClick={() => setShowAdjustModal(false)}>إلغاء</AdminButton>
-            <AdminButton variant="primary" type="submit">تأكيد التعديل وتوثيق الحركة</AdminButton>
+            <AdminButton variant="outline" onClick={() => setShowAdjustModal(false)}>{tx("إلغاء")}</AdminButton>
+            <AdminButton variant="primary" type="submit">{tx("تأكيد التعديل وتوثيق الحركة")}</AdminButton>
           </div>
         </form>
       </AdminModal>
@@ -1411,52 +1442,52 @@ export default function EquipmentManager({
       <AdminModal
         isOpen={showInspectionModal}
         onClose={() => setShowInspectionModal(false)}
-        title="تسجيل محضر فحص فني للمعدات"
+        title={tx("تسجيل محضر فحص فني للمعدات")}
       >
         <form onSubmit={handleSaveInspection} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <AdminSelect
-            label="الصنف المراد فحصه"
+            label={tx("الصنف المراد فحصه")}
             required
             value={inspectionForm.productId}
             onChange={(e) => setInspectionForm({ ...inspectionForm, productId: e.target.value })}
-            options={products.map((p) => ({ value: p.id, label: `${p.sku} - ${p.nameAr}` }))}
+            options={products.map((p) => ({ value: p.id, label: `${p.sku} - ${isAr ? p.nameAr : (p.nameEn || p.nameAr)}` }))}
           />
           <AdminSelect
-            label="نوع الفحص"
+            label={tx("نوع الفحص")}
             required
             value={inspectionForm.inspectionType}
             onChange={(e) => setInspectionForm({ ...inspectionForm, inspectionType: e.target.value })}
             options={[
-              { value: 'RECEIVING', label: 'فحص استلام شحنة جديدة' },
-              { value: 'PRE_DELIVERY', label: 'فحص ما قبل التسليم للعميل' },
-              { value: 'PERIODIC', label: 'فحص ومعايرة دورية' },
-              { value: 'RETURN', label: 'فحص معدات مرتجعة' },
+              { value: 'RECEIVING', label: tx('فحص استلام شحنة جديدة') },
+              { value: 'PRE_DELIVERY', label: tx('فحص ما قبل التسليم للعميل') },
+              { value: 'PERIODIC', label: tx('فحص ومعايرة دورية') },
+              { value: 'RETURN', label: tx('فحص معدات مرتجعة') },
             ]}
           />
           <AdminSelect
-            label="النتيجة الفنية"
+            label={tx("النتيجة الفنية")}
             required
             value={inspectionForm.result}
             onChange={(e) => setInspectionForm({ ...inspectionForm, result: e.target.value })}
             options={[
-              { value: 'PASS', label: 'PASS — مجاز ومطابق للمواصفات' },
-              { value: 'FAIL', label: 'FAIL — راسب وغير مطابق (يحظر التسليم)' },
-              { value: 'CONDITIONAL', label: 'CONDITIONAL — معلق بانتظار تعديل' },
+              { value: 'PASS', label: tx('PASS — مجاز ومطابق للمواصفات') },
+              { value: 'FAIL', label: tx('FAIL — راسب وغير مطابق (يحظر التسليم)') },
+              { value: 'CONDITIONAL', label: tx('CONDITIONAL — معلق بانتظار تعديل') },
             ]}
           />
           <AdminTextarea
-            label="ملخص الفحص وقائمة التحقق"
+            label={tx("ملخص الفحص وقائمة التحقق")}
             value={inspectionForm.checklistSummary}
             onChange={(e) => setInspectionForm({ ...inspectionForm, checklistSummary: e.target.value })}
           />
           <AdminTextarea
-            label="النتائج الفنية والملاحظات"
+            label={tx("النتائج الفنية والملاحظات")}
             value={inspectionForm.findings}
             onChange={(e) => setInspectionForm({ ...inspectionForm, findings: e.target.value })}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <AdminButton variant="outline" onClick={() => setShowInspectionModal(false)}>إلغاء</AdminButton>
-            <AdminButton variant="primary" type="submit">اعتماد محضر الفحص</AdminButton>
+            <AdminButton variant="outline" onClick={() => setShowInspectionModal(false)}>{tx("إلغاء")}</AdminButton>
+            <AdminButton variant="primary" type="submit">{tx("اعتماد محضر الفحص")}</AdminButton>
           </div>
         </form>
       </AdminModal>
@@ -1468,7 +1499,7 @@ export default function EquipmentManager({
         <AdminModal
           isOpen={showHandoverModal}
           onClose={() => setShowHandoverModal(false)}
-          title="محضر استلام وتسليم معدات رسمي"
+          title={tx("محضر استلام وتسليم معدات رسمي")}
         >
           <div
             id="printable-handover-doc"
@@ -1484,49 +1515,49 @@ export default function EquipmentManager({
             {/* Header */}
             <div style={{ textAlign: 'center', borderBottom: '2px solid #E5E7EB', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A' }}>
-                {selectedHandover.centerNameAr}
+                {isAr ? selectedHandover.centerNameAr : (selectedHandover.centerNameEn || selectedHandover.centerNameAr)}
               </div>
               <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
-                {selectedHandover.centerNameEn}
+                {isAr ? selectedHandover.centerNameEn : selectedHandover.centerNameAr}
               </div>
               <div style={{ marginTop: '0.75rem', fontSize: '1.1rem', fontWeight: 800, color: '#0369A1' }}>
-                {selectedHandover.documentTitleAr}
+                {isAr ? selectedHandover.documentTitleAr : (selectedHandover.documentTitleEn || tx("محضر تسليم واستلام معدات وتجهيزات أمنية وسلامة"))}
               </div>
               <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.25rem' }}>
-                رقم المحضر: <strong>{selectedHandover.deliveryReference}</strong> | تاريخ التسليم:{' '}
-                <strong>{new Date(selectedHandover.deliveryDate).toLocaleDateString('ar-EG')}</strong>
+                {tx("رقم المحضر")}: <strong>{selectedHandover.deliveryReference}</strong> | {tx("تاريخ التسليم")}:{' '}
+                <strong>{new Date(selectedHandover.deliveryDate).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}</strong>
               </div>
             </div>
 
             {/* Parties Info */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
               <div style={{ background: '#F8FAFC', padding: '0.75rem', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
-                <div style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.25rem' }}>الجهة المستلمة (العميل):</div>
-                <div>المنظمة / الشركة: <strong>{selectedHandover.client.organization}</strong></div>
-                <div>المستلم المعتمد: <strong>{selectedHandover.receivedBy.representativeName}</strong></div>
-                <div>الصفة: {selectedHandover.receivedBy.role}</div>
-                <div>الهاتف: {selectedHandover.receivedBy.phone}</div>
+                <div style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.25rem' }}>{tx("الجهة المستلمة (العميل):")}</div>
+                <div>{tx("المنظمة / الشركة:")} <strong>{selectedHandover.client.organization}</strong></div>
+                <div>{tx("المستلم المعتمد:")} <strong>{selectedHandover.receivedBy.representativeName}</strong></div>
+                <div>{tx("الصفة:")} {selectedHandover.receivedBy.role}</div>
+                <div>{tx("الهاتف:")} {selectedHandover.receivedBy.phone}</div>
               </div>
               <div style={{ background: '#F8FAFC', padding: '0.75rem', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
-                <div style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.25rem' }}>الجهة المسلّمة (المركز):</div>
-                <div>الإدارة: {selectedHandover.deliveredBy.centerDepartment}</div>
-                <div>المسؤول المسلّم: <strong>{selectedHandover.deliveredBy.officerName}</strong></div>
-                <div>مرجع طلب الخدمة: {selectedHandover.serviceRequestNumber}</div>
-                <div>موقع التسليم: {selectedHandover.deliveryLocation}</div>
+                <div style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.25rem' }}>{tx("الجهة المسلّمة (المركز):")}</div>
+                <div>{tx("الإدارة:")} {selectedHandover.deliveredBy.centerDepartment}</div>
+                <div>{tx("المسؤول المسلّم:")} <strong>{selectedHandover.deliveredBy.officerName}</strong></div>
+                <div>{tx("مرجع طلب الخدمة:")} {selectedHandover.serviceRequestNumber}</div>
+                <div>{tx("موقع التسليم:")} {selectedHandover.deliveryLocation}</div>
               </div>
             </div>
 
             {/* Items Table */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'right' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: isAr ? 'right' : 'left' }}>
                 <thead>
                   <tr style={{ background: '#F1F5F9', borderBottom: '2px solid #CBD5E1' }}>
                     <th style={{ padding: '0.5rem' }}>#</th>
-                    <th style={{ padding: '0.5rem' }}>رمز الصنف</th>
-                    <th style={{ padding: '0.5rem' }}>بيان المعدات والتجهيزات</th>
-                    <th style={{ padding: '0.5rem' }}>الكمية</th>
-                    <th style={{ padding: '0.5rem' }}>الرقم التسلسلي</th>
-                    <th style={{ padding: '0.5rem' }}>حالة الفحص الفني</th>
+                    <th style={{ padding: '0.5rem' }}>{tx("رمز الصنف")}</th>
+                    <th style={{ padding: '0.5rem' }}>{tx("بيان المعدات والتجهيزات")}</th>
+                    <th style={{ padding: '0.5rem' }}>{tx("الكمية")}</th>
+                    <th style={{ padding: '0.5rem' }}>{tx("الرقم التسلسلي")}</th>
+                    <th style={{ padding: '0.5rem' }}>{tx("حالة الفحص الفني")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1534,7 +1565,7 @@ export default function EquipmentManager({
                     <tr key={it.itemNumber} style={{ borderBottom: '1px solid #E2E8F0' }}>
                       <td style={{ padding: '0.5rem' }}>{it.itemNumber}</td>
                       <td style={{ padding: '0.5rem', fontWeight: 600 }}>{it.sku}</td>
-                      <td style={{ padding: '0.5rem' }}>{it.nameAr}</td>
+                      <td style={{ padding: '0.5rem' }}>{isAr ? it.nameAr : (it.nameEn || it.nameAr)}</td>
                       <td style={{ padding: '0.5rem', fontWeight: 700 }}>{it.quantity} {it.unit}</td>
                       <td style={{ padding: '0.5rem', fontFamily: 'monospace' }}>{it.serialNumber || '—'}</td>
                       <td style={{ padding: '0.5rem', color: '#16A34A', fontWeight: 600 }}>{it.inspectionStatus}</td>
@@ -1544,29 +1575,29 @@ export default function EquipmentManager({
               </table>
             </div>
 
-            {/* Acknowledgment & Signatures (No fake signatures: explicit printed acknowledgment) */}
+            {/* Acknowledgment & Signatures */}
             <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', padding: '0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: '#92400E', marginBottom: '1.25rem' }}>
-              <strong>إقرار استلام رسمي:</strong> {selectedHandover.receivedBy.acknowledgmentTextAr}
+              <strong>{tx("إقرار استلام رسمي:")}</strong> {isAr ? selectedHandover.receivedBy.acknowledgmentTextAr : (tx(selectedHandover.receivedBy.acknowledgmentTextAr) || selectedHandover.receivedBy.acknowledgmentTextAr)}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', textAlign: 'center', marginTop: '1.5rem', borderTop: '1px solid #E2E8F0', paddingTop: '1rem', fontSize: '0.85rem' }}>
               <div>
-                <div style={{ color: '#64748B' }}>المسلّم عن مركز عدن الأول (FACSS):</div>
+                <div style={{ color: '#64748B' }}>{tx("المسلّم عن مركز الحلول المتكاملة للأمن والسلامة (FACSS):")}</div>
                 <div style={{ fontWeight: 700, marginTop: '0.5rem' }}>{selectedHandover.deliveredBy.officerName}</div>
-                <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>(اعتماد إلكتروني مسجل في النظام)</div>
+                <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>{tx("(اعتماد إلكتروني مسجل في النظام)")}</div>
               </div>
               <div>
-                <div style={{ color: '#64748B' }}>المستلم عن الجهة الطالبة:</div>
+                <div style={{ color: '#64748B' }}>{tx("المستلم عن الجهة الطالبة:")}</div>
                 <div style={{ fontWeight: 700, marginTop: '0.5rem' }}>{selectedHandover.receivedBy.representativeName}</div>
-                <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>(اسم الممثل المعتمد المسجل رسمياً)</div>
+                <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>{tx("(اسم الممثل المعتمد المسجل رسمياً)")}</div>
               </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
-            <AdminButton variant="outline" onClick={() => setShowHandoverModal(false)}>إغلاق</AdminButton>
+            <AdminButton variant="outline" onClick={() => setShowHandoverModal(false)}>{tx("إغلاق")}</AdminButton>
             <AdminButton variant="primary" icon={<Printer size={14} />} onClick={() => window.print()}>
-              طباعة المحضر
+              {tx("طباعة المحضر")}
             </AdminButton>
           </div>
         </AdminModal>

@@ -16,7 +16,8 @@ import {
   LogOut, 
   Globe, 
   User as UserIcon,
-  ShieldCheck
+  ShieldCheck,
+  KeyRound
 } from 'lucide-react';
 
 interface AdminTopbarProps {
@@ -147,6 +148,29 @@ export default function AdminTopbar({
             </div>
           </div>
 
+          {/* Change Password Link */}
+          <Link
+            href="/admin/change-password"
+            className="topbar-action-btn change-password-btn"
+            title={isAr ? 'تغيير كلمة المرور' : 'Change Password'}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.35rem 0.65rem',
+              borderRadius: '6px',
+              fontSize: '0.8rem',
+              color: 'var(--facss-gold-400, #D4AF37)',
+              background: 'rgba(212, 175, 55, 0.08)',
+              border: '1px solid rgba(212, 175, 55, 0.25)',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <KeyRound size={14} />
+            <span className="action-text">{isAr ? 'كلمة المرور' : 'Password'}</span>
+          </Link>
+
           {/* Logout Button */}
           <button
             type="button"
@@ -205,6 +229,15 @@ export default function AdminTopbar({
                 >
                   <ExternalLink size={15} />
                   <span>{isAr ? 'معاينة الموقع العام' : 'View Public Site'}</span>
+                </Link>
+
+                <Link
+                  href="/admin/change-password"
+                  className="mobile-dropdown-item"
+                  onClick={() => setUserMenuOpen(false)}
+                >
+                  <KeyRound size={15} />
+                  <span>{isAr ? 'تغيير كلمة المرور' : 'Change Password'}</span>
                 </Link>
 
                 <button

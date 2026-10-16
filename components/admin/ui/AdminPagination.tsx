@@ -22,8 +22,12 @@ export default function AdminPagination({
   onPageChange,
   className = '',
 }: AdminPaginationProps) {
-  const { tx, txLocale } = useAdminT();
+  const { tx, isAr } = useAdminT();
   if (totalPages <= 1) return null;
+
+  const isRtl = isAr;
+  const PrevIcon = isRtl ? ChevronRight : ChevronLeft;
+  const NextIcon = isRtl ? ChevronLeft : ChevronRight;
 
   return (
     <div className={`admin-pagination ${className}`}>
@@ -42,7 +46,7 @@ export default function AdminPagination({
           size="sm"
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
-          icon={ChevronRight}
+          icon={PrevIcon}
         >
           {tx("السابق")}
         </AdminButton>
@@ -56,7 +60,7 @@ export default function AdminPagination({
           size="sm"
           disabled={currentPage >= totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          icon={ChevronLeft}
+          icon={NextIcon}
           iconPosition="end"
         >
           {tx("التالي")}

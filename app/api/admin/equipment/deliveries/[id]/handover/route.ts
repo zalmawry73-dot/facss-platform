@@ -57,8 +57,8 @@ export async function GET(
     const handoverDocument = {
       documentTitleAr: 'محضر تسليم واستلام معدات وتجهيزات أمنية وسلامة',
       documentTitleEn: 'Official Safety Equipment Delivery & Handover Report',
-      centerNameAr: 'مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية (FACSS)',
-      centerNameEn: 'Aden First Center for Security Services & Strategic Studies',
+      centerNameAr: 'مركز الحلول المتكاملة للأمن والسلامة (FACSS)',
+      centerNameEn: 'Integrated Solutions Center for Safety and Security (FACSS)',
       deliveryReference: delivery.deliveryNumber,
       serviceRequestNumber: delivery.serviceRequest.requestNumber,
       deliveryDate: delivery.deliveryDate,

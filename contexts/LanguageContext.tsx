@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Locale, translations } from '@/lib/i18n';
 
 interface LanguageContextType {
@@ -9,6 +10,7 @@ interface LanguageContextType {
   t: typeof translations['ar'];
   dir: 'rtl' | 'ltr';
   toggleLocale: () => void;
+  isPending?: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -32,6 +34,8 @@ export function LanguageProvider({
   children: React.ReactNode;
   initialLocale?: Locale;
 }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   useEffect(() => {
@@ -41,24 +45,61 @@ export function LanguageProvider({
     const resolvedLocale = cookieLocale || localLocale || initialLocale;
 
     if (resolvedLocale === 'ar' || resolvedLocale === 'en') {
-      setLocaleState(resolvedLocale);
+      if (resolvedLocale !== locale) {
+        setLocaleState(resolvedLocale);
+      }
       document.documentElement.dir = resolvedLocale === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = resolvedLocale;
       setCookie('facss_locale', resolvedLocale);
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('facss_locale', resolvedLocale);
+        try {
+          localStorage.setItem('facss_locale', resolvedLocale);
+        } catch {}
+      }
+      // If the client-resolved locale differs from what the server rendered on initial pass,
+      // refresh server components seamlessly
+      if (resolvedLocale !== initialLocale) {
+        startTransition(() => {
+          try {
+            router.refresh();
+          } catch (err) {
+            console.error('Failed to sync server components with resolved locale:', err);
+          }
+        });
       }
     }
   }, [initialLocale]);
 
   const setLocale = (newLocale: Locale) => {
+    if (newLocale !== 'ar' && newLocale !== 'en') return;
+
+    // 1. Immediately update client React state
     setLocaleState(newLocale);
+
+    // 2. Synchronously write cookie so any subsequent server requests carry the new locale
     setCookie('facss_locale', newLocale);
+
+    // 3. Write localStorage for client persistence
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('facss_locale', newLocale);
+      try {
+        localStorage.setItem('facss_locale', newLocale);
+      } catch {}
     }
-    document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = newLocale;
+
+    // 4. Update DOM html attributes immediately
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = newLocale;
+    }
+
+    // 5. Trigger Next.js App Router server component re-render with the new cookie
+    startTransition(() => {
+      try {
+        router.refresh();
+      } catch (err) {
+        console.error('Failed to refresh router on locale switch:', err);
+      }
+    });
   };
 
   const toggleLocale = () => {
@@ -69,7 +110,7 @@ export function LanguageProvider({
   const t = translations[locale];
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t, dir, toggleLocale }}>
+    <LanguageContext.Provider value={{ locale, setLocale, t, dir, toggleLocale, isPending }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -78,7 +119,14 @@ export function LanguageProvider({
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    return {
+      locale: 'ar' as Locale,
+      setLocale: () => {},
+      t: translations['ar'],
+      dir: 'rtl' as const,
+      toggleLocale: () => {},
+      isPending: false,
+    };
   }
   return context;
 }

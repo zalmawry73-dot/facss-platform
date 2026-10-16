@@ -10,7 +10,8 @@ import {
   Mail, 
   ShieldCheck, 
   AlertCircle, 
-  LogIn 
+  LogIn,
+  Clock
 } from 'lucide-react';
 
 function LoginForm() {
@@ -20,6 +21,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
   const errorParam = searchParams.get('error');
+  const reasonParam = searchParams.get('reason');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -76,33 +78,57 @@ function LoginForm() {
   };
 
   return (
-    <div style={{ paddingBlock: '4rem' }}>
-      <div className="container" style={{ maxWidth: '500px' }}>
-        <div className="card" style={{ padding: '2.5rem', borderTop: '4px solid var(--facss-gold-500)' }}>
+    <div style={{ paddingBlock: '4rem', background: 'var(--surface-bg)', minHeight: 'calc(100vh - 120px)', display: 'flex', alignItems: 'center' }}>
+      <div className="container" style={{ maxWidth: '480px' }}>
+        <div className="card-institutional" style={{ padding: 'clamp(2rem, 4vw, 2.75rem)', borderTop: '4px solid var(--color-gold-500)', boxShadow: '0 20px 40px -15px rgba(11, 61, 46, 0.08)' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <img
-              src="/images/logo.png"
+              src="/images/brand/logo-symbol.png"
               alt={t.siteTitle}
-              style={{ width: '72px', height: '72px', marginInline: 'auto', marginBottom: '1rem', objectFit: 'contain' }}
+              style={{ width: '64px', height: 'auto', marginInline: 'auto', marginBottom: '1.25rem', objectFit: 'contain' }}
             />
-            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+            <h1 style={{ fontSize: '1.65rem', fontWeight: 900, color: 'var(--color-primary-950)', marginBottom: '0.4rem', letterSpacing: '-0.01em' }}>
               {t.navLogin}
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
               {t.loginSubtitle}
             </p>
           </div>
 
+          {reasonParam === 'timeout' && !error && (
+            <div style={{
+              padding: '0.85rem 1rem',
+              background: 'rgba(181, 146, 84, 0.12)',
+              border: '1px solid var(--color-gold-500, #B59254)',
+              borderRadius: '8px',
+              color: 'var(--color-gold-700, #674C28)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              marginBottom: '1.5rem',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              lineHeight: 1.5
+            }}>
+              <Clock size={20} style={{ flexShrink: 0, color: 'var(--color-gold-600, #8E6F37)' }} />
+              <span>
+                {locale === 'ar'
+                  ? 'تم تسجيل خروجك تلقائياً لعدم وجود أي نشاط لمدة 15 دقيقة، وذلك لضمان أمان وسرية الحساب.'
+                  : 'You have been automatically logged out due to 15 minutes of inactivity for your account security.'}
+              </span>
+            </div>
+          )}
+
           {error && (
-            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 600 }}>
+            <div style={{ padding: '0.85rem 1rem', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 600 }}>
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleLogin}>
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
               <label className="form-label">{t.emailAddress}</label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -116,7 +142,7 @@ function LoginForm() {
               </div>
             </div>
 
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
               <label className="form-label">{t.password}</label>
               <input
                 type="password"
@@ -145,14 +171,20 @@ function LoginForm() {
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+          <div style={{ textAlign: 'center', paddingTop: '1.5rem', borderTop: '1px solid rgba(181, 146, 84, 0.2)' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>
               {t.dontHaveAccount}{' '}
-              <Link href="/register" style={{ color: 'var(--facss-green-900)', fontWeight: 700 }}>
+              <Link href="/register" style={{ color: 'var(--color-primary-900)', fontWeight: 800 }}>
                 {t.registerNewAccount}
               </Link>
             </p>
           </div>
+        </div>
+
+        {/* Security Reassurance */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '1.5rem', color: 'var(--color-gold-700)', fontSize: '0.8rem', fontWeight: 600 }}>
+          <ShieldCheck size={16} />
+          <span>{locale === 'ar' ? 'منظومة ولوج مؤسسية آمنة ومشفرة' : 'Encrypted Institutional Access Gateway'}</span>
         </div>
       </div>
     </div>

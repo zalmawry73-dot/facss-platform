@@ -12,6 +12,7 @@ const ROUTE_LABELS_AR: Record<string, string> = {
   get incidents() { return tx("البلاغات الميدانية"); },
   get alerts() { return tx("التنبيهات الميدانية"); },
   get risks() { return tx("سجل المخاطر التشغيلية"); },
+  get equipment() { return tx("المعدات والمخزون"); },
   get services() { return tx("دليل الخدمات"); },
   get requests() { return tx("طلبات الخدمات"); },
   get training() { return tx("أكاديمية التدريب"); },
@@ -22,6 +23,7 @@ const ROUTE_LABELS_AR: Record<string, string> = {
   get content() { return tx("إدارة المحتوى"); },
   get settings() { return tx("إعدادات النظام"); },
   get logs() { return tx("سجل التدقيق والرقابة"); },
+  get ['change-password']() { return tx("تغيير كلمة المرور"); },
 };
 
 const ROUTE_LABELS_EN: Record<string, string> = {
@@ -29,6 +31,7 @@ const ROUTE_LABELS_EN: Record<string, string> = {
   incidents: 'Field Incidents',
   alerts: 'Field Alerts',
   risks: 'Operational Risks',
+  equipment: 'Equipment & Inventory',
   services: 'Services Catalog',
   requests: 'Service Requests',
   training: 'Training Academy',
@@ -39,6 +42,7 @@ const ROUTE_LABELS_EN: Record<string, string> = {
   content: 'Content CMS',
   settings: 'System Settings',
   logs: 'Audit Logs',
+  'change-password': 'Change Password',
 };
 
 export default function AdminBreadcrumb() {
@@ -71,7 +75,7 @@ export default function AdminBreadcrumb() {
 
     let label = labels[seg.toLowerCase()];
     if (!label) {
-      // Dynamic ID segment (e.g. incident ID, alert ID, risk ID)
+      // Dynamic ID segment (e.g. incident ID, alert ID, risk ID, equipment ID)
       const prevSeg = segments[idx - 1];
       if (prevSeg === 'incidents') {
         label = isAr ? 'تفاصيل البلاغ' : 'Incident Details';
@@ -79,6 +83,16 @@ export default function AdminBreadcrumb() {
         label = isAr ? 'تفاصيل التنبيه' : 'Alert Details';
       } else if (prevSeg === 'risks') {
         label = isAr ? 'تفاصيل الخطر' : 'Risk Details';
+      } else if (prevSeg === 'equipment') {
+        label = isAr ? 'تفاصيل المعدة' : 'Equipment Details';
+      } else if (prevSeg === 'training') {
+        label = isAr ? 'تفاصيل الدورة' : 'Course Details';
+      } else if (prevSeg === 'research') {
+        label = isAr ? 'تفاصيل الدراسة' : 'Study Details';
+      } else if (prevSeg === 'requests') {
+        label = isAr ? 'تفاصيل الطلب' : 'Request Details';
+      } else if (prevSeg === 'users') {
+        label = isAr ? 'تفاصيل المستخدم' : 'User Details';
       } else {
         label = isAr ? 'تفاصيل السجل' : 'Record Details';
       }

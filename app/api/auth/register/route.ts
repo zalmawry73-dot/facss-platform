@@ -83,6 +83,7 @@ export async function POST(request: Request) {
       fullName: newUser.fullName,
       role: newUser.role,
       organization: newUser.organization,
+      tokenVersion: newUser.tokenVersion,
     });
 
     const isHttps = process.env.APP_URL?.startsWith('https://') ?? false;

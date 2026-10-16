@@ -16,6 +16,8 @@ import {
 export const revalidate = 0;
 
 const AUTHOR_TRANSLATIONS: Record<string, string> = {
+  'وحدة الدراسات والبحوث بمركز الحلول المتكاملة للأمن والسلامة (FACSS)': 'Studies & Research Unit (FACSS)',
+  'وحدة التحليل والتقييم الميداني — مركز الحلول المتكاملة للأمن والسلامة': 'Field Analysis & Assessment Unit (FACSS)',
   'وحدة الدراسات الميدانية والتحليل بالمركز المتكامل': 'Field Studies & Analysis Unit (Integrated Center)',
   'وحدة الأبحاث والمسوحات الميدانية بالمركز المتكامل': 'Field Research & Surveys Unit (Integrated Center)',
   'فريق السلامة والتقييم الميداني بالمركز المتكامل': 'Safety & Field Assessment Team (Integrated Center)',
@@ -63,94 +65,89 @@ export default async function ResearchPage() {
   return (
     <div>
       {/* Banner */}
-      <section
-        style={{
-          paddingBlock: '4rem',
-          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          textAlign: 'center',
-          color: '#FFFFFF',
-        }}
-      >
-        <div className="container">
-          <span className="section-tag">{t.researchSectionTitle}</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
+      <section className="page-header-institutional">
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div className="hero-badge-pill" style={{ marginBottom: '1.25rem' }}>
+            <BookOpen size={15} style={{ color: 'var(--color-gold-400)' }} />
+            <span>{t.researchSectionTitle}</span>
+          </div>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 3.8vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
             {locale === 'ar' ? 'المنتجات المعرفية والدراسات والتقارير الميدانية' : 'Knowledge Products, Field Studies & Reports'}
           </h1>
-          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.1rem', maxWidth: '820px', marginInline: 'auto', lineHeight: 1.75 }}>
+          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.05rem', maxWidth: '820px', marginInline: 'auto', lineHeight: 1.75 }}>
             {t.researchSectionSubtitle}
           </p>
         </div>
       </section>
 
       {/* Publications Repository */}
-      <section className="section">
+      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           {publications.length === 0 ? (
-            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
+            <div className="card-institutional" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
               <FileText size={44} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
                 {locale === 'ar' ? 'لا توجد دراسات أو تقارير منشورة حالياً' : 'No publications currently available'}
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7 }}>
                 {locale === 'ar' 
                   ? 'يتم نشر التقارير الدورية وموجزات سياق الوصول الإنساني ومصفوفات المخاطر فور اعتمادها وتدقيقها الداخلي.' 
                   : 'Periodic context briefs, access risk analyses, and danger matrices are published upon internal validation.'}
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem' }}>
               {publications.map((pub) => {
                 const categoryTitle = locale === 'en' ? (pub.category.titleEn || pub.category.titleAr) : pub.category.titleAr;
                 const title = locale === 'en' ? (pub.titleEn || pub.titleAr) : pub.titleAr;
                 const summary = locale === 'en' ? (pub.summaryEn || pub.summaryAr) : pub.summaryAr;
 
                 return (
-                  <div key={pub.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div key={pub.id} className="card-institutional" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderTop: '4px solid var(--color-primary-900)' }}>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem' }}>
                         <span className="badge badge-gold">{categoryTitle}</span>
                         {pub.visibility === 'PUBLIC' ? (
                           <span className="badge badge-success">{t.publicAccess}</span>
                         ) : (
-                          <span className="badge badge-warning" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <span className="badge badge-warning" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                             <Lock size={12} />
                             <span>{t.clientOnlyAccess}</span>
                           </span>
                         )}
                       </div>
 
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.6rem', lineHeight: 1.4 }}>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.65rem', lineHeight: 1.4 }}>
                         {title}
                       </h3>
 
-                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.35rem' }}>
                         {summary}
                       </p>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <User size={14} style={{ color: 'var(--facss-green-800)' }} />
-                          <span>{locale === 'en' ? (AUTHOR_TRANSLATIONS[pub.author] || pub.author) : pub.author}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                          <User size={15} style={{ color: 'var(--color-primary-800)' }} />
+                          <span style={{ fontWeight: 600 }}>{locale === 'en' ? (AUTHOR_TRANSLATIONS[pub.author] || pub.author) : pub.author}</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Eye size={14} style={{ color: 'var(--facss-gold-600)' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                          <Eye size={15} style={{ color: 'var(--color-gold-700)' }} />
                           <span>{pub.viewsCount} {locale === 'ar' ? 'قراءة' : 'views'}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ paddingTop: '1.2rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
                       <Link
                         href={`/research/${pub.slug}`}
-                        className="btn btn-outline btn-sm"
-                        style={{ fontSize: '0.82rem' }}
+                        className="btn btn-secondary btn-sm"
+                        style={{ fontSize: '0.85rem' }}
                       >
                         <BookOpen size={15} />
                         <span>{t.viewResearch}</span>
                       </Link>
 
-                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-en)' }}>
                         {formatDate(pub.publicationDate, locale)}
                       </span>
                     </div>

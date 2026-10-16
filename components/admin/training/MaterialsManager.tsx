@@ -21,6 +21,7 @@ import {
   AdminTextarea,
   AdminAlert,
 } from '@/components/admin/ui';
+import { useAdminT } from '@/lib/admin-i18n';
 
 interface Material {
   id: string;
@@ -38,6 +39,7 @@ interface Material {
 interface CourseOption {
   id: string;
   titleAr: string;
+  titleEn?: string | null;
   courseType?: string;
 }
 
@@ -46,6 +48,7 @@ interface Props {
 }
 
 export default function MaterialsManager({ courses }: Props) {
+  const { tx, isAr, locale } = useAdminT();
   const [selectedCourseId, setSelectedCourseId] = useState<string>(courses[0]?.id || '');
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(false);
@@ -74,7 +77,7 @@ export default function MaterialsManager({ courses }: Props) {
         setMaterials(data.materials);
       }
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'فشل تحميل المواد التدريبية' });
+      setFeedback({ type: 'error', message: err.message || tx('فشل تحميل المواد التدريبية') });
     } finally {
       setLoading(false);
     }
@@ -98,9 +101,9 @@ export default function MaterialsManager({ courses }: Props) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل رفع المادة التدريبية');
+      if (!res.ok) throw new Error(data.error || tx('فشل رفع المادة التدريبية'));
 
-      setFeedback({ type: 'success', message: 'تم رفع المادة التدريبية بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم رفع المادة التدريبية بنجاح') });
       setIsUploadOpen(false);
       setUploadTitle('');
       setUploadDesc('');
@@ -114,15 +117,15 @@ export default function MaterialsManager({ courses }: Props) {
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`هل أنت متأكد من حذف المادة التدريبية [${title}]؟`)) return;
+    if (!confirm(tx("هل أنت متأكد من حذف المادة التدريبية [{0}]؟", title))) return;
     try {
       const res = await fetch(`/api/admin/training/materials/${id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل حذف المادة التدريبية');
+      if (!res.ok) throw new Error(data.error || tx('فشل حذف المادة التدريبية'));
 
-      setFeedback({ type: 'success', message: 'تم حذف المادة بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم حذف المادة بنجاح') });
       await loadMaterials(selectedCourseId);
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message });
@@ -139,20 +142,20 @@ export default function MaterialsManager({ courses }: Props) {
     if (v === 'PUBLIC') {
       return (
         <span className="badge" style={{ background: '#22C55E20', color: '#22C55E', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-          <Globe size={11} /> عامة للجميع
+          <Globe size={11} /> {tx("عامة للجميع")}
         </span>
       );
     }
     if (v === 'ENROLLED_TRAINEES') {
       return (
         <span className="badge" style={{ background: '#3B82F620', color: '#3B82F6', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-          <Users size={11} /> للمتدربين المسجلين
+          <Users size={11} /> {tx("للمتدربين المسجلين")}
         </span>
       );
     }
     return (
       <span className="badge" style={{ background: '#F59E0B20', color: '#F59E0B', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-        <Lock size={11} /> داخلية للمدربين
+        <Lock size={11} /> {tx("داخلية للمدربين")}
       </span>
     );
   };
@@ -174,10 +177,10 @@ export default function MaterialsManager({ courses }: Props) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--admin-text-primary)', margin: 0 }}>
-              المواد والحقائب التدريبية (Training Materials & Content)
+              {tx("المواد والحقائب التدريبية (Training Materials & Content)")}
             </h3>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              رفع وإدارة المستندات، العروض التقديمية، والحقائب التدريبية مع حماية الخصوصية ومستويات الصلاحية
+              {tx("رفع وإدارة المستندات، العروض التقديمية، والحقائب التدريبية مع حماية الخصوصية ومستويات الصلاحية")}
             </span>
           </div>
           <AdminButton
@@ -187,12 +190,12 @@ export default function MaterialsManager({ courses }: Props) {
             onClick={() => setIsUploadOpen(true)}
             disabled={!selectedCourseId}
           >
-            رفع مادة تدريبية جديدة
+            {tx("رفع مادة تدريبية جديدة")}
           </AdminButton>
         </div>
 
         <div style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>اختر البرنامج التدريبي:</label>
+          <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>{tx("اختر البرنامج التدريبي:")}</label>
           <select
             className="form-select"
             value={selectedCourseId}
@@ -201,7 +204,7 @@ export default function MaterialsManager({ courses }: Props) {
           >
             {courses.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.titleAr} {c.courseType === 'PRIVATE_CLIENT' ? '(دورة خاصة)' : '(دورة عامة)'}
+                {isAr ? c.titleAr : (c.titleEn || c.titleAr)} {c.courseType === 'PRIVATE_CLIENT' ? tx('(دورة خاصة)') : tx('(دورة عامة)')}
               </option>
             ))}
           </select>
@@ -212,24 +215,24 @@ export default function MaterialsManager({ courses }: Props) {
       <div className="card">
         {loading ? (
           <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            جاري تحميل المواد التدريبية...
+            {tx("جاري تحميل المواد التدريبية...")}
           </div>
         ) : materials.length === 0 ? (
           <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            لا توجد مواد تدريبية مرفوعة لهذه الدورة حتى الآن. يمكنك رفع أول حقيبة تدريبية الآن.
+            {tx("لا توجد مواد تدريبية مرفوعة لهذه الدورة حتى الآن. يمكنك رفع أول حقيبة تدريبية الآن.")}
           </div>
         ) : (
           <div className="table-responsive">
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>عنوان المادة</th>
-                  <th>اسم الملف والنوع</th>
-                  <th>الحجم</th>
-                  <th>مستوى الصلاحية</th>
-                  <th>تاريخ الرفع</th>
-                  <th>المسؤول</th>
-                  <th>الإجراءات</th>
+                  <th>{tx("عنوان المادة")}</th>
+                  <th>{tx("اسم الملف والنوع")}</th>
+                  <th>{tx("الحجم")}</th>
+                  <th>{tx("مستوى الصلاحية")}</th>
+                  <th>{tx("تاريخ الرفع")}</th>
+                  <th>{tx("المسؤول")}</th>
+                  <th>{tx("الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -242,7 +245,7 @@ export default function MaterialsManager({ courses }: Props) {
                       )}
                     </td>
                     <td>
-                      <div style={{ fontSize: '0.85rem', direction: 'ltr', textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.85rem', direction: 'ltr', textAlign: isAr ? 'right' : 'left' }}>
                         {m.fileName}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{m.mimeType}</div>
@@ -253,7 +256,7 @@ export default function MaterialsManager({ courses }: Props) {
                     <td>{getVisibilityBadge(m.visibility)}</td>
                     <td>
                       <span style={{ fontSize: '0.8rem' }}>
-                        {new Date(m.createdAt).toLocaleDateString('ar-EG')}
+                        {new Date(m.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}
                       </span>
                     </td>
                     <td>
@@ -266,7 +269,7 @@ export default function MaterialsManager({ courses }: Props) {
                           target="_blank"
                           rel="noreferrer"
                           className="btn btn-sm btn-outline"
-                          title="تحميل الملف"
+                          title={tx("تحميل الملف")}
                           style={{ padding: '4px 8px' }}
                         >
                           <Download size={13} />
@@ -276,7 +279,7 @@ export default function MaterialsManager({ courses }: Props) {
                           size="sm"
                           icon={<Trash2 size={13} />}
                           onClick={() => handleDelete(m.id, m.title)}
-                          title="حذف المادة"
+                          title={tx("حذف المادة")}
                         />
                       </div>
                     </td>
@@ -293,36 +296,36 @@ export default function MaterialsManager({ courses }: Props) {
         <AdminModal
           isOpen={isUploadOpen}
           onClose={() => setIsUploadOpen(false)}
-          title="رفع مادة / حقيبة تدريبية جديدة"
+          title={tx("رفع مادة / حقيبة تدريبية جديدة")}
         >
           <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <AdminInput
-              label="عنوان المادة التدريبية *"
+              label={tx("عنوان المادة التدريبية *")}
               value={uploadTitle}
               onChange={(e) => setUploadTitle(e.target.value)}
-              placeholder="الحقيبة التدريبية الكاملة، العرض التقديمي للجلسة الأولى..."
+              placeholder={tx("الحقيبة التدريبية الكاملة، العرض التقديمي للجلسة الأولى...")}
               required
             />
             <AdminTextarea
-              label="وصف المادة (اختياري)"
+              label={tx("وصف المادة (اختياري)")}
               value={uploadDesc}
               onChange={(e) => setUploadDesc(e.target.value)}
               rows={2}
             />
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>مستوى الرؤية والصلاحية *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("مستوى الرؤية والصلاحية *")}</label>
               <select
                 className="form-select"
                 value={uploadVisibility}
                 onChange={(e) => setUploadVisibility(e.target.value)}
               >
-                <option value="ENROLLED_TRAINEES">المتدربون المسجلون في الدورة فقط (Enrolled Trainees)</option>
-                <option value="PUBLIC">عامة لجميع الزوار (Public Download)</option>
-                <option value="INTERNAL">داخلية للمدربين والإدارة فقط (Internal Staff Only)</option>
+                <option value="ENROLLED_TRAINEES">{tx("المتدربون المسجلون في الدورة فقط (Enrolled Trainees)")}</option>
+                <option value="PUBLIC">{tx("عامة لجميع الزوار (Public Download)")}</option>
+                <option value="INTERNAL">{tx("داخلية للمدربين والإدارة فقط (Internal Staff Only)")}</option>
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>الملف (PDF, Word, PPT, Excel, Images) *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("الملف (PDF, Word, PPT, Excel, Images) *")}</label>
               <input
                 type="file"
                 className="form-control"
@@ -333,10 +336,10 @@ export default function MaterialsManager({ courses }: Props) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <AdminButton variant="outline" size="md" onClick={() => setIsUploadOpen(false)}>
-                إلغاء
+                {tx("إلغاء")}
               </AdminButton>
               <AdminButton variant="primary" size="md" type="submit" disabled={uploading || !uploadFile || !uploadTitle}>
-                {uploading ? 'جاري الرفع...' : 'رفع وحفظ المادة'}
+                {uploading ? tx("جاري الرفع...") : tx("رفع وحفظ المادة")}
               </AdminButton>
             </div>
           </form>

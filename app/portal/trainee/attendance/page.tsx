@@ -85,19 +85,24 @@ export default async function TraineeAttendancePage() {
 
   return (
     <div>
-      <div className="card" style={{ marginBottom: '2rem' }}>
+      <div className="portal-card" style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFF', margin: '0 0 0.35rem 0' }}>
-              {isAr ? 'سجل الحضور والجلسات والتقييمات الأكاديمية' : 'Attendance, Sessions & Academic Evaluations'}
-            </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(11, 61, 46, 0.08)', color: 'var(--brand-deep-green)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Calendar size={18} />
+              </div>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                {isAr ? 'سجل الحضور والجلسات والتقييمات الأكاديمية' : 'Attendance, Sessions & Academic Evaluations'}
+              </h2>
+            </div>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>
               {isAr
                 ? 'متابعة سجل حضورك لكل جلسة تدريبية، نسبة الحضور المحققة، ونتائج التقييمات القبلية والبعدية'
                 : 'Track your session attendance, attendance percentage, and pre/post evaluation scores'}
             </p>
           </div>
-          <Link href="/portal/trainee" className="btn btn-outline btn-sm">
+          <Link href="/portal/trainee" className="btn btn-outline btn-sm" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>
             <span>{isAr ? 'العودة للوحة المتدرب' : 'Back to Dashboard'}</span>
             <ChevronIcon size={14} />
           </Link>
@@ -105,9 +110,12 @@ export default async function TraineeAttendancePage() {
       </div>
 
       {registrations.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--text-muted)' }}>
-          <AlertCircle size={40} style={{ margin: '0 auto 0.75rem', opacity: 0.6 }} />
-          <p style={{ margin: 0, fontWeight: 600 }}>
+        <div className="portal-empty-state">
+          <AlertCircle size={44} style={{ color: 'var(--color-gold-500)', margin: '0 auto 1rem' }} />
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+            {isAr ? 'لا توجد سجلات حضور مسجلة' : 'No Attendance Records Found'}
+          </h3>
+          <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
             {isAr ? 'لم يتم تسجيلك في أي دورات تدريبية بعد.' : 'You have not enrolled in any training courses yet.'}
           </p>
         </div>
@@ -128,14 +136,14 @@ export default async function TraineeAttendancePage() {
             const postEval = reg.evaluations.find((e) => e.type === 'POST') || null;
 
             return (
-              <div key={reg.id} className="card" style={{ padding: 'clamp(1rem, 3vw, 1.75rem)' }}>
+              <div key={reg.id} className="portal-card" style={{ padding: 'clamp(1.25rem, 3vw, 1.75rem)' }}>
                 {/* Course Header */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFF', margin: '0 0 0.3rem 0' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--brand-deep-green)', margin: '0 0 0.4rem 0' }}>
                       {courseTitle}
                     </h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)', flexWrap: 'wrap' }}>
                       <span>{isAr ? `المدة: ${course.duration}` : `Duration: ${course.duration}`}</span>
                       <span>•</span>
                       <span>{isAr ? `المقر: ${course.location}` : `Location: ${course.location}`}</span>
@@ -144,17 +152,19 @@ export default async function TraineeAttendancePage() {
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <span
-                      className="badge"
                       style={{
-                        background: isEligible ? 'rgba(34, 197, 94, 0.18)' : 'rgba(239, 68, 68, 0.18)',
-                        color: isEligible ? '#22c55e' : '#ef4444',
-                        border: `1px solid ${isEligible ? '#22c55e' : '#ef4444'}50`,
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '999px',
+                        fontSize: '0.82rem',
+                        background: isEligible ? 'rgba(21, 128, 61, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+                        color: isEligible ? '#15803D' : '#DC2626',
+                        border: `1px solid ${isEligible ? '#15803D40' : '#DC262640'}`,
                         fontWeight: 700,
                       }}
                     >
                       {isEligible
                         ? (isAr ? `مستوفٍ لنسبة الحضور (${attendancePct}%)` : `Attendance Met (${attendancePct}%)`)
-                        : (isAr ? `حضور ضعيف (${attendancePct}% / المطلوب ${minRequired}%)` : `Below Threshold (${attendancePct}%)`)}
+                        : (isAr ? `أقل من الحد الأدنى (${attendancePct}% / المطلوب ${minRequired}%)` : `Below Threshold (${attendancePct}%)`)}
                     </span>
 
                     {reg.certificate && !reg.certificate.isRevoked && (
@@ -168,59 +178,67 @@ export default async function TraineeAttendancePage() {
 
                 {/* Metrics Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
-                  <div style={{ padding: '0.85rem 1rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                  <div style={{ padding: '1rem', background: 'rgba(11, 61, 46, 0.03)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem', fontWeight: 600 }}>
                       {isAr ? 'نسبة الحضور الفعلية' : 'Attendance Rate'}
                     </span>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 900, color: isEligible ? '#22c55e' : '#ef4444' }}>
+                    <span style={{ fontSize: '1.6rem', fontWeight: 900, color: isEligible ? '#15803D' : '#DC2626' }}>
                       {attendancePct}%
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>
-                      {isAr ? `الحد الأدنى: ${minRequired}%` : `Minimum: ${minRequired}%`}
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.2rem' }}>
+                      {isAr ? `الحد الأدنى المطلوب: ${minRequired}%` : `Minimum: ${minRequired}%`}
                     </span>
                   </div>
 
-                  <div style={{ padding: '0.85rem 1rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                  <div style={{ padding: '1rem', background: 'rgba(11, 61, 46, 0.03)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem', fontWeight: 600 }}>
                       {isAr ? 'جلسات الحضور' : 'Attended Sessions'}
                     </span>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#22c55e' }}>
-                      {presentCount} <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ {totalSessions}</span>
+                    <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#15803D' }}>
+                      {presentCount} <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>/ {totalSessions}</span>
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.2rem' }}>
+                      {isAr ? 'جلسة تدريبية فعلية' : 'training sessions'}
                     </span>
                   </div>
 
-                  <div style={{ padding: '0.85rem 1rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                  <div style={{ padding: '1rem', background: 'rgba(11, 61, 46, 0.03)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem', fontWeight: 600 }}>
                       {isAr ? 'الغياب والأعذار' : 'Absences & Excuses'}
                     </span>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '0.2rem' }}>
-                      <span style={{ color: '#ef4444' }}>{absentCount} {isAr ? 'غائب' : 'absent'}</span>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 800, marginTop: '0.2rem' }}>
+                      <span style={{ color: absentCount > 0 ? '#DC2626' : 'var(--text-secondary)' }}>
+                        {absentCount} {isAr ? 'غائب' : 'absent'}
+                      </span>
                       {excusedCount > 0 && (
-                        <span style={{ color: '#f59e0b', fontSize: '0.9rem', marginInlineStart: '0.5rem' }}>
+                        <span style={{ color: '#B45309', fontSize: '0.9rem', marginInlineStart: '0.5rem', fontWeight: 700 }}>
                           • {excusedCount} {isAr ? 'معذور' : 'excused'}
                         </span>
                       )}
                     </div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.2rem' }}>
+                      {isAr ? 'مسجلة رسمياً بالسجل' : 'officially recorded'}
+                    </span>
                   </div>
 
                   {/* Evaluations Metric */}
-                  <div style={{ padding: '0.85rem 1rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                  <div style={{ padding: '1rem', background: 'rgba(11, 61, 46, 0.03)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem', fontWeight: 600 }}>
                       {isAr ? 'التقييم الأكاديمي (بعدي)' : 'Post Evaluation'}
                     </span>
-                    <div style={{ fontSize: '1.3rem', fontWeight: 800, color: postEval?.score !== null && postEval?.score !== undefined ? '#22c55e' : 'var(--text-muted)' }}>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 800, color: postEval?.score !== null && postEval?.score !== undefined ? '#15803D' : 'var(--text-muted)' }}>
                       {postEval?.score !== null && postEval?.score !== undefined ? `${postEval.score} / ${postEval.maxScore}` : (isAr ? 'لم يُؤدَّ بعد' : 'Pending')}
                     </div>
                     {preEval?.score !== null && preEval?.score !== undefined && postEval?.score !== null && postEval?.score !== undefined && (
-                      <span style={{ fontSize: '0.75rem', color: postEval.score >= preEval.score ? '#22c55e' : '#ef4444', fontWeight: 700 }}>
-                        {postEval.score >= preEval.score ? `+${postEval.score - preEval.score}` : postEval.score - preEval.score} {isAr ? 'معدل التطور' : 'gain'}
+                      <span style={{ fontSize: '0.75rem', color: postEval.score >= preEval.score ? '#15803D' : '#DC2626', fontWeight: 700, display: 'block', marginTop: '0.2rem' }}>
+                        {postEval.score >= preEval.score ? `+${postEval.score - preEval.score}` : postEval.score - preEval.score} {isAr ? 'معدل التطور' : 'score gain'}
                       </span>
                     )}
                   </div>
                 </div>
 
                 {/* Sessions Table */}
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#FFF', marginBottom: '0.75rem' }}>
+                <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.85rem' }}>
                   {isAr ? 'جدول الجلسات التدريبية وحالة الحضور' : 'Training Sessions & Attendance'}
                 </h4>
 
@@ -229,15 +247,15 @@ export default async function TraineeAttendancePage() {
                     {isAr ? 'لم يحدد المركز جدول الجلسات بعد.' : 'No sessions scheduled yet.'}
                   </p>
                 ) : (
-                  <div className="table-container" style={{ marginBottom: '1.5rem' }}>
-                    <table className="data-table">
+                  <div className="portal-table-container">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isAr ? 'right' : 'left' }}>
                       <thead>
                         <tr>
-                          <th>{isAr ? 'الجلسة' : 'Session'}</th>
-                          <th>{isAr ? 'عنوان وموضوع الجلسة' : 'Topic'}</th>
-                          <th>{isAr ? 'التاريخ والوقت' : 'Date & Time'}</th>
-                          <th>{isAr ? 'حالة الحضور' : 'Attendance Status'}</th>
-                          <th>{isAr ? 'ملاحظات' : 'Notes'}</th>
+                          <th style={{ padding: '0.85rem 1rem', background: 'rgba(11, 61, 46, 0.05)', color: 'var(--brand-deep-green)', fontWeight: 800, fontSize: '0.82rem', borderBottom: '1px solid var(--border-color)' }}>{isAr ? 'الجلسة' : 'Session'}</th>
+                          <th style={{ padding: '0.85rem 1rem', background: 'rgba(11, 61, 46, 0.05)', color: 'var(--brand-deep-green)', fontWeight: 800, fontSize: '0.82rem', borderBottom: '1px solid var(--border-color)' }}>{isAr ? 'عنوان وموضوع الجلسة' : 'Topic'}</th>
+                          <th style={{ padding: '0.85rem 1rem', background: 'rgba(11, 61, 46, 0.05)', color: 'var(--brand-deep-green)', fontWeight: 800, fontSize: '0.82rem', borderBottom: '1px solid var(--border-color)' }}>{isAr ? 'التاريخ والوقت' : 'Date & Time'}</th>
+                          <th style={{ padding: '0.85rem 1rem', background: 'rgba(11, 61, 46, 0.05)', color: 'var(--brand-deep-green)', fontWeight: 800, fontSize: '0.82rem', borderBottom: '1px solid var(--border-color)' }}>{isAr ? 'حالة الحضور' : 'Attendance Status'}</th>
+                          <th style={{ padding: '0.85rem 1rem', background: 'rgba(11, 61, 46, 0.05)', color: 'var(--brand-deep-green)', fontWeight: 800, fontSize: '0.82rem', borderBottom: '1px solid var(--border-color)' }}>{isAr ? 'ملاحظات' : 'Notes'}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -246,13 +264,13 @@ export default async function TraineeAttendancePage() {
                           const status = record?.status || null;
 
                           return (
-                            <tr key={sess.id}>
-                              <td style={{ fontWeight: 800, color: 'var(--color-gold)' }}>
+                            <tr key={sess.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--color-gold-600)' }}>
                                 {isAr ? `الجلسة ${sess.sessionNumber}` : `Session ${sess.sessionNumber}`}
                               </td>
-                              <td style={{ fontWeight: 600 }}>{sess.title}</td>
-                              <td>
-                                <div style={{ fontSize: '0.85rem' }}>
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{sess.title}</td>
+                              <td style={{ padding: '0.85rem 1rem' }}>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>
                                   {new Date(sess.sessionDate).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}
                                 </div>
                                 {(sess.startTime || sess.endTime) && (
@@ -261,17 +279,17 @@ export default async function TraineeAttendancePage() {
                                   </div>
                                 )}
                               </td>
-                              <td>
+                              <td style={{ padding: '0.85rem 1rem' }}>
                                 {status === 'PRESENT' ? (
-                                  <span className="badge" style={{ background: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', border: '1px solid #22c55e50' }}>
+                                  <span style={{ display: 'inline-flex', padding: '0.2rem 0.65rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700, background: 'rgba(21, 128, 61, 0.1)', color: '#15803D', border: '1px solid rgba(21, 128, 61, 0.3)' }}>
                                     {isAr ? 'حاضر' : 'Present'}
                                   </span>
                                 ) : status === 'EXCUSED' ? (
-                                  <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', border: '1px solid #f59e0b50' }}>
+                                  <span style={{ display: 'inline-flex', padding: '0.2rem 0.65rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700, background: 'rgba(180, 83, 9, 0.1)', color: '#B45309', border: '1px solid rgba(180, 83, 9, 0.3)' }}>
                                     {isAr ? 'معذور رسمي' : 'Excused'}
                                   </span>
                                 ) : status === 'ABSENT' ? (
-                                  <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid #ef444450' }}>
+                                  <span style={{ display: 'inline-flex', padding: '0.2rem 0.65rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700, background: 'rgba(220, 38, 38, 0.1)', color: '#DC2626', border: '1px solid rgba(220, 38, 38, 0.3)' }}>
                                     {isAr ? 'غائب' : 'Absent'}
                                   </span>
                                 ) : (
@@ -280,7 +298,7 @@ export default async function TraineeAttendancePage() {
                                   </span>
                                 )}
                               </td>
-                              <td style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                              <td style={{ padding: '0.85rem 1rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                                 {record?.notes || sess.notes || '-'}
                               </td>
                             </tr>

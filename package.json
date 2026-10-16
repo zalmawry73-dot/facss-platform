@@ -11,7 +11,9 @@
     "db:push": "prisma db push",
     "db:seed": "node scripts/bootstrap_initial.js",
     "seed": "prisma db push && node scripts/bootstrap_initial.js",
-    "seed:demo": "node -e \"process.env.ALLOW_DEMO_SEED='true'; require('./scripts/seed.js');\""
+    "seed:demo": "node -e \"process.env.ALLOW_DEMO_SEED='true'; require('./scripts/seed.js');\"",
+    "check:i18n": "node scripts/check_admin_i18n.js",
+    "test:validations": "npx tsx scripts/test_i18n_validations.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1148.0",

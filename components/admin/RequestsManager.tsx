@@ -298,7 +298,7 @@ export default function RequestsManager({ initialRequests }: Props) {
         <span
           style={{
             fontWeight: 800,
-            color: 'var(--brand-gold-600)',
+            color: 'var(--color-gold-600)',
             fontFamily: 'var(--font-en)',
             direction: 'ltr',
             display: 'inline-block',
@@ -425,7 +425,7 @@ export default function RequestsManager({ initialRequests }: Props) {
         title={tx("إدارة ومتابعة طلبات الخدمات الأمنية")}
         description={tx("تحديث مسارات العمل الميداني، إصدار التقارير الأمنية، وإدارة مستندات العمليات")}
         meta={
-          <span style={{ fontSize: '0.78rem', color: 'var(--brand-gold-600)', fontWeight: 700 }}>
+          <span style={{ fontSize: '0.78rem', color: 'var(--color-gold-700)', fontWeight: 700 }}>
             {tx("إجمالي الطلبات المسجلة:")} {requests.length} {tx("طلب")}
           </span>
         }
@@ -573,7 +573,7 @@ export default function RequestsManager({ initialRequests }: Props) {
                 <strong
                   style={{
                     fontSize: '0.82rem',
-                    color: 'var(--brand-gold-600)',
+                    color: 'var(--color-gold-700)',
                     display: 'block',
                     marginBottom: '0.25rem',
                   }}
@@ -665,8 +665,8 @@ export default function RequestsManager({ initialRequests }: Props) {
                             key={doc.id}
                             style={{
                               padding: '0.75rem 1rem',
-                              background: isFinal ? 'rgba(217, 119, 6, 0.06)' : 'var(--surface-bg)',
-                              border: isFinal ? '1px solid var(--brand-gold-500)' : '1px solid var(--admin-card-border)',
+                              background: isFinal ? 'rgba(181, 146, 84, 0.08)' : 'var(--surface-bg)',
+                              border: isFinal ? '1px solid var(--color-gold-500)' : '1px solid var(--admin-card-border)',
                               borderRadius: '8px',
                               display: 'flex',
                               alignItems: 'center',

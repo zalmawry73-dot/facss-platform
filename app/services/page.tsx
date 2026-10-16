@@ -90,139 +90,154 @@ export default async function ServicesPage() {
   return (
     <div>
       {/* Banner */}
-      <section
-        style={{
-          paddingBlock: '4rem',
-          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          textAlign: 'center',
-        }}
-      >
-        <div className="container">
-          <span className="section-tag">{t.servicesSectionTitle}</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
+      <section className="page-header-institutional">
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div className="hero-badge-pill" style={{ marginBottom: '1.25rem' }}>
+            <Shield size={15} style={{ color: 'var(--color-gold-400)' }} />
+            <span>{t.servicesSectionTitle}</span>
+          </div>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 3.8vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
             {t.siteTitle}
           </h1>
-          <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
+          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.05rem', maxWidth: '800px', marginInline: 'auto', lineHeight: 1.75 }}>
             {t.tagline}
           </p>
         </div>
       </section>
 
       {/* Services List by Category */}
-      <section className="section">
+      <section className="section" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="container">
           {categories.length === 0 ? (
-            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '600px', marginInline: 'auto', marginBottom: '2rem' }}>
+            <div className="card-institutional" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto', marginBottom: '2rem' }}>
               <Shield size={44} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
                 {isAr ? 'دليل الخدمات قيد التحديث المؤسسي' : 'Services catalog currently under institutional update'}
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                {isAr ? 'سيتم إدراج مجالات النشاط الميداني وخدمات تقييم المخاطر والوصول الإنساني قريباً عبر لوحة الإدارة.' : 'Field activity fields, risk assessment, and humanitarian access services will be published soon via the administration.'}
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7 }}>
+                {isAr ? 'سيتم إدراج مجالات النشاط الميداني وخدمات تقييم المخاطر والجاهزية قريباً عبر لوحة الإدارة.' : 'Field activity fields, risk assessment, and operational readiness services will be published soon via the administration.'}
               </p>
             </div>
           ) : (
             categories.map((cat) => {
-            const catTitle = isAr ? cat.titleAr : (cat.titleEn || cat.titleAr);
-            const catSub = isAr ? cat.titleEn : null;
+              const catTitle = isAr ? cat.titleAr : (cat.titleEn || cat.titleAr);
+              const catSub = isAr ? cat.titleEn : null;
 
-            return (
-              <div key={cat.id} style={{ marginBottom: '4rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '2rem', paddingBottom: '0.85rem', borderBottom: '1px solid var(--border-color)' }}>
-                  <Shield size={24} style={{ color: 'var(--facss-gold-600)' }} />
-                  <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    {catTitle}
-                  </h2>
-                  {catSub && (
-                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginInlineStart: 'auto' }}>
-                      {catSub}
-                    </span>
-                  )}
-                </div>
+              return (
+                <div key={cat.id} style={{ marginBottom: '4.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '2rem', paddingBottom: '0.85rem', borderBottom: '2px solid var(--border-subtle)' }}>
+                    <div
+                      style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: 'var(--radius-md)',
+                        background: 'rgba(181, 146, 84, 0.14)',
+                        color: 'var(--color-gold-700)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Shield size={20} />
+                    </div>
+                    <div>
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+                        {catTitle}
+                      </h2>
+                    </div>
+                    {catSub && (
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginInlineStart: 'auto', fontWeight: 600 }}>
+                        {catSub}
+                      </span>
+                    )}
+                  </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
-                  {cat.services.map((srv) => {
-                    let features: string[] = [];
-                    try {
-                      const rawFeatures = isAr ? srv.featuresAr : (srv.featuresEn || srv.featuresAr);
-                      features = JSON.parse(rawFeatures || '[]');
-                    } catch {
-                      features = [];
-                    }
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.75rem' }}>
+                    {cat.services.map((srv) => {
+                      let features: string[] = [];
+                      try {
+                        const rawFeatures = isAr ? srv.featuresAr : (srv.featuresEn || srv.featuresAr);
+                        features = JSON.parse(rawFeatures || '[]');
+                      } catch {
+                        features = [];
+                      }
 
-                    const srvTitle = isAr ? srv.titleAr : (srv.titleEn || srv.titleAr);
-                    const srvSub = isAr ? srv.titleEn : null;
-                    const srvDesc = isAr ? srv.shortDescAr : (srv.shortDescEn || srv.shortDescAr);
+                      const srvTitle = isAr ? srv.titleAr : (srv.titleEn || srv.titleAr);
+                      const srvSub = isAr ? srv.titleEn : null;
+                      const srvDesc = isAr ? srv.shortDescAr : (srv.shortDescEn || srv.shortDescAr);
 
-                    return (
-                      <div key={srv.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                        <div>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                            <span className="badge badge-gold">{catTitle}</span>
-                            <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)' }}>{t.siteAcronym}</span>
+                      return (
+                        <div key={srv.id} className="card-institutional" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderTop: '3px solid var(--color-primary-900)' }}>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                              <span className="badge badge-gold">{catTitle}</span>
+                              <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', fontWeight: 600 }}>{t.siteAcronym}</span>
+                            </div>
+
+                            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.45rem', lineHeight: 1.4 }}>
+                              {srvTitle}
+                            </h3>
+                            {srvSub && (
+                              <h4 style={{ fontSize: '0.82rem', color: 'var(--color-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
+                                {srvSub}
+                              </h4>
+                            )}
+
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.65, marginBottom: '1.25rem' }}>
+                              {srvDesc}
+                            </p>
+
+                            {/* Top Features */}
+                            {features.length > 0 && (
+                              <div style={{ marginBottom: '1.5rem', background: 'var(--surface-sunken)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', margin: 0, padding: 0 }}>
+                                  {features.slice(0, 3).map((f, idx) => (
+                                    <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                                      <CheckCircle2 size={15} style={{ color: 'var(--color-primary-800)', flexShrink: 0 }} />
+                                      <span>{f}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                           </div>
 
-                          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                            {srvTitle}
-                          </h3>
-                          {srvSub && (
-                            <h4 style={{ fontSize: '0.82rem', color: 'var(--facss-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
-                              {srvSub}
-                            </h4>
-                          )}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1.1rem', borderTop: '1px solid var(--border-subtle)', flexWrap: 'wrap', gap: '0.75rem' }}>
+                            <Link
+                              href={`/services/${srv.slug}`}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.45rem',
+                                color: 'var(--color-primary-900)',
+                                fontSize: '0.88rem',
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                                transition: 'var(--transition)',
+                              }}
+                            >
+                              <span>{isAr ? 'عرض تفاصيل الخدمة' : 'View Service Details'}</span>
+                              <ArrowIcon size={14} />
+                            </Link>
 
-                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '1.2rem' }}>
-                            {srvDesc}
-                          </p>
-
-                          {/* Top Features */}
-                          {features.length > 0 && (
-                            <div style={{ marginBottom: '1.5rem', background: 'var(--surface-sunken)', padding: '0.85rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-                                {features.slice(0, 3).map((f, idx) => (
-                                  <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                                    <CheckCircle2 size={14} style={{ color: 'var(--facss-green-700)', flexShrink: 0 }} />
-                                    <span>{f}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                            <Link href={`/request-service?service=${srv.slug}`} className="btn btn-gold btn-sm">
+                              {t.requestService}
+                            </Link>
+                          </div>
                         </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
-                          <Link
-                            href={`/services/${srv.slug}`}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.4rem',
-                              color: 'var(--facss-green-900)',
-                              fontSize: '0.88rem',
-                              fontWeight: 700,
-                            }}
-                          >
-                            <span>{isAr ? 'عرض تفاصيل الخدمة' : 'View Service Details'}</span>
-                            <ArrowIcon size={15} />
-                          </Link>
-
-                          <Link href={`/request-service?service=${srv.slug}`} className="btn btn-gold btn-sm">
-                            {t.requestService}
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          }) )}
+              );
+            })
+          )}
         </div>
       </section>
 
       {/* Humanitarian & Field Beneficiary Sectors */}
-      <section className="section" style={{ background: 'var(--surface-sunken)', borderTop: '1px solid var(--border-color)' }}>
+      <section className="section" style={{ background: 'var(--surface-bg)', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div className="section-title-wrap">
             <span className="section-tag">{t.targetSectors}</span>
@@ -231,43 +246,45 @@ export default async function ServicesPage() {
             </h2>
             <p className="section-subtitle">
               {isAr
-                ? 'تقييمات ميدانية واستشارات متخصصة مصممة لتيسير الوصول الإنساني الآمن وحماية الكوادر والفرق العاملة في الميدان'
-                : 'Field assessments and specialized advisory tailored to facilitate safe humanitarian access and protect aid workers.'}
+                ? 'تقييمات ميدانية واستشارات متخصصة مصممة لتيسير العمل الآمن وحماية الكوادر والمنشآت في الميدان'
+                : 'Field assessments and specialized advisory tailored to facilitate safe operations and protect cadres and facilities in the field.'}
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
             {beneficiariesList.map((sec, idx) => (
-              <div key={idx} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div key={idx} className="card-institutional" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                     <span className="badge badge-gold">
-                      {isAr ? 'قطاع إنساني شريك' : 'Humanitarian Sector'}
+                      {isAr ? 'قطاع شريك' : 'Partner Sector'}
                     </span>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-subtle)', fontWeight: 700 }}>0{idx + 1}</span>
+                    <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.85rem', color: 'var(--color-gold-700)', fontWeight: 800 }}>
+                      0{idx + 1}
+                    </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+                  <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem', lineHeight: 1.4 }}>
                     {isAr ? sec.titleAr : sec.titleEn}
                   </h3>
                   {isAr && sec.titleEn && (
-                    <h4 style={{ fontSize: '0.82rem', color: 'var(--facss-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
+                    <h4 style={{ fontSize: '0.82rem', color: 'var(--color-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
                       {sec.titleEn}
                     </h4>
                   )}
 
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7 }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
                     {isAr ? sec.descAr : sec.descEn}
                   </p>
                 </div>
 
-                <div style={{ paddingTop: '1.25rem', marginTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
+                <div style={{ paddingTop: '1.25rem', marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
                   <Link
                     href="/request-service"
-                    className="btn btn-outline btn-sm"
+                    className="btn btn-secondary btn-sm"
                     style={{ width: '100%', justifyContent: 'center' }}
                   >
-                    <span>{isAr ? 'طلب استشارة أو تقييم ميداني' : 'Request Field Consultation or Assessment'}</span>
+                    <span>{isAr ? 'طلب استشارة أو تقييم ميداني' : 'Request Consultation or Assessment'}</span>
                     <ArrowIcon size={14} />
                   </Link>
                 </div>

@@ -91,16 +91,16 @@ export default function Header() {
           {/* Logo & Official Center Name in 2 Clear Lines */}
           <Link href="/" className="brand-logo" onClick={() => setMobileMenuOpen(false)}>
             <img 
-              src="/images/logo.png" 
+              src="/images/brand/logo-symbol-dark.png" 
               alt={t.siteTitle} 
               className="brand-logo-img" 
             />
             <div className="brand-title-wrap">
               <span className="brand-name-primary">
-                {locale === 'ar' ? 'المركز المتكامل' : 'Integrated Center'}
+                {locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center'}
               </span>
               <span className="brand-name-secondary">
-                {locale === 'ar' ? 'لخدمات الأمن والسلامة والدراسات الميدانية' : 'for Security, Safety & Field Studies'}
+                {locale === 'ar' ? 'للأمن والسلامة' : 'for Safety and Security'}
               </span>
             </div>
           </Link>

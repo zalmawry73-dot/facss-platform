@@ -15,7 +15,7 @@ def generate_html():
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>الدليل المؤسسي الشامل لمنصة مركز عدن الأول (FACSS)</title>
+<title>الدليل المؤسسي الشامل لمنصة مركز الحلول المتكاملة للأمن والسلامة (FACSS)</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
     
@@ -23,7 +23,7 @@ def generate_html():
         size: A4 portrait;
         margin: 14mm 14mm 14mm 14mm;
         @bottom-right {{
-            content: "مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية (FACSS)";
+            content: "مركز الحلول المتكاملة للأمن والسلامة (FACSS)";
             font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
             font-size: 8pt;
             color: #718096;
@@ -32,7 +32,7 @@ def generate_html():
             content: counter(page);
             font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
             font-size: 8pt;
-            color: #C59B27;
+            color: #B59254;
             font-weight: bold;
         }}
     }}
@@ -124,7 +124,7 @@ def generate_html():
     .cover-entity-en {{
         font-size: 11pt;
         font-weight: 600;
-        color: #C59B27;
+        color: #B59254;
         margin-top: 5px;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -133,7 +133,7 @@ def generate_html():
     .cover-divider {{
         width: 90px;
         height: 4px;
-        background: linear-gradient(90deg, #C59B27, #E5C158);
+        background: linear-gradient(90deg, #B59254, #D4B26F);
         margin: 25px auto;
         border-radius: 2px;
     }}
@@ -153,7 +153,7 @@ def generate_html():
     .doc-badge {{
         display: inline-block;
         background: rgba(197, 155, 39, 0.2);
-        border: 1px solid #C59B27;
+        border: 1px solid #B59254;
         color: #DFB743;
         font-size: 9.5pt;
         font-weight: 700;
@@ -183,7 +183,7 @@ def generate_html():
         gap: 20px;
         margin-top: 15px;
         font-size: 9.5pt;
-        color: #C59B27;
+        color: #B59254;
         font-weight: 700;
     }}
     
@@ -193,7 +193,7 @@ def generate_html():
         background: rgba(0, 0, 0, 0.3);
         border-radius: 10px;
         padding: 16px 22px;
-        border-right: 4px solid #C59B27;
+        border-right: 4px solid #B59254;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -209,7 +209,7 @@ def generate_html():
     .author-name {{
         font-size: 13pt;
         font-weight: 800;
-        color: #C59B27;
+        color: #B59254;
         margin: 0;
     }}
     
@@ -251,7 +251,7 @@ def generate_html():
         width: 32px;
         height: 32px;
         background: #0B2518;
-        color: #C59B27;
+        color: #B59254;
         border-radius: 6px;
         display: flex;
         align-items: center;
@@ -278,7 +278,7 @@ def generate_html():
         font-weight: 700;
         background: #F7FAFC;
         border: 1px solid #E2E8F0;
-        color: #C59B27;
+        color: #B59254;
         padding: 3px 10px;
         border-radius: 20px;
     }}
@@ -289,7 +289,7 @@ def generate_html():
         font-weight: 800;
         color: #0B2518;
         margin: 15px 0 8px 0;
-        border-right: 3px solid #C59B27;
+        border-right: 3px solid #B59254;
         padding-right: 8px;
     }}
     
@@ -332,7 +332,7 @@ def generate_html():
     }}
     
     .card-accent {{
-        border-top: 3px solid #C59B27;
+        border-top: 3px solid #B59254;
         background: #FFFFFF;
         box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }}
@@ -361,11 +361,11 @@ def generate_html():
         border-radius: 8px;
         padding: 14px 16px;
         margin: 12px 0;
-        border-right: 4px solid #C59B27;
+        border-right: 4px solid #B59254;
     }}
     
     .highlight-box h3 {{
-        color: #C59B27;
+        color: #B59254;
         font-size: 11pt;
         margin: 0 0 6px 0;
     }}
@@ -450,7 +450,7 @@ def generate_html():
     .step-number {{
         width: 22px;
         height: 22px;
-        background: #C59B27;
+        background: #B59254;
         color: #FFFFFF;
         border-radius: 50%;
         display: inline-flex;
@@ -491,8 +491,8 @@ def generate_html():
     <div class="cover-page">
         <div class="cover-top">
             <img src="{logo_b64}" alt="FACSS Official Seal" class="cover-logo">
-            <h1 class="cover-entity-ar">مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية</h1>
-            <div class="cover-entity-en">Aden First Center for Security Services and Strategic Studies (FACSS)</div>
+            <h1 class="cover-entity-ar">مركز الحلول المتكاملة للأمن والسلامة</h1>
+            <div class="cover-entity-en">Integrated Solutions Center for Safety and Security (FACSS)</div>
             <div class="cover-divider"></div>
         </div>
         
@@ -501,11 +501,11 @@ def generate_html():
             <div class="cover-title">الدليل المؤسسي والتشغيلي الشامل للمنصة الرقمية</div>
             <p class="cover-subtitle">دليل شامل لمكونات الموقع الرسمي، منظومة الحلول الأمنية، بوابات الخدمة الذاتية، ونظام الإدارة</p>
             <div class="cover-slogans">
-                <span>🛡️ «أمانٌ يبدأ من عدن»</span>
+                <span>🛡️ «حلول متكاملة.. أمانٌ مستدام»</span>
                 <span>•</span>
                 <span>⚖️ «الوقاية قبل الاستجابة»</span>
                 <span>•</span>
-                <span>🌐 First in Security, First in Trust</span>
+                <span>🌐 Excellence in Security, Leadership in Trust</span>
             </div>
         </div>
         
@@ -538,7 +538,7 @@ def generate_html():
 
         <div class="highlight-box">
             <h3>منظومة أمنية متكاملة تُرسي مفهوم «الوقاية قبل الاستجابة»</h3>
-            <p>تعتبر المنصة الرقمية لمركز عدن الأول (FACSS) واجهة سيادية وتقنية متطورة، صُممت لتجسيد الميثاق المؤسسي للمركز وتوفير منصة موحدة تجمع بين الخدمات الأمنية الميدانية المتقدمة، الاستشارات الاستراتيجية، برامج التأهيل الأكاديمي، والبحوث الأمنية المحكمة، لتخدم القطاعات الحيوية في الجمهورية اليمنية والإقليم وفق أعلى المعايير العالمية.</p>
+            <p>تعتبر المنصة الرقمية لمركز الحلول المتكاملة للأمن والسلامة (FACSS) واجهة سيادية وتقنية متطورة، صُممت لتجسيد الميثاق المؤسسي للمركز وتوفير منصة موحدة تجمع بين الخدمات الأمنية الميدانية المتقدمة، الاستشارات الاستراتيجية، برامج التأهيل الأكاديمي، والبحوث الأمنية المحكمة، لتخدم القطاعات الحيوية في الجمهورية اليمنية والإقليم وفق أعلى المعايير العالمية.</p>
         </div>
 
         <h2>الركائز المؤسسية الثلاث لميثاق المركز:</h2>
@@ -657,12 +657,12 @@ def generate_html():
                 <p class="card-desc">يعكس العمق الأمني، الرصانة المؤسسية، والاستقرار، مستوحى من الهوية الرسمية لدرع المركز.</p>
             </div>
             <div class="card">
-                <div class="card-title"><span style="display:inline-block;width:12px;height:12px;background:#C59B27;border-radius:2px;"></span> الذهبي الإمبراطوري المعتم (#C59B27)</div>
+                <div class="card-title"><span style="display:inline-block;width:12px;height:12px;background:#B59254;border-radius:2px;"></span> الذهبي الإمبراطوري المعتم (#B59254)</div>
                 <p class="card-desc">يرمز للريادة، القيمة العالية، والجودة المعتمدة في الخدمات والاستشارات المقدمة لكبار العملاء.</p>
             </div>
         </div>
 
-        <div class="highlight-box" style="background:#F8FAFC;border:1px solid #CBD5E0;color:#2D3748;border-right:4px solid #C59B27;">
+        <div class="highlight-box" style="background:#F8FAFC;border:1px solid #CBD5E0;color:#2D3748;border-right:4px solid #B59254;">
             <h3 style="color:#0B2518;">استقلالية المنصة التامة (Zero Vendor Lock-in):</h3>
             <p style="color:#4A5568;">تم بناء الكود البرمجي بالكامل ليكون ملكاً حصرياً للمركز؛ لا يعتمد على أي اشتراكات مدفوعة أو منصات مقيدة، ويمكن نقله مستقبلاً إلى خوادم خاصة داخل مقر المركز بكل سهولة.</p>
         </div>
@@ -800,7 +800,7 @@ def generate_html():
         <h2>أكاديمية التدريب ومركز الدراسات والبحوث:</h2>
         <div class="grid-2">
             <div class="card">
-                <div class="card-title">🎯 أكاديمية عدن الأولى للتدريب الأمني</div>
+                <div class="card-title">🎯 أكاديمية التدريب الأمني والسلامة المهنية</div>
                 <p class="card-desc">تتيح للشباب والكوادر استعراض دبلومات الحراسات، دورات الرماية والدفاع المدني، والسلامة المهنية (OSHA)، مع نموذج تسجيل إلكتروني فوري وسداد الرسوم.</p>
             </div>
             <div class="card">
@@ -880,9 +880,9 @@ def generate_html():
         </div>
 
         <h2>روابط الوصول المباشر للمنصة السحابية:</h2>
-        <div class="highlight-box" style="background:#FFFFFF;border:1px solid #C59B27;color:#0B2518;">
+        <div class="highlight-box" style="background:#FFFFFF;border:1px solid #B59254;color:#0B2518;">
             <div style="font-size:11pt;font-weight:bold;color:#0B2518;margin-bottom:6px;">🌐 رابط الموقع المباشر (Vercel Global Edge):</div>
-            <div style="font-size:12pt;font-weight:bold;color:#C59B27;direction:ltr;text-align:right;">https://facss-platform.vercel.app</div>
+            <div style="font-size:12pt;font-weight:bold;color:#B59254;direction:ltr;text-align:right;">https://facss-platform.vercel.app</div>
             <p style="color:#718096;font-size:8.5pt;margin-top:4px;">(يعمل 24/7 عبر السحابة العالمية برابط مشفر HTTPS مع قاعدة بيانات PostgreSQL سحابية فورية).</p>
         </div>
 
@@ -953,7 +953,7 @@ def generate_html():
         </div>
 
         <div class="footer-note">
-            تم إعداد وتطوير هذه المنصة الرقمية بكافة معاييرها الفنية والأمنية بواسطة: <strong>م / زكريا الماوري</strong> لصالح <strong>مركز عدن الأول للخدمات الأمنية والدراسات الاستراتيجية (FACSS)</strong> — سبتمبر 2026م.
+            تم إعداد وتطوير هذه المنصة الرقمية بكافة معاييرها الفنية والأمنية بواسطة: <strong>م / زكريا الماوري</strong> لصالح <strong>مركز الحلول المتكاملة للأمن والسلامة (FACSS)</strong> — سبتمبر 2026م.
         </div>
     </div>
 

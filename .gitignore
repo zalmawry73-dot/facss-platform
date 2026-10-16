@@ -28,6 +28,9 @@
 /extracted_assets/
 *.log
 *.backup
+*.dump
+backup_*.sql
+*.dump.bak
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -52,9 +55,20 @@ desktop_homepage_*.png
 FACSS_COMPLETE_PROJECT.zip
 *.zip
 *.tar.gz
+\#*.txt
 
 # Vercel
 .vercel
+
+# QA Isolated Test Clones & Audit Folders
+/.qa_app/
+/.qa_app_ts/
+/FACSS_MANUAL_UAT/
+/FACSS_I18N_AUDIT/
+/scratch/
+scripts/qa_phase7/out/
+scripts/phase5_audit_results.json
+scripts/phase6_audit_results.json
 
 # TypeScript
 *.tsbuildinfo

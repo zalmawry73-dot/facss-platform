@@ -105,4 +105,6 @@ export const LIMITERS = {
   REGISTER: { maxRequests: 3, windowSeconds: 3600 },    // 3 per hour
   CONTACT: { maxRequests: 5, windowSeconds: 600 },      // 5 per 10 minutes
   REQUESTS: { maxRequests: 10, windowSeconds: 3600 },   // 10 per hour
+  PASSWORD_CHANGE: { maxRequests: 10, windowSeconds: 900 }, // 10 per 15 minutes
 };
+

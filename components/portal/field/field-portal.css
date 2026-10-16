@@ -1,32 +1,34 @@
 /* ==========================================================================
-   FIELD PORTAL DESIGN SYSTEM & STYLES (AICSFA INSTITUTIONAL FIELD TERMINAL)
-   Dedicated Shell & Intake UX for Field Focal Points
+   FACSS FIELD PORTAL DESIGN SYSTEM (MODERN INSTITUTIONAL / PREMIUM CORPORATE)
+   Optimized for High-Contrast Field Intake, Mobile Ergonomics & Daylight Visibility
    ========================================================================== */
 
-/* Main Terminal Shell */
+/* Main Terminal Shell - Warm Canvas */
 .field-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #07111c;
+  background-color: var(--surface-bg, #FAF9F6);
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.04) 0%, transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(2, 132, 199, 0.03) 0%, transparent 50%);
-  color: #e2e8f0;
+    radial-gradient(circle at 50% 0%, rgba(181, 146, 84, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(11, 61, 46, 0.04) 0%, transparent 50%);
+  color: #0F172A;
   font-family: var(--font-ar), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Header */
+.field-shell[dir="ltr"] {
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+}
+
+/* Institutional Deep Green Header */
 .field-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(11, 23, 38, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(217, 119, 6, 0.22);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(135deg, #08281E 0%, #0B3D2E 100%);
+  border-bottom: 2px solid var(--color-gold-500, #B59254);
+  box-shadow: 0 4px 20px rgba(8, 40, 30, 0.25);
   padding: 0.75rem 1.25rem;
 }
 
@@ -50,26 +52,26 @@
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #162a40 0%, #0b1726 100%);
-  border: 1.5px solid var(--brand-gold-500, #d97706);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid var(--color-gold-500, #B59254);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
 .field-brand-logo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .field-brand-text h1 {
   font-size: 0.98rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #FFFFFF;
   margin: 0;
   line-height: 1.25;
 }
@@ -85,7 +87,7 @@
 .field-badge-terminal {
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--brand-gold-400, #f59e0b);
+  color: var(--color-gold-400, #C5A869);
   letter-spacing: 0.2px;
 }
 
@@ -94,11 +96,11 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.68rem;
-  font-weight: 600;
-  background: rgba(34, 197, 94, 0.12);
-  color: #4ade80;
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  padding: 0.15rem 0.45rem;
+  font-weight: 700;
+  background: rgba(21, 128, 61, 0.25);
+  color: #86EFAC;
+  border: 1px solid rgba(134, 239, 172, 0.4);
+  padding: 0.15rem 0.5rem;
   border-radius: 4px;
 }
 
@@ -106,8 +108,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
+  background-color: #22C55E;
+  box-shadow: 0 0 8px #22C55E;
   animation: fieldPulse 2s infinite;
 }
 
@@ -128,8 +130,8 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.35rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
 }
 
@@ -137,13 +139,13 @@
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  background: rgba(217, 119, 6, 0.18);
-  color: var(--brand-gold-400, #f59e0b);
+  background: var(--color-gold-500, #B59254);
+  color: #08281E;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.8rem;
+  font-weight: 800;
+  font-size: 0.82rem;
 }
 
 .field-user-details {
@@ -154,13 +156,13 @@
 .field-user-name {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #FFFFFF;
   line-height: 1.2;
 }
 
 .field-user-role {
   font-size: 0.68rem;
-  color: #94a3b8;
+  color: var(--color-gold-300, #D4BE8D);
 }
 
 .field-logout-btn {
@@ -168,20 +170,20 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.45rem 0.85rem;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: #FCA5A5;
   border-radius: 6px;
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .field-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.18);
-  border-color: #ef4444;
-  color: #ffffff;
+  background: rgba(220, 38, 38, 0.3);
+  border-color: #EF4444;
+  color: #FFFFFF;
 }
 
 .field-lang-btn {
@@ -189,9 +191,9 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.4rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
   border-radius: 6px;
   font-size: 0.78rem;
   font-weight: 700;
@@ -200,9 +202,9 @@
 }
 
 .field-lang-btn:hover {
-  background: rgba(217, 119, 6, 0.15);
-  border-color: rgba(217, 119, 6, 0.5);
-  color: var(--brand-gold-400, #f59e0b);
+  background: rgba(181, 146, 84, 0.25);
+  border-color: var(--color-gold-400);
+  color: #FFFFFF;
 }
 
 /* Main Layout Container */
@@ -223,62 +225,65 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
 }
 
 .field-portal-title {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .field-portal-title h2 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--brand-deep-green, #08281E);
   margin: 0;
 }
 
+/* Security Notice Banner */
 .field-security-banner {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  background: linear-gradient(90deg, rgba(217, 119, 6, 0.08) 0%, rgba(11, 23, 38, 0.6) 100%);
-  border: 1px solid rgba(217, 119, 6, 0.28);
-  border-right: 4px solid var(--brand-gold-500, #d97706);
-  border-radius: 8px;
-  padding: 0.85rem 1.25rem;
+  gap: 0.85rem;
+  background: linear-gradient(90deg, rgba(181, 146, 84, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border: 1px solid rgba(181, 146, 84, 0.3);
+  border-inline-start: 4px solid var(--color-gold-500, #B59254);
+  border-radius: 10px;
+  padding: 0.95rem 1.25rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(181, 146, 84, 0.08);
 }
 
 .field-security-banner-icon {
   flex-shrink: 0;
-  color: var(--brand-gold-400, #f59e0b);
+  color: var(--color-gold-600, #9A7B3E);
 }
 
 .field-security-banner-text {
-  font-size: 0.82rem;
-  color: #cbd5e1;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.55;
 }
 
 .field-security-banner-text strong {
-  color: #ffffff;
+  color: var(--brand-deep-green, #08281E);
 }
 
-/* Sections & Form Cards */
+/* Section Cards - Pure White Surface */
 .field-section-card {
-  background: #0d1a29;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  transition: border-color 0.2s ease;
+  background: #FFFFFF;
+  border: 1px solid rgba(11, 61, 46, 0.12);
+  border-radius: 14px;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  margin-bottom: 1.75rem;
+  box-shadow: 0 4px 16px rgba(11, 61, 46, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .field-section-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(181, 146, 84, 0.35);
+  box-shadow: 0 6px 20px rgba(11, 61, 46, 0.07);
 }
 
 .field-section-header {
@@ -288,22 +293,22 @@
   gap: 0.75rem;
   margin-bottom: 1.25rem;
   padding-bottom: 0.85rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
 }
 
 .field-section-header-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .field-section-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  background: rgba(217, 119, 6, 0.12);
-  border: 1px solid rgba(217, 119, 6, 0.25);
-  color: var(--brand-gold-400, #f59e0b);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(11, 61, 46, 0.07);
+  border: 1px solid rgba(11, 61, 46, 0.15);
+  color: var(--brand-deep-green, #08281E);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -311,26 +316,26 @@
 }
 
 .field-section-title {
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--brand-deep-green, #08281E);
   margin: 0;
   line-height: 1.25;
 }
 
 .field-section-desc {
-  font-size: 0.78rem;
-  color: #94a3b8;
+  font-size: 0.82rem;
+  color: #64748B;
   margin: 0.2rem 0 0;
 }
 
 .field-step-pill {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--brand-gold-400, #f59e0b);
-  background: rgba(217, 119, 6, 0.12);
-  border: 1px solid rgba(217, 119, 6, 0.3);
-  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--color-gold-700, #674C28);
+  background: rgba(181, 146, 84, 0.14);
+  border: 1px solid var(--color-gold-500, #B59254);
+  padding: 0.25rem 0.75rem;
   border-radius: 999px;
   white-space: nowrap;
 }
@@ -348,7 +353,7 @@
   gap: 1.25rem;
 }
 
-/* Form Controls */
+/* Form Controls - Daylight High-Contrast & 48px Touch Target */
 .field-form-group {
   display: flex;
   flex-direction: column;
@@ -356,22 +361,23 @@
 }
 
 .field-label {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #e2e8f0;
+  color: #0F172A;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .field-label .required-mark {
-  color: #ef4444;
-  margin-right: 0.25rem;
+  color: #DC2626;
+  margin-inline-start: 0.25rem;
+  font-weight: 900;
 }
 
 .field-label-hint {
-  font-size: 0.72rem;
-  color: #64748b;
+  font-size: 0.74rem;
+  color: #64748B;
   font-weight: 500;
 }
 
@@ -379,13 +385,14 @@
 .field-select,
 .field-textarea {
   width: 100%;
-  background: #08121d;
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 0.7rem 0.95rem;
-  color: #ffffff;
-  font-size: 0.9rem;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 9px;
+  padding: 0.75rem 1rem;
+  color: #0F172A;
+  font-size: 0.95rem;
   font-family: inherit;
+  min-height: 48px;
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
@@ -394,21 +401,21 @@
 .field-select:focus,
 .field-textarea:focus {
   outline: none;
-  border-color: var(--brand-gold-400, #f59e0b);
-  background: #0b1827;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+  border-color: var(--color-gold-500, #B59254);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(181, 146, 84, 0.2);
 }
 
 .field-input.has-error,
 .field-select.has-error,
 .field-textarea.has-error {
-  border-color: #ef4444 !important;
-  background: rgba(239, 68, 68, 0.05) !important;
+  border-color: #DC2626 !important;
+  background: rgba(220, 38, 38, 0.02) !important;
 }
 
 .field-input::placeholder,
 .field-textarea::placeholder {
-  color: #64748b;
+  color: #94A3B8;
 }
 
 .field-input[dir="ltr"],
@@ -418,50 +425,52 @@
 }
 
 .field-error-text {
-  font-size: 0.75rem;
-  color: #f87171;
-  font-weight: 600;
+  font-size: 0.78rem;
+  color: #DC2626;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  margin-top: 0.2rem;
+  margin-top: 0.25rem;
 }
 
 /* Character Counter */
 .field-char-counter {
-  font-size: 0.72rem;
-  color: #64748b;
+  font-size: 0.74rem;
+  color: #64748B;
   text-align: left;
   margin-top: 0.25rem;
   direction: ltr;
 }
 
 .field-char-counter.valid {
-  color: #4ade80;
+  color: #15803D;
+  font-weight: 700;
 }
 
-/* GPS Location Button */
+/* GPS Location Button - Large 48px Touch Ergonomics */
 .field-gps-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.6rem 1rem;
-  background: rgba(2, 132, 199, 0.12);
-  border: 1px solid rgba(2, 132, 199, 0.35);
-  color: #38bdf8;
-  border-radius: 8px;
-  font-size: 0.82rem;
+  padding: 0.65rem 1.15rem;
+  background: rgba(2, 132, 199, 0.1);
+  border: 1.5px solid rgba(2, 132, 199, 0.4);
+  color: #0284C7;
+  border-radius: 9px;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 42px;
   width: fit-content;
 }
 
 .field-gps-btn:hover:not(:disabled) {
-  background: rgba(2, 132, 199, 0.22);
-  border-color: #38bdf8;
-  color: #ffffff;
+  background: #0284C7;
+  border-color: #0284C7;
+  color: #FFFFFF;
 }
 
 .field-gps-btn:disabled {
@@ -469,13 +478,13 @@
   cursor: not-allowed;
 }
 
-/* Sensitive Source Enclave */
+/* Sensitive Source Enclave - High-Security Visual Styling */
 .field-secure-enclave {
-  background: linear-gradient(135deg, rgba(16, 32, 51, 0.95) 0%, rgba(10, 20, 32, 0.98) 100%);
-  border: 1.5px solid rgba(217, 119, 6, 0.4);
-  border-radius: 10px;
-  padding: 1.25rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, rgba(181, 146, 84, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border: 1.5px solid rgba(181, 146, 84, 0.35);
+  border-radius: 12px;
+  padding: 1.35rem;
+  box-shadow: 0 4px 16px rgba(11, 61, 46, 0.03);
   position: relative;
   overflow: hidden;
 }
@@ -487,7 +496,7 @@
   right: 0;
   width: 4px;
   height: 100%;
-  background: var(--brand-gold-500, #d97706);
+  background: var(--color-gold-500, #B59254);
 }
 
 .field-secure-header {
@@ -495,7 +504,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
   flex-wrap: wrap;
 }
 
@@ -503,34 +512,34 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  color: var(--brand-gold-400, #f59e0b);
+  color: var(--color-gold-700, #674C28);
 }
 
 .field-aes-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: rgba(217, 119, 6, 0.15);
-  border: 1px solid rgba(217, 119, 6, 0.4);
-  color: #fde68a;
-  padding: 0.2rem 0.55rem;
-  border-radius: 4px;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: rgba(181, 146, 84, 0.15);
+  border: 1px solid var(--color-gold-500, #B59254);
+  color: var(--color-gold-700, #674C28);
+  padding: 0.2rem 0.65rem;
+  border-radius: 6px;
   letter-spacing: 0.3px;
 }
 
 .field-secure-notice {
-  font-size: 0.78rem;
-  color: #94a3b8;
-  line-height: 1.5;
-  margin-bottom: 1.25rem;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 0.6rem 0.85rem;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.55;
+  margin-bottom: 1.35rem;
+  background: #FFFFFF;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(181, 146, 84, 0.2);
 }
 
 /* Upload Area */
@@ -539,10 +548,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem;
-  border: 2px dashed rgba(217, 119, 6, 0.35);
-  border-radius: 10px;
-  background: rgba(8, 18, 29, 0.6);
+  padding: 2.25rem 1.5rem;
+  border: 2px dashed rgba(181, 146, 84, 0.45);
+  border-radius: 12px;
+  background: rgba(181, 146, 84, 0.03);
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
@@ -550,32 +559,32 @@
 
 .field-upload-dropzone:hover,
 .field-upload-dropzone.drag-active {
-  border-color: var(--brand-gold-400, #f59e0b);
-  background: rgba(217, 119, 6, 0.04);
+  border-color: var(--color-gold-600, #9A7B3E);
+  background: rgba(181, 146, 84, 0.08);
 }
 
 .field-upload-icon-circle {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: rgba(217, 119, 6, 0.12);
-  color: var(--brand-gold-400, #f59e0b);
+  background: rgba(181, 146, 84, 0.15);
+  color: var(--color-gold-700, #674C28);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
 }
 
 .field-upload-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--brand-deep-green, #08281E);
   margin-bottom: 0.35rem;
 }
 
 .field-upload-hints {
-  font-size: 0.75rem;
-  color: #64748b;
+  font-size: 0.78rem;
+  color: #64748B;
   display: flex;
   gap: 0.75rem;
   align-items: center;
@@ -595,29 +604,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.65rem 0.85rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  padding: 0.75rem 0.95rem;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color, #E2E8F0);
+  border-radius: 9px;
   gap: 0.6rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
   transition: border-color 0.2s;
 }
 
 .field-attachment-item:hover {
-  border-color: rgba(217, 119, 6, 0.3);
+  border-color: var(--color-gold-500, #B59254);
 }
 
 .field-attachment-info {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   min-width: 0;
 }
 
 .field-attachment-name {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #f1f5f9;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0F172A;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -625,18 +635,18 @@
 }
 
 .field-attachment-size {
-  font-size: 0.7rem;
-  color: #64748b;
+  font-size: 0.72rem;
+  color: #64748B;
   direction: ltr;
 }
 
 .field-attachment-remove {
   background: transparent;
   border: none;
-  color: #ef4444;
+  color: #DC2626;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -644,26 +654,27 @@
 }
 
 .field-attachment-remove:hover {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(220, 38, 38, 0.1);
 }
 
 /* Pre-Submit Review Widget */
 .field-review-card {
-  background: #091522;
-  border: 1px solid rgba(217, 119, 6, 0.35);
-  border-radius: 10px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(181, 146, 84, 0.4);
+  border-radius: 12px;
+  padding: 1.35rem;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 4px 16px rgba(11, 61, 46, 0.04);
 }
 
 .field-review-title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
+  gap: 0.6rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 1rem;
+  color: var(--brand-deep-green, #08281E);
+  margin-bottom: 1.15rem;
 }
 
 .field-review-grid {
@@ -673,32 +684,33 @@
 }
 
 .field-review-item {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.65rem 0.85rem;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(11, 61, 46, 0.03);
+  padding: 0.75rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #E2E8F0);
 }
 
 .field-review-label {
-  font-size: 0.72rem;
-  color: #94a3b8;
+  font-size: 0.74rem;
+  color: #64748B;
   display: block;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
 }
 
 .field-review-value {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #f1f5f9;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0F172A;
 }
 
-/* Action Area & Submit Button */
+/* Action Area & Submit Button - Thumb-Friendly */
 .field-action-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   flex-wrap: wrap;
 }
 
@@ -708,22 +720,22 @@
   justify-content: center;
   gap: 0.65rem;
   padding: 0.95rem 2rem;
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-  color: #ffffff;
-  border: 1px solid #f59e0b;
-  border-radius: 8px;
-  font-size: 1rem;
+  background: linear-gradient(135deg, var(--color-gold-500, #B59254) 0%, var(--color-gold-600, #9A7B3E) 100%);
+  color: #FFFFFF;
+  border: 1px solid var(--color-gold-600, #9A7B3E);
+  border-radius: 10px;
+  font-size: 1.05rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
-  min-height: 48px;
+  box-shadow: 0 4px 16px rgba(181, 146, 84, 0.35);
+  min-height: 52px;
   flex: 1;
 }
 
 .field-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45);
+  background: linear-gradient(135deg, var(--color-gold-400, #C5A869) 0%, var(--color-gold-500, #B59254) 100%);
+  box-shadow: 0 6px 22px rgba(181, 146, 84, 0.45);
   transform: translateY(-1px);
 }
 
@@ -737,7 +749,7 @@
 .field-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(8, 40, 30, 0.7);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
@@ -748,14 +760,15 @@
 }
 
 .field-modal-card {
-  background: #0d1a29;
-  border: 1.5px solid rgba(217, 119, 6, 0.4);
-  border-radius: 12px;
+  background: #FFFFFF;
+  border: 2px solid var(--color-gold-500, #B59254);
+  border-radius: 14px;
   max-width: 520px;
   width: 100%;
   padding: 1.75rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
   animation: fieldScaleUp 0.2s ease;
+  color: #0F172A;
 }
 
 @keyframes fieldFadeIn {
@@ -778,23 +791,24 @@
 
 /* Success Receipt Screen */
 .field-receipt-card {
-  background: #0d1a29;
-  border: 1.5px solid #22c55e;
-  border-radius: 14px;
-  padding: 2.5rem 2rem;
+  background: #FFFFFF;
+  border: 2px solid #15803D;
+  border-radius: 16px;
+  padding: 2.75rem 2rem;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15);
-  max-width: 640px;
+  box-shadow: 0 8px 32px rgba(21, 128, 61, 0.12);
+  max-width: 660px;
   margin: 2rem auto;
+  color: #0F172A;
 }
 
 .field-receipt-icon {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  background: rgba(34, 197, 94, 0.15);
-  border: 2px solid #22c55e;
-  color: #22c55e;
+  background: rgba(21, 128, 61, 0.12);
+  border: 2px solid #15803D;
+  color: #15803D;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -802,35 +816,39 @@
 }
 
 .field-receipt-box {
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(217, 119, 6, 0.35);
-  border-radius: 10px;
+  background: rgba(11, 61, 46, 0.03);
+  border: 1px solid var(--color-gold-500, #B59254);
+  border-radius: 12px;
   padding: 1.25rem 1.5rem;
   margin: 1.5rem 0;
-  text-align: right;
+  text-align: start;
 }
 
 .field-receipt-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
 }
 
 .field-receipt-row:last-child {
   border-bottom: none;
 }
 
-/* Minimalist Portal Footer */
+/* Institutional Portal Footer */
 .field-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: #060e17;
-  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border-color, #E2E8F0);
+  background: #08281E;
+  color: #E2E8F0;
+  padding: 1.25rem 1.25rem;
   margin-top: auto;
-  font-size: 0.75rem;
-  color: #64748b;
+  font-size: 0.78rem;
   text-align: center;
+}
+
+.field-footer strong {
+  color: var(--color-gold-300, #D4BE8D);
 }
 
 .field-footer-inner {
@@ -840,10 +858,10 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
-/* Responsive Breakpoints */
+/* Responsive Breakpoints & Mobile Ergonomics */
 @media (max-width: 900px) {
   .field-review-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -884,16 +902,17 @@
 
 @media (max-width: 480px) {
   .field-brand-text h1 {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
   }
   
   .field-badge-terminal {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
   }
   
   .field-submit-btn {
     width: 100%;
     padding: 0.85rem 1.25rem;
+    font-size: 0.98rem;
   }
   
   .field-user-chip {

@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { ROLES } from '@/lib/rbac';
 import { validateRegistrationInput } from '@/lib/validations/admin';
+import { getRequestLocale } from '@/lib/validations/common';
 import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -20,16 +21,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized: يجب تسجيل الدخول أولاً' }, { status: 401 });
     }
 
+    const body = await request.json().catch(() => ({}));
+    const locale = getRequestLocale(request, body);
+
     // Role gate: only TRAINEE, ADMIN, SUPER_ADMIN can register
     const allowedRoles = [ROLES.TRAINEE, ROLES.ADMIN, ROLES.SUPER_ADMIN];
     if (!allowedRoles.includes(session.role as any)) {
       return NextResponse.json(
-        { error: 'Forbidden: التسجيل في الدورات متاح لحسابات المتدربين فقط' },
+        {
+          error:
+            locale === 'en'
+              ? 'Forbidden: Course registration is available for trainee accounts only'
+              : 'Forbidden: التسجيل في الدورات متاح لحسابات المتدربين فقط',
+        },
         { status: 403 }
       );
     }
-
-    const body = await request.json().catch(() => ({}));
 
     // Auto-fill from session when client sends minimal data (just courseId)
     if (!body.fullName || body.fullName.trim().length < 3) {
@@ -42,11 +49,14 @@ export async function POST(request: Request) {
       body.phone = session.phone || '0000000000';
     }
 
-    const validation = validateRegistrationInput(body);
+    const validation = validateRegistrationInput(body, locale);
 
     if (!validation.success || !validation.data) {
       return NextResponse.json(
-        { error: 'بيانات التسجيل غير صالحة', errors: validation.errors },
+        {
+          error: locale === 'en' ? 'Invalid registration data' : 'بيانات التسجيل غير صالحة',
+          errors: validation.errors,
+        },
         { status: 400 }
       );
     }
@@ -67,13 +77,21 @@ export async function POST(request: Request) {
     });
 
     if (!course) {
-      return NextResponse.json({ error: 'الدورة التدريبية غير موجودة' }, { status: 404 });
+      return NextResponse.json(
+        { error: locale === 'en' ? 'Training course not found' : 'الدورة التدريبية غير موجودة' },
+        { status: 404 }
+      );
     }
 
     // 2. Block public registration on private client courses
     if (course.courseType === 'PRIVATE_CLIENT') {
       return NextResponse.json(
-        { error: 'هذه الدورة خاصة بالعميل ولا تتيح التسجيل العام' },
+        {
+          error:
+            locale === 'en'
+              ? 'This course is private and does not allow public registration'
+              : 'هذه الدورة خاصة بالعميل ولا تتيح التسجيل العام',
+        },
         { status: 403 }
       );
     }
@@ -81,7 +99,12 @@ export async function POST(request: Request) {
     // 3. Course must be OPEN for registration
     if (course.status !== 'OPEN') {
       return NextResponse.json(
-        { error: `التسجيل غير متاح حالياً — حالة الدورة: ${course.status}` },
+        {
+          error:
+            locale === 'en'
+              ? `Registration is currently unavailable — Course status: ${course.status}`
+              : `التسجيل غير متاح حالياً — حالة الدورة: ${course.status}`,
+        },
         { status: 400 }
       );
     }
@@ -90,7 +113,12 @@ export async function POST(request: Request) {
     const activeCount = course.registrations.length;
     if (activeCount >= course.capacity) {
       return NextResponse.json(
-        { error: `عذراً، تم اكتمال سعة الدورة (${course.capacity} مقعد). لا يمكن قبول تسجيلات جديدة حالياً.` },
+        {
+          error:
+            locale === 'en'
+              ? `Sorry, course capacity is full (${course.capacity} seats). New registrations cannot be accepted at this time.`
+              : `عذراً، تم اكتمال سعة الدورة (${course.capacity} مقعد). لا يمكن قبول تسجيلات جديدة حالياً.`,
+        },
         { status: 409 }
       );
     }
@@ -106,7 +134,12 @@ export async function POST(request: Request) {
 
     if (existingRegistration) {
       return NextResponse.json(
-        { error: 'أنت مسجل بالفعل في هذه الدورة التدريبية. لا يمكن التسجيل مرة أخرى.' },
+        {
+          error:
+            locale === 'en'
+              ? 'You are already registered in this course. Duplicate registration is not permitted.'
+              : 'أنت مسجل بالفعل في هذه الدورة التدريبية. لا يمكن التسجيل مرة أخرى.',
+        },
         { status: 409 }
       );
     }
@@ -151,10 +184,14 @@ export async function POST(request: Request) {
       details: `تسجيل متدرب [${fullName}] في دورة [${course.titleAr}] — المقاعد المشغولة: ${activeCount + 1}/${course.capacity}`,
     });
 
+    const courseTitle = locale === 'en' ? (course.titleEn || course.titleAr) : course.titleAr;
     return NextResponse.json(
       {
         success: true,
-        message: `تم تسجيلك بنجاح في دورة [${course.titleAr}]. طلبك قيد المراجعة.`,
+        message:
+          locale === 'en'
+            ? `Successfully registered for course [${courseTitle}]. Your application is under review.`
+            : `تم تسجيلك بنجاح في دورة [${course.titleAr}]. طلبك قيد المراجعة.`,
         registration,
       },
       { status: 201 }

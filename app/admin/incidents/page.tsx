@@ -5,7 +5,7 @@ import { ROLES, CAPABILITIES, getUserCapabilities } from '@/lib/rbac';
 import IncidentsManager from '@/components/admin/IncidentsManager';
 
 export const metadata = {
-  title: 'إدارة البلاغات الميدانية والتحقق | المركز المتكامل لخدمات الأمن والسلامة',
+  title: 'إدارة البلاغات الميدانية والتحقق | مركز الحلول المتكاملة للأمن والسلامة',
 };
 
 export default async function AdminIncidentsPage() {

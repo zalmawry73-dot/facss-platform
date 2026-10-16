@@ -259,7 +259,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
     descriptionEn: '',
     trainerName: '',
     duration: tx("20 ساعة تدريبية (5 أيام)"),
-    location: tx("قاعة المركز المتكامل للتدريب - خور مكسر"),
+    location: tx("قاعة التدريب والمحاكاة الميدانية — خور مكسر"),
     capacity: 25,
     status: 'OPEN',
     categoryId: categories[0]?.id || '',
@@ -373,7 +373,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
       descriptionEn: '',
       trainerName: '',
       duration: tx("20 ساعة تدريبية (5 أيام)"),
-      location: tx("قاعة المركز المتكامل للتدريب - خور مكسر"),
+      location: tx("قاعة التدريب والمحاكاة الميدانية — خور مكسر"),
       capacity: 25,
       status: 'OPEN',
       categoryId: categories[0]?.id || '',
@@ -741,7 +741,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
       />
 
       {/* Tab Switcher */}
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.5rem', width: '100%', minWidth: 0 }}>
         <AdminTabs
           tabs={[
             { id: 'courses', label: tx("إدارة الدورات"), icon: Users, count: courses.length },
@@ -1807,7 +1807,7 @@ export default function TrainingManager({ initialCourses, categories }: Props) {
                 marginBottom: '1rem',
               }}
             >
-              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--brand-gold-600, #d97706)', marginBottom: '0.85rem' }}>
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-600, #B59254)', marginBottom: '0.85rem' }}>
                 {tx("معايير استحقاق الشهادة والأهلية الأكاديمية")}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'center' }}>

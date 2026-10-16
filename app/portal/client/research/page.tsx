@@ -56,22 +56,22 @@ export default async function ClientResearchPage() {
 
   return (
     <div>
-      <div className="card" style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="portal-card" style={{ marginBottom: '1.75rem' }}>
+        <div className="portal-card-header">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
-              <FolderLock size={22} color="var(--color-gold)" />
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFF', margin: 0 }}>
+              <FolderLock size={22} style={{ color: 'var(--color-gold-600)' }} />
+              <h2 className="portal-card-title">
                 {isAr ? 'الدراسات والتقارير الأمنية المقيدة والمصرح بها' : 'Restricted & Authorized Security Studies'}
               </h2>
             </div>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>
+            <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', margin: 0 }}>
               {isAr
                 ? 'الدراسات الميدانية والتقارير الاستراتيجية الخاصة التي تم منح مؤسستكم تصريح وصول رسمي للاطلاع عليها'
                 : 'Field studies and confidential strategic assessments officially authorized for your organization'}
             </p>
           </div>
-          <Link href="/portal/client" className="btn btn-outline btn-sm">
+          <Link href="/portal/client" className="btn btn-outline btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
             <span>{isAr ? 'العودة للوحة العميل' : 'Back to Dashboard'}</span>
             <ChevronIcon size={14} />
           </Link>
@@ -79,24 +79,24 @@ export default async function ClientResearchPage() {
       </div>
 
       {authorizedStudies.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--text-muted)' }}>
-          <AlertCircle size={40} style={{ margin: '0 auto 0.75rem', opacity: 0.6 }} />
-          <p style={{ margin: 0, fontWeight: 600 }}>
+        <div className="portal-empty-state">
+          <FolderLock size={44} style={{ color: 'var(--color-gold-500)', marginInline: 'auto', marginBottom: '0.85rem', opacity: 0.6 }} />
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
             {isAr
-              ? 'لا توجد دراسات أمنية مقيدة مصرح بها لحسابكم حالياً.'
-              : 'No restricted security studies are currently authorized for your account.'}
+              ? 'لا توجد دراسات أمنية مقيدة مصرح بها لحسابكم حالياً'
+              : 'No restricted security studies are currently authorized for your account'}
+          </h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '440px', marginInline: 'auto', marginBottom: '1.25rem' }}>
+            {isAr
+              ? 'يمكنكم طلب دراسات مخصصة أو تقارير تقييم ميداني نوعية عبر قسم طلبات الخدمات.'
+              : 'You can request tailored security studies through the service requests department.'}
           </p>
-          <span style={{ fontSize: '0.82rem', marginTop: '0.5rem', display: 'block' }}>
-            {isAr
-              ? 'يمكنكم طلب دراسات مخصصة أو تقييمات ميدانية عبر قسم طلبات الخدمات'
-              : 'You can request tailored security studies through the services section'}
-          </span>
-          <Link href="/portal/client/requests" className="btn btn-gold btn-sm" style={{ marginTop: '1.25rem' }}>
+          <Link href="/portal/client/requests" className="btn btn-gold btn-sm">
             <span>{isAr ? 'تقديم طلب دراسة ميدانية' : 'Request Field Study'}</span>
           </Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '1.25rem' }}>
           {authorizedStudies.map((grant) => {
             const pub = grant.publication;
             const title = isAr ? pub.titleAr : pub.titleEn || pub.titleAr;
@@ -106,44 +106,56 @@ export default async function ClientResearchPage() {
             return (
               <div
                 key={grant.id}
-                className="card"
+                className="portal-card"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  border: '1px solid rgba(197, 155, 39, 0.3)',
-                  background: 'linear-gradient(180deg, var(--surface-card) 0%, rgba(20, 30, 20, 0.6) 100%)',
+                  padding: '1.35rem',
+                  marginBottom: 0
                 }}
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <span className="badge" style={{ background: 'rgba(197, 155, 39, 0.15)', color: 'var(--color-gold-light)', fontSize: '0.78rem' }}>
+                    <span 
+                      style={{ 
+                        fontSize: '0.74rem', 
+                        padding: '0.15rem 0.5rem', 
+                        borderRadius: '4px',
+                        background: 'rgba(181, 146, 84, 0.12)', 
+                        color: 'var(--color-gold-700)', 
+                        fontWeight: 700,
+                        border: '1px solid rgba(181, 146, 84, 0.3)'
+                      }}
+                    >
                       {categoryName}
                     </span>
                     <span
-                      className="badge"
                       style={{
-                        background: 'rgba(34, 197, 94, 0.15)',
-                        color: '#22c55e',
-                        border: '1px solid rgba(34, 197, 94, 0.3)',
-                        fontSize: '0.75rem',
+                        background: 'rgba(21, 128, 61, 0.1)',
+                        color: '#15803D',
+                        border: '1px solid rgba(21, 128, 61, 0.25)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.15rem 0.5rem',
+                        borderRadius: '4px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.3rem',
                       }}
                     >
-                      <ShieldCheck size={13} />
-                      <span>{isAr ? 'تصريح نشط' : 'Active Grant'}</span>
+                      <ShieldCheck size={12} />
+                      <span>{isAr ? 'وصول مصرح به' : 'Authorized'}</span>
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#FFF', margin: '0 0 0.5rem 0', lineHeight: 1.4 }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.6rem', lineHeight: 1.4 }}>
                     {title}
                   </h3>
 
                   <p
                     style={{
-                      fontSize: '0.85rem',
+                      fontSize: '0.84rem',
                       color: 'var(--text-secondary)',
                       lineHeight: 1.6,
                       marginBottom: '1rem',
@@ -157,25 +169,19 @@ export default async function ClientResearchPage() {
                   </p>
                 </div>
 
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '1rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.75rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <User size={13} />
-                      <span>{pub.author}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <Calendar size={13} />
-                      <span>{formatDate(pub.publicationDate, locale)}</span>
-                    </div>
+                <div style={{ borderTop: '1px solid var(--admin-card-border)', paddingTop: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: 'var(--font-en)' }}>
+                    <Calendar size={13} />
+                    <span>{formatDate(pub.createdAt, locale)}</span>
                   </div>
 
                   <Link
                     href={`/portal/client/research/${pub.id}`}
-                    className="btn btn-gold btn-sm"
-                    style={{ width: '100%', justifyContent: 'center' }}
+                    className="admin-btn admin-btn-outline admin-btn-sm"
+                    style={{ fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                   >
-                    <BookOpen size={15} />
-                    <span>{isAr ? 'قراءة الدراسة الكاملة' : 'Read Full Study'}</span>
+                    <Eye size={13} />
+                    <span>{isAr ? 'الاطلاع على الدراسة' : 'View Study'}</span>
                   </Link>
                 </div>
               </div>

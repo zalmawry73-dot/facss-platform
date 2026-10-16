@@ -12,6 +12,7 @@ export interface TokenPayload {
   role: string;
   phone?: string | null;
   organization?: string | null;
+  tokenVersion: number; // MANDATORY: Fail closed on legacy or unversioned tokens
 }
 
 export function getJwtSecret(): Uint8Array {
@@ -31,6 +32,9 @@ export async function comparePassword(password: string, hash: string): Promise<b
 }
 
 export async function signToken(payload: TokenPayload): Promise<string> {
+  if (typeof payload.tokenVersion !== 'number' || payload.tokenVersion < 1) {
+    throw new Error('FATAL SECURITY: Cannot sign token without valid tokenVersion.');
+  }
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -48,8 +52,12 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
 }
 
 /**
- * Returns authenticated user payload with database verification (checks isActive).
- * If user is disabled, deleted, or token is invalid, returns null.
+ * Returns authenticated user payload with centralized database verification.
+ * Enforces:
+ * 1. Cryptographic signature and expiration.
+ * 2. Mandatory presence of tokenVersion >= 1 (fails closed on legacy/unversioned tokens).
+ * 3. Database existence and isActive === true.
+ * 4. Exact match between JWT tokenVersion and database tokenVersion (session revocation).
  */
 export async function getCurrentUser(verifyDb: boolean = true): Promise<TokenPayload | null> {
   try {
@@ -60,11 +68,16 @@ export async function getCurrentUser(verifyDb: boolean = true): Promise<TokenPay
     const payload = await verifyToken(token);
     if (!payload || !payload.userId) return null;
 
+    // MANDATORY REQUIREMENT 1: Fail closed if tokenVersion is missing, undefined, null, or invalid
+    if (typeof payload.tokenVersion !== 'number' || payload.tokenVersion < 1) {
+      return null;
+    }
+
     if (!verifyDb) {
       return payload;
     }
 
-    // Database verification: ensures user exists and isActive === true
+    // Database verification: ensures user exists, isActive === true, and tokenVersion matches
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
       select: {
@@ -75,10 +88,16 @@ export async function getCurrentUser(verifyDb: boolean = true): Promise<TokenPay
         isActive: true,
         phone: true,
         organization: true,
+        tokenVersion: true,
       }
     });
 
     if (!user || !user.isActive) {
+      return null;
+    }
+
+    // MANDATORY REQUIREMENT 1 & 2: Strict match between JWT tokenVersion and DB tokenVersion
+    if (payload.tokenVersion !== user.tokenVersion) {
       return null;
     }
 
@@ -89,6 +108,7 @@ export async function getCurrentUser(verifyDb: boolean = true): Promise<TokenPay
       role: user.role,
       phone: user.phone,
       organization: user.organization,
+      tokenVersion: user.tokenVersion,
     };
   } catch (err) {
     console.error('getCurrentUser error:', err);

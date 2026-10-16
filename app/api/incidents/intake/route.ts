@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { CAPABILITIES, ROLES, getUserCapabilities } from '@/lib/rbac';
 import { validateIncidentIntake } from '@/lib/validations/incidents';
+import { getRequestLocale } from '@/lib/validations/common';
 import { encryptIncidentOriginalPayload } from '@/lib/security/crypto';
 import {
   validateAttachmentFile,
@@ -15,11 +16,15 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json().catch(() => ({}));
+    const locale = getRequestLocale(request, body);
+    const isEn = locale === 'en';
+
     // 1. Authenticate user
     const session = await getCurrentUser(true);
     if (!session || !session.userId) {
       return NextResponse.json(
-        { error: 'غير مصرح: يلزم تسجيل الدخول لتقديم البلاغ الميداني' },
+        { error: isEn ? 'Unauthorized: Authentication required to submit field incidents' : 'غير مصرح: يلزم تسجيل الدخول لتقديم البلاغ الميداني' },
         { status: 401 }
       );
     }
@@ -32,7 +37,7 @@ export async function POST(request: Request) {
 
     if (!dbUser || !dbUser.isActive) {
       return NextResponse.json(
-        { error: 'الحساب معطل أو غير نشط. يرجى مراجعة إدارة المركز.' },
+        { error: isEn ? 'User account is inactive or disabled. Please contact operations admin.' : 'الحساب معطل أو غير نشط. يرجى مراجعة إدارة المركز.' },
         { status: 403 }
       );
     }
@@ -44,7 +49,7 @@ export async function POST(request: Request) {
 
     if (!canSubmit) {
       return NextResponse.json(
-        { error: 'غير مصرح: الحساب لا يملك الصلاحية المعتمدة لتقديم البلاغات الميدانية (submit_incident)' },
+        { error: isEn ? 'Unauthorized: Account lacks approved permission to submit incidents (submit_incident)' : 'غير مصرح: الحساب لا يملك الصلاحية المعتمدة لتقديم البلاغات الميدانية (submit_incident)' },
         { status: 403 }
       );
     }
@@ -52,18 +57,17 @@ export async function POST(request: Request) {
     // Hard deny for CLIENT and TRAINEE even if somehow requested
     if (session.role === ROLES.CLIENT || session.role === ROLES.TRAINEE) {
       return NextResponse.json(
-        { error: 'بوابات المستفيدين والعملاء غير مخولة بتقديم البلاغات الميدانية الحساسة' },
+        { error: isEn ? 'Client and trainee portals are not authorized to submit sensitive field incidents' : 'بوابات المستفيدين والعملاء غير مخولة بتقديم البلاغات الميدانية الحساسة' },
         { status: 403 }
       );
     }
 
     // 3. Parse and validate body
-    const body = await request.json().catch(() => ({}));
-    const validation = validateIncidentIntake(body);
+    const validation = validateIncidentIntake(body, locale);
 
     if (!validation.success || !validation.data) {
       return NextResponse.json(
-        { error: 'بيانات البلاغ غير مكتملة أو غير صالحة', errors: validation.errors },
+        { error: isEn ? 'Incident data is incomplete or invalid' : 'بيانات البلاغ غير مكتملة أو غير صالحة', errors: validation.errors },
         { status: 400 }
       );
     }
@@ -86,7 +90,9 @@ export async function POST(request: Request) {
     if (recentDuplicate) {
       return NextResponse.json(
         {
-          error: 'تم استلام بلاغ مماثل مؤخراً خلال الدقيقة الماضية. لمنع التكرار يرجى التحقق من رقم التتبع السابق.',
+          error: isEn
+            ? 'A matching incident was recently recorded within the last minute. Duplicate blocked.'
+            : 'تم استلام بلاغ مماثل مؤخراً خلال الدقيقة الماضية. لمنع التكرار يرجى التحقق من رقم التتبع السابق.',
           existingIncidentNumber: recentDuplicate.incidentNumber,
         },
         { status: 409 }
@@ -215,7 +221,9 @@ export async function POST(request: Request) {
         incidentNumber: createdIncident.incidentNumber,
         status: createdIncident.status,
         receivedAt: createdIncident.createdAt,
-        message: 'تم استلام البلاغ الميداني بنجاح وتمريره للفرز الأمني لدى إدارة العمليات.',
+        message: isEn
+          ? 'Field incident received successfully and routed for security triage.'
+          : 'تم استلام البلاغ الميداني بنجاح وتمريره للفرز الأمني لدى إدارة العمليات.',
       },
       { status: 201 }
     );

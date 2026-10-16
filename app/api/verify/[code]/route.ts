@@ -37,7 +37,7 @@ export async function GET(
 
     if (!certificate) {
       return NextResponse.json(
-        { valid: false, error: 'رمز التحقق غير صالح — لا توجد شهادة مطابقة في قاعدة بيانات المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية' },
+        { valid: false, error: 'رمز التحقق غير صالح — لا توجد شهادة مطابقة في قاعدة بيانات مركز الحلول المتكاملة للأمن والسلامة' },
         { status: 404 }
       );
     }
@@ -63,7 +63,7 @@ export async function GET(
       issueDate: certificate.issueDate,
       grade: certificate.grade,
       verificationCode: certificate.verificationCode,
-      message: 'شهادة صحيحة وسارية المفعول — صادرة رسمياً من المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+      message: 'شهادة صحيحة وسارية المفعول — صادرة رسمياً من مركز الحلول المتكاملة للأمن والسلامة',
     });
   } catch (error: any) {
     console.error('Certificate verification error:', error);

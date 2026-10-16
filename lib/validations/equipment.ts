@@ -1,4 +1,5 @@
 // Validation schemas for Package E: Safety Equipment, Inventory, Procurement & Inspection
+import { vMsg, resolveLocale, ValidationLocale } from './common';
 
 export interface ValidationResult<T> {
   success: boolean;
@@ -19,28 +20,48 @@ export interface EquipmentCategoryInput {
   order?: number;
 }
 
-export function validateCategoryInput(body: any, isPartial = false): ValidationResult<EquipmentCategoryInput> {
+export function validateCategoryInput(
+  body: any,
+  isPartial = false,
+  locale?: string
+): ValidationResult<EquipmentCategoryInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات التصنيف مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات التصنيف مفقودة', 'Category data is missing', loc) },
+    };
   }
 
   if (!isPartial || body.code !== undefined) {
     if (!body.code || typeof body.code !== 'string' || body.code.trim().length < 2) {
-      errors.code = 'رمز التصنيف مطلوب ويجب أن يكون حرفين على الأقل (مثال: CAT-PPE)';
+      errors.code = vMsg(
+        'رمز التصنيف مطلوب ويجب أن يكون حرفين على الأقل (مثال: CAT-PPE)',
+        'Category code is required (min 2 characters, e.g. CAT-PPE)',
+        loc
+      );
     }
   }
 
   if (!isPartial || body.nameAr !== undefined) {
     if (!body.nameAr || typeof body.nameAr !== 'string' || body.nameAr.trim().length < 2) {
-      errors.nameAr = 'اسم التصنيف بالعربية مطلوب';
+      errors.nameAr = vMsg(
+        'اسم التصنيف بالعربية مطلوب',
+        'Arabic category name is required',
+        loc
+      );
     }
   }
 
   if (!isPartial || body.nameEn !== undefined) {
     if (!body.nameEn || typeof body.nameEn !== 'string' || body.nameEn.trim().length < 2) {
-      errors.nameEn = 'اسم التصنيف بالإنجليزية مطلوب';
+      errors.nameEn = vMsg(
+        'اسم التصنيف بالإنجليزية مطلوب',
+        'English category name is required',
+        loc
+      );
     }
   }
 
@@ -86,39 +107,67 @@ export interface EquipmentProductInput {
   minimumStockLevel?: number;
 }
 
-export function validateProductInput(body: any, isPartial = false): ValidationResult<EquipmentProductInput> {
+export function validateProductInput(
+  body: any,
+  isPartial = false,
+  locale?: string
+): ValidationResult<EquipmentProductInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات المنتج مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات المنتج مفقودة', 'Product data is missing', loc) },
+    };
   }
 
   if (!isPartial || body.sku !== undefined) {
     if (!body.sku || typeof body.sku !== 'string' || body.sku.trim().length < 2) {
-      errors.sku = 'رمز الصنف / SKU مطلوب ويجب أن يكون حرفين على الأقل';
+      errors.sku = vMsg(
+        'رمز الصنف / SKU مطلوب ويجب أن يكون حرفين على الأقل',
+        'SKU code is required (min 2 characters)',
+        loc
+      );
     }
   }
 
   if (!isPartial || body.nameAr !== undefined) {
     if (!body.nameAr || typeof body.nameAr !== 'string' || body.nameAr.trim().length < 2) {
-      errors.nameAr = 'اسم المنتج بالعربية مطلوب';
+      errors.nameAr = vMsg(
+        'اسم المنتج بالعربية مطلوب',
+        'Arabic product name is required',
+        loc
+      );
     }
   }
 
   if (!isPartial || body.nameEn !== undefined) {
     if (!body.nameEn || typeof body.nameEn !== 'string' || body.nameEn.trim().length < 2) {
-      errors.nameEn = 'اسم المنتج بالإنجليزية مطلوب';
+      errors.nameEn = vMsg(
+        'اسم المنتج بالإنجليزية مطلوب',
+        'English product name is required',
+        loc
+      );
     }
   }
 
   if (!isPartial || body.categoryId !== undefined) {
     if (!body.categoryId || typeof body.categoryId !== 'string') {
-      errors.categoryId = 'تصنيف المنتج مطلوب';
+      errors.categoryId = vMsg(
+        'تصنيف المنتج مطلوب',
+        'Product category is required',
+        loc
+      );
     }
   }
 
   if (body.minimumStockLevel !== undefined && (isNaN(Number(body.minimumStockLevel)) || Number(body.minimumStockLevel) < 0)) {
-    errors.minimumStockLevel = 'الحد الأدنى للمخزون يجب أن يكون رقمًا غير سالب';
+    errors.minimumStockLevel = vMsg(
+      'الحد الأدنى للمخزون يجب أن يكون رقمًا غير سالب',
+      'Minimum stock level must be a non-negative number',
+      loc
+    );
   }
 
   if (Object.keys(errors).length > 0) {
@@ -168,27 +217,43 @@ export interface SupplierInput {
   notes?: string | null;
 }
 
-export function validateSupplierInput(body: any, isPartial = false): ValidationResult<SupplierInput> {
+export function validateSupplierInput(
+  body: any,
+  isPartial = false,
+  locale?: string
+): ValidationResult<SupplierInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات المورد مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات المورد مفقودة', 'Supplier data is missing', loc) },
+    };
   }
 
   if (!isPartial || body.name !== undefined) {
     if (!body.name || typeof body.name !== 'string' || body.name.trim().length < 2) {
-      errors.name = 'اسم المورد مطلوب';
+      errors.name = vMsg('اسم المورد مطلوب', 'Supplier name is required', loc);
     }
   }
 
   if (!isPartial || body.phone !== undefined) {
     if (!body.phone || typeof body.phone !== 'string' || body.phone.trim().length < 6) {
-      errors.phone = 'رقم هاتف المورد مطلوب وصحيح';
+      errors.phone = vMsg(
+        'رقم هاتف المورد مطلوب وصحيح',
+        'Valid supplier phone number is required (min 6 digits)',
+        loc
+      );
     }
   }
 
   if (body.email && (typeof body.email !== 'string' || !body.email.includes('@'))) {
-    errors.email = 'البريد الإلكتروني غير صالح';
+    errors.email = vMsg(
+      'البريد الإلكتروني غير صالح',
+      'Valid email address is required',
+      loc
+    );
   }
 
   if (Object.keys(errors).length > 0) {
@@ -234,27 +299,46 @@ export interface ProcurementOrderInput {
   items: ProcurementItemInput[];
 }
 
-export function validateProcurementOrderInput(body: any): ValidationResult<ProcurementOrderInput> {
+export function validateProcurementOrderInput(
+  body: any,
+  locale?: string
+): ValidationResult<ProcurementOrderInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات أمر الشراء مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات أمر الشراء مفقودة', 'Purchase order data is missing', loc) },
+    };
   }
 
   if (!body.supplierId || typeof body.supplierId !== 'string') {
-    errors.supplierId = 'المورد مطلوب';
+    errors.supplierId = vMsg('المورد مطلوب', 'Supplier is required', loc);
   }
 
   if (!Array.isArray(body.items) || body.items.length === 0) {
-    errors.items = 'يجب إضافة صنف واحد على الأقل في أمر الشراء';
+    errors.items = vMsg(
+      'يجب إضافة صنف واحد على الأقل في أمر الشراء',
+      'At least one item must be added to the purchase order',
+      loc
+    );
   } else {
     for (let i = 0; i < body.items.length; i++) {
       const item = body.items[i];
       if (!item.productId) {
-        errors[`items.${i}.productId`] = `الصنف رقم ${i + 1}: معرف المنتج مطلوب`;
+        errors[`items.${i}.productId`] = vMsg(
+          `الصنف رقم ${i + 1}: معرف المنتج مطلوب`,
+          `Item #${i + 1}: Product ID is required`,
+          loc
+        );
       }
       if (!item.quantityOrdered || Number(item.quantityOrdered) <= 0) {
-        errors[`items.${i}.quantityOrdered`] = `الصنف رقم ${i + 1}: الكمية المطلوبة يجب أن تكون أكبر من 0`;
+        errors[`items.${i}.quantityOrdered`] = vMsg(
+          `الصنف رقم ${i + 1}: الكمية المطلوبة يجب أن تكون أكبر من 0`,
+          `Item #${i + 1}: Ordered quantity must be greater than 0`,
+          loc
+        );
       }
     }
   }
@@ -304,43 +388,82 @@ export interface ProcurementReceivingInput {
   items: ReceivingItemInput[];
 }
 
-export function validateReceivingInput(body: any): ValidationResult<ProcurementReceivingInput> {
+export function validateReceivingInput(
+  body: any,
+  locale?: string
+): ValidationResult<ProcurementReceivingInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات استلام الشحنة مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات استلام الشحنة مفقودة', 'Shipment receiving data is missing', loc) },
+    };
   }
 
   if (!body.procurementOrderId || typeof body.procurementOrderId !== 'string') {
-    errors.procurementOrderId = 'أمر الشراء مطلوب';
+    errors.procurementOrderId = vMsg(
+      'أمر الشراء مطلوب',
+      'Purchase order ID is required',
+      loc
+    );
   }
 
   if (!Array.isArray(body.items) || body.items.length === 0) {
-    errors.items = 'يجب استلام صنف واحد على الأقل';
+    errors.items = vMsg(
+      'يجب استلام صنف واحد على الأقل',
+      'At least one item must be received',
+      loc
+    );
   } else {
     for (let i = 0; i < body.items.length; i++) {
       const item = body.items[i];
       if (!item.productId) {
-        errors[`items.${i}.productId`] = `الصنف رقم ${i + 1}: معرف المنتج مطلوب`;
+        errors[`items.${i}.productId`] = vMsg(
+          `الصنف رقم ${i + 1}: معرف المنتج مطلوب`,
+          `Item #${i + 1}: Product ID is required`,
+          loc
+        );
       }
       const rec = Number(item.quantityReceived);
       const acc = Number(item.quantityAccepted);
       const rej = Number(item.quantityRejected || 0);
 
       if (isNaN(rec) || rec <= 0) {
-        errors[`items.${i}.quantityReceived`] = `الصنف رقم ${i + 1}: الكمية المستلمة يجب أن تكون أكبر من 0`;
+        errors[`items.${i}.quantityReceived`] = vMsg(
+          `الصنف رقم ${i + 1}: الكمية المستلمة يجب أن تكون أكبر من 0`,
+          `Item #${i + 1}: Received quantity must be greater than 0`,
+          loc
+        );
       }
       if (isNaN(acc) || acc < 0) {
-        errors[`items.${i}.quantityAccepted`] = `الصنف رقم ${i + 1}: الكمية المقبولة غير صالحة`;
+        errors[`items.${i}.quantityAccepted`] = vMsg(
+          `الصنف رقم ${i + 1}: الكمية المقبولة غير صالحة`,
+          `Item #${i + 1}: Accepted quantity is invalid`,
+          loc
+        );
       }
       if (isNaN(rej) || rej < 0) {
-        errors[`items.${i}.quantityRejected`] = `الصنف رقم ${i + 1}: الكمية المرفوضة غير صالحة`;
+        errors[`items.${i}.quantityRejected`] = vMsg(
+          `الصنف رقم ${i + 1}: الكمية المرفوضة غير صالحة`,
+          `Item #${i + 1}: Rejected quantity is invalid`,
+          loc
+        );
       }
       if (acc + rej !== rec) {
-        errors[`items.${i}.quantityMismatch`] = `الصنف رقم ${i + 1}: مجموع المقبول (${acc}) والمرفوض (${rej}) يجب أن يساوي المستلم (${rec})`;
+        errors[`items.${i}.quantityMismatch`] = vMsg(
+          `الصنف رقم ${i + 1}: مجموع المقبول (${acc}) والمرفوض (${rej}) يجب أن يساوي المستلم (${rec})`,
+          `Item #${i + 1}: Sum of accepted (${acc}) and rejected (${rej}) must equal received quantity (${rec})`,
+          loc
+        );
       }
       if (rej > 0 && (!item.rejectionReason || typeof item.rejectionReason !== 'string' || item.rejectionReason.trim().length === 0)) {
-        errors[`items.${i}.rejectionReason`] = `الصنف رقم ${i + 1}: سبب الرفض مطلوب عند وجود كميات مرفوضة`;
+        errors[`items.${i}.rejectionReason`] = vMsg(
+          `الصنف رقم ${i + 1}: سبب الرفض مطلوب عند وجود كميات مرفوضة`,
+          `Item #${i + 1}: Rejection reason is required when items are rejected`,
+          loc
+        );
       }
     }
   }
@@ -380,24 +503,39 @@ export interface InventoryAdjustmentInput {
   reason: string;
 }
 
-export function validateAdjustmentInput(body: any): ValidationResult<InventoryAdjustmentInput> {
+export function validateAdjustmentInput(
+  body: any,
+  locale?: string
+): ValidationResult<InventoryAdjustmentInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات تعديل المخزون مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات تعديل المخزون مفقودة', 'Stock adjustment data is missing', loc) },
+    };
   }
 
   if (!body.productId || typeof body.productId !== 'string') {
-    errors.productId = 'معرف المنتج مطلوب';
+    errors.productId = vMsg('معرف المنتج مطلوب', 'Product ID is required', loc);
   }
 
   const delta = Number(body.delta);
   if (isNaN(delta) || delta === 0) {
-    errors.delta = 'قيمة التعديل يجب أن تكون رقمًا صحيحًا غير صفري (موجب للإضافة، سالب للخصم)';
+    errors.delta = vMsg(
+      'قيمة التعديل يجب أن تكون رقمًا صحيحًا غير صفري (موجب للإضافة، سالب للخصم)',
+      'Adjustment delta must be a non-zero integer (positive to add, negative to deduct)',
+      loc
+    );
   }
 
   if (!body.reason || typeof body.reason !== 'string' || body.reason.trim().length < 5) {
-    errors.reason = 'سبب تعديل المخزون إلزامي ومطلوب (5 أحرف على الأقل)';
+    errors.reason = vMsg(
+      'سبب تعديل المخزون إلزامي ومطلوب (5 أحرف على الأقل)',
+      'Adjustment operational reason is required (minimum 5 characters)',
+      loc
+    );
   }
 
   if (Object.keys(errors).length > 0) {
@@ -433,23 +571,38 @@ export interface InspectionInput {
   documentUrl?: string | null;
 }
 
-export function validateInspectionInput(body: any): ValidationResult<InspectionInput> {
+export function validateInspectionInput(
+  body: any,
+  locale?: string
+): ValidationResult<InspectionInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الفحص مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات الفحص مفقودة', 'Inspection data is missing', loc) },
+    };
   }
 
   if (!body.productId || typeof body.productId !== 'string') {
-    errors.productId = 'معرف المنتج مطلوب';
+    errors.productId = vMsg('معرف المنتج مطلوب', 'Product ID is required', loc);
   }
 
   if (!body.inspectionType || !VALID_INSPECTION_TYPES.includes(body.inspectionType)) {
-    errors.inspectionType = `نوع الفحص غير صالح. الأنواع المتاحة: ${VALID_INSPECTION_TYPES.join(', ')}`;
+    errors.inspectionType = vMsg(
+      `نوع الفحص غير صالح. الأنواع المتاحة: ${VALID_INSPECTION_TYPES.join(', ')}`,
+      `Invalid inspection type. Available types: ${VALID_INSPECTION_TYPES.join(', ')}`,
+      loc
+    );
   }
 
   if (!body.result || !VALID_INSPECTION_RESULTS.includes(body.result)) {
-    errors.result = `نتيجة الفحص غير صالحة. النتائج المتاحة: ${VALID_INSPECTION_RESULTS.join(', ')}`;
+    errors.result = vMsg(
+      `نتيجة الفحص غير صالحة. النتائج المتاحة: ${VALID_INSPECTION_RESULTS.join(', ')}`,
+      `Invalid inspection result. Available results: ${VALID_INSPECTION_RESULTS.join(', ')}`,
+      loc
+    );
   }
 
   if (Object.keys(errors).length > 0) {
@@ -491,27 +644,46 @@ export interface MaintenanceInput {
   documentUrl?: string | null;
 }
 
-export function validateMaintenanceInput(body: any): ValidationResult<MaintenanceInput> {
+export function validateMaintenanceInput(
+  body: any,
+  locale?: string
+): ValidationResult<MaintenanceInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الصيانة مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات الصيانة مفقودة', 'Maintenance data is missing', loc) },
+    };
   }
 
   if (!body.productId || typeof body.productId !== 'string') {
-    errors.productId = 'معرف المنتج مطلوب';
+    errors.productId = vMsg('معرف المنتج مطلوب', 'Product ID is required', loc);
   }
 
   if (!body.performedBy || typeof body.performedBy !== 'string' || body.performedBy.trim().length === 0) {
-    errors.performedBy = 'اسم القائم بالصيانة / الفني مطلوب';
+    errors.performedBy = vMsg(
+      'اسم القائم بالصيانة / الفني مطلوب',
+      'Technician / maintenance performer name is required',
+      loc
+    );
   }
 
   if (body.maintenanceType && !VALID_MAINT_TYPES.includes(body.maintenanceType)) {
-    errors.maintenanceType = `نوع الصيانة غير صالح. الأنواع المتاحة: ${VALID_MAINT_TYPES.join(', ')}`;
+    errors.maintenanceType = vMsg(
+      `نوع الصيانة غير صالح. الأنواع المتاحة: ${VALID_MAINT_TYPES.join(', ')}`,
+      `Invalid maintenance type. Available types: ${VALID_MAINT_TYPES.join(', ')}`,
+      loc
+    );
   }
 
   if (body.status && !VALID_MAINT_STATUSES.includes(body.status)) {
-    errors.status = `حالة الصيانة غير صالحة. الحالات المتاحة: ${VALID_MAINT_STATUSES.join(', ')}`;
+    errors.status = vMsg(
+      `حالة الصيانة غير صالحة. الحالات المتاحة: ${VALID_MAINT_STATUSES.join(', ')}`,
+      `Invalid maintenance status. Available statuses: ${VALID_MAINT_STATUSES.join(', ')}`,
+      loc
+    );
   }
 
   if (Object.keys(errors).length > 0) {
@@ -547,24 +719,43 @@ export interface SupplyReservationInput {
   items: SupplyReservationItemInput[];
 }
 
-export function validateReservationInput(body: any): ValidationResult<SupplyReservationInput> {
+export function validateReservationInput(
+  body: any,
+  locale?: string
+): ValidationResult<SupplyReservationInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الحجز مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات الحجز مفقودة', 'Reservation data is missing', loc) },
+    };
   }
 
   if (!Array.isArray(body.items) || body.items.length === 0) {
-    errors.items = 'يجب تحديد صنف واحد على الأقل للحجز';
+    errors.items = vMsg(
+      'يجب تحديد صنف واحد على الأقل للحجز',
+      'At least one item must be specified for reservation',
+      loc
+    );
   } else {
     for (let i = 0; i < body.items.length; i++) {
       const item = body.items[i];
       if (!item.productId) {
-        errors[`items.${i}.productId`] = `الصنف ${i + 1}: معرف المنتج مطلوب`;
+        errors[`items.${i}.productId`] = vMsg(
+          `الصنف ${i + 1}: معرف المنتج مطلوب`,
+          `Item #${i + 1}: Product ID is required`,
+          loc
+        );
       }
       const qty = Number(item.quantityToReserve);
       if (isNaN(qty) || qty <= 0) {
-        errors[`items.${i}.quantityToReserve`] = `الصنف ${i + 1}: الكمية المحجوزة يجب أن تكون أكبر من 0`;
+        errors[`items.${i}.quantityToReserve`] = vMsg(
+          `الصنف ${i + 1}: الكمية المحجوزة يجب أن تكون أكبر من 0`,
+          `Item #${i + 1}: Quantity to reserve must be greater than 0`,
+          loc
+        );
       }
     }
   }
@@ -604,32 +795,59 @@ export interface EquipmentDeliveryInput {
   items: DeliveryItemInput[];
 }
 
-export function validateDeliveryInput(body: any): ValidationResult<EquipmentDeliveryInput> {
+export function validateDeliveryInput(
+  body: any,
+  locale?: string
+): ValidationResult<EquipmentDeliveryInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات التسليم مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات التسليم مفقودة', 'Delivery data is missing', loc) },
+    };
   }
 
   if (!body.serviceRequestId || typeof body.serviceRequestId !== 'string') {
-    errors.serviceRequestId = 'معرف طلب الخدمة / التوريد مطلوب';
+    errors.serviceRequestId = vMsg(
+      'معرف طلب الخدمة / التوريد مطلوب',
+      'Service request / supply ID is required',
+      loc
+    );
   }
 
   if (!body.receivedByName || typeof body.receivedByName !== 'string' || body.receivedByName.trim().length < 2) {
-    errors.receivedByName = 'اسم المستلم / ممثل العميل مطلوب رسمياً للتسليم والتسليم';
+    errors.receivedByName = vMsg(
+      'اسم المستلم / ممثل العميل مطلوب رسمياً للتسليم والتسليم',
+      'Recipient name / client representative is officially required for delivery handover',
+      loc
+    );
   }
 
   if (!Array.isArray(body.items) || body.items.length === 0) {
-    errors.items = 'يجب تسليم صنف واحد على الأقل';
+    errors.items = vMsg(
+      'يجب تسليم صنف واحد على الأقل',
+      'At least one item must be delivered',
+      loc
+    );
   } else {
     for (let i = 0; i < body.items.length; i++) {
       const item = body.items[i];
       if (!item.productId) {
-        errors[`items.${i}.productId`] = `الصنف ${i + 1}: معرف المنتج مطلوب`;
+        errors[`items.${i}.productId`] = vMsg(
+          `الصنف ${i + 1}: معرف المنتج مطلوب`,
+          `Item #${i + 1}: Product ID is required`,
+          loc
+        );
       }
       const qty = Number(item.quantity);
       if (isNaN(qty) || qty <= 0) {
-        errors[`items.${i}.quantity`] = `الصنف ${i + 1}: كمية التسليم يجب أن تكون أكبر من 0`;
+        errors[`items.${i}.quantity`] = vMsg(
+          `الصنف ${i + 1}: كمية التسليم يجب أن تكون أكبر من 0`,
+          `Item #${i + 1}: Delivery quantity must be greater than 0`,
+          loc
+        );
       }
     }
   }
@@ -670,28 +888,47 @@ export interface EquipmentReturnInput {
   notes?: string | null;
 }
 
-export function validateReturnInput(body: any): ValidationResult<EquipmentReturnInput> {
+export function validateReturnInput(
+  body: any,
+  locale?: string
+): ValidationResult<EquipmentReturnInput> {
   const errors: Record<string, string> = {};
+  const loc: ValidationLocale = resolveLocale(locale, body);
 
   if (!body) {
-    return { success: false, errors: { form: 'بيانات الإرجاع مفقودة' } };
+    return {
+      success: false,
+      errors: { form: vMsg('بيانات الإرجاع مفقودة', 'Return data is missing', loc) },
+    };
   }
 
   if (!body.productId || typeof body.productId !== 'string') {
-    errors.productId = 'معرف المنتج مطلوب';
+    errors.productId = vMsg('معرف المنتج مطلوب', 'Product ID is required', loc);
   }
 
   const qty = Number(body.quantity);
   if (isNaN(qty) || qty <= 0) {
-    errors.quantity = 'الكمية المرتجعة يجب أن تكون أكبر من 0';
+    errors.quantity = vMsg(
+      'الكمية المرتجعة يجب أن تكون أكبر من 0',
+      'Returned quantity must be greater than 0',
+      loc
+    );
   }
 
   if (!body.reason || typeof body.reason !== 'string' || body.reason.trim().length < 3) {
-    errors.reason = 'سبب الإرجاع مطلوب (3 أحرف على الأقل)';
+    errors.reason = vMsg(
+      'سبب الإرجاع مطلوب (3 أحرف على الأقل)',
+      'Return reason is required (minimum 3 characters)',
+      loc
+    );
   }
 
   if (!body.receivedByName || typeof body.receivedByName !== 'string' || body.receivedByName.trim().length < 2) {
-    errors.receivedByName = 'اسم مستلم المعدات المرتجعة مطلوب';
+    errors.receivedByName = vMsg(
+      'اسم مستلم المعدات المرتجعة مطلوب',
+      'Name of person receiving returned equipment is required',
+      loc
+    );
   }
 
   if (Object.keys(errors).length > 0) {

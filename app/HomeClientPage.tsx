@@ -23,7 +23,8 @@ import {
   BadgeCheck,
   Building,
   Target,
-  Layers
+  Layers,
+  FileCheck
 } from 'lucide-react';
 import type { ContentBlockData } from '@/lib/content';
 
@@ -218,46 +219,25 @@ export default function HomeClientPage({ initialContent }: Props) {
   return (
     <div>
       {/* ----------------------------------------------------
-         SECTION 1: HERO (INSTITUTIONAL & CALM)
+         SECTION 1: HERO (MODERN INSTITUTIONAL / SOVEREIGN)
          ---------------------------------------------------- */}
-      <section
-        style={{
-          backgroundColor: 'var(--facss-green-950)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          paddingTop: '4.5rem',
-          paddingBottom: '4.5rem',
-          color: '#FFFFFF',
-          position: 'relative',
-        }}
-      >
-        <div className="container" style={{ maxWidth: '980px', textAlign: 'center' }}>
+      <section className="hero-institutional">
+        <div className="container" style={{ maxWidth: '1000px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
           {/* Slogan Pill */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.4rem 1.1rem',
-              borderRadius: 'var(--radius-full)',
-              background: 'rgba(201, 162, 39, 0.12)',
-              border: '1px solid rgba(201, 162, 39, 0.3)',
-              marginBottom: '1.5rem',
-            }}
-          >
-            <Shield size={15} style={{ color: 'var(--facss-gold-400)' }} />
-            <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>
-              {sloganText}
-            </span>
+          <div className="hero-badge-pill">
+            <Shield size={16} style={{ color: 'var(--color-gold-400)' }} />
+            <span>{sloganText}</span>
           </div>
 
           {/* Main Title */}
           <h1
             style={{
-              fontSize: 'clamp(1.85rem, 3.8vw, 2.75rem)',
+              fontSize: 'clamp(2rem, 4.2vw, 3.1rem)',
               fontWeight: 900,
-              lineHeight: 1.3,
+              lineHeight: 1.25,
               marginBottom: '1.25rem',
               color: '#FFFFFF',
+              letterSpacing: '-0.02em',
             }}
           >
             {heroHeadline}
@@ -266,11 +246,11 @@ export default function HomeClientPage({ initialContent }: Props) {
           {/* Subtitle */}
           <p
             style={{
-              fontSize: '1.05rem',
+              fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
               color: 'var(--text-on-dark-muted)',
-              lineHeight: 1.75,
-              marginBottom: '2.25rem',
-              maxWidth: '820px',
+              lineHeight: 1.8,
+              marginBottom: '2.5rem',
+              maxWidth: '840px',
               marginInline: 'auto',
             }}
           >
@@ -280,7 +260,7 @@ export default function HomeClientPage({ initialContent }: Props) {
           {/* CTAs */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link href="/request-service" className="btn btn-gold btn-lg">
-              <Shield size={17} />
+              <Shield size={18} />
               <span>{t.heroCtaPrimary}</span>
               <ArrowIcon size={16} />
             </Link>
@@ -289,32 +269,79 @@ export default function HomeClientPage({ initialContent }: Props) {
             </Link>
           </div>
 
-          {/* Institutional Highlights */}
+          {/* Institutional Highlights / Trust Anchor Strip */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
               gap: '1.25rem',
-              marginTop: '3.25rem',
-              paddingTop: '2rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              marginTop: '3.75rem',
+              paddingTop: '2.25rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.12)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-              <ShieldAlert size={18} style={{ color: 'var(--facss-gold-400)' }} />
-              <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  background: 'rgba(181, 146, 84, 0.16)',
+                  border: '1px solid rgba(181, 146, 84, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-gold-400)',
+                  flexShrink: 0,
+                }}
+              >
+                <ShieldAlert size={17} />
+              </div>
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
                 {t.heroBadge1}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-              <Compass size={18} style={{ color: 'var(--facss-gold-400)' }} />
-              <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  background: 'rgba(181, 146, 84, 0.16)',
+                  border: '1px solid rgba(181, 146, 84, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-gold-400)',
+                  flexShrink: 0,
+                }}
+              >
+                <Compass size={17} />
+              </div>
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
                 {t.heroBadge2}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-              <GraduationCap size={18} style={{ color: 'var(--facss-gold-400)' }} />
-              <span style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-on-dark-muted)' }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  background: 'rgba(181, 146, 84, 0.16)',
+                  border: '1px solid rgba(181, 146, 84, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-gold-400)',
+                  flexShrink: 0,
+                }}
+              >
+                <GraduationCap size={17} />
+              </div>
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
                 {t.heroBadge3}
               </span>
             </div>
@@ -323,7 +350,7 @@ export default function HomeClientPage({ initialContent }: Props) {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 2: 6 CORE HUMANITARIAN PRINCIPLES
+         SECTION 2: 6 INSTITUTIONAL PRINCIPLES
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
@@ -337,43 +364,33 @@ export default function HomeClientPage({ initialContent }: Props) {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
             {principlesList.map((p, idx) => {
               const Icon = p.icon;
               return (
-                <div
-                  key={idx}
-                  className="card"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '1rem',
-                    padding: '1.4rem',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '42px',
-                      height: '42px',
-                      borderRadius: 'var(--radius-md)',
-                      backgroundColor: 'rgba(201, 162, 39, 0.12)',
-                      color: 'var(--facss-gold-600)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon size={20} />
-                  </div>
+                <div key={idx} className="principle-card">
                   <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--facss-gold-600)', display: 'block', marginBottom: '0.2rem' }}>
-                      {p.num}
-                    </span>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem' }}>
+                      <span className="principle-num">{p.num}</span>
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: 'var(--radius-md)',
+                          backgroundColor: 'rgba(181, 146, 84, 0.12)',
+                          color: 'var(--color-gold-700)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Icon size={20} />
+                      </div>
+                    </div>
+                    <h3 style={{ fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem', lineHeight: 1.4 }}>
                       {p.title}
                     </h3>
-                    <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
                       {p.desc}
                     </p>
                   </div>
@@ -385,7 +402,7 @@ export default function HomeClientPage({ initialContent }: Props) {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 3: 6 APPROVED HUMANITARIAN ACTIVITY FIELDS
+         SECTION 3: 6 APPROVED ACTIVITY FIELDS
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
@@ -399,40 +416,32 @@ export default function HomeClientPage({ initialContent }: Props) {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
             {activityFieldsList.map((field, idx) => {
               const Icon = field.icon;
               return (
-                <div
-                  key={idx}
-                  className="card"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
+                <div key={idx} className="service-card">
                   <div>
                     <div
                       style={{
-                        width: '46px',
-                        height: '46px',
+                        width: '48px',
+                        height: '48px',
                         borderRadius: 'var(--radius-md)',
-                        backgroundColor: 'var(--facss-green-50)',
-                        border: '1px solid var(--facss-green-100)',
-                        color: 'var(--facss-green-800)',
+                        backgroundColor: 'var(--color-primary-50)',
+                        border: '1px solid var(--color-primary-200)',
+                        color: 'var(--color-primary-900)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        marginBottom: '1.1rem',
+                        marginBottom: '1.25rem',
                       }}
                     >
-                      <Icon size={22} />
+                      <Icon size={24} />
                     </div>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.6rem', lineHeight: 1.4 }}>
+                    <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.65rem', lineHeight: 1.4 }}>
                       {field.title}
                     </h3>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.25rem' }}>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
                       {field.desc}
                     </p>
                   </div>
@@ -442,27 +451,28 @@ export default function HomeClientPage({ initialContent }: Props) {
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.4rem',
-                      fontSize: '0.85rem',
+                      gap: '0.45rem',
+                      fontSize: '0.88rem',
                       fontWeight: 700,
-                      color: 'var(--facss-green-800)',
-                      paddingTop: '0.75rem',
+                      color: 'var(--color-primary-800)',
+                      paddingTop: '0.85rem',
                       borderTop: '1px solid var(--border-subtle)',
                       textDecoration: 'none',
+                      transition: 'var(--transition)',
                     }}
                   >
                     <span>{isAr ? 'تفاصيل المجال' : 'Learn More'}</span>
-                    <ArrowIcon size={14} />
+                    <ArrowIcon size={15} />
                   </Link>
                 </div>
               );
             })}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-            <Link href="/services" className="btn btn-secondary">
+          <div style={{ textAlign: 'center', marginTop: '2.75rem' }}>
+            <Link href="/services" className="btn btn-secondary btn-lg">
               <span>{t.allServices}</span>
-              <ArrowIcon size={15} />
+              <ArrowIcon size={16} />
             </Link>
           </div>
         </div>
@@ -483,18 +493,30 @@ export default function HomeClientPage({ initialContent }: Props) {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem' }}>
             {beneficiariesList.map((b, idx) => {
               const Icon = b.icon;
               return (
-                <div key={idx} className="card" style={{ padding: '1.75rem' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'rgba(201,162,39,0.12)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-                    <Icon size={20} />
+                <div key={idx} className="card-institutional">
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'rgba(181, 146, 84, 0.14)',
+                      color: 'var(--color-gold-700)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: '1.1rem',
+                    }}
+                  >
+                    <Icon size={22} />
                   </div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.55rem', lineHeight: 1.4, color: 'var(--text-primary)' }}>
                     {b.title}
                   </h3>
-                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
                     {b.desc}
                   </p>
                 </div>
@@ -507,35 +529,45 @@ export default function HomeClientPage({ initialContent }: Props) {
       {/* ----------------------------------------------------
          SECTION 5: TRAINING & RESEARCH SHOWCASE
          ---------------------------------------------------- */}
-      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)' }}>
+      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem' }}>
             {/* Training Column */}
             <div
-              className="card"
+              className="card-institutional"
               style={{
-                padding: 'clamp(1.25rem, 3.5vw, 2.25rem)',
-                border: '1px solid var(--border-subtle)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
+                borderTop: '4px solid var(--color-gold-500)',
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'rgba(201, 162, 39, 0.12)', color: 'var(--facss-gold-600)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <GraduationCap size={22} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                  <div
+                    style={{
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'rgba(181, 146, 84, 0.14)',
+                      color: 'var(--color-gold-700)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <GraduationCap size={24} />
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--facss-gold-600)', textTransform: 'uppercase' }}>
-                      {isAr ? 'بناء القدرات' : 'Capacity Building'}
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-gold-700)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      {isAr ? 'بناء القدرات والتأهيل' : 'Capacity Building'}
                     </span>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
                       {t.trainingSectionTitle}
                     </h3>
                   </div>
                 </div>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
                   {isAr
                     ? 'برامج تطبيقية مخصصة لبناء قدرات العاملين في الميدان في مجالات السلامة الشخصية، إدارة مخاطر الحركة، إعداد خطط الوصول، والدعم النفسي الأولي.'
                     : 'Applied programs dedicated to building field personnel capacities in personal safety, movement risk management, access planning, and psychological first aid.'}
@@ -549,30 +581,40 @@ export default function HomeClientPage({ initialContent }: Props) {
 
             {/* Research Column */}
             <div
-              className="card"
+              className="card-institutional"
               style={{
-                padding: 'clamp(1.25rem, 3.5vw, 2.25rem)',
-                border: '1px solid var(--border-subtle)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
+                borderTop: '4px solid var(--color-primary-900)',
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: 'var(--radius-md)', background: 'var(--facss-green-50)', color: 'var(--facss-green-800)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <FileText size={22} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                  <div
+                    style={{
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--color-primary-50)',
+                      color: 'var(--color-primary-900)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <FileText size={24} />
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--facss-green-800)', textTransform: 'uppercase' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary-800)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       {isAr ? 'المنتجات المعرفية' : 'Knowledge Products'}
                     </span>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
                       {t.researchSectionTitle}
                     </h3>
                   </div>
                 </div>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
                   {isAr
                     ? 'تقارير دورية وموجزات تحليلية ترصد بيئة وسياق الوصول الإنساني، مع خرائط مخاطر ودراسات مسحية معمقة لدعم اتخاذ القرار وتأمين حركة المساعدات.'
                     : 'Periodic bulletins, analytical briefs, and access risk evaluations monitoring field context to support decision-makers in facilitating principled aid.'}
@@ -588,27 +630,77 @@ export default function HomeClientPage({ initialContent }: Props) {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 6: INSTITUTIONAL CTA
+         SECTION 6: DIGITAL VERIFICATION SPOTLIGHT
+         ---------------------------------------------------- */}
+      <section className="section" style={{ backgroundColor: 'var(--surface-bg)', paddingBlock: '3.5rem' }}>
+        <div className="container">
+          <div className="quick-verify-banner">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '2rem', alignItems: 'center' }}>
+              <div>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: 'rgba(181, 146, 84, 0.18)',
+                    border: '1px solid rgba(181, 146, 84, 0.4)',
+                    borderRadius: '99px',
+                    padding: '0.35rem 0.95rem',
+                    marginBottom: '1rem',
+                    color: 'var(--color-gold-400)',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  <BadgeCheck size={16} />
+                  <span>{isAr ? 'المصادقة والتحقق الرقمي' : 'Digital Credential Verification'}</span>
+                </div>
+                <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.75rem', lineHeight: 1.3 }}>
+                  {isAr ? 'بوابة التحقق من صحة الوثائق والشهادات' : 'Official Credential Verification Portal'}
+                </h2>
+                <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '0.96rem', lineHeight: 1.7, margin: 0, maxWidth: '640px' }}>
+                  {isAr
+                    ? 'تتيح هذه البوابة للشركاء والجهات المعنية التحقق اللحظي من صحة وسريان الوثائق والشهادات الصادرة عن مركز الحلول المتكاملة للأمن والسلامة.'
+                    : 'Empowering partners and authorities to instantly verify credentials and certificates issued by Integrated Solutions Center for Safety and Security.'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: dir === 'rtl' ? 'flex-start' : 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
+                <Link href="/verify" className="btn btn-gold btn-lg">
+                  <FileCheck size={18} />
+                  <span>{t.verifyCertificate}</span>
+                  <ArrowIcon size={16} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------
+         SECTION 7: INSTITUTIONAL REQUISITION & CTA
          ---------------------------------------------------- */}
       <section
         style={{
-          backgroundColor: 'var(--facss-green-950)',
-          borderTop: '1px solid rgba(201, 162, 39, 0.2)',
-          paddingBlock: '4rem',
+          backgroundColor: 'var(--color-primary-950)',
+          borderTop: '1px solid rgba(181, 146, 84, 0.25)',
+          paddingBlock: '4.5rem',
           color: '#FFFFFF',
+          textAlign: 'center',
+          position: 'relative',
         }}
       >
-        <div className="container" style={{ maxWidth: '840px', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '1.85rem', fontWeight: 900, marginBottom: '0.75rem', color: '#FFFFFF' }}>
+        <div className="container" style={{ maxWidth: '840px' }}>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.2rem)', fontWeight: 900, marginBottom: '0.85rem', color: '#FFFFFF' }}>
             {ctaTitle}
           </h2>
-          <p style={{ fontSize: '1rem', color: 'var(--text-on-dark-muted)', lineHeight: 1.65, marginBottom: '1.75rem' }}>
+          <p style={{ fontSize: '1.05rem', color: 'var(--text-on-dark-muted)', lineHeight: 1.75, marginBottom: '2rem' }}>
             {ctaSubtitle}
           </p>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link href="/request-service" className="btn btn-gold btn-lg">
-              <Shield size={17} />
+              <Shield size={18} />
               <span>{t.requestService}</span>
               <ArrowIcon size={16} />
             </Link>

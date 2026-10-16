@@ -111,32 +111,28 @@ function RequestServiceForm() {
   };
 
   return (
-    <div>
-      {/* Banner */}
-      <section
-        style={{
-          paddingBlock: '4rem',
-          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          textAlign: 'center',
-        }}
-      >
-        <div className="container">
-          <span className="section-tag">{t.requestService}</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
+    <div className="min-h-screen" style={{ background: 'var(--surface-bg)' }}>
+      {/* Institutional Page Header */}
+      <section className="page-header-institutional">
+        <div className="container text-center">
+          <div className="hero-badge-pill" style={{ marginInline: 'auto', marginBottom: '1.25rem' }}>
+            <Shield size={14} color="var(--color-gold-400)" />
+            <span>{t.requestService}</span>
+          </div>
+          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
             {t.requestServiceTitle}
           </h1>
-          <p style={{ color: 'var(--facss-ivory-300)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto' }}>
+          <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: '1.1rem', maxWidth: '750px', marginInline: 'auto', lineHeight: 1.8 }}>
             {t.requestServiceSubtitle}
           </p>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" style={{ paddingBlock: '3.5rem' }}>
         <div className="container" style={{ maxWidth: '820px' }}>
           {/* Success Screen */}
           {generatedNumber ? (
-            <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', borderTop: '4px solid var(--facss-gold-500)' }}>
+            <div className="card-institutional" style={{ padding: '3.5rem 2rem', textAlign: 'center', borderTop: '4px solid var(--color-gold-500)' }}>
               <div
                 style={{
                   width: '80px',
@@ -155,7 +151,7 @@ function RequestServiceForm() {
                 <CheckCircle2 size={42} />
               </div>
 
-              <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.8rem' }}>
+              <h2 style={{ fontSize: '1.85rem', fontWeight: 900, color: 'var(--color-primary-950)', marginBottom: '0.8rem', letterSpacing: '-0.01em' }}>
                 {t.requestSuccessTitle}
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginBottom: '1.8rem' }}>
@@ -167,12 +163,12 @@ function RequestServiceForm() {
                 style={{
                   display: 'inline-block',
                   padding: '1rem 2.5rem',
-                  background: 'var(--surface-sunken)',
-                  border: '2px dashed var(--facss-gold-500)',
+                  background: '#F4F1EA',
+                  border: '2px dashed var(--color-gold-500)',
                   borderRadius: '12px',
                   fontSize: '1.6rem',
                   fontWeight: 900,
-                  color: 'var(--facss-gold-700)',
+                  color: 'var(--color-primary-950)',
                   letterSpacing: '0.08em',
                   marginBottom: '2rem',
                 }}
@@ -196,10 +192,21 @@ function RequestServiceForm() {
             </div>
           ) : (
             /* Request Form */
-            <div className="card">
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
-                {isAr ? 'بيانات طلب الخدمة والمنشأة' : 'Institutional Service Request Details'}
-              </h2>
+            <div className="card-institutional" style={{ padding: 'clamp(1.75rem, 3.5vw, 2.75rem)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', borderBottom: '1px solid rgba(181, 146, 84, 0.2)', paddingBottom: '1.25rem', marginBottom: '1.75rem', flexWrap: 'wrap' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary-950)', margin: 0, letterSpacing: '-0.01em' }}>
+                    {isAr ? 'بيانات طلب الخدمة والمنشأة' : 'Institutional Service Request Details'}
+                  </h2>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: '0.25rem 0 0' }}>
+                    {isAr ? 'إجراءات التقييم الميداني والاعتماد المباشر' : 'Field assessment and direct operational assignment protocol'}
+                  </p>
+                </div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.75rem', background: 'rgba(181, 146, 84, 0.1)', borderRadius: '20px', border: '1px solid rgba(181, 146, 84, 0.25)', color: 'var(--color-gold-700)', fontSize: '0.78rem', fontWeight: 700 }}>
+                  <Lock size={12} />
+                  <span>{isAr ? 'طلب رسمي مشفر' : 'Encrypted Official Requisition'}</span>
+                </div>
+              </div>
 
               {error && (
                 <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', fontWeight: 600 }}>

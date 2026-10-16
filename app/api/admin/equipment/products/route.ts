@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { CAPABILITIES, assertApiCapability } from '@/lib/rbac';
 import { validateProductInput } from '@/lib/validations/equipment';
+import { getRequestLocale } from '@/lib/validations/common';
 import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -90,11 +91,15 @@ export async function POST(request: Request) {
     if (!gate.authorized) return gate.response!;
 
     const body = await request.json().catch(() => ({}));
-    const validation = validateProductInput(body);
+    const locale = getRequestLocale(request, body);
+    const validation = validateProductInput(body, false, locale);
 
     if (!validation.success || !validation.data) {
       return NextResponse.json(
-        { error: 'بيانات المنتج غير صالحة', errors: validation.errors },
+        {
+          error: locale === 'en' ? 'Invalid product data' : 'بيانات المنتج غير صالحة',
+          errors: validation.errors,
+        },
         { status: 400 }
       );
     }
@@ -107,7 +112,12 @@ export async function POST(request: Request) {
     });
     if (existingSku) {
       return NextResponse.json(
-        { error: `رمز الصنف / SKU (${input.sku}) مسجل مسبقاً في النظام` },
+        {
+          error:
+            locale === 'en'
+              ? `Product SKU (${input.sku}) is already registered in the system`
+              : `رمز الصنف / SKU (${input.sku}) مسجل مسبقاً في النظام`,
+        },
         { status: 409 }
       );
     }
@@ -117,7 +127,15 @@ export async function POST(request: Request) {
       where: { id: input.categoryId },
     });
     if (!categoryExists) {
-      return NextResponse.json({ error: 'تصنيف المنتج المحدد غير موجود' }, { status: 400 });
+      return NextResponse.json(
+        {
+          error:
+            locale === 'en'
+              ? 'The selected equipment category does not exist'
+              : 'تصنيف المنتج المحدد غير موجود',
+        },
+        { status: 400 }
+      );
     }
 
     const product = await prisma.equipmentProduct.create({

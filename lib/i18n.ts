@@ -3,10 +3,10 @@ export type Locale = 'ar' | 'en';
 export const translations = {
   ar: {
     // Brand & Header
-    siteTitle: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
-    siteAcronym: 'المركز المتكامل',
+    siteTitle: 'مركز الحلول المتكاملة للأمن والسلامة',
+    siteAcronym: 'مركز الحلول المتكاملة',
     slogan: '«السلامة أولاً»',
-    sloganSub: 'Integrated Center for Security, Safety & Field Studies',
+    sloganSub: 'Integrated Solutions Center for Safety and Security',
     tagline: 'خدمات متكاملة في الأمن والسلامة والحراسات الوقائية، والرصد والإنذار المبكر، والدراسات الميدانية وبناء القدرات، وحلول السلامة والتجهيزات',
     
     // Navigation
@@ -37,9 +37,9 @@ export const translations = {
     heroBadge3: 'الدراسات وبناء القدرات',
 
     // About Highlights
-    aboutTitle: 'عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    aboutTitle: 'عن مركز الحلول المتكاملة للأمن والسلامة',
     aboutSubtitle: 'السلامة أولاً — نحو بيئات عمل أكثر وقاية وجاهزية واستمرارية',
-    aboutParagraph1: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية جهة متخصصة في تقديم خدمات متكاملة تساعد المؤسسات على الوقاية من المخاطر، وحماية الأفراد والممتلكات، وتحسين الجاهزية، وفهم البيئات الميدانية المعقدة، واتخاذ قرارات تستند إلى معلومات وتحليلات مهنية.',
+    aboutParagraph1: 'مركز الحلول المتكاملة للأمن والسلامة جهة متخصصة في تقديم خدمات متكاملة تساعد المؤسسات على الوقاية من المخاطر، وحماية الأفراد والممتلكات، وتحسين الجاهزية، وفهم البيئات الميدانية المعقدة، واتخاذ قرارات تستند إلى معلومات وتحليلات مهنية.',
     aboutParagraph2: 'يجمع المركز بين الخدمات التشغيلية المباشرة، والرصد والتحليل، والدراسات والتقييم، والتدريب وبناء القدرات، والتقنية والتوريدات، ضمن منهجية تضع الوقاية في مقدمة إجراءات السلامة قبل الانتقال إلى الحماية أو الاستجابة.',
     readMore: 'المزيد عن المركز',
     whyFacssTitle: 'النهج والمعايير المهنية للمركز',
@@ -200,7 +200,7 @@ export const translations = {
 
     // Authentication (Login & Register)
     loginTitle: 'تسجيل الدخول إلى المنصة',
-    loginSubtitle: 'بوابة الدخول الموحدة للمركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    loginSubtitle: 'بوابة الدخول الموحدة لمركز الحلول المتكاملة للأمن والسلامة',
     loginEmailLabel: 'البريد الإلكتروني',
     loginPasswordLabel: 'كلمة المرور',
     loginBtn: 'دخول إلى المنصة',
@@ -211,7 +211,7 @@ export const translations = {
     unauthorizedMessage: 'يرجى تسجيل الدخول بحساب مصرح له للوصول إلى هذا القسم',
     forbiddenMessage: 'غير مصرح لك بالوصول إلى هذا المورد',
     registerTitle: 'إنشاء حساب جديد',
-    registerSubtitle: 'الانضمام لمنصة المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    registerSubtitle: 'الانضمام لمنصة مركز الحلول المتكاملة للأمن والسلامة',
     roleClient: 'حساب منظمة / جهة شريكة',
     roleTrainee: 'حساب متدرب',
     fullNameClientPlaceholder: 'اسم المفوض أو منسق السلامة',
@@ -249,7 +249,7 @@ export const translations = {
 
     // Certificate & Verification
     verifyTitle: 'نظام التحقق الإلكتروني من الشهادات والوثائق',
-    verifySubtitle: 'التحقق من صحة الوثائـق والشهادات الصادرة عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    verifySubtitle: 'التحقق من صحة الوثائـق والشهادات الصادرة عن مركز الحلول المتكاملة للأمن والسلامة',
     verifyValidBadge: 'شهادة صادرة ومسجلة',
     verifyRevokedBadge: 'شهادة ملغاة',
     verifyNotFoundBadge: 'رمز التحقق غير مسجل',
@@ -270,7 +270,7 @@ export const translations = {
     grade: 'التقدير العام',
     verificationCode: 'رمز التحقق الرقمي',
     verificationValidTitle: 'وثيقة صادرة وموثقة بالسجلات',
-    verificationValidDesc: 'تم التحقق من صحة هذه الوثيقة ومطابقتها للسجلات المعتمدة الصادرة عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية.',
+    verificationValidDesc: 'تم التحقق من صحة هذه الوثيقة ومطابقتها للسجلات المعتمدة الصادرة عن مركز الحلول المتكاملة للأمن والسلامة.',
     verificationRevokedTitle: 'شهادة ملغاة',
     verificationRevokedDesc: 'تم إلغاء هذه الوثيقة من قبل إدارة المركز وتعتبر غير سارية في سجلاتنا التدريبية.',
 
@@ -343,11 +343,11 @@ export const translations = {
     status_INACTIVE: 'معطل',
 
     // Footer
-    footerRights: 'جميع الحقوق محفوظة © 2026 المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    footerRights: 'جميع الحقوق محفوظة © 2026 مركز الحلول المتكاملة للأمن والسلامة',
     footerAbout: 'مركز مهني واستشاري وتشغيلي يقدم خدمات الأمن والسلامة والدراسات الميدانية والتدريب والتنسيق المجتمعي والأنظمة والتجهيزات ذات الصلة.',
     quickLinks: 'روابط الوصول السريع',
     securityServices: 'القطاعات التشغيلية المعتمدة',
-    institutionalNotice: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية — السلامة أولاً',
+    institutionalNotice: 'مركز الحلول المتكاملة للأمن والسلامة — السلامة أولاً',
     footerGuardingLink: 'الحراسات وخدمات الأمن والسلامة',
     footerAssessmentLink: 'الرصد الميداني والتنبيه المبكر',
     footerConsultingLink: 'الدراسات الميدانية والتحليل والمراقبة',
@@ -452,19 +452,20 @@ export const translations = {
     adminNavSettings: 'إعدادات النظام',
     adminNavContent: 'إدارة المحتوى',
     adminNavLogs: 'سجل التدقيق',
-    adminNavBannerTitle: 'لوحة الإدارة والتحكم — المركز المتكامل لخدمات الأمن والسلامة',
+    adminNavBannerTitle: 'لوحة الإدارة والتحكم — مركز الحلول المتكاملة للأمن والسلامة',
     adminNavViewSite: 'معاينة الموقع العام',
     adminNavLogout: 'تسجيل الخروج',
+    adminNavChangePassword: 'تغيير كلمة المرور',
     adminNavRole: 'الرتبة',
     adminNavSystemSections: 'أقسام المنظومة',
   },
 
   en: {
     // Brand & Header
-    siteTitle: 'Integrated Center for Security, Safety & Field Studies',
-    siteAcronym: 'Integrated Center',
+    siteTitle: 'Integrated Solutions Center for Safety and Security',
+    siteAcronym: 'Integrated Solutions Center',
     slogan: '“Safety First”',
-    sloganSub: 'Integrated Center for Security, Safety & Field Studies',
+    sloganSub: 'Integrated Solutions Center for Safety and Security',
     tagline: 'Integrated security and safety services, protective guarding, early warning monitoring, field studies, capacity building, and safety equipment',
     
     // Navigation
@@ -658,7 +659,7 @@ export const translations = {
 
     // Authentication (Login & Register)
     loginTitle: 'Sign In to Portal',
-    loginSubtitle: 'Unified Portal Access — Integrated Center for Security, Safety & Field Studies',
+    loginSubtitle: 'Unified Portal Access — Integrated Solutions Center for Safety and Security',
     loginEmailLabel: 'Email Address',
     loginPasswordLabel: 'Password',
     loginBtn: 'Sign In to Platform',
@@ -669,7 +670,7 @@ export const translations = {
     unauthorizedMessage: 'Please sign in with an authorized account to access this area',
     forbiddenMessage: 'You are not authorized to access this resource',
     registerTitle: 'Create an Account',
-    registerSubtitle: 'Join the platform of Integrated Center for Security, Safety & Field Studies',
+    registerSubtitle: 'Join the platform of Integrated Solutions Center for Safety and Security',
     roleClient: 'Partner Organization Account',
     roleTrainee: 'Trainee Account',
     fullNameClientPlaceholder: 'Safety Officer / Focal Point Full Name',
@@ -801,11 +802,11 @@ export const translations = {
     status_INACTIVE: 'Inactive',
 
     // Footer
-    footerRights: 'All Rights Reserved © 2026 Integrated Center for Security, Safety & Field Studies',
+    footerRights: 'All Rights Reserved © 2026 Integrated Solutions Center for Safety and Security',
     footerAbout: 'A professional, consulting, and operational center providing security and safety services, field studies, training, community coordination, and specialized systems based on a prevention-first approach.',
     quickLinks: 'Quick Links',
     securityServices: 'Approved Activity Sectors',
-    institutionalNotice: 'Integrated Center for Security, Safety & Field Studies — Safety First',
+    institutionalNotice: 'Integrated Solutions Center for Safety and Security — Safety First',
     footerGuardingLink: 'Guarding & Protective Security',
     footerAssessmentLink: 'Field Monitoring & Early Warning',
     footerConsultingLink: 'Field Studies, Analysis & Monitoring',
@@ -910,9 +911,10 @@ export const translations = {
     adminNavSettings: 'System Settings',
     adminNavContent: 'Content Management',
     adminNavLogs: 'Audit Logs',
-    adminNavBannerTitle: 'Admin Console — Integrated Center for Security & Safety',
+    adminNavBannerTitle: 'Admin Console — Integrated Solutions Center for Safety and Security',
     adminNavViewSite: 'View Public Site',
     adminNavLogout: 'Sign Out',
+    adminNavChangePassword: 'Change Password',
     adminNavRole: 'Role',
     adminNavSystemSections: 'System Sections',
   }

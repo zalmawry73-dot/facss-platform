@@ -19,7 +19,8 @@ import {
   Briefcase,
   AlertTriangle,
   PenSquare,
-  Package
+  Package,
+  KeyRound
 } from 'lucide-react';
 
 import { AdminButton } from '@/components/admin/ui';
@@ -71,7 +72,7 @@ export default function AdminClientBar({ user }: AdminClientBarProps) {
       {/* Admin Top Banner */}
       <div className="card admin-top-banner" style={{ marginBottom: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0 }}>
-          <img src="/images/logo.png" alt="شعار المركز" style={{ width: '42px', height: '42px', objectFit: 'contain', flexShrink: 0 }} />
+          <img src="/images/brand/logo-symbol-dark.png" alt="شعار المركز" style={{ width: '42px', height: 'auto', objectFit: 'contain', flexShrink: 0 }} />
           <div style={{ minWidth: 0 }}>
             <h1 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#FFFFFF', margin: 0, lineHeight: 1.3 }}>
               {t.adminNavBannerTitle}
@@ -91,6 +92,15 @@ export default function AdminClientBar({ user }: AdminClientBarProps) {
             style={{ borderColor: 'rgba(255,255,255,0.2)', color: '#FFFFFF', fontSize: '0.8rem' }}
           >
             {t.adminNavViewSite}
+          </AdminButton>
+          <AdminButton
+            href="/admin/change-password"
+            variant="outline"
+            size="sm"
+            icon={<KeyRound size={14} />}
+            style={{ borderColor: 'rgba(212, 175, 55, 0.4)', color: 'var(--facss-gold-400)', fontSize: '0.8rem' }}
+          >
+            {t.adminNavChangePassword || (dir === 'rtl' ? 'تغيير كلمة المرور' : 'Change Password')}
           </AdminButton>
           <AdminButton
             onClick={() => logout()}

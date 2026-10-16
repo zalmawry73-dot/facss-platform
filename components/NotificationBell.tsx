@@ -311,13 +311,13 @@ export default function NotificationBell() {
               {unreadCount > 0 && (
                 <span
                   style={{
-                    backgroundColor: 'rgba(201, 162, 39, 0.15)',
+                    backgroundColor: 'rgba(181, 146, 84, 0.15)',
                     color: 'var(--facss-gold-400)',
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     padding: '0.15rem 0.45rem',
                     borderRadius: '999px',
-                    border: '1px solid rgba(201, 162, 39, 0.3)',
+                    border: '1px solid var(--border-dark)',
                   }}
                 >
                   {unreadCount} {isAr ? 'جديد' : 'new'}

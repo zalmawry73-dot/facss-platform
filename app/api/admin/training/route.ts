@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { CAPABILITIES, assertApiCapability } from '@/lib/rbac';
 import { validateCourseInput } from '@/lib/validations/admin';
+import { getRequestLocale } from '@/lib/validations/common';
 import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -70,11 +71,15 @@ export async function POST(request: Request) {
     if (!gate.authorized) return gate.response!;
 
     const body = await request.json().catch(() => ({}));
-    const validation = validateCourseInput(body);
+    const locale = getRequestLocale(request, body);
+    const validation = validateCourseInput(body, false, locale);
 
     if (!validation.success || !validation.data) {
       return NextResponse.json(
-        { error: 'بيانات الدورة غير صالحة', errors: validation.errors },
+        {
+          error: locale === 'en' ? 'Invalid course data' : 'بيانات الدورة غير صالحة',
+          errors: validation.errors,
+        },
         { status: 400 }
       );
     }
@@ -113,7 +118,15 @@ export async function POST(request: Request) {
     });
 
     if (!categoryExists) {
-      return NextResponse.json({ error: 'تصنيف الدورة التدريبية غير موجود' }, { status: 400 });
+      return NextResponse.json(
+        {
+          error:
+            locale === 'en'
+              ? 'Training course category not found'
+              : 'تصنيف الدورة التدريبية غير موجود',
+        },
+        { status: 400 }
+      );
     }
 
     // If private client course, verify client exists if clientId provided
@@ -122,7 +135,15 @@ export async function POST(request: Request) {
         where: { id: clientId },
       });
       if (!clientExists) {
-        return NextResponse.json({ error: 'العميل المحدد للدورة الخاصة غير موجود' }, { status: 400 });
+        return NextResponse.json(
+          {
+            error:
+              locale === 'en'
+                ? 'Selected client for private course not found'
+                : 'العميل المحدد للدورة الخاصة غير موجود',
+          },
+          { status: 400 }
+        );
       }
     }
 

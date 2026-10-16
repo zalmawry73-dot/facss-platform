@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: PublicSettings = {
   SOCIAL_TWITTER: '',
   SOCIAL_LINKEDIN: '',
   SOCIAL_FACEBOOK: '',
-  ANNOUNCEMENT_TEXT: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية — السلامة أولاً',
+  ANNOUNCEMENT_TEXT: 'مركز الحلول المتكاملة للأمن والسلامة — السلامة أولاً',
 };
 
 /**

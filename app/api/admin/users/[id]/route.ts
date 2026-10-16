@@ -118,6 +118,11 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: 'لا توجد حقول صالحة للتعديل' }, { status: 400 });
     }
 
+    // Security Gate: Revoke all existing active sessions when status or role is modified
+    if ('isActive' in updatePayload || 'role' in updatePayload) {
+      updatePayload.tokenVersion = { increment: 1 };
+    }
+
     const updated = await prisma.user.update({
       where: { id: params.id },
       data: updatePayload,

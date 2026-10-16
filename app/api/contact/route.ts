@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { checkRateLimit, rateLimitResponse, LIMITERS } from '@/lib/rateLimit';
+import { getRequestLocale } from '@/lib/validations/common';
 
 export async function POST(request: Request) {
   try {
@@ -11,11 +12,17 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    const locale = getRequestLocale(request, body);
     const { name, email, phone, organization, subject, message } = body;
 
     if (!name || !email || !subject || !message) {
       return NextResponse.json(
-        { error: 'جميع الحقول الأساسية مطلوبة (الاسم، البريد، الموضوع، الرسالة)' },
+        {
+          error:
+            locale === 'en'
+              ? 'All required fields must be filled (name, email, subject, message)'
+              : 'جميع الحقول الأساسية مطلوبة (الاسم، البريد، الموضوع، الرسالة)',
+        },
         { status: 400 }
       );
     }
@@ -24,7 +31,10 @@ export async function POST(request: Request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(sanitizedEmail)) {
       return NextResponse.json(
-        { error: 'صيغة البريد الإلكتروني غير صالحة' },
+        {
+          error:
+            locale === 'en' ? 'Invalid email format' : 'صيغة البريد الإلكتروني غير صالحة',
+        },
         { status: 400 }
       );
     }
@@ -32,7 +42,12 @@ export async function POST(request: Request) {
     // Input bounds validation
     if (String(name).length > 100 || String(subject).length > 200 || String(message).length > 5000) {
       return NextResponse.json(
-        { error: 'تجاوزت بعض الحقول الحد الأقصى المسموح به من المحارف' },
+        {
+          error:
+            locale === 'en'
+              ? 'Some fields exceed the maximum allowed character limit'
+              : 'تجاوزت بعض الحقول الحد الأقصى المسموح به من المحارف',
+        },
         { status: 400 }
       );
     }
@@ -90,8 +105,12 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: isComplaint
-        ? `تم استلام الشكوى بنجاح وقيدت بالرقم المرجعي الرسمي [${referenceNumber}]. سنقوم بمراجعتها ومعالجتها خلال المهلة المحددة.`
-        : 'تم استلام رسالتكم بنجاح وسيقوم فريق العمل بالتواصل معكم.',
+        ? (locale === 'en'
+            ? `Complaint received successfully and recorded under reference [${referenceNumber}]. We will review and process it within the designated timeframe.`
+            : `تم استلام الشكوى بنجاح وقيدت بالرقم المرجعي الرسمي [${referenceNumber}]. سنقوم بمراجعتها ومعالجتها خلال المهلة المحددة.`)
+        : (locale === 'en'
+            ? 'Your message has been received successfully. Our team will contact you soon.'
+            : 'تم استلام رسالتكم بنجاح وسيقوم فريق العمل بالتواصل معكم.'),
       id: newMsg.id,
       referenceNumber,
       messageType,
@@ -99,7 +118,10 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Contact submit error:', error);
     return NextResponse.json(
-      { error: 'حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة لاحقاً.' },
+      {
+        error:
+          'حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة لاحقاً.',
+      },
       { status: 500 }
     );
   }

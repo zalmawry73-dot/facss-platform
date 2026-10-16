@@ -12,8 +12,12 @@ import {
   FileText, 
   Download, 
   ArrowLeft,
+  ArrowRight,
   FileCheck2,
-  FolderLock
+  FolderLock,
+  Clock,
+  Building2,
+  ExternalLink
 } from 'lucide-react';
 import ClientDocumentUpload from '@/components/portal/ClientDocumentUpload';
 import ClientFeedbackForm from '@/components/portal/ClientFeedbackForm';
@@ -30,6 +34,7 @@ interface PageProps {
 export default async function ClientRequestDetailPage({ params }: PageProps) {
   const cookieStore = cookies();
   const isAr = cookieStore.get('facss_locale')?.value !== 'en';
+  const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   // Layer 2 server-side auth check
   const user = await requireAuth(`/portal/client/requests/${params.id}`);
@@ -44,7 +49,6 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
         orderBy: { createdAt: 'desc' },
       },
       documents: {
-        // Enforce strict client-visible and non-archived filter at the database level
         where: {
           isArchived: false,
           visibility: 'CLIENT_VISIBLE',
@@ -60,16 +64,23 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
   }
 
   // Security authorization: STRICT ALLOWLIST
-  // Only the verified request owner OR authorized staff can view this request.
   const isStaff = STAFF_ROLES.includes(user.role as any);
   const isOwner = Boolean(req.userId && req.userId === user.userId);
 
   if (!isOwner && !isStaff) {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-        <p style={{ color: '#EF4444', fontWeight: 700 }}>غير مصرح لك بالاطلاع على هذا الطلب.</p>
-        <Link href="/portal/client/requests" className="btn btn-outline" style={{ marginTop: '1rem' }}>
-          العودة للطلبات
+      <div className="portal-card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem', maxWidth: '520px', marginInline: 'auto' }}>
+        <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(220, 38, 38, 0.1)', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', marginInline: 'auto', marginBottom: '1rem' }}>
+          <Shield size={26} />
+        </div>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+          {isAr ? 'وصول مقيد وغير مصرح به' : 'Restricted Access'}
+        </h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', marginBottom: '1.5rem' }}>
+          {isAr ? 'غير مصرح لك بالاطلاع على تفاصيل هذا الطلب الأمني.' : 'You are not authorized to view this request.'}
+        </p>
+        <Link href="/portal/client/requests" className="btn btn-primary btn-sm">
+          {isAr ? 'العودة لقائمة الطلبات' : 'Return to Requests'}
         </Link>
       </div>
     );
@@ -81,11 +92,11 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
   const centerDeliverables = req.documents.filter((d) => d.documentType !== 'FINAL_REPORT' && d.documentType !== 'CLIENT_ATTACHMENT');
 
   const steps = [
-    { key: 'NEW', label: 'طلب جديد' },
-    { key: 'UNDER_REVIEW', label: 'قيد المراجعة' },
-    { key: 'APPROVED', label: 'معتمد' },
-    { key: 'IN_PROGRESS', label: 'تنفيذ ميداني' },
-    { key: 'COMPLETED', label: 'مكتمل' },
+    { key: 'NEW', label: isAr ? 'طلب جديد' : 'New Request' },
+    { key: 'UNDER_REVIEW', label: isAr ? 'قيد المراجعة' : 'Under Review' },
+    { key: 'APPROVED', label: isAr ? 'معتمد' : 'Approved' },
+    { key: 'IN_PROGRESS', label: isAr ? 'تنفيذ ميداني' : 'In Field' },
+    { key: 'COMPLETED', label: isAr ? 'مكتمل' : 'Completed' },
   ];
 
   const getStepIndex = (st: string) => {
@@ -109,10 +120,11 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
       {/* Staff Operational Notice Banner */}
       {isStaff && (
         <div
+          className="portal-card"
           style={{
-            background: 'linear-gradient(90deg, rgba(201, 162, 39, 0.12), rgba(13, 26, 18, 0.95))',
-            border: '1px solid var(--facss-gold-500)',
-            borderRadius: '12px',
+            background: 'linear-gradient(90deg, rgba(181, 146, 84, 0.12), rgba(8, 40, 30, 0.05))',
+            border: '1px solid var(--color-gold-500)',
+            borderInlineStart: '5px solid var(--color-gold-600)',
             padding: '1rem 1.25rem',
             marginBottom: '1.75rem',
             display: 'flex',
@@ -128,101 +140,114 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
                 width: '40px',
                 height: '40px',
                 borderRadius: '8px',
-                background: 'rgba(201, 162, 39, 0.2)',
+                background: 'rgba(181, 146, 84, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--facss-gold-400)',
+                color: 'var(--color-gold-700)',
                 flexShrink: 0,
               }}
             >
               <Shield size={22} />
             </div>
             <div>
-              <strong style={{ color: '#FFFFFF', fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem' }}>
-                أنت تستعرض هذا الطلب بصلاحية مسؤول نظام ({user.role})
+              <strong style={{ color: 'var(--text-primary)', fontSize: '0.92rem', display: 'block', marginBottom: '0.2rem' }}>
+                {isAr ? `أنت تستعرض هذا الطلب بصلاحية مسؤول نظام (${user.role})` : `Viewing request with staff privilege (${user.role})`}
               </strong>
-              <span style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.75)' }}>
-                هذه الصفحة هي واجهة العميل. لإدارة الطلب، تحديث الحالة، وتصدير التقارير عبر الشريط الجانبي للوحة التحكم:
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                {isAr ? 'هذه هي معاينة تجربة العميل الفعلية للطلب.' : 'This is the verified client-facing view of the request.'}
               </span>
             </div>
           </div>
           <Link
             href={`/admin/requests?id=${req.id}`}
             className="btn btn-gold btn-sm"
-            style={{ fontWeight: 800, whiteSpace: 'nowrap' }}
+            style={{ fontWeight: 700, whiteSpace: 'nowrap' }}
           >
-            <span>الانتقال لإدارة الطلب في لوحة التحكم الإدارية</span>
+            <span>{isAr ? 'الانتقال لإدارة الطلب بلوحة التحكم' : 'Manage in Admin Console'}</span>
           </Link>
         </div>
       )}
 
-      {/* Back button & Title */}
+      {/* Header bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
-            <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--facss-gold-700)', margin: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-primary-950)', margin: 0, fontFamily: 'var(--font-en)' }}>
               {req.requestNumber}
             </h1>
-            <StatusBadge type="serviceRequest" status={req.status} />
+            <StatusBadge type="serviceRequest" status={req.status} locale={isAr ? 'ar' : 'en'} />
           </div>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            {(isAr ? req.service.titleAr : ((req.service as any).titleEn || req.service.titleAr))} • {req.organization}
+          <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Building2 size={14} />
+            <span>{(isAr ? req.service.titleAr : ((req.service as any).titleEn || req.service.titleAr))}</span>
+            <span>•</span>
+            <span>{req.organization}</span>
           </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           {isStaff && (
             <Link href={`/admin/requests?id=${req.id}`} className="btn btn-gold btn-sm">
-              <span>إدارة الطلب (لوحة الإدارة)</span>
+              <span>{isAr ? 'إدارة الطلب' : 'Manage'}</span>
             </Link>
           )}
           <Link
             href={isStaff ? '/admin/requests' : '/portal/client/requests'}
             className="btn btn-outline btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            <span>{isStaff ? 'العودة لطلبات الإدارة' : 'العودة لسجل الطلبات'}</span>
-            <ArrowLeft size={16} />
+            <ArrowIcon size={14} />
+            <span>{isStaff ? (isAr ? 'العودة لطلبات الإدارة' : 'Admin Requests') : (isAr ? 'العودة للطلبات' : 'All Requests')}</span>
           </Link>
         </div>
       </div>
 
-      {/* Visual Workflow Pipeline */}
-      <div className="card" style={{ marginBottom: '2rem', padding: '1.8rem 1.5rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-          مسار تقدم الطلب الميداني
+      {/* Visual Workflow Pipeline (Requirement 2) */}
+      <div className="portal-card" style={{ marginBottom: '1.75rem', padding: '1.75rem 1.5rem' }}>
+        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.25rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--admin-card-border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Clock size={18} style={{ color: 'var(--color-gold-600)' }} />
+          <span>{isAr ? 'مسار تقدم ومراحل تنفيذ الطلب الميداني' : 'Field Request Progress Pipeline'}</span>
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.5rem', textAlign: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem', textAlign: 'center' }}>
           {steps.map((step, idx) => {
             const isDone = idx <= currentIndex;
             const isCurrent = idx === currentIndex;
             return (
-              <div key={step.key} style={{ position: 'relative' }}>
+              <div 
+                key={step.key} 
+                style={{ 
+                  padding: '0.75rem 0.5rem',
+                  borderRadius: '10px',
+                  background: isCurrent ? 'rgba(181, 146, 84, 0.1)' : isDone ? 'rgba(21, 128, 61, 0.05)' : 'var(--surface-bg)',
+                  border: isCurrent ? '1.5px solid var(--color-gold-500)' : isDone ? '1px solid rgba(21, 128, 61, 0.25)' : '1px solid var(--admin-card-border)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
                 <div
                   style={{
-                    width: '36px',
-                    height: '36px',
+                    width: '32px',
+                    height: '32px',
                     borderRadius: '50%',
-                    background: isCurrent ? 'var(--facss-gold-500)' : isDone ? 'var(--facss-green-700)' : 'var(--surface-sunken)',
-                    color: isCurrent ? 'var(--facss-green-950)' : isDone ? '#FFFFFF' : 'var(--text-muted)',
-                    border: isCurrent ? '2px solid var(--facss-gold-600)' : isDone ? 'none' : '1px solid var(--border-color)',
+                    background: isCurrent ? 'var(--color-gold-500)' : isDone ? '#15803D' : 'var(--admin-card-border)',
+                    color: isCurrent ? 'var(--color-primary-950)' : isDone ? '#FFFFFF' : 'var(--text-muted)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 800,
-                    fontSize: '0.85rem',
+                    fontSize: '0.82rem',
                     marginInline: 'auto',
-                    marginBottom: '0.5rem',
+                    marginBottom: '0.4rem',
                   }}
                 >
-                  {isDone ? <CheckCircle2 size={18} /> : idx + 1}
+                  {isDone ? <CheckCircle2 size={16} /> : idx + 1}
                 </div>
                 <span
                   style={{
-                    fontSize: '0.75rem',
-                    fontWeight: isCurrent ? 800 : 500,
-                    color: isCurrent ? 'var(--facss-green-950)' : isDone ? 'var(--text-primary)' : 'var(--text-muted)',
+                    fontSize: '0.78rem',
+                    fontWeight: isCurrent ? 800 : isDone ? 700 : 500,
+                    color: isCurrent ? 'var(--color-primary-950)' : isDone ? 'var(--text-primary)' : 'var(--text-muted)',
                     display: 'block',
                   }}
                 >
@@ -237,26 +262,29 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
       {/* Final Approved Reports Highlight Card */}
       {finalReports.length > 0 && (
         <div 
-          className="card" 
+          className="portal-card" 
           style={{ 
-            marginBottom: '2rem', 
-            background: 'var(--surface-sunken)',
-            border: '2px solid var(--facss-gold-500)',
-            padding: '1.8rem 2rem',
+            marginBottom: '1.75rem', 
+            background: 'linear-gradient(135deg, rgba(181, 146, 84, 0.08) 0%, rgba(11, 61, 46, 0.04) 100%)',
+            border: '2px solid var(--color-gold-500)',
+            borderInlineStart: '6px solid var(--color-gold-600)',
+            padding: '1.6rem 1.85rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem' }}>
-            <FileCheck2 size={26} style={{ color: 'var(--facss-gold-600)' }} />
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-              التقرير الأمني النهائي (Final Assessment Report)
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.85rem' }}>
+            <FileCheck2 size={26} style={{ color: 'var(--color-gold-600)' }} />
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              {isAr ? 'التقرير الأمني النهائي المعتمد (Final Assessment Report)' : 'Official Final Assessment Report'}
             </h3>
           </div>
 
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', lineHeight: 1.6 }}>
-            تم إنجاز التقييم الميداني وإصدار الوثيقة النهائية المعتمدة من قبل خبراء المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية. يمكنك تنزيل النسخة الرقمية عبر الرابط المشفر أدناه:
+          <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.6 }}>
+            {isAr 
+              ? 'تم إنجاز التقييم الميداني وإصدار الوثيقة النهائية المعتمدة من قبل خبراء مركز الحلول المتكاملة للأمن والسلامة. يمكنك الاطلاع عليها وتنزيل نسختك الرقمية الرسمية أدناه:' 
+              : 'The field assessment has been completed and the final official report has been certified by experts of the Integrated Solutions Center for Safety and Security. Download below:'}
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             {finalReports.map((report) => (
               <div 
                 key={report.id} 
@@ -264,22 +292,24 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'space-between', 
-                  padding: '1rem 1.2rem', 
+                  padding: '1rem 1.25rem', 
                   background: 'var(--surface-card)', 
-                  borderRadius: '8px', 
-                  border: '1px solid var(--border-color)',
+                  borderRadius: '10px', 
+                  border: '1px solid var(--admin-card-border)',
                   flexWrap: 'wrap',
-                  gap: '0.8rem',
+                  gap: '0.85rem',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                  <FolderLock size={22} style={{ color: 'var(--facss-gold-600)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'rgba(181, 146, 84, 0.15)', color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <FolderLock size={20} />
+                  </div>
                   <div>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                    <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                       {report.title}
                     </h4>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      تاريخ الاعتماد: {new Date(report.createdAt).toLocaleDateString('ar-YE')} • الحجم: {report.sizeBytes ? (report.sizeBytes / (1024 * 1024)).toFixed(2) + ' MB' : 'PDF'}
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                      {isAr ? 'تاريخ الاعتماد:' : 'Issued:'} {new Date(report.createdAt).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')} • {report.sizeBytes ? (report.sizeBytes / (1024 * 1024)).toFixed(2) + ' MB' : 'PDF'}
                     </span>
                   </div>
                 </div>
@@ -294,10 +324,10 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
                   <a 
                     href={`/api/documents/${report.id}/download`} 
                     className="btn btn-gold btn-sm" 
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700 }}
                   >
                     <Download size={15} />
-                    <span>تنزيل التقرير الأمني الرسمي</span>
+                    <span>{isAr ? 'تنزيل التقرير الأمني' : 'Download Report'}</span>
                   </a>
                 </div>
               </div>
@@ -306,51 +336,59 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
-        {/* Left Column: Scope & Timeline Notes */}
+      {/* Main Grid: Details, Notes, and Attachments */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem', alignItems: 'start' }}>
+        {/* Left Column: Scope & Activity Notes */}
         <div style={{ flex: 2 }}>
           {/* Scope Card */}
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-              نطاق وتفاصيل طلب الخدمة
+          <div className="portal-card" style={{ marginBottom: '1.75rem' }}>
+            <h3 className="portal-card-title" style={{ fontSize: '1.1rem', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--admin-card-border)' }}>
+              <FileText size={18} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'نطاق وتفاصيل طلب الخدمة' : 'Service Scope & Requirements'}</span>
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.8, whiteSpace: 'pre-line' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.8, whiteSpace: 'pre-line', margin: 0 }}>
               {req.description}
             </p>
           </div>
 
           {/* Activity Notes Thread */}
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.2rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-              تحديثات غرفة العمليات والمتابعة الميدانية
+          <div className="portal-card" style={{ marginBottom: '1.75rem' }}>
+            <h3 className="portal-card-title" style={{ fontSize: '1.1rem', marginBottom: '1.2rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--admin-card-border)' }}>
+              <Clock size={18} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'تحديثات غرفة العمليات والمتابعة الميدانية' : 'Operations Updates & Field Notes'}</span>
             </h3>
 
             {req.notes.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                جارٍ مراجعة طلبكم وسيقوم الضابط المكلف بنشر التحديثات الميدانية هنا.
-              </p>
+              <div className="portal-empty-state" style={{ padding: '2rem 1rem' }}>
+                <Clock size={32} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '0.5rem', opacity: 0.5 }} />
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', margin: 0 }}>
+                  {isAr 
+                    ? 'جارٍ مراجعة طلبكم وسيقوم الضابط الميداني المكلف بنشر التحديثات هنا.' 
+                    : 'Your request is in review. Updates will appear here as work progresses.'}
+                </p>
+              </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {req.notes.map((note) => (
                   <div
                     key={note.id}
                     style={{
-                      padding: '1.2rem',
-                      background: 'var(--surface-sunken)',
+                      padding: '1.1rem 1.25rem',
+                      background: 'var(--surface-bg)',
                       borderRadius: '8px',
-                      borderInlineStart: '4px solid var(--facss-gold-500)',
-                      border: '1px solid var(--border-color)',
+                      borderInlineStart: '4px solid var(--color-gold-500)',
+                      border: '1px solid var(--admin-card-border)',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--facss-green-900)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--color-primary-900)' }}>
                         {note.authorName}
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        {new Date(note.createdAt).toLocaleDateString('ar-YE', { hour: '2-digit', minute: '2-digit' })}
+                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'var(--font-en)' }}>
+                        {new Date(note.createdAt).toLocaleDateString(isAr ? 'ar-YE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <p style={{ color: 'var(--text-primary)', fontSize: '0.92rem', lineHeight: 1.6, margin: 0 }}>
+                    <p style={{ color: 'var(--text-primary)', fontSize: '0.88rem', lineHeight: 1.6, margin: 0 }}>
                       {note.note}
                     </p>
                   </div>
@@ -360,20 +398,25 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
           </div>
 
           {/* Client Attachments Section */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.3rem' }}>
-              مستندات ومرفقات العميل
+          <div className="portal-card">
+            <h3 className="portal-card-title" style={{ fontSize: '1.1rem', marginBottom: '0.3rem' }}>
+              <FolderLock size={18} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'مستندات ومرفقات العميل' : 'Client Attachments'}</span>
             </h3>
             <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '1.2rem' }}>
-              المخططات ووثائق التفويض التي أرفقتها بالطلب
+              {isAr ? 'المخططات ووثائق التفويض المرفقة بالطلب' : 'Site plans, authorization letters, and uploaded files'}
             </span>
 
             {clientAttachments.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-                لم يتم إرفاق أي مستندات من قبلك حتى الآن. يمكنك استخدام النموذج أدناه لرفع المخططات ووثائق التفويض.
-              </p>
+              <div className="portal-empty-state" style={{ padding: '2rem 1rem', marginBottom: '1.25rem' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
+                  {isAr 
+                    ? 'لم يتم إرفاق مستندات بعد. يمكنك رفع المخططات والوثائق الداعمة أدناه.' 
+                    : 'No documents uploaded yet. Use the form below to attach files.'}
+                </p>
+              </div>
             ) : (
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: 0, padding: 0 }}>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '0 0 1.25rem 0', padding: 0 }}>
                 {clientAttachments.map((doc) => (
                   <li 
                     key={doc.id} 
@@ -382,29 +425,29 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
                       alignItems: 'center', 
                       justifyContent: 'space-between', 
                       padding: '0.85rem 1rem', 
-                      background: 'var(--surface-sunken)', 
-                      borderRadius: '6px',
-                      border: '1px solid var(--border-color)',
+                      background: 'var(--surface-bg)', 
+                      borderRadius: '8px',
+                      border: '1px solid var(--admin-card-border)',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <FileText size={18} style={{ color: 'var(--facss-gold-600)' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                      <FileText size={18} style={{ color: 'var(--color-gold-600)' }} />
                       <div>
-                        <span style={{ fontSize: '0.88rem', color: 'var(--text-primary)', display: 'block', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.86rem', color: 'var(--text-primary)', display: 'block', fontWeight: 600 }}>
                           {doc.title}
                         </span>
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                          {new Date(doc.createdAt).toLocaleDateString('ar-YE')} • {doc.sizeBytes ? (doc.sizeBytes / 1024).toFixed(0) + ' KB' : ''}
+                          {new Date(doc.createdAt).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')} • {doc.sizeBytes ? (doc.sizeBytes / 1024).toFixed(0) + ' KB' : ''}
                         </span>
                       </div>
                     </div>
                     <a 
                       href={`/api/documents/${doc.id}/download`} 
-                      className="btn btn-outline btn-sm" 
+                      className="admin-btn admin-btn-outline admin-btn-sm" 
                       style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
                     >
                       <Download size={13} />
-                      <span>تنزيل</span>
+                      <span>{isAr ? 'تنزيل' : 'Download'}</span>
                     </a>
                   </li>
                 ))}
@@ -416,50 +459,58 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Right Column: Assigned Cadre & Center Deliverables */}
+        {/* Right Column: Assigned Officer & Deliverables */}
         <div>
-          {/* Assigned Cadre Card */}
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.2rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-              المسؤول الأمني المكلّف
+          {/* Assigned Officer Card */}
+          <div className="portal-card" style={{ marginBottom: '1.75rem' }}>
+            <h3 className="portal-card-title" style={{ fontSize: '1.05rem', marginBottom: '1.15rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--admin-card-border)' }}>
+              <User size={18} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'المسؤول الأمني المكلّف' : 'Assigned Security Officer'}</span>
             </h3>
 
             {req.assignedEmployee ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--facss-gold-500)', color: 'var(--facss-green-950)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(181, 146, 84, 0.15)', color: 'var(--color-gold-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
                   <User size={24} />
                 </div>
                 <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                  <h4 style={{ fontSize: '0.96rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
                     {req.assignedEmployee.fullName}
                   </h4>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--facss-green-900)', fontWeight: 600 }}>
-                    ضابط عمليات أمنية مكلّف
+                  <span style={{ fontSize: '0.78rem', color: 'var(--color-primary-900)', fontWeight: 600 }}>
+                    {isAr ? 'ضابط عمليات أمنية مكلّف' : 'Operations Officer'}
                   </span>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.25rem 0 0 0' }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0 0', fontFamily: 'var(--font-en)' }} dir="ltr">
                     {req.assignedEmployee.phone || req.assignedEmployee.email}
                   </p>
                 </div>
               </div>
             ) : (
-              <div style={{ padding: '0.85rem', background: 'var(--surface-sunken)', borderRadius: '8px', color: 'var(--text-secondary)', fontSize: '0.85rem', border: '1px solid var(--border-color)' }}>
-                طلبكم قيد التخصيص وسيقوم مدير العمليات بتكليف ضابط المتابعة قريباً.
+              <div className="portal-empty-state" style={{ padding: '1.25rem 1rem' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.84rem', margin: 0 }}>
+                  {isAr 
+                    ? 'طلبكم قيد التخصيص وسيقوم مدير العمليات بتكليف ضابط المتابعة قريباً.' 
+                    : 'Pending assignment by operations director.'}
+                </p>
               </div>
             )}
           </div>
 
           {/* Other Center Deliverables (Client-Visible) */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.3rem' }}>
-              مستندات المركز المرئية
+          <div className="portal-card">
+            <h3 className="portal-card-title" style={{ fontSize: '1.05rem', marginBottom: '0.3rem' }}>
+              <FileCheck2 size={18} style={{ color: 'var(--color-gold-600)' }} />
+              <span>{isAr ? 'مستندات ومخرجات المركز' : 'Center Deliverables'}</span>
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '1rem' }}>
-              الوثائق والمصفوفات الأولية المشتركة من فريق العمليات
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '1rem' }}>
+              {isAr ? 'الوثائق والمصفوفات المشتركة من فريق العمليات' : 'Deliverables shared by operations'}
             </span>
 
             {centerDeliverables.length === 0 ? (
-              <div style={{ padding: '1rem', background: 'var(--surface-sunken)', borderRadius: '8px', color: 'var(--text-secondary)', fontSize: '0.85rem', border: '1px solid var(--border-color)' }}>
-                لا توجد مستندات إضافية من المركز حالياً.
+              <div className="portal-empty-state" style={{ padding: '1.5rem 1rem' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.84rem', margin: 0 }}>
+                  {isAr ? 'لا توجد مستندات إضافية حالياً.' : 'No additional deliverables shared yet.'}
+                </p>
               </div>
             ) : (
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: 0, padding: 0 }}>
@@ -470,28 +521,28 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'space-between', 
-                      padding: '0.75rem', 
-                      background: 'var(--surface-sunken)', 
-                      borderRadius: '6px',
-                      border: '1px solid var(--border-color)' 
+                      padding: '0.8rem', 
+                      background: 'var(--surface-bg)', 
+                      borderRadius: '8px', 
+                      border: '1px solid var(--admin-card-border)' 
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <FileText size={18} style={{ color: 'var(--facss-gold-600)' }} />
+                      <FileText size={18} style={{ color: 'var(--color-gold-600)' }} />
                       <div>
                         <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', display: 'block', fontWeight: 600 }}>{doc.title}</span>
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                          {new Date(doc.createdAt).toLocaleDateString('ar-YE')}
+                          {new Date(doc.createdAt).toLocaleDateString(isAr ? 'ar-YE' : 'en-US')}
                         </span>
                       </div>
                     </div>
                     <a 
                       href={`/api/documents/${doc.id}/download`} 
                       className="btn btn-gold btn-sm" 
-                      style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
+                      style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
                     >
                       <Download size={13} />
-                      <span>تحميل</span>
+                      <span>{isAr ? 'تحميل' : 'Download'}</span>
                     </a>
                   </li>
                 ))}
@@ -501,7 +552,7 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* C11: Client Feedback Card on Completed Requests */}
+      {/* Client Feedback Card on Completed Requests */}
       {req.status === 'COMPLETED' && isOwner && (
         <ClientFeedbackForm
           requestId={req.id}

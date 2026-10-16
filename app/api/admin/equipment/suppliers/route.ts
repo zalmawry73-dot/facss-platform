@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { CAPABILITIES, assertApiCapability } from '@/lib/rbac';
 import { validateSupplierInput } from '@/lib/validations/equipment';
+import { getRequestLocale } from '@/lib/validations/common';
 import { generateReferenceNumber } from '@/lib/equipment-rules';
 import { logActivity } from '@/lib/audit';
 
@@ -59,11 +60,15 @@ export async function POST(request: Request) {
     if (!gate.authorized) return gate.response!;
 
     const body = await request.json().catch(() => ({}));
-    const validation = validateSupplierInput(body);
+    const locale = getRequestLocale(request, body);
+    const validation = validateSupplierInput(body, false, locale);
 
     if (!validation.success || !validation.data) {
       return NextResponse.json(
-        { error: 'بيانات المورد غير صالحة', errors: validation.errors },
+        {
+          error: locale === 'en' ? 'Invalid supplier data' : 'بيانات المورد غير صالحة',
+          errors: validation.errors,
+        },
         { status: 400 }
       );
     }
@@ -75,7 +80,15 @@ export async function POST(request: Request) {
       where: { supplierCode },
     });
     if (existingCode) {
-      return NextResponse.json({ error: `كود المورد (${supplierCode}) مسجل مسبقاً` }, { status: 409 });
+      return NextResponse.json(
+        {
+          error:
+            locale === 'en'
+              ? `Supplier code (${supplierCode}) is already registered`
+              : `كود المورد (${supplierCode}) مسجل مسبقاً`,
+        },
+        { status: 409 }
+      );
     }
 
     const supplier = await prisma.supplier.create({

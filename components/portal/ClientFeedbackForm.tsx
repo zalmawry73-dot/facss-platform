@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Star, CheckCircle2, MessageSquare, Send } from 'lucide-react';
 
 interface Props {
@@ -16,8 +17,9 @@ interface Props {
   locale?: string;
 }
 
-export default function ClientFeedbackForm({ requestId, existingFeedback, locale = 'ar' }: Props) {
-  const isAr = locale === 'ar';
+export default function ClientFeedbackForm({ requestId, existingFeedback, locale: propLocale = 'ar' }: Props) {
+  const { locale: contextLocale } = useLanguage();
+  const isAr = (contextLocale || propLocale) === 'ar';
   const [feedback, setFeedback] = useState(existingFeedback || null);
   const [overallRating, setOverallRating] = useState(5);
   const [serviceQuality, setServiceQuality] = useState(5);
@@ -152,8 +154,8 @@ export default function ClientFeedbackForm({ requestId, existingFeedback, locale
         borderRadius: '12px',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--brand-gold-600)', marginBottom: '0.5rem' }}>
-        <Star size={20} style={{ fill: 'var(--brand-gold-600)' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--color-gold-600)', marginBottom: '0.5rem' }}>
+        <Star size={20} style={{ fill: 'var(--color-gold-600)' }} />
         <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
           {isAr ? 'تقييم جودة الخدمة ورضا العميل' : 'Rate Service Quality & Experience'}
         </h4>

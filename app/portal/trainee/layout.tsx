@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -11,85 +12,159 @@ import {
   User, 
   Calendar,
   LayoutDashboard,
-  LogOut 
+  ExternalLink,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function TraineePortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, loading, logout } = useAuth();
+  const { user, loading } = useAuth();
+  const { locale, dir } = useLanguage();
+  const isAr = locale === 'ar';
 
   if (loading) {
     return (
-      <div style={{ padding: '6rem 2rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--color-gold-light)', fontSize: '1.2rem' }}>جارٍ تحميل بوابة المتدرب...</p>
+      <div className="portal-container" dir={dir}>
+        <div className="container-wide" style={{ paddingBlock: '6rem', textAlign: 'center' }}>
+          <div className="portal-card" style={{ maxWidth: '480px', marginInline: 'auto' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(181, 146, 84, 0.12)', border: '1px solid var(--color-gold-500)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginInline: 'auto', marginBottom: '1rem' }}>
+              <GraduationCap size={24} style={{ color: 'var(--color-gold-600)' }} />
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+              {isAr ? 'جارٍ تحميل بوابة المتدرب الأكاديمية...' : 'Loading Trainee Portal...'}
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
+              {isAr ? 'يتم استرداد السجل التدريبي والشهادات المسجلة' : 'Retrieving training history and certificates'}
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div style={{ padding: '6rem 2rem', textAlign: 'center' }}>
-        <h2 style={{ color: '#FFF', marginBottom: '1rem' }}>يرجى تسجيل الدخول للوصول لبوابة المتدربين</h2>
-        <Link href="/login?redirect=/portal/trainee" className="btn btn-gold">
-          تسجيل الدخول
-        </Link>
+      <div className="portal-container" dir={dir}>
+        <div className="container-wide" style={{ paddingBlock: '6rem', textAlign: 'center' }}>
+          <div className="portal-card" style={{ maxWidth: '520px', marginInline: 'auto', textAlign: 'center' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(11, 61, 46, 0.08)', border: '1px solid var(--color-primary-800)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginInline: 'auto', marginBottom: '1.25rem' }}>
+              <GraduationCap size={28} style={{ color: 'var(--color-primary-900)' }} />
+            </div>
+            <h2 style={{ color: 'var(--text-primary)', fontSize: '1.3rem', fontWeight: 800, marginBottom: '0.75rem' }}>
+              {isAr ? 'بوابة المتدربين والشهادات الرقمية' : 'Trainee Portal & Digital Certificates'}
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '1.75rem', lineHeight: 1.6 }}>
+              {isAr 
+                ? 'يرجى تسجيل الدخول بحساب المتدرب للوصول إلى سجل الدورات، نسب الحضور، والشهادات المعتمدة.' 
+                : 'Please sign in with your trainee account to view enrollments, attendance records, and certificates.'}
+            </p>
+            <Link href="/login?redirect=/portal/trainee" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontWeight: 700 }}>
+              {isAr ? 'تسجيل الدخول إلى البوابة' : 'Sign In to Portal'}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   const links = [
-    { href: '/portal/trainee', label: 'لوحة التدريب العامة', icon: LayoutDashboard },
-    { href: '/portal/trainee/courses', label: 'دوراتي والبرامج المتاحة', icon: BookOpen },
-    { href: '/portal/trainee/attendance', label: 'سجل الحضور والجلسات', icon: Calendar },
-    { href: '/portal/trainee/certificates', label: 'الشهادات الصادرة', icon: Award },
-    { href: '/portal/trainee/profile', label: 'الملف الشخصي', icon: User },
+    { 
+      href: '/portal/trainee', 
+      label: isAr ? 'لوحة التدريب العامة' : 'Training Dashboard', 
+      icon: LayoutDashboard,
+      exact: true 
+    },
+    { 
+      href: '/portal/trainee/courses', 
+      label: isAr ? 'دوراتي والبرامج المتاحة' : 'Courses & Programs', 
+      icon: BookOpen,
+      exact: false 
+    },
+    { 
+      href: '/portal/trainee/attendance', 
+      label: isAr ? 'سجل الحضور والجلسات' : 'Attendance & Sessions', 
+      icon: Calendar,
+      exact: false 
+    },
+    { 
+      href: '/portal/trainee/certificates', 
+      label: isAr ? 'الشهادات المعتمدة' : 'Issued Certificates', 
+      icon: Award,
+      exact: false 
+    },
+    { 
+      href: '/portal/trainee/profile', 
+      label: isAr ? 'الملف الأكاديمي' : 'Trainee Profile', 
+      icon: User,
+      exact: true 
+    },
   ];
 
   return (
-    <div style={{ paddingBlock: '2.5rem' }}>
+    <div className="portal-container" dir={dir}>
       <div className="container-wide">
         {/* Header Banner Card */}
-        <div className="card" style={{ marginBottom: '2rem', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0 }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(197,155,39,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-light)', flexShrink: 0 }}>
-              <GraduationCap size={24} />
+        <div className="portal-header-banner">
+          <div className="portal-header-brand">
+            <div className="portal-header-emblem" aria-hidden="true">
+              <img 
+                src="/images/brand/logo-symbol-dark.png" 
+                alt="درع مركز الحلول المتكاملة" 
+                style={{ height: '36px', width: 'auto', objectFit: 'contain' }} 
+              />
             </div>
             <div style={{ minWidth: 0 }}>
-              <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFF', margin: 0, lineHeight: 1.3 }}>
-                بوابة المتدرب | {user.fullName}
-              </h1>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                برامج التدريب وبناء القدرات • {user.email}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                <h1 className="portal-header-title">
+                  {isAr ? 'بوابة المتدرب وبناء القدرات' : 'Trainee & Capacity Building Portal'}
+                </h1>
+                <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '4px', background: 'rgba(181, 146, 84, 0.25)', color: 'var(--color-gold-300)', fontWeight: 700, border: '1px solid rgba(181, 146, 84, 0.4)' }}>
+                  {isAr ? 'أكاديمية التدريب' : 'Training Academy'}
+                </span>
+              </div>
+              <div className="portal-header-subtitle">
+                <GraduationCap size={14} />
+                <span>{user.fullName}</span>
+                <span>•</span>
+                <span dir="ltr" style={{ fontFamily: 'var(--font-en)' }}>{user.email}</span>
+              </div>
             </div>
           </div>
 
-          <Link href="/training" className="btn btn-gold btn-sm">
-            <BookOpen size={16} />
-            <span>استعراض دليل الدورات التدريبية</span>
-          </Link>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', zIndex: 1 }}>
+            <Link 
+              href="/training" 
+              className="btn btn-gold btn-sm"
+              style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.55rem 1.15rem' }}
+            >
+              <BookOpen size={16} />
+              <span>{isAr ? 'استعراض دليل الدورات' : 'Explore Courses'}</span>
+            </Link>
+          </div>
         </div>
 
         {/* Sub-nav tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', borderBottom: '1px solid rgba(197,155,39,0.25)', paddingBottom: '0.5rem', overflowX: 'auto' }}>
+        <nav className="portal-nav-bar" aria-label="Trainee Portal Navigation">
           {links.map((link) => {
             const Icon = link.icon;
-            const isActive = pathname === link.href;
+            const isActive = link.exact 
+              ? pathname === link.href 
+              : pathname === link.href || pathname.startsWith(link.href + '/');
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`btn btn-sm ${isActive ? 'btn-gold' : 'btn-outline'}`}
-                style={{ borderRadius: '8px', fontSize: '0.85rem' }}
+                className={`portal-nav-item ${isActive ? 'active' : ''}`}
               >
                 <Icon size={16} />
                 <span>{link.label}</span>
               </Link>
             );
           })}
-        </div>
+        </nav>
 
-        {children}
+        {/* Portal View Content */}
+        <main>{children}</main>
       </div>
     </div>
   );

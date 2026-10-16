@@ -462,7 +462,7 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
                 <div className="admin-card-row">
                   <span className="admin-card-label">{tx("الصلاحيات:")}</span>
                   {u.role === 'SUPER_ADMIN' ? (
-                    <span style={{ fontSize: '0.72rem', color: 'var(--brand-gold-600)', fontWeight: 700 }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--color-gold-600)', fontWeight: 700 }}>
                       {tx("صلاحيات مطلقة (SUPER_ADMIN)")}
                     </span>
                   ) : (
@@ -536,8 +536,8 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
                     key={cap.id}
                     style={{
                       padding: '0.75rem 1rem',
-                      background: isAssigned ? 'rgba(217, 119, 6, 0.05)' : 'var(--surface-bg)',
-                      border: isAssigned ? '1px solid var(--brand-gold-500)' : '1px solid var(--admin-card-border)',
+                      background: isAssigned ? 'rgba(181, 146, 84, 0.08)' : 'var(--surface-bg)',
+                      border: isAssigned ? '1px solid var(--color-gold-500)' : '1px solid var(--admin-card-border)',
                       borderRadius: '8px',
                       display: 'flex',
                       alignItems: 'center',

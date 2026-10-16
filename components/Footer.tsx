@@ -49,23 +49,23 @@ export default function Footer({ contactAddressAr, contactAddressEn, contactEmai
           <div className="footer-brand">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
               <img 
-                src="/images/logo.png" 
+                src="/images/brand/logo-symbol-dark.png" 
                 alt={t.siteTitle} 
-                style={{ width: '52px', height: '52px', objectFit: 'contain' }} 
+                style={{ width: '48px', height: 'auto', objectFit: 'contain' }} 
               />
               <div>
-                <h3 className="gold-text" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
-                  {locale === 'ar' ? 'المركز المتكامل' : 'Integrated Center'}
+                <h3 className="gold-text" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-gold-400)' }}>
+                  {locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center'}
                 </h3>
                 <p style={{ fontSize: '0.78rem', color: '#E2E8F0', margin: '2px 0 0 0' }}>
                   {locale === 'ar' 
-                    ? 'لخدمات الأمن والسلامة والدراسات الميدانية' 
-                    : 'for Security, Safety & Field Studies'}
+                    ? 'للأمن والسلامة' 
+                    : 'for Safety and Security'}
                 </p>
               </div>
             </div>
 
-            <div style={{ marginTop: '1.2rem', padding: '0.75rem', background: 'rgba(201,162,39,0.08)', borderRadius: '8px', border: '1px solid rgba(201,162,39,0.2)' }}>
+            <div style={{ marginTop: '1.2rem', padding: '0.75rem', background: 'rgba(181, 146, 84, 0.08)', borderRadius: '8px', border: '1px solid var(--border-dark)' }}>
               <p style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--color-gold-light)', margin: 0 }}>
                 {t.slogan}
               </p>

@@ -25,6 +25,7 @@ import {
   AdminSelect,
   AdminAlert,
 } from '@/components/admin/ui';
+import { useAdminT } from '@/lib/admin-i18n';
 
 interface Trainer {
   id: string;
@@ -52,6 +53,7 @@ interface Trainer {
 interface CourseOption {
   id: string;
   titleAr: string;
+  titleEn?: string | null;
 }
 
 interface Props {
@@ -59,6 +61,7 @@ interface Props {
 }
 
 export default function TrainersManager({ courses }: Props) {
+  const { tx, isAr, locale } = useAdminT();
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -109,7 +112,7 @@ export default function TrainersManager({ courses }: Props) {
         setTrainers(data.trainers);
       }
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'فشل تحميل سجل المدربين' });
+      setFeedback({ type: 'error', message: err.message || tx('فشل تحميل قائمة المدربين') });
     } finally {
       setLoading(false);
     }
@@ -164,9 +167,9 @@ export default function TrainersManager({ courses }: Props) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل حفظ بيانات المدرب');
+      if (!res.ok) throw new Error(data.error || tx('فشل حفظ بيانات المدرب'));
 
-      setFeedback({ type: 'success', message: 'تم حفظ بيانات المدرب بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم حفظ بيانات المدرب بنجاح') });
       setIsTrainerModalOpen(false);
       await loadTrainers();
     } catch (err: any) {
@@ -184,10 +187,10 @@ export default function TrainersManager({ courses }: Props) {
         body: JSON.stringify({ isActive: !t.isActive }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل تحديث حالة المدرب');
+      if (!res.ok) throw new Error(data.error || tx('فشل تحديث حالة المدرب'));
       setFeedback({
         type: 'success',
-        message: `تم ${!t.isActive ? 'تفعيل' : 'تعطيل'} حساب المدرب بنجاح`,
+        message: tx('تم تحديث حالة المدرب بنجاح'),
       });
       await loadTrainers();
     } catch (err: any) {
@@ -206,9 +209,9 @@ export default function TrainersManager({ courses }: Props) {
         body: JSON.stringify({ courseId: selectedCourseId, role: assignRole }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل تكليف المدرب بالدورة');
+      if (!res.ok) throw new Error(data.error || tx('فشل تكليف المدرب بالدورة'));
 
-      setFeedback({ type: 'success', message: 'تم تكليف المدرب بالدورة بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم تكليف المدرب بالدورة بنجاح') });
       setAssignModalTrainer(null);
       await loadTrainers();
     } catch (err: any) {
@@ -233,9 +236,9 @@ export default function TrainersManager({ courses }: Props) {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل رفع وثيقة المدرب');
+      if (!res.ok) throw new Error(data.error || tx('فشل رفع الوثيقة'));
 
-      setFeedback({ type: 'success', message: 'تم رفع وثيقة المؤهل/الاعتماد بنجاح' });
+      setFeedback({ type: 'success', message: tx('تم رفع وثيقة المؤهل/الاعتماد بنجاح') });
       setDocModalTrainer(null);
       setDocFile(null);
       setDocTitle('');
@@ -250,7 +253,9 @@ export default function TrainersManager({ courses }: Props) {
   const filteredTrainers = trainers.filter((t) => {
     const matchesSearch =
       t.fullNameAr.toLowerCase().includes(search.toLowerCase()) ||
+      (t.fullNameEn && t.fullNameEn.toLowerCase().includes(search.toLowerCase())) ||
       t.professionalTitleAr.toLowerCase().includes(search.toLowerCase()) ||
+      (t.professionalTitleEn && t.professionalTitleEn.toLowerCase().includes(search.toLowerCase())) ||
       (t.specializations && t.specializations.toLowerCase().includes(search.toLowerCase()));
 
     const matchesStatus =
@@ -278,10 +283,10 @@ export default function TrainersManager({ courses }: Props) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--admin-text-primary)', margin: 0 }}>
-              سجل المدربين والخبراء المعتمدين (Trainer Registry)
+              {tx("سجل المدربين والخبراء المعتمدين (Trainer Registry)")}
             </h3>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              إدارة الخبراء والمدربين، مؤهلاتهم، واعتماداتهم، وتكليفهم بالدورات التدريبية
+              {tx("إدارة الخبراء والمدربين، مؤهلاتهم، واعتماداتهم، وتكليفهم بالدورات التدريبية")}
             </span>
           </div>
           <AdminButton
@@ -290,21 +295,21 @@ export default function TrainersManager({ courses }: Props) {
             icon={<Plus size={16} />}
             onClick={openCreateModal}
           >
-            إضافة مدرب جديد
+            {tx("إضافة مدرب جديد")}
           </AdminButton>
         </div>
 
         {/* Filters */}
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <Search size={16} style={{ position: 'absolute', insetInlineEnd: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
               className="form-control"
-              placeholder="البحث بالاسم، المسمى المهني، أو التخصص..."
+              placeholder={tx("البحث بالاسم، المسمى المهني، أو التخصص...")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ paddingRight: '2.5rem' }}
+              style={{ paddingInlineEnd: '2.5rem' }}
             />
           </div>
           <select
@@ -313,9 +318,9 @@ export default function TrainersManager({ courses }: Props) {
             onChange={(e) => setFilterActive(e.target.value)}
             style={{ width: '180px' }}
           >
-            <option value="ALL">جميع الحالات</option>
-            <option value="ACTIVE">المدربون النشطون</option>
-            <option value="INACTIVE">غير النشطين (معطل)</option>
+            <option value="ALL">{tx("جميع الحالات")}</option>
+            <option value="ACTIVE">{tx("المدربون النشطون")}</option>
+            <option value="INACTIVE">{tx("غير النشطين (معطل)")}</option>
           </select>
         </div>
       </div>
@@ -324,24 +329,24 @@ export default function TrainersManager({ courses }: Props) {
       <div className="card">
         {loading ? (
           <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            جاري تحميل سجل المدربين...
+            {tx("جاري تحميل سجل المدربين...")}
           </div>
         ) : filteredTrainers.length === 0 ? (
           <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            لا يوجد مدربون مطابقون لخيارات البحث
+            {tx("لا يوجد مدربون مطابقون لخيارات البحث")}
           </div>
         ) : (
           <div className="table-responsive">
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>الاسم واللقب المهني</th>
-                  <th>التخصصات</th>
-                  <th>بيانات الاتصال</th>
-                  <th>الدورات المكلف بها</th>
-                  <th>الوثائق والمؤهلات</th>
-                  <th>الحالة</th>
-                  <th>الإجراءات</th>
+                  <th>{tx("الاسم واللقب المهني")}</th>
+                  <th>{tx("التخصصات")}</th>
+                  <th>{tx("بيانات الاتصال")}</th>
+                  <th>{tx("الدورات المكلف بها")}</th>
+                  <th>{tx("الوثائق والمؤهلات")}</th>
+                  <th>{tx("الحالة")}</th>
+                  <th>{tx("الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -349,15 +354,15 @@ export default function TrainersManager({ courses }: Props) {
                   <tr key={t.id}>
                     <td>
                       <div style={{ fontWeight: 700, color: 'var(--admin-text-primary)' }}>
-                        {t.fullNameAr}
+                        {isAr ? t.fullNameAr : (t.fullNameEn || t.fullNameAr)}
                       </div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--color-gold)' }}>
-                        {t.professionalTitleAr}
+                        {isAr ? t.professionalTitleAr : (t.professionalTitleEn || t.professionalTitleAr)}
                       </div>
                     </td>
                     <td>
                       <div style={{ fontSize: '0.85rem', maxWidth: '200px' }}>
-                        {t.specializations || 'غير محدد'}
+                        {t.specializations || tx("غير محدد")}
                       </div>
                     </td>
                     <td>
@@ -366,12 +371,12 @@ export default function TrainersManager({ courses }: Props) {
                     </td>
                     <td>
                       <span className="badge" style={{ background: '#3B82F620', color: '#3B82F6' }}>
-                        {t.courseAssignments?.length || 0} دورة
+                        {t.courseAssignments?.length || 0} {tx("دورة")}
                       </span>
                     </td>
                     <td>
                       <span className="badge" style={{ background: '#10B98120', color: '#10B981' }}>
-                        {t.documents?.length || 0} وثيقة
+                        {t.documents?.length || 0} {tx("وثيقة")}
                       </span>
                     </td>
                     <td>
@@ -382,7 +387,7 @@ export default function TrainersManager({ courses }: Props) {
                           color: t.isActive ? '#22C55E' : '#EF4444',
                         }}
                       >
-                        {t.isActive ? 'نشط' : 'معطل'}
+                        {t.isActive ? tx("نشط") : tx("معطل")}
                       </span>
                     </td>
                     <td>
@@ -392,7 +397,7 @@ export default function TrainersManager({ courses }: Props) {
                           size="sm"
                           icon={<Edit2 size={13} />}
                           onClick={() => openEditModal(t)}
-                          title="تعديل بيانات المدرب"
+                          title={tx("تعديل بيانات المدرب")}
                         />
                         <AdminButton
                           variant="outline"
@@ -402,7 +407,7 @@ export default function TrainersManager({ courses }: Props) {
                             setAssignModalTrainer(t);
                             setSelectedCourseId(courses[0]?.id || '');
                           }}
-                          title="تكليف بدورة تدريبية"
+                          title={tx("تكليف بدورة تدريبية")}
                         />
                         <AdminButton
                           variant="outline"
@@ -413,14 +418,14 @@ export default function TrainersManager({ courses }: Props) {
                             setDocTitle('');
                             setDocFile(null);
                           }}
-                          title="رفع وثيقة اعتماد"
+                          title={tx("رفع وثيقة اعتماد")}
                         />
                         <AdminButton
                           variant="outline"
                           size="sm"
                           icon={t.isActive ? <UserX size={13} /> : <UserCheck size={13} />}
                           onClick={() => toggleTrainerStatus(t)}
-                          title={t.isActive ? 'تعطيل الحساب' : 'تفعيل الحساب'}
+                          title={t.isActive ? tx("تعطيل الحساب") : tx("تفعيل الحساب")}
                         />
                       </div>
                     </td>
@@ -437,46 +442,46 @@ export default function TrainersManager({ courses }: Props) {
         <AdminModal
           isOpen={isTrainerModalOpen}
           onClose={() => setIsTrainerModalOpen(false)}
-          title={editingTrainer ? 'تعديل بيانات المدرب' : 'إضافة مدرب جديد لسجل الخبراء'}
+          title={editingTrainer ? tx("تعديل بيانات المدرب") : tx("إضافة مدرب جديد لسجل الخبراء")}
         >
           <form onSubmit={handleSaveTrainer} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <AdminInput
-              label="الاسم الكامل بالعربية *"
+              label={tx("الاسم الكامل بالعربية *")}
               value={form.fullNameAr}
               onChange={(e) => setForm({ ...form, fullNameAr: e.target.value })}
               required
             />
             <AdminInput
-              label="المسمى المهني بالعربية (مثال: خبير الأمن والسلامة الميدانية) *"
+              label={tx("المسمى المهني بالعربية (مثال: خبير الأمن والسلامة الميدانية) *")}
               value={form.professionalTitleAr}
               onChange={(e) => setForm({ ...form, professionalTitleAr: e.target.value })}
               required
             />
             <AdminInput
-              label="مجالات التخصص (مفصولة بفواصل)"
+              label={tx("مجالات التخصص (مفصولة بفواصل)")}
               value={form.specializations}
               onChange={(e) => setForm({ ...form, specializations: e.target.value })}
-              placeholder="الاستجابة للطوارئ، السلامة المهنية، مكافحة الحرائق..."
+              placeholder={tx("الاستجابة للطوارئ، السلامة المهنية، مكافحة الحرائق...")}
             />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <AdminInput
-                label="البريد الإلكتروني"
+                label={tx("البريد الإلكتروني المهني")}
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
               <AdminInput
-                label="رقم الهاتف"
+                label={tx("رقم الهاتف")}
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <AdminButton variant="outline" size="md" onClick={() => setIsTrainerModalOpen(false)}>
-                إلغاء
+                {tx("إلغاء")}
               </AdminButton>
               <AdminButton variant="primary" size="md" type="submit" disabled={submitting}>
-                {submitting ? 'جاري الحفظ...' : 'حفظ بيانات المدرب'}
+                {submitting ? tx("جاري الحفظ...") : (editingTrainer ? tx("تحديث بيانات المدرب") : tx("حفظ بيانات المدرب"))}
               </AdminButton>
             </div>
           </form>
@@ -488,43 +493,43 @@ export default function TrainersManager({ courses }: Props) {
         <AdminModal
           isOpen={Boolean(assignModalTrainer)}
           onClose={() => setAssignModalTrainer(null)}
-          title={`تكليف المدرب [${assignModalTrainer.fullNameAr}] بدورة تدريبية`}
+          title={tx("تكليف المدرب [{0}] بدورة تدريبية", isAr ? assignModalTrainer.fullNameAr : (assignModalTrainer.fullNameEn || assignModalTrainer.fullNameAr))}
         >
           <form onSubmit={handleAssignCourse} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>اختر الدورة التدريبية *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("اختر الدورة التدريبية *")}</label>
               <select
                 className="form-select"
                 value={selectedCourseId}
                 onChange={(e) => setSelectedCourseId(e.target.value)}
                 required
               >
-                <option value="">-- اختر الدورة --</option>
+                <option value="">{tx("-- اختر الدورة --")}</option>
                 {courses.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.titleAr}
+                    {isAr ? c.titleAr : (c.titleEn || c.titleAr)}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>صفة التكليف *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("صفة التكليف *")}</label>
               <select
                 className="form-select"
                 value={assignRole}
                 onChange={(e) => setAssignRole(e.target.value)}
               >
-                <option value="LEAD_TRAINER">المدرب الرئيسي (Lead Trainer)</option>
-                <option value="ASSISTANT_TRAINER">مدرب مساعد (Assistant Trainer)</option>
-                <option value="GUEST_LECTURER">محاضر زائر / خبير ضيف</option>
+                <option value="LEAD_TRAINER">{tx("المدرب الرئيسي (Lead Trainer)")}</option>
+                <option value="ASSISTANT_TRAINER">{tx("مدرب مساعد (Assistant Trainer)")}</option>
+                <option value="GUEST_LECTURER">{tx("محاضر زائر / خبير ضيف")}</option>
               </select>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <AdminButton variant="outline" size="md" onClick={() => setAssignModalTrainer(null)}>
-                إلغاء
+                {tx("إلغاء")}
               </AdminButton>
               <AdminButton variant="primary" size="md" type="submit" disabled={assigning || !selectedCourseId}>
-                {assigning ? 'جاري التكليف...' : 'تأكيد التكليف بالدورة'}
+                {assigning ? tx("جاري التكليف...") : tx("تأكيد التكليف بالدورة")}
               </AdminButton>
             </div>
           </form>
@@ -536,31 +541,31 @@ export default function TrainersManager({ courses }: Props) {
         <AdminModal
           isOpen={Boolean(docModalTrainer)}
           onClose={() => setDocModalTrainer(null)}
-          title={`رفع وثيقة اعتماد للمدرب [${docModalTrainer.fullNameAr}]`}
+          title={tx("رفع وثيقة اعتماد للمدرب [{0}]", isAr ? docModalTrainer.fullNameAr : (docModalTrainer.fullNameEn || docModalTrainer.fullNameAr))}
         >
           <form onSubmit={handleUploadDocument} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <AdminInput
-              label="عنوان الوثيقة أو المؤهل *"
+              label={tx("عنوان الوثيقة أو المؤهل *")}
               value={docTitle}
               onChange={(e) => setDocTitle(e.target.value)}
-              placeholder="شهادة المدرب المعتمد TOT، دبلوم السلامة المهنية..."
+              placeholder={tx("شهادة المدرب المعتمد TOT، دبلوم السلامة المهنية...")}
               required
             />
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>نوع الوثيقة *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("نوع الوثيقة *")}</label>
               <select
                 className="form-select"
                 value={docType}
                 onChange={(e) => setDocType(e.target.value)}
               >
-                <option value="CERTIFICATION">شهادة تدريبية أو احترافية (Certification)</option>
-                <option value="ACCREDITATION">اعتماد مهني (Accreditation)</option>
-                <option value="DEGREE">مؤهل أكاديمي (Degree)</option>
-                <option value="CV">السيرة الذاتية المفصلة (CV)</option>
+                <option value="CERTIFICATION">{tx("شهادة تدريبية أو احترافية (Certification)")}</option>
+                <option value="ACCREDITATION">{tx("اعتماد مهني (Accreditation)")}</option>
+                <option value="DEGREE">{tx("مؤهل أكاديمي (Degree)")}</option>
+                <option value="CV">{tx("السيرة الذاتية المفصلة (CV)")}</option>
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>الملف (PDF أو Word أو صورة) *</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>{tx("الملف (PDF أو Word أو صورة) *")}</label>
               <input
                 type="file"
                 className="form-control"
@@ -571,10 +576,10 @@ export default function TrainersManager({ courses }: Props) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <AdminButton variant="outline" size="md" onClick={() => setDocModalTrainer(null)}>
-                إلغاء
+                {tx("إلغاء")}
               </AdminButton>
               <AdminButton variant="primary" size="md" type="submit" disabled={uploadingDoc || !docFile || !docTitle}>
-                {uploadingDoc ? 'جاري الرفع...' : 'رفع وحفظ الوثيقة'}
+                {uploadingDoc ? tx("جاري الرفع...") : tx("رفع وحفظ الوثيقة")}
               </AdminButton>
             </div>
           </form>

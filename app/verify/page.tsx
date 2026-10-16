@@ -82,48 +82,23 @@ export default function VerifyPortalLandingPage() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--surface-sunken)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--surface-bg)' }}>
       {/* Hero Header */}
-      <section
-        style={{
-          paddingBlock: '4rem 3.5rem',
-          background:
-            'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          textAlign: 'center',
-          color: '#FFFFFF',
-          position: 'relative',
-        }}
-      >
+      <section className="page-header-institutional" style={{ paddingBottom: '4.5rem' }}>
         <div className="container" style={{ maxWidth: '820px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.4rem 0.9rem',
-              background: 'rgba(201, 162, 39, 0.15)',
-              border: '1px solid rgba(201, 162, 39, 0.35)',
-              borderRadius: '20px',
-              fontSize: 'clamp(0.75rem, 2.5vw, 0.82rem)',
-              color: 'var(--facss-gold-300)',
-              fontWeight: 700,
-              marginBottom: '1.25rem',
-              maxWidth: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            <ShieldCheck size={16} style={{ flexShrink: 0 }} />
+          <div className="hero-badge-pill" style={{ marginInline: 'auto', marginBottom: '1.25rem' }}>
+            <ShieldCheck size={15} color="var(--color-gold-400)" />
             <span>{isAr ? 'البوابة الرسمية للتحقق الرقمي' : 'Official Digital Verification Portal'}</span>
           </div>
 
           <h1
             style={{
-              fontSize: 'clamp(1.45rem, 5.5vw, 2.4rem)',
+              fontSize: 'clamp(1.65rem, 5.5vw, 2.5rem)',
               fontWeight: 900,
               color: '#FFFFFF',
               marginBottom: '0.8rem',
               lineHeight: 1.25,
+              letterSpacing: '-0.02em',
             }}
           >
             {isAr
@@ -133,30 +108,30 @@ export default function VerifyPortalLandingPage() {
 
           <p
             style={{
-              color: 'var(--facss-ivory-300)',
+              color: 'rgba(255, 255, 255, 0.85)',
               fontSize: 'clamp(0.88rem, 2.8vw, 1.05rem)',
               maxWidth: '680px',
               marginInline: 'auto',
-              lineHeight: 1.7,
+              lineHeight: 1.75,
               marginBottom: '2.5rem',
             }}
           >
             {isAr
-              ? 'تتيح هذه البوابة للمنظمات والجهات الشريكة التحقق الفوري من صحة وسريان الشهادات والوثائق الصادرة عن المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية.'
-              : 'Empowering organizations and partners to instantly verify credentials and certificates issued by the Integrated Center for Security, Safety & Field Studies.'}
+              ? 'تتيح هذه البوابة للمنظمات والجهات الشريكة التحقق الفوري من صحة وسريان الشهادات والوثائق الصادرة عن مركز الحلول المتكاملة للأمن والسلامة.'
+              : 'Empowering organizations and partners to instantly verify credentials and certificates issued by the Integrated Solutions Center for Safety and Security.'}
           </p>
 
           {/* Verification Search Card */}
           <div
-            className="card verify-search-card"
+            className="card-institutional verify-search-card"
             style={{
-              background: 'var(--surface-card)',
               borderRadius: '16px',
-              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.35)',
-              border: '1px solid rgba(201, 162, 39, 0.3)',
+              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.12)',
+              border: '1px solid rgba(181, 146, 84, 0.35)',
               textAlign: isAr ? 'right' : 'left',
               position: 'relative',
               zIndex: 2,
+              padding: 'clamp(1.5rem, 3vw, 2.25rem)',
             }}
           >
             <form onSubmit={handleVerify}>
@@ -363,21 +338,24 @@ export default function VerifyPortalLandingPage() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <Building size={24} style={{ color: 'var(--facss-green-800)', flexShrink: 0 }} />
+              <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'rgba(11, 61, 46, 0.08)', border: '1px solid rgba(181, 146, 84, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary-900)', flexShrink: 0 }}>
+                <Building size={22} />
+              </div>
               <div>
                 <strong
                   style={{
                     fontSize: '1rem',
-                    color: 'var(--text-primary)',
+                    color: 'var(--color-primary-950)',
                     display: 'block',
                     marginBottom: '0.2rem',
+                    fontWeight: 800,
                   }}
                 >
                   {isAr
-                    ? 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية'
-                    : 'Integrated Center for Security, Safety & Field Studies'}
+                    ? 'مركز الحلول المتكاملة للأمن والسلامة'
+                    : 'Integrated Solutions Center for Safety and Security'}
                 </strong>
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                   {isAr
                     ? 'الجهة التخصصية في خدمات الأمن والسلامة والتأهيل والدراسات الميدانية في الجمهورية اليمنية.'
                     : 'The specialized entity for security, safety, capacity building, and field studies.'}

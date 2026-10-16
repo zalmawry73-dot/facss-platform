@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const metadata = {
-  title: 'ملف وتفاصيل البلاغ الميداني | المركز المتكامل لخدمات الأمن والسلامة',
+  title: 'ملف وتفاصيل البلاغ الميداني | مركز الحلول المتكاملة للأمن والسلامة',
 };
 
 export default async function IncidentDetailPage({ params }: Props) {

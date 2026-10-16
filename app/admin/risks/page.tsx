@@ -5,7 +5,7 @@ import { ROLES, CAPABILITIES, getUserCapabilities } from '@/lib/rbac';
 import RiskRegisterManager from '@/components/admin/RiskRegisterManager';
 
 export const metadata = {
-  title: 'سجل المخاطر التشغيلية الميدانية | المركز المتكامل لخدمات الأمن والسلامة',
+  title: 'سجل المخاطر التشغيلية الميدانية | مركز الحلول المتكاملة للأمن والسلامة',
   description: 'إدارة وتقييم المخاطر التشغيلية الميدانية ومتابعة مصفوفات التخفيف والمعالجة',
 };
 

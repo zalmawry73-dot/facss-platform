@@ -23,7 +23,8 @@ import {
   History,
   X,
   Shield,
-  ChevronDown
+  ChevronDown,
+  Package
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -130,6 +131,13 @@ export default function AdminSidebar({
           labelEn: 'Service Requests',
           icon: FileText,
           requiredCapability: 'manage_requests',
+        },
+        {
+          href: '/admin/equipment',
+          labelAr: tx("المعدات والمخزون"),
+          labelEn: 'Equipment & Inventory',
+          icon: Package,
+          requiredCapability: 'manage_equipment',
         },
       ],
     },
@@ -244,20 +252,20 @@ export default function AdminSidebar({
           href="/admin"
           className="sidebar-brand-link"
           onClick={() => setMobileOpen(false)}
-          title={tx("المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية")}
+          title={isAr ? "مركز الحلول المتكاملة للأمن والسلامة" : "Integrated Solutions Center for Safety and Security"}
         >
           <img
-            src="/images/logo.png"
+            src="/images/brand/logo-symbol-dark.png"
             alt={tx("شعار المركز")}
             className="sidebar-brand-logo"
           />
           {!isEffectiveCollapsed && (
             <div className="sidebar-brand-text">
               <span className="brand-line-primary">
-                {isAr ? 'المركز المتكامل' : 'Integrated Center'}
+                {isAr ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center'}
               </span>
               <span className="brand-line-secondary">
-                {isAr ? 'لوحة الإدارة والتحكم' : 'Operations Panel'}
+                {isAr ? 'لوحة الإدارة والتحكم' : 'Operations Console'}
               </span>
             </div>
           )}

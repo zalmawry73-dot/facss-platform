@@ -79,34 +79,29 @@ export default function ContactPage() {
   };
 
   return (
-    <div>
-      {/* Banner */}
-      <section
-        style={{
-          paddingBlock: '4rem',
-          background: 'linear-gradient(180deg, var(--facss-green-950) 0%, var(--facss-green-900) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          textAlign: 'center',
-          color: '#FFFFFF',
-        }}
-      >
-        <div className="container">
-          <span className="section-tag">{t.navContact}</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem' }}>
+    <div className="min-h-screen" style={{ background: 'var(--surface-bg)' }}>
+      {/* Institutional Page Header */}
+      <section className="page-header-institutional">
+        <div className="container text-center">
+          <div className="hero-badge-pill" style={{ marginInline: 'auto', marginBottom: '1.25rem' }}>
+            <ShieldCheck size={14} color="var(--color-gold-400)" />
+            <span>{t.navContact}</span>
+          </div>
+          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
             {t.contactTitle}
           </h1>
-          <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.1rem', maxWidth: '780px', marginInline: 'auto', lineHeight: 1.75 }}>
+          <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: '1.1rem', maxWidth: '760px', marginInline: 'auto', lineHeight: 1.8 }}>
             {t.contactSubtitle}
           </p>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" style={{ paddingBlock: '3.5rem' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(1.5rem, 3.5vw, 3rem)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 'clamp(1.5rem, 3.5vw, 3rem)' }}>
             {/* Form Column */}
-            <div className="card">
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
+            <div className="card-institutional" style={{ padding: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--color-primary-950)', marginBottom: '1.5rem', letterSpacing: '-0.01em' }}>
                 {t.contactFormTitle}
               </h2>
 
@@ -364,32 +359,32 @@ export default function ContactPage() {
 
             {/* Info Column */}
             <div>
-              <div className="card" style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
+              <div className="card-institutional" style={{ marginBottom: '2rem', padding: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary-950)', marginBottom: '1.5rem', letterSpacing: '-0.01em' }}>
                   {t.officialCoordinatesTitle}
                 </h3>
 
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1.35rem', padding: 0, margin: 0 }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(201,162,39,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--facss-gold-700)', flexShrink: 0 }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'rgba(181, 146, 84, 0.12)', border: '1px solid rgba(181, 146, 84, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-600)', flexShrink: 0 }}>
                       <MapPin size={20} />
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700 }}>
+                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--color-gold-700)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                         {t.locationLabel}
                       </strong>
-                      <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                      <span style={{ fontSize: '0.98rem', color: 'var(--color-primary-950)', fontWeight: 700 }}>
                         {isAr ? 'العاصمة عدن، الجمهورية اليمنية' : 'Aden Capital, Republic of Yemen'}
                       </span>
                     </div>
                   </li>
 
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(201,162,39,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--facss-gold-700)', flexShrink: 0 }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'rgba(181, 146, 84, 0.12)', border: '1px solid rgba(181, 146, 84, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-gold-600)', flexShrink: 0 }}>
                       <Globe size={20} />
                     </div>
                     <div>
-                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--facss-green-900)', fontWeight: 700 }}>
+                      <strong style={{ display: 'block', fontSize: '0.82rem', color: 'var(--color-gold-700)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                         {t.hoursLabel}
                       </strong>
                       <span style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
@@ -401,17 +396,17 @@ export default function ContactPage() {
                   </li>
                 </ul>
 
-                <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#F4F1EA', borderRadius: '10px', border: '1px solid rgba(181, 146, 84, 0.25)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                    <ShieldCheck size={18} style={{ color: 'var(--facss-gold-600)' }} />
-                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                      {isAr ? 'السرية والخصوصية' : 'Confidentiality & Privacy'}
+                    <ShieldCheck size={18} style={{ color: 'var(--color-gold-600)' }} />
+                    <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-primary-950)' }}>
+                      {isAr ? 'السرية وحماية البيانات' : 'Confidentiality & Data Protection'}
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--color-gold-700)', margin: 0, lineHeight: 1.65 }}>
                     {isAr
-                      ? 'يلتزم المركز بالحفاظ على سرية بيانات الجهات المتواصلة وتفاصيل الاستفسارات الميدانية وفق مبادئ حماية البيانات.'
-                      : 'The Center is committed to strict confidentiality of partner inquiries in accordance with data protection principles.'}
+                      ? 'يلتزم المركز بأعلى معايير السرية المؤسسية وحماية بيانات الجهات المتواصلة وتفاصيل الاستفسارات الميدانية.'
+                      : 'The Center enforces strict institutional confidentiality and data protection for all stakeholder inquiries and field assessments.'}
                   </p>
                 </div>
               </div>
