@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import prisma from '@/lib/prisma';
-import { requireCapability, CAPABILITIES } from '@/lib/rbac';
+import { requireCapability, CAPABILITIES, STAFF_ROLES } from '@/lib/rbac';
 import RequestsManager, { ServiceRequestItem } from '@/components/admin/RequestsManager';
 
 export const revalidate = 0;
@@ -9,19 +9,34 @@ export default async function AdminRequestsPage() {
   // Layer 3 Authorization: Enforce Granular Capability
   await requireCapability(CAPABILITIES.MANAGE_REQUESTS, '/admin');
 
-  const requests = await prisma.serviceRequest.findMany({
-    include: {
-      service: { select: { titleAr: true } },
-      assignedEmployee: { select: { id: true, fullName: true } },
-      notes: {
-        orderBy: { createdAt: 'desc' },
+  const [requests, staff] = await Promise.all([
+    prisma.serviceRequest.findMany({
+      include: {
+        service: { select: { titleAr: true } },
+        assignedEmployee: { select: { id: true, fullName: true, email: true } },
+        notes: {
+          orderBy: { createdAt: 'desc' },
+        },
+        documents: {
+          orderBy: { createdAt: 'desc' },
+        },
       },
-      documents: {
-        orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.user.findMany({
+      where: {
+        isActive: true,
+        role: { in: STAFF_ROLES },
       },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        role: true,
+      },
+      orderBy: { fullName: 'asc' },
+    }),
+  ]);
 
   const serializedRequests: ServiceRequestItem[] = requests.map((r) => ({
     id: r.id,
@@ -60,8 +75,9 @@ export default async function AdminRequestsPage() {
   return (
     <div>
       <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>جارٍ تحميل طلبات الخدمات...</div>}>
-        <RequestsManager initialRequests={serializedRequests} />
+        <RequestsManager initialRequests={serializedRequests} staffList={staff} />
       </Suspense>
     </div>
   );
 }
+

@@ -10,7 +10,7 @@ import {
   Shield, Compass, GraduationCap, Heart, BookOpen, Users2,
   Target, Lock, Scale, SearchCheck, BadgeCheck, Building,
   Layers, Activity, HeartHandshake, ShieldAlert, Info,
-  ArrowUpDown, Link as LinkIcon
+  ArrowUpDown, Link as LinkIcon, Layout, Building2
 } from 'lucide-react';
 import {
   AdminPageHeader,
@@ -55,7 +55,7 @@ const ICON_MAP: Record<string, React.ComponentType<any>> = {
   Shield, Compass, GraduationCap, Heart, BookOpen, Users2,
   Target, Lock, Scale, SearchCheck, BadgeCheck, Building,
   Layers, Activity, HeartHandshake, ShieldAlert, Info,
-  ArrowUpDown, Settings
+  ArrowUpDown, Settings, Layout, Building2
 };
 
 function getRenderedIcon(name: string | null | undefined, defaultIcon: React.ComponentType<any> = Shield) {
@@ -67,17 +67,23 @@ function getRenderedIcon(name: string | null | undefined, defaultIcon: React.Com
 // Sections Config
 // ────────────────────────────────────────────────────────
 const SECTIONS = [
-  { id: 'identity',        labelKey: 'sectionIdentity',        descKey: 'sectionIdentityDesc',        icon: Target },
-  { id: 'principles',      labelKey: 'sectionPrinciples',      descKey: 'sectionPrinciplesDesc',      icon: Shield },
-  { id: 'activity_fields', labelKey: 'sectionActivityFields', descKey: 'sectionActivityFieldsDesc', icon: Compass },
-  { id: 'lifecycle',       labelKey: 'sectionLifecycle',       descKey: 'sectionLifecycleDesc',       icon: ArrowUpDown },
-  { id: 'org_structure',   labelKey: 'sectionOrgStructure',   descKey: 'sectionOrgStructureDesc',   icon: Layers },
-  { id: 'beneficiaries',   labelKey: 'sectionBeneficiaries',   descKey: 'sectionBeneficiariesDesc',   icon: Users2 },
-  { id: 'homepage',        labelKey: 'sectionHomepage',        descKey: 'sectionHomepageDesc',        icon: Info },
+  { id: 'identity',         labelKey: 'sectionIdentity',        descKey: 'sectionIdentityDesc',        icon: Target },
+  { id: 'principles',       labelKey: 'sectionPrinciples',      descKey: 'sectionPrinciplesDesc',      icon: Shield },
+  { id: 'activity_fields',  labelKey: 'sectionActivityFields', descKey: 'sectionActivityFieldsDesc', icon: Compass },
+  { id: 'lifecycle',        labelKey: 'sectionLifecycle',       descKey: 'sectionLifecycleDesc',       icon: ArrowUpDown },
+  { id: 'org_structure',    labelKey: 'sectionOrgStructure',   descKey: 'sectionOrgStructureDesc',   icon: Layers },
+  { id: 'beneficiaries',    labelKey: 'sectionBeneficiaries',   descKey: 'sectionBeneficiariesDesc',   icon: Users2 },
+  { id: 'homepage',         labelKey: 'sectionHomepage',        descKey: 'sectionHomepageDesc',        icon: Info },
+  { id: 'page_banners',     labelKey: 'sectionPageBanners',     descKey: 'sectionPageBannersDesc',     icon: Layout },
+  { id: 'navigation_brand', labelKey: 'sectionNavigationBrand', descKey: 'sectionNavigationBrandDesc', icon: Building2 },
 ] as const;
 
 // Protected from deletion
-const PROTECTED_KEYS = ['vision', 'mission', 'about_paragraph_1', 'about_paragraph_2', 'why_us'];
+const PROTECTED_KEYS = [
+  'vision', 'mission', 'about_paragraph_1', 'about_paragraph_2', 'why_us',
+  'hero_headline', 'hero_subtitle', 'hero_badge_1', 'hero_badge_2', 'hero_badge_3',
+  'about_cta', 'brand_names', 'footer_content', 'banner_services', 'banner_training', 'banner_research'
+];
 
 // ────────────────────────────────────────────────────────
 // Inline Edit Form Component
@@ -592,8 +598,14 @@ export default function ContentManager({ initialBlocks, adminName }: Props) {
   const [feedback, setFeedback] = useState<FeedbackType>(null);
 
   const sectionBlocks = blocks
-    .filter(b => b.section === activeSection)
-    .sort((a, b) => a.order - b.order);
+    .filter(b => b.section === activeSection || (activeSection === 'principles' && b.key === 'section_principles_header'))
+    .sort((a, b) => {
+      if (activeSection === 'principles') {
+        if (a.key === 'section_principles_header') return -1;
+        if (b.key === 'section_principles_header') return 1;
+      }
+      return a.order - b.order;
+    });
 
   const isAnySaving = savingId !== null || savingNew;
 

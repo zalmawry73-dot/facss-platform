@@ -270,7 +270,7 @@ export async function executeReceivingTransaction(params: {
         });
       }
 
-      // Update ProcurementItem received quantity
+      // Update ProcurementItem received quantity with ceiling enforcement
       const poItem = await tx.procurementItem.findFirst({
         where: {
           procurementOrderId: params.procurementOrderId,
@@ -278,6 +278,12 @@ export async function executeReceivingTransaction(params: {
         },
       });
       if (poItem) {
+        const remaining = Math.max(0, poItem.quantityOrdered - poItem.quantityReceived);
+        if (itemInput.quantityReceived > remaining) {
+          throw new Error(
+            `الكمية المستلمة (${itemInput.quantityReceived}) تتجاوز سقف الكمية المتبقية (${remaining}) في أمر الشراء للصنف`
+          );
+        }
         await tx.procurementItem.update({
           where: { id: poItem.id },
           data: {

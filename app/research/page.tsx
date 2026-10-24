@@ -13,6 +13,8 @@ import {
   BookOpen
 } from 'lucide-react';
 
+import { getContentBlock } from '@/lib/content';
+
 export const revalidate = 0;
 
 const AUTHOR_TRANSLATIONS: Record<string, string> = {
@@ -53,14 +55,24 @@ export default async function ResearchPage() {
     allowedVisibilities.push('CLIENT_ONLY');
   }
 
-  const publications = await prisma.researchPublication.findMany({
-    where: {
-      status: 'PUBLISHED',
-      visibility: { in: allowedVisibilities },
-    },
-    include: { category: true },
-    orderBy: { publicationDate: 'desc' },
-  });
+  const [publications, bannerBlock] = await Promise.all([
+    prisma.researchPublication.findMany({
+      where: {
+        status: 'PUBLISHED',
+        visibility: { in: allowedVisibilities },
+      },
+      include: { category: true },
+      orderBy: { publicationDate: 'desc' },
+    }),
+    getContentBlock('page_banners', 'banner_research'),
+  ]);
+
+  let bannerMeta: any = {};
+  try { bannerMeta = bannerBlock?.metadata ? JSON.parse(bannerBlock.metadata) : {}; } catch {}
+
+  const bannerTag = (locale === 'ar' ? bannerMeta.tagAr : bannerMeta.tagEn) || t.researchSectionTitle;
+  const bannerTitle = (locale === 'ar' ? (bannerBlock?.titleAr || bannerBlock?.titleEn) : (bannerBlock?.titleEn || bannerBlock?.titleAr)) || (locale === 'ar' ? 'المنتجات المعرفية والدراسات والتقارير الميدانية' : 'Knowledge Products, Field Studies & Reports');
+  const bannerDesc = (locale === 'ar' ? (bannerBlock?.descriptionAr || bannerBlock?.descriptionEn) : (bannerBlock?.descriptionEn || bannerBlock?.descriptionAr)) || t.researchSectionSubtitle;
 
   return (
     <div>
@@ -69,13 +81,13 @@ export default async function ResearchPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="hero-badge-pill" style={{ marginBottom: '1.25rem' }}>
             <BookOpen size={15} style={{ color: 'var(--color-gold-400)' }} />
-            <span>{t.researchSectionTitle}</span>
+            <span>{bannerTag}</span>
           </div>
           <h1 style={{ fontSize: 'clamp(1.8rem, 3.8vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-            {locale === 'ar' ? 'المنتجات المعرفية والدراسات والتقارير الميدانية' : 'Knowledge Products, Field Studies & Reports'}
+            {bannerTitle}
           </h1>
           <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.05rem', maxWidth: '820px', marginInline: 'auto', lineHeight: 1.75 }}>
-            {t.researchSectionSubtitle}
+            {bannerDesc}
           </p>
         </div>
       </section>

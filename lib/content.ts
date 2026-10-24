@@ -20,6 +20,7 @@ export interface ContentBlockData {
   link: string | null;
   order: number;
   isVisible: boolean;
+  metadata?: string | null;
 }
 
 /**
@@ -44,13 +45,14 @@ export async function getContentSection(section: string): Promise<ContentBlockDa
           link: true,
           order: true,
           isVisible: true,
+          metadata: true,
         },
       });
       return blocks;
     }
 
     const rows = await prisma.$queryRaw<ContentBlockData[]>`
-      SELECT "id", "section", "key", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "icon", "link", "order", "isVisible"
+      SELECT "id", "section", "key", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "icon", "link", "order", "isVisible", "metadata"
       FROM "ContentBlock"
       WHERE "section" = ${section} AND "isVisible" = true
       ORDER BY "order" ASC
@@ -83,6 +85,7 @@ export async function getContentBlock(section: string, key: string): Promise<Con
           link: true,
           order: true,
           isVisible: true,
+          metadata: true,
         },
       });
       if (!block || !block.isVisible) return null;
@@ -90,7 +93,7 @@ export async function getContentBlock(section: string, key: string): Promise<Con
     }
 
     const rows = await prisma.$queryRaw<ContentBlockData[]>`
-      SELECT "id", "section", "key", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "icon", "link", "order", "isVisible"
+      SELECT "id", "section", "key", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "icon", "link", "order", "isVisible", "metadata"
       FROM "ContentBlock"
       WHERE "section" = ${section} AND "key" = ${key} AND "isVisible" = true
       LIMIT 1

@@ -96,6 +96,30 @@ function LoginForm() {
             </p>
           </div>
 
+          {reasonParam === 'request_service' && !error && (
+            <div style={{
+              padding: '0.85rem 1rem',
+              background: 'rgba(181, 146, 84, 0.12)',
+              border: '1px solid var(--color-gold-500, #B59254)',
+              borderRadius: '8px',
+              color: 'var(--color-gold-700, #674C28)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              marginBottom: '1.5rem',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              lineHeight: 1.5
+            }}>
+              <ShieldCheck size={20} style={{ flexShrink: 0, color: 'var(--color-gold-600, #8E6F37)' }} />
+              <span>
+                {locale === 'ar'
+                  ? 'لتقديم طلب خدمة أو استشارة معتمدة، يرجى تسجيل الدخول بحساب العميل المؤسسي أو إنشاء حساب جديد لمتابعة الطلب في بوابتك.'
+                  : 'To submit an official service requisition, please log in to your client account or register a new account.'}
+              </span>
+            </div>
+          )}
+
           {reasonParam === 'timeout' && !error && (
             <div style={{
               padding: '0.85rem 1rem',
@@ -174,7 +198,10 @@ function LoginForm() {
           <div style={{ textAlign: 'center', paddingTop: '1.5rem', borderTop: '1px solid rgba(181, 146, 84, 0.2)' }}>
             <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>
               {t.dontHaveAccount}{' '}
-              <Link href="/register" style={{ color: 'var(--color-primary-900)', fontWeight: 800 }}>
+              <Link 
+                href={redirect && redirect !== '/' ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register'} 
+                style={{ color: 'var(--color-primary-900)', fontWeight: 800 }}
+              >
                 {t.registerNewAccount}
               </Link>
             </p>

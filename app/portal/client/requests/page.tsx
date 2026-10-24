@@ -46,10 +46,19 @@ export default async function ClientRequestsPage({ searchParams }: { searchParam
     statusFilterCondition = { in: ['COMPLETED', 'CANCELLED'] };
   }
 
+  const clientOwnerCondition = {
+    OR: [
+      { userId: session.userId },
+      { contactEmail: session.email.toLowerCase() }
+    ]
+  };
+
   const allRequests = await prisma.serviceRequest.findMany({
     where: { 
-      userId: session.userId,
-      ...(statusFilterCondition ? { status: statusFilterCondition } : {})
+      AND: [
+        clientOwnerCondition,
+        ...(statusFilterCondition ? [{ status: statusFilterCondition }] : [])
+      ]
     },
     include: {
       service: true,
@@ -59,15 +68,32 @@ export default async function ClientRequestsPage({ searchParams }: { searchParam
   });
 
   // Counts for tabs
-  const countAll = await prisma.serviceRequest.count({ where: { userId: session.userId } });
+  const countAll = await prisma.serviceRequest.count({ 
+    where: clientOwnerCondition 
+  });
   const countNew = await prisma.serviceRequest.count({ 
-    where: { userId: session.userId, status: { in: ['NEW', 'UNDER_REVIEW', 'CONTACTED', 'WAITING_FOR_CLIENT'] } } 
+    where: { 
+      AND: [
+        clientOwnerCondition,
+        { status: { in: ['NEW', 'UNDER_REVIEW', 'CONTACTED', 'WAITING_FOR_CLIENT'] } }
+      ]
+    } 
   });
   const countInProgress = await prisma.serviceRequest.count({ 
-    where: { userId: session.userId, status: { in: ['APPROVED', 'IN_PROGRESS', 'REPORT_READY'] } } 
+    where: { 
+      AND: [
+        clientOwnerCondition,
+        { status: { in: ['APPROVED', 'IN_PROGRESS', 'REPORT_READY'] } }
+      ]
+    } 
   });
   const countCompleted = await prisma.serviceRequest.count({ 
-    where: { userId: session.userId, status: { in: ['COMPLETED', 'CANCELLED'] } } 
+    where: { 
+      AND: [
+        clientOwnerCondition,
+        { status: { in: ['COMPLETED', 'CANCELLED'] } }
+      ]
+    } 
   });
 
   const heading   = isAr ? 'سجل طلبات الخدمات والتقييمات الميدانية' : 'Field Assessment & Service Requests';

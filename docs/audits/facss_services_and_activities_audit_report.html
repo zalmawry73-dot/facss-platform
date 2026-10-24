@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير التدقيق الوظيفي والمعماري: وحدة الخدمات والأنشطة — FACSS</title>
+  <style>
+    :root {
+      --primary: #0F172A;
+      --primary-light: #1E293B;
+      --gold: #D4AF37;
+      --gold-dark: #B59254;
+      --gold-light: #FDFBF7;
+      --accent: #0284C7;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --border-dark: #334155;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header styling */
+    .header-banner {
+      background: linear-gradient(135deg, #0A0F1D 0%, #1E293B 100%);
+      color: #FFFFFF;
+      padding: 3rem 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-subtitle {
+      color: #94A3B8;
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.8;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.88rem;
+      color: #CBD5E1;
+    }
+
+    .header-meta span strong {
+      color: var(--gold);
+    }
+
+    /* Cards & Sections */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.25rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 2px solid #F1F5F9;
+      padding-bottom: 0.75rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Grid layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr));
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+      gap: 1.5rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Stat Box */
+    .stat-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      border-top: 3px solid var(--gold);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    /* Comparison Box */
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .concept-card {
+      border-radius: 10px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .concept-card.activity {
+      background: #F0F9FF;
+      border-color: #BAE6FD;
+      border-top: 4px solid var(--accent);
+    }
+
+    .concept-card.service {
+      background: #FEFCE8;
+      border-color: #FEF08A;
+      border-top: 4px solid var(--gold-dark);
+    }
+
+    .concept-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .concept-title.activity { color: #0369A1; }
+    .concept-title.service { color: #A16207; }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    th {
+      background: #F8FAFC;
+      color: var(--primary);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #F8FAFC;
+    }
+
+    /* Status Badges */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag-critical { background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; }
+    .tag-high { background: #FFEDD5; color: #C2410C; border: 1px solid #FDBA74; }
+    .tag-medium { background: #FEF3C7; color: #D97706; border: 1px solid #FCD34D; }
+    .tag-low { background: #E0F2FE; color: #0284C7; border: 1px solid #7DD3FC; }
+    .tag-success { background: #DCFCE7; color: #15803D; border: 1px solid #86EFAC; }
+    .tag-gold { background: rgba(212, 175, 55, 0.15); color: #B59254; border: 1px solid rgba(212, 175, 55, 0.4); }
+
+    /* Workflows / Timeline */
+    .workflow-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .workflow-step {
+      display: flex;
+      gap: 1.25rem;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      position: relative;
+    }
+
+    .step-number {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.35rem;
+    }
+
+    .step-content p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .step-meta {
+      margin-top: 0.6rem;
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    /* Modal Breakdown Box */
+    .modal-breakdown {
+      background: #0F172A;
+      color: #F8FAFC;
+      border-radius: 10px;
+      padding: 1.5rem;
+      border: 1px solid var(--gold);
+      margin: 1.5rem 0;
+    }
+
+    .modal-header-mockup {
+      border-bottom: 1px solid #334155;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-pill {
+      font-family: monospace;
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      color: var(--gold);
+      direction: ltr;
+      display: inline-block;
+    }
+
+    /* Alert callouts */
+    .alert-callout {
+      border-right: 4px solid var(--gold);
+      background: rgba(212, 175, 55, 0.06);
+      padding: 1.25rem 1.5rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+    }
+
+    .alert-callout h4 {
+      color: var(--primary);
+      font-size: 0.98rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+
+    .alert-callout p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    ul, ol {
+      padding-right: 1.4rem;
+      margin: 0.75rem 0;
+      font-size: 0.9rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2.5rem 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header Banner -->
+  <header class="header-banner">
+    <div class="badge-pill">
+      <span>🛡️ تقرير تدقيق وظيفي ومعماري شامل</span>
+    </div>
+    <h1>وحدة الخدمات والأنشطة — الوضع التشغيلي الراهن (Current-State Audit)</h1>
+    <p class="header-subtitle">
+      تحليل تفصيلي لدورة حياة الخدمات والأنشطة في منصة FACSS، التحقق الفعلي من البنية البرمجية ونماذج البيانات،
+      كشف الفروق بين "الخدمة" و"النشاط"، شرح شاشات العميل والإدارة عند النقر على «إدارة ومتابعة»، وفحص التكامل الحقيقي
+      مع وحدات التدريب، الدراسات والبحوث، والمخازن والعتاد التشغيلي.
+    </p>
+
+    <div class="header-meta">
+      <span><strong>نظام التدقيق:</strong> FACSS Security & Safety Architecture</span>
+      <span><strong>بيئة الفحص:</strong> Next.js 14 App Router + Prisma ORM + PostgreSQL</span>
+      <span><strong>النطاق:</strong> الخدمات، الأنشطة، الطلبات، الكتالوج، وتكاملات العمليات</span>
+      <span><strong>تاريخ التدقيق:</strong> أكتوبر 2026</span>
+    </div>
+  </header>
+
+  <!-- Key Summary Metrics -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>📊 الملخص الرقمي لوحدة الخدمات والأنشطة في المنصة</span>
+    </div>
+    <div class="grid-4" style="margin-top: 1.5rem;">
+      <div class="stat-box">
+        <div class="stat-number">7</div>
+        <div class="stat-label">مجالات نشاط مؤسسي معتمدة (ServiceCategory)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">14+</div>
+        <div class="stat-label">خدمة ميدانية مندرجة ومفعلة (Service)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">8</div>
+        <div class="stat-label">حالات تشغيلية للطلب (RequestStatus Lifecycle)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">تكامل حقيقي مع مستودعات العتاد والتسليم الميداني</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: The Core Distinction: Service vs Activity -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>💡 أولاً: ما الفرق الجوهري بين «الخدمة» و«النشاط» في منصة FACSS؟</span>
+    </div>
+    <p class="section-desc">
+      بناءً على فحص الشيفرة المصدرية المباشرة ونماذج قاعدة البيانات <span class="code-pill">prisma/schema.prisma</span>
+      وقواميس التعريب <span class="code-pill">lib/i18n.ts</span>، يتجلى التمييز المعماري والوظيفي على النحو التالي:
+    </p>
+
+    <div class="comparison-container">
+      <!-- Activity Card -->
+      <div class="concept-card activity">
+        <div class="concept-title activity">مجال النشاط المؤسسي (Activity Sector / Field)</div>
+        <p style="font-size: 0.9rem; margin-bottom: 0.75rem;">
+          <strong>في قاعدة البيانات:</strong> نموذج <span class="code-pill">ServiceCategory</span> وقسم المحتوى الثابت <span class="code-pill">activity_fields</span>.
+        </p>
+        <p style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+          <strong>التعريف المؤسسي:</strong> هو <em>الإطار الاستراتيجي العريض</em> أو <em>القطاع الإنساني/الأمني التخصصي</em>
+          الذي يمارس المركز فيه ولايته ومهامه المعتمدة. النشاط لا يُطلب مباشرة من قبل العميل كعقد فردي، بل هو "المظلة الحاكمة"
+          التي تُصنف تحتها الخدمات الميدانية.
+        </p>
+        <div style="margin-top: 1rem; font-size: 0.84rem; background: #FFFFFF; padding: 0.75rem; border-radius: 6px; border: 1px solid #BAE6FD;">
+          <strong>أمثلة مجالات النشاط السبعة في المنصة:</strong>
+          <ul style="margin: 0.35rem 0 0 1.25rem;">
+            <li>الحراسات والخدمات الأمنية الوقائية (<span class="code-pill">guarding-protective-security</span>)</li>
+            <li>الرصد الميداني والإنذار المبكر (<span class="code-pill">field-monitoring-early-warning</span>)</li>
+            <li>الدراسات الميدانية والتحليل والرصد (<span class="code-pill">field-studies-analysis-monitoring</span>)</li>
+            <li>التدريب وبناء القدرات والتنسيق (<span class="code-pill">training-capacity-coordination</span>)</li>
+            <li>أنظمة السلامة والمعدات التقنية (<span class="code-pill">safety-systems-equipment</span>)</li>
+            <li>تحليل المخاطر والوصول الإنساني (<span class="code-pill">access-risk-analysis</span>)</li>
+            <li>الخدمات الأمنية التشغيلية (<span class="code-pill">operational-security-services</span>)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Service Card -->
+      <div class="concept-card service">
+        <div class="concept-title service">الخدمة الميدانية الإجرائية (Operational Service)</div>
+        <p style="font-size: 0.9rem; margin-bottom: 0.75rem;">
+          <strong>في قاعدة البيانات:</strong> نموذج <span class="code-pill">Service</span> المرتبط بنموذج <span class="code-pill">ServiceRequest</span>.
+        </p>
+        <p style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+          <strong>التعريف الإجرائي:</strong> هي <em>الوحدة التنفيذية التعاقدية المحددة</em> التي يطلبها العميل فعلياً.
+          تمتلك نطاق عمل محدد (Scope)، مخرجات واضحة (Deliverables)، مراحل تنفيذ (Process Phases)، قطاعات مستهدفة،
+          ومستندات تقييم وختام.
+        </p>
+        <div style="margin-top: 1rem; font-size: 0.84rem; background: #FFFFFF; padding: 0.75rem; border-radius: 6px; border: 1px solid #FEF08A;">
+          <strong>أمثلة الخدمات المندرجة تحت الأنشطة:</strong>
+          <ul style="margin: 0.35rem 0 0 1.25rem;">
+            <li>تحت نشاط "تحليل المخاطر": <strong>تقييم المخاطر الأمنية للمقرات والبعثات (SRA)</strong>.</li>
+            <li>تحت نشاط "الحراسات الوقائية": <strong>تأمين المقرات الإنسانية وخطط الإخلاء الميداني</strong>.</li>
+            <li>تحت نشاط "الرصد الميداني": <strong>موجزات المسارات وحركة القوافل الإغاثية</strong>.</li>
+            <li>تحت نشاط "المعدات التقنية": <strong>تجهيز شبكات الاتصال الميداني VHF/HF وغرف المراقبة</strong>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-callout">
+      <h4>📌 خلاصة العلاقة بينهما:</h4>
+      <p>
+        <strong>النشاط</strong> يجيب عن سؤال: <em>"ما هي التخصصات والولايات التي يعمل فيها المركز؟"</em> (تصنيف استراتيجي ومعرفي).<br>
+        <strong>الخدمة</strong> تجيب عن سؤال: <em>"ماذا أطلب بالتحديد كعميل لينفذه فريق العمليات الميدانية؟"</em> (عنصر تعاقدي وتنفيذي يولد طلباً برقم مرجعي).
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 2: Four Perspectives Analysis -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>👥 ثانياً: استكشاف الوحدة من أربع زوايا مترابطة</span>
+    </div>
+    <p class="section-desc">
+      كيف تتفاعل الفئات المختلفة مع المنظومة، وما هي الأدوات والمسارات المتاحة لكل فئة؟
+    </p>
+
+    <div class="grid-2">
+      <!-- 1. Regular Client -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>👤 1. العميل العادي (المستفيد / الباحث / ممثل البعثة الفردية)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+          الهدف: فهم ما يقدمه المركز، مقارنة الخيارات، واختيار الخطوة الصحيحة دون تعقيد بيروقراطي.
+        </p>
+        <ul style="font-size: 0.86rem; color: #334155;">
+          <li><strong>واجهة التصفح والاستكشاف:</strong> يزور <span class="code-pill">/services</span> ويشاهد مجالات النشاط السبعة، وكل مجال يعرض الخدمات المندرجة تحته مع بطاقات تلخص 3 مميزات رئيسية.</li>
+          <li><strong>واجهة تفاصيل الخدمة:</strong> ينقر على الخدمة ليصل إلى <span class="code-pill">/services/[slug]</span> حيث يقرأ وصف النطاق ومراحل التنفيذ الأربع والقطاعات المستفيدة.</li>
+          <li><strong>اتخاذ القرار والإجراء التالي:</strong> يجد في القائمة الجانبية خيارين واضحين:
+            <ol style="margin-top: 0.35rem; margin-right: 1.25rem;">
+              <li><strong>«بدء طلب الخدمة الآن»:</strong> ينقله إلى <span class="code-pill">/request-service?service=slug</span> مع التحديد الآلي للخدمة.</li>
+              <li><strong>«استفسار أو استشارة سريعة»:</strong> ينقله لصفحة الاتصال والمحادثة المباشرة مع العمليات.</li>
+            </ol>
+          </li>
+          <li><strong>تقديم الطلب المرن:</strong> لا يشترط النظام التسجيل المسبق؛ يمكن للعميل العادي تقديم الطلب كضيف، وعند تسجيله لاحقاً بنفس البريد يتم ربط الطلب تلقائياً بحسابه.</li>
+        </ul>
+      </div>
+
+      <!-- 2. Institutional Client -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🏢 2. العميل المؤسسي (وكالات الأمم المتحدة، المنظمات الدولية INGOs، الشركات)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+          الهدف: إدارة محفظة طلبات أمنية معقدة، التزام بمعايير الحوكمة وسرية الوثائق، وتسلّم تقارير نهائية معتمدة.
+        </p>
+        <ul style="font-size: 0.86rem; color: #334155;">
+          <li><strong>بوابة العميل المؤسسي:</strong> يدخل إلى <span class="code-pill">/portal/client</span> ليشاهد لوحة تحكم إحصائية تضم إجمالي طلباته، الطلبات الميدانية النشطة، والتقارير المعتمدة الجاهزة للتحميل.</li>
+          <li><strong>إدارة وتتبع الطلبات:</strong> يتابع في <span class="code-pill">/portal/client/requests</span> قائمة طلباته مقسمة حسب التبويبات (جديدة، قيد التنفيذ، مكتملة).</li>
+          <li><strong>صفحة تفاصيل الطلب والتفاعل:</strong> في <span class="code-pill">/portal/client/requests/[id]</span> يرى مؤشر تقدم خطي (Stepper) من 5 مراحل، وسجل الملاحظات التشغيلية التي سمحت الإدارة بمشاركتها.</li>
+          <li><strong>تبادل المستندات والتقارير:</strong>
+            <ul style="margin-top: 0.25rem; margin-right: 1rem;">
+              <li>يرفع ملحقات العقد والشروط المرجعية (TOR) عبر مكون <span class="code-pill">ClientDocumentUpload</span>.</li>
+              <li>يستعرض التقرير الأمني النهائي المعتمد فقط بعد اجتيازه ضبط الجودة (<span class="code-pill">QA_APPROVED</span>).</li>
+              <li>ينقر على زر اعتماد الاستلام الرسمي <span class="code-pill">ClientReportAcceptanceButton</span> لتوثيق التسليم قانونياً.</li>
+              <li>يقيّم جودة الخدمة عبر نموذج التغذية الراجعة <span class="code-pill">ClientFeedbackForm</span>.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 3. Operations & Staff -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>⚙️ 3. الموظفون وضباط العمليات (Operations Officers & Supervisors)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+          الهدف: فرز الطلبات الواردة، تحديث مسارات العمل، التنسيق مع العميل، وتوجيه الكوادر الميدانية.
+        </p>
+        <ul style="font-size: 0.86rem; color: #334155;">
+          <li><strong>شاشة إدارة الطلبات:</strong> يتابع في <span class="code-pill">/admin/requests</span> تدفق الطلبات، ويصفي حسب الحالة، الأولوية (NORMAL, HIGH, URGENT)، والبحث النصي برقم الطلب أو اسم المؤسسة.</li>
+          <li><strong>إجراءات النافذة المنبثقة:</strong> ينقر على «إدارة ومتابعة» لفتح درج العمليات لتعديل الحالة وتدوين الملاحظات الميدانية.</li>
+          <li><strong>فلترة السرية والشفافية:</strong> يحدد ما إذا كانت الملاحظة للاستخدام الداخلي فقط أو مرئية للعميل في بوابته عبر مربع اختيار (<span class="code-pill">isClientVisible</span>).</li>
+          <li><strong>رفع مسودات التقارير والتقارير النهائية:</strong> يرفع المسودات كـ <span class="code-pill">INTERNAL_ONLY</span>، والتقارير النهائية كـ <span class="code-pill">FINAL_REPORT</span> التي تخضع لمسار QA.</li>
+        </ul>
+      </div>
+
+      <!-- 4. System & Catalog Managers -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>👑 4. مدير النظام ومدير دليل الخدمات (Catalog & System Admins)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+          الهدف: التحكم في المعروض المؤسسي، تحديث نصوص الخدمات ومميزاتها، والتحكم الفوري في إتاحة الخدمات للجمهور.
+        </p>
+        <ul style="font-size: 0.86rem; color: #334155;">
+          <li><strong>شاشة دليل الخدمات الميدانية:</strong> في <span class="code-pill">/admin/services</span> يدير مجالات النشاط السبعة والخدمات المندرجة تحتها.</li>
+          <li><strong>إضافة خدمة ميدانية جديدة:</strong> زر ينشئ خدمة جديدة باختيار القطاع، العنوانين (عربي/إنجليزي)، المعرف (Slug)، والمميزات.</li>
+          <li><strong>تعديل بيانات الخدمة ونطاقها:</strong> تعديل فوري للنصوص، المراحل، القطاعات المستهدفة، وترتيب الظهور، مع تفعيل/تعطيل مباشر ينعكس فورياً في الواجهة العامة.</li>
+          <li><strong>الرقابة والتدقيق:</strong> كافة عمليات الإنشاء والتعديل تُسجل في سجل التدقيق <span class="code-pill">ActivityLog</span> باسم المشرف ووقت التنفيذ.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Deep Dive into "Manage" (ماذا يحدث عند النقر على إدارة) -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>🔍 ثالثاً: التشريح الفعلي لنافذة «إدارة ومتابعة» الطلب الأمني</span>
+    </div>
+    <p class="section-desc">
+      عند قيام ضابط العمليات أو المدير بالنقر على زر «إدارة ومتابعة» في جدول الطلبات (<span class="code-pill">RequestsManager.tsx:525</span>)،
+      تُفتح نافذة حوارية متقدمة (<span class="code-pill">AdminModal</span>) بعرض 720px تتضمن العمليات الدقيقة التالية:
+    </p>
+
+    <div class="modal-breakdown">
+      <div class="modal-header-mockup">
+        <span style="font-weight: 800; color: var(--gold); font-size: 1.05rem;">
+          إدارة الطلب: FACSS-SR-2026-481920 (منظمة أطباء بلا حدود — تقييم المخاطر الأمنية الميدانية)
+        </span>
+        <span style="font-size: 0.78rem; background: rgba(212, 175, 55, 0.2); padding: 0.2rem 0.6rem; border-radius: 4px; color: var(--gold);">
+          نافذة العمليات
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <!-- Tab 1 Explanation -->
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 1.25rem; border-radius: 8px; border: 1px solid #334155;">
+          <h4 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 0.95rem;">
+            📑 التبويب الأول: الحالة والملاحظات التشغيلية (Status & Notes)
+          </h4>
+          <ol style="margin-right: 1.25rem; font-size: 0.84rem; color: #CBD5E1;">
+            <li><strong>عرض ملخص نطاق الطلب:</strong> قراءة الشرح الميداني الذي كتبه العميل عند تقديم الطلب.</li>
+            <li><strong>تحديث الحالة التشغيلية:</strong> قائمة منسدلة تضم 8 حالات:
+              <span class="code-pill" style="font-size: 0.72rem; margin-top: 0.2rem;">NEW &rarr; UNDER_REVIEW &rarr; CONTACTED &rarr; WAITING_FOR_CLIENT &rarr; APPROVED &rarr; IN_PROGRESS &rarr; COMPLETED &rarr; CANCELLED</span>
+            </li>
+            <li><strong>تدوين ملاحظة ميدانية:</strong> حقل نصي لكتابة تقرير التواصل أو الإحالة.</li>
+            <li><strong>مربع اختيار الشفافية مع العميل:</strong>
+              <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; padding: 0.4rem 0.6rem; border-radius: 6px; margin-top: 0.4rem; font-size: 0.78rem;">
+                ☑️ إظهار هذه الملاحظة للعميل في بوابة المتابعة (<span class="code-pill">isClientVisible: true</span>)
+              </div>
+            </li>
+            <li><strong>الأثر عند الحفظ:</strong>
+              <ul style="margin-right: 1rem; margin-top: 0.25rem;">
+                <li>تحديث جدول <span class="code-pill">ServiceRequest</span> بقاعدة البيانات.</li>
+                <li>إنشاء سجل ملاحظة جديد في جدول <span class="code-pill">ServiceRequestNote</span>.</li>
+                <li>إرسال إشعار فوري في البوابة للعميل (<span class="code-pill">Notification</span>) إذا تغيرت الحالة.</li>
+                <li>توثيق الحركة الإدارية في <span class="code-pill">ActivityLog</span>.</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Tab 2 Explanation -->
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 1.25rem; border-radius: 8px; border: 1px solid #334155;">
+          <h4 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 0.95rem;">
+            📁 التبويب الثاني: المستندات والتقرير النهائي (Documents & QA)
+          </h4>
+          <ol style="margin-right: 1.25rem; font-size: 0.84rem; color: #CBD5E1;">
+            <li><strong>استعراض المستندات المرفوعة:</strong> عرض كافة الملحقات والتقارير مع وسوم تبين نوعها وحالتها الأمنية:
+              <div style="display: flex; gap: 0.4rem; margin: 0.35rem 0; flex-wrap: wrap;">
+                <span class="tag tag-critical">داخلي فقط (INTERNAL_ONLY)</span>
+                <span class="tag tag-success">متاح للعميل (CLIENT_VISIBLE)</span>
+                <span class="tag tag-gold">التقرير النهائي (FINAL_REPORT)</span>
+              </div>
+            </li>
+            <li><strong>رفع مستند أمني جديد:</strong> يدعم رفع الملف وتحديد نوعه ومستوى إتاحته.</li>
+            <li><strong>دورة ضبط جودة التقرير النهائي (Report QA Engine):</strong>
+              <ul style="margin-right: 1rem; margin-top: 0.25rem;">
+                <li>إذا كان نوع المستند <span class="code-pill">FINAL_REPORT</span>، فإنه لا يُسلّم للعميل مباشرة!</li>
+                <li>يدخل التقرير دورة اعتماد الجودة عبر مسار <span class="code-pill">/api/admin/documents/[id]/qa</span>.</li>
+                <li>صلاحية المراجعة مشروطة بحيازة قدرة <span class="code-pill">QA_REPORTS</span>.</li>
+                <li>مراحل QA:
+                  <span class="code-pill" style="font-size: 0.72rem;">UNDER_REVIEW &rarr; APPROVED / REJECTED &rarr; DELIVERED &rarr; CLIENT_ACCEPTED</span>
+                </li>
+              </ul>
+            </li>
+            <li><strong>إمكانية الأرشفة:</strong> زر أرشفة ناعمة (<span class="code-pill">isArchived: true</span>) لحفظ السجلات التاريخية دون حذفها فيزيائياً من القرص.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Lifecycle Step-by-Step Scenario -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>🔄 رابعاً: ماذا يحدث بالتفصيل خطوة بخطوة عند تقدم العميل بطلب؟</span>
+    </div>
+    <p class="section-desc">
+      سيناريو واقعي لطلب خدمة «تقييم المخاطر الميدانية وقوافل الإغاثة» من لحظة الإدخال وحتى الإغلاق والأرشفة:
+    </p>
+
+    <div class="workflow-timeline">
+      <!-- Step 1 -->
+      <div class="workflow-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>التقديم والتحقق المبدئي (Submission & Anti-Spam Gate)</h4>
+          <p>
+            يقوم العميل بتعبئة النموذج عبر <span class="code-pill">/request-service</span>. يتحقق الخادم فوراً من:
+            معدل الطلبات (<span class="code-pill">Rate Limit: 10/hour per IP</span>)، التحقق من وجود الخدمة وتفعيلها وتفعيل قطاعها الحاضن.
+          </p>
+          <div class="step-meta">
+            <span class="tag tag-low">API: POST /api/requests</span>
+            <span class="tag tag-gold">الحالة: NEW</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="workflow-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>توليد الرقم المرجعي الفريد وتأسيس السجلات (Record Seeding & Collision-Proof Number)</h4>
+          <p>
+            توليد رقم متابعة لا يتكرر بصيغة <span class="code-pill">FACSS-SR-YYYY-XXXXXX</span>. إنشاء سجل الطلب في قاعدة البيانات،
+            وإنشاء أول ملاحظة تتبع تلقائية في <span class="code-pill">ServiceRequestNote</span>: <em>"تم تسجيل طلب الخدمة وإحالته لإدارة العمليات"</em>.
+            إذا كان العميل مسجلاً، يتم إرسال إشعار فوري بحسابه، وتوثيق الحدث في <span class="code-pill">ActivityLog</span>.
+          </p>
+          <div class="step-meta">
+            <span class="tag tag-success">تم إنشاء السجل والملاحظة والإشعار</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="workflow-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>المراجعة التشغيلية والتواصل مع العميل (Operational Review & Status Transition)</h4>
+          <p>
+            يفتح ضابط العمليات الطلب في لوحة الإدارة، يغير الحالة إلى <span class="code-pill">UNDER_REVIEW</span>، ثم يتصل بالعميل للتنسيق
+            ويغير الحالة إلى <span class="code-pill">CONTACTED</span> مع تدوين ملاحظة: <em>"تم التواصل هاتفياً وطلب إرسال مسار القافلة بدقة"</em>،
+            مع وسم <span class="code-pill">isClientVisible = true</span>.
+          </p>
+          <div class="step-meta">
+            <span class="tag tag-medium">الحالة: CONTACTED</span>
+            <span class="tag tag-low">إشعار العميل آلياً</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="workflow-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h4>تبادل الشروط المرجعية والملحقات (Document Exchange)</h4>
+          <p>
+            يدخل العميل لبوابته في <span class="code-pill">/portal/client/requests/[id]</span> ويرى الملاحظة ومؤشر التقدم،
+            ثم يرفع ملف إحداثيات ومسار التحرك. يُحفظ الملف كـ <span class="code-pill">CLIENT_ATTACHMENT</span> مع تخزين آمن ومحمي ضد التلاعب.
+          </p>
+          <div class="step-meta">
+            <span class="tag tag-low">API: POST /api/requests/[id]/documents</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="workflow-step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h4>التنفيذ الميداني وإصدار التقرير الأمني (Field Execution & Quality Assurance QA)</h4>
+          <p>
+            تعتمد العمليات الطلب (<span class="code-pill">APPROVED</span>) ويبدأ التنفيذ الميداني (<span class="code-pill">IN_PROGRESS</span>).
+            عقب انتهاء التقييم الميداني، يرفع الضابط التقرير الأمني بصيغة PDF كـ <span class="code-pill">FINAL_REPORT</span>.
+            يدخل التقرير مسار التحقق والاعتماد QA برئاسة المشرف المختص، وبمجرد اعتماده يصبح التقرير متاحاً للتحميل للعميل.
+          </p>
+          <div class="step-meta">
+            <span class="tag tag-gold">مسار ضبط الجودة: QA_APPROVED</span>
+            <span class="tag tag-medium">الحالة: IN_PROGRESS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="workflow-step">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <h4>استلام العميل، التقييم، وإغلاق الطلب (Client Acceptance, Feedback & Completion)</h4>
+          <p>
+            يقوم العميل بتحميل التقرير النهائي وينقر على زر «اعتماد واستلام التقرير النهائي». يملأ نموذج التغذية الراجعة
+            وتقييم جودة الخدمة (<span class="code-pill">ClientFeedback</span>). يتحول الطلب في لوحة الإدارة إلى <span class="code-pill">COMPLETED</span>.
+          </p>
+          <div class="step-meta">
+            <span class="tag tag-success">الحالة النهائية: COMPLETED</span>
+            <span class="tag tag-gold">اكتمال دورة حياة الطلب</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Inter-Module Integrations Analysis -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>🔗 خامساً: الارتباط الفعلي بوحدات التدريب، الدراسات والبحوث، والمخازن</span>
+    </div>
+    <p class="section-desc">
+      فحص برمجيات المنصة للتفريق القاطع بين الارتباطات الحقيقية المثبتة برمجياً، والارتباطات المفاهيمية، والفجوات القائمة:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الوحدة المرتبطة</th>
+            <th>نوع وطبيعة الارتباط</th>
+            <th>الإثبات الفعلي من الشيفرة وقاعدة البيانات</th>
+            <th>الحكم التشغيلي الدقيق</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>المخازن والمستودعات والعتاد التشغيلي (Equipment & Warehouse)</strong></td>
+            <td><strong>ارتباط وتكامل برمجي وقاعدي كامل وعميق (Full Database Relation)</strong></td>
+            <td>
+              يرتبط نموذج <span class="code-pill">ServiceRequest</span> مباشرة بنماذج العتاد:
+              <ul style="margin: 0.25rem 0 0 1rem; font-size: 0.8rem;">
+                <li><span class="code-pill">fulfillmentStatus</span> (حالة الإمداد: NONE, REQUESTED, RESERVED, DELIVERED, RETURNED)</li>
+                <li><span class="code-pill">supplyItems: SupplyRequestItem[]</span> (طلبات صرف عتاد ميداني للطلب)</li>
+                <li><span class="code-pill">equipmentDeliveries: EquipmentDelivery[]</span> (سندات تسليم العتاد مع تتبع الأرقام التسلسلية)</li>
+                <li><span class="code-pill">equipmentReturns: EquipmentReturn[]</span> (سندات إرجاع العتاد والفحص الفني)</li>
+                <li><span class="code-pill">procurementOrders: ProcurementOrder[]</span> (أوامر الشراء المباشرة عند نقص المخزون)</li>
+              </ul>
+            </td>
+            <td><span class="tag tag-success">تكامل حقيقي وعميق 100%</span></td>
+          </tr>
+
+          <tr>
+            <td><strong>التدريب وبناء القدرات (Training & Academy)</strong></td>
+            <td><strong>ارتباط مفاهيمي ومؤسسي — منفصل إجرائياً وقاعدياً (Loose Conceptual Coupling)</strong></td>
+            <td>
+              يوجد قطاع نشاط باسم <span class="code-pill">training-capacity-coordination</span> ويوجد به خدمات ميدانية استشارية،
+              لكن محرك التدريب والأكاديمية (<span class="code-pill">Course, CourseCategory, TrainingRegistration, TNA</span>)
+              يعمل كمسار مستقل تماماً. لا يوجد مفتاح أجنبي (Foreign Key) يحوّل <span class="code-pill">ServiceRequest</span>
+              آلياً إلى تسجيل في دورة تدريبية أو حجز مقاعد.
+            </td>
+            <td><span class="tag tag-medium">ارتباط مفاهيمي فقط (لا يوجد Trigger آلي)</span></td>
+          </tr>
+
+          <tr>
+            <td><strong>الدراسات والبحوث الميدانية (Research & Studies)</strong></td>
+            <td><strong>ارتباط مفاهيمي ونشر منفصل (Parallel Domain)</strong></td>
+            <td>
+              يوجد قطاع نشاط باسم <span class="code-pill">field-studies-analysis-monitoring</span> يتيح للعميل طلب دراسة ميدانية مخصصة كـ <span class="code-pill">ServiceRequest</span>.
+              أما وحدة الأبحاث العامة (<span class="code-pill">ResearchPublication, ResearchAccessGrant</span>) فهي لإدارة المنشورات العلمية الصادرة ومنح تراخيص الاطلاع عليها،
+              ولا يوجد ربط مباشر يحول تقرير الطلب المكتمل تلقائياً إلى دراسة منشورة في منصة الأبحاث.
+            </td>
+            <td><span class="tag tag-medium">ارتباط مفاهيمي فقط (فصل بين الطلب الخاص والمنشور العام)</span></td>
+          </tr>
+
+          <tr>
+            <td><strong>البلاغات والمخاطر الميدانية (Field Incidents & Risks)</strong></td>
+            <td><strong>ارتباط بالبيانات المرجعية وسياق التقييم (Contextual Reference)</strong></td>
+            <td>
+              عند إعداد ضابط العمليات لتقرير تقييم المخاطر للطلب، يستند إلى سجل البلاغات والتنبيهات الميدانية وسجل المخاطر،
+              لكن كل بلاغ أو خطر هو كيان مستقل له نظامه التشفيري الخاص (AES-256) ولا يتم حقنه كعنصر داخل الطلب تفادياً لتسريب سريات البلاغات.
+            </td>
+            <td><span class="tag tag-low">ارتباط استدلالي آمن ومعزول تشفيرياً</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section 6: Quality Assessment & Discovered Gaps -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>⚠️ سادساً: تقييم الجودة والفجوات المكتشفة (Gap & Vulnerability Analysis)</span>
+    </div>
+    <p class="section-desc">
+      حصر الملاحظات التشغيلية والبرمجية المكتشفة مصنفة حسب الأثر والأولوية مع الدليل المادي من الشيفرة:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>المستوى</th>
+            <th>الفجوة / الملاحظة</th>
+            <th>الدليل الفعلي من الكود</th>
+            <th>الأثر على تجربة المستخدم والتشغيل</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-critical">حرجة (CRITICAL)</span></td>
+            <td><strong>غياب حقل إسناد الموظف في واجهة الإدارة (Missing Employee Assignment Dropdown)</strong></td>
+            <td>
+              في الخادم: <span class="code-pill">PATCH /api/requests/[id]</span> يدعم بالكامل حقل <span class="code-pill">assignedEmployeeId</span> ويحفظه بجدول الطلبات.<br>
+              في الواجهة: <span class="code-pill">RequestsManager.tsx:588-620</span> لا تحتوي نافذة الإدارة على قائمة منسدلة لاختيار الموظف المسؤول من فريق العمليات!
+            </td>
+            <td>
+              يضطر المشرف إلى إدارة الطلبات دون تحديد الموظف المسؤول عنها على مستوى واجهة المستخدم، مما يعطل ميزة فرز "طلباتي المسندة إلي" للموظفين.
+            </td>
+          </tr>
+
+          <tr>
+            <td><span class="tag tag-high">عالية (HIGH)</span></td>
+            <td><strong>عدم إمكانية إضافة تصنيفات/أنشطة جديدة من الواجهة (No Category Creation in UI)</strong></td>
+            <td>
+              في <span class="code-pill">ServicesCatalogManager.tsx</span> يتاح للمدير إضافة وتعديل <em>الخدمات</em> (<span class="code-pill">Service</span>)،
+              ولكن لا يوجد زر أو نموذج لإضافة <em>مجال نشاط / قطاع جديد</em> (<span class="code-pill">ServiceCategory</span>) إلا عبر التهجير المباشر (DB Migration) أو بذور البيانات (Seeds).
+            </td>
+            <td>
+              إذا أراد المركز استحداث قطاع نشاط سابع أو ثامن، يضطر للاستعانة بالمطور لإضافته في قاعدة البيانات.
+            </td>
+          </tr>
+
+          <tr>
+            <td><span class="tag tag-medium">متوسطة (MEDIUM)</span></td>
+            <td><strong>غياب مسار التحويل المباشر من طلب تدريب إلى حجز دورة (Decoupled Training Provisioning)</strong></td>
+            <td>
+              إذا طلب عميل مؤسسي خدمة "التدريب الأمني وبناء القدرات" عبر <span class="code-pill">/request-service</span>،
+              يتحول الطلب إلى سجل في <span class="code-pill">ServiceRequest</span>، ولا يوجد زر للمدير في نافذة إدارة الطلب يتيح له "توليد دورة تدريبية خاصة" أو حجز مقاعد للمتدربين مباشرة من الطلب.
+            </td>
+            <td>
+              يحتاج موظف التدريب لفتح صفحة الأكاديمية وإنشاء الدورة بشكل يدوي وتكرار إدخال بيانات الجهة الطالبة.
+            </td>
+          </tr>
+
+          <tr>
+            <td><span class="tag tag-low">منخفضة (LOW)</span></td>
+            <td><strong>ازدواجية التسمية في لوحة التحكم (Activity Fields vs Service Categories)</strong></td>
+            <td>
+              في الواجهة العامة تُسمى <em>«مجالات النشاط الميداني»</em>، بينما في بعض شاشات الإدارة تسمى <em>«دليل الخدمات والتصنيفات المؤسسية»</em>.
+            </td>
+            <td>
+              إرباك طفيف لمديري النظام الجدد حول ما إذا كان "النشاط" و"التصنيف" شيئاً واحداً أم شيئين مختلفين.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section 7: Actionable Recommendations -->
+  <section class="section-card">
+    <div class="section-title">
+      <span>🚀 سابعاً: التوصيات العملية المقترحة (Actionable Recommendations)</span>
+    </div>
+    <p class="section-desc">
+      توصيات هندسية ملموسة لرفع كفاءة الوحدة وتحقيق التكامل الشامل:
+    </p>
+
+    <div class="grid-2">
+      <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.5rem;">
+          1. إضافة حقل اختيار وإسناد الموظف في نافذة إدارة الطلب
+        </h4>
+        <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.6;">
+          <strong>المشكلة:</strong> البنية الخلفية جاهزة لكن الواجهة تنقصها القائمة المنسدلة.<br>
+          <strong>الحل:</strong> تمرير قائمة الموظفين (<span class="code-pill">staffList</span>) لمكون <span class="code-pill">RequestsManager</span>
+          وإضافة <span class="code-pill">&lt;AdminSelect&gt;</span> يربط <span class="code-pill">assignedEmployeeId</span> في التبويب الأول.<br>
+          <strong>الأثر:</strong> تمكين المشرفين من إسناد المهام ومتابعة إنجاز كل ضابط ميداني.
+        </p>
+      </div>
+
+      <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.5rem;">
+          2. توفير واجهة لإدارة وتعديل مجالات النشاط (Category Manager)
+        </h4>
+        <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.6;">
+          <strong>المشكلة:</strong> لا يمكن إنشاء قطاع نشاط جديد إلا برمجياً.<br>
+          <strong>الحل:</strong> إضافة زر «إضافة مجال نشاط جديد» وتعديل ترتيب الأنشطة وأيقوناتها في <span class="code-pill">ServicesCatalogManager</span>.<br>
+          <strong>الأثر:</strong> استقلالية تامة لإدارة المركز عند توسيع مجالات عمله في المحافظات.
+        </p>
+      </div>
+
+      <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.5rem;">
+          3. إتاحة زر «تحويل إلى دورة تدريبية خاصة» للطلبات التدريبية
+        </h4>
+        <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.6;">
+          <strong>المشكلة:</strong> انقطاع المسار بين طلب الخدمة التدريبية وسجل الدورات بالأكاديمية.<br>
+          <strong>الحل:</strong> في حال كان الطلب مندرجاً تحت قطاع التدريب، يظهر زر "إنشاء دورة مرتبطة" يقوم بنسخ بيانات العميل والموضوع إلى نموذج <span class="code-pill">Course</span> بنوع <span class="code-pill">PRIVATE_CLIENT</span>.<br>
+          <strong>الأثر:</strong> تجربة تشغيلية متكاملة وسلسة بين العمليات وإدارة التدريب.
+        </p>
+      </div>
+
+      <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.5rem;">
+          4. توحيد المصطلحات في التوثيق ولوحة الإدارة
+        </h4>
+        <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.6;">
+          <strong>المشكلة:</strong> التذبذب بين كلمة "تصنيف" وكلمة "مجال نشاط".<br>
+          <strong>الحل:</strong> اعتماد مصطلح <strong>«مجالات النشاط المؤسسي»</strong> دائماً للقطاعات العريضة، ومصطلح <strong>«الخدمات الميدانية المعتمدة»</strong> للخدمات الإجرائية.<br>
+          <strong>الأثر:</strong> وضوح ذهني وقانوني للمستخدمين والإداريين.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>منصة FACSS — مركز الحلول المتكاملة للأمن والسلامة والدراسات الميدانية (عدن)</p>
+    <p style="margin-top: 0.35rem; color: #94A3B8;">تم إعداد هذا التقرير في أكتوبر 2026 ضمن التدقيق الشامل للأنظمة التشغيلية للمنصة</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

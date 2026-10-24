@@ -124,6 +124,7 @@ export default function AdminSidebar({
           labelAr: tx("دليل الخدمات المؤسسية"),
           labelEn: 'Services Catalog',
           icon: Briefcase,
+          requiredCapability: ['manage_requests', 'manage_content'],
         },
         {
           href: '/admin/requests',
@@ -179,6 +180,7 @@ export default function AdminSidebar({
           labelAr: tx("مركز تشغيل المنظومة"),
           labelEn: 'Operations Hub',
           icon: Settings,
+          requiredCapability: ['manage_settings', 'manage_users', 'view_audit_logs'],
         },
         {
           href: '/admin/messages',

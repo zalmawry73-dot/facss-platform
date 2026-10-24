@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
+    "db:check": "node scripts/check_db.js",
     "db:seed": "node scripts/bootstrap_initial.js",
     "seed": "prisma db push && node scripts/bootstrap_initial.js",
     "seed:demo": "node -e \"process.env.ALLOW_DEMO_SEED='true'; require('./scripts/seed.js');\"",

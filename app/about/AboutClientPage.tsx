@@ -47,12 +47,37 @@ export default function AboutClientPage({ initialContent }: Props) {
   const lifecycleBlocks = initialContent['lifecycle'] || [];
   const orgBlocks = initialContent['org_structure'] || [];
   const identityBlocks = initialContent['identity'] || [];
+  const homepageBlocks = initialContent['homepage'] || [];
+
+  const principlesHeaderBlock = homepageBlocks.find(b => b.key === 'section_principles_header');
+  let principlesMeta: any = {};
+  try { principlesMeta = principlesHeaderBlock?.metadata ? JSON.parse(principlesHeaderBlock.metadata) : {}; } catch {}
+  const principlesSectionTag = (isAr ? principlesMeta.tagAr : principlesMeta.tagEn) || t.pillarsTitle;
+  const principlesSectionTitle = principlesHeaderBlock ? pickTitle(principlesHeaderBlock) : t.pillarsTitle;
+  const principlesSectionSubtitle = principlesHeaderBlock ? pickDesc(principlesHeaderBlock) : t.pillarsSubtitle;
 
   const visionBlock = identityBlocks.find(b => b.key === 'vision');
   const missionBlock = identityBlocks.find(b => b.key === 'mission');
   const whyUsBlock = identityBlocks.find(b => b.key === 'why_us');
   const aboutP1 = identityBlocks.find(b => b.key === 'about_paragraph_1');
   const aboutP2 = identityBlocks.find(b => b.key === 'about_paragraph_2');
+  const aboutIdentityTagBlock = identityBlocks.find(b => b.key === 'about_section_identity_tag');
+  const aboutGoalsSubtitleBlock = identityBlocks.find(b => b.key === 'about_goals_subtitle');
+  const aboutCtaBlock = identityBlocks.find(b => b.key === 'about_cta');
+
+  let aboutCtaMeta: any = {};
+  try { aboutCtaMeta = aboutCtaBlock?.metadata ? JSON.parse(aboutCtaBlock.metadata) : {}; } catch {}
+
+  const aboutCtaTitle = aboutCtaBlock ? pickTitle(aboutCtaBlock) : (isAr ? 'هل تحتاج إلى استشارة أمنية أو تقييم مخاطر ميدانية؟' : 'Need Institutional Security Advisory or Risk Assessment?');
+  const aboutCtaDesc = aboutCtaBlock ? pickDesc(aboutCtaBlock) : (isAr ? 'تواصل مع إدارة المركز لتقديم طلب خدمة أو استشارة تقييم المخاطر وبناء خطط الوقاية والجاهزية.' : 'Contact center coordination to initiate specialized advisory requests or field risk assessments.');
+  const aboutCtaPrimaryBtnText = (isAr ? aboutCtaMeta.btnPrimaryTextAr : aboutCtaMeta.btnPrimaryTextEn) || t.navRequestService;
+  const aboutCtaPrimaryBtnLink = aboutCtaMeta.btnPrimaryLink || '/request-service';
+  const aboutCtaSecondaryBtnText = (isAr ? aboutCtaMeta.btnSecondaryTextAr : aboutCtaMeta.btnSecondaryTextEn) || (isAr ? 'اتصل بنا' : 'Contact Us');
+  const aboutCtaSecondaryBtnLink = aboutCtaMeta.btnSecondaryLink || '/contact';
+
+  const overviewTag = aboutIdentityTagBlock ? (isAr ? (aboutIdentityTagBlock.descriptionAr || aboutIdentityTagBlock.descriptionEn) : (aboutIdentityTagBlock.descriptionEn || aboutIdentityTagBlock.descriptionAr)) : (isAr ? 'النشأة والرؤية' : 'Identity & Foundation');
+  const overviewTitle = aboutIdentityTagBlock ? pickTitle(aboutIdentityTagBlock) : (isAr ? 'التعريف والنشأة المؤسسية' : 'Institutional Genesis & Mandate');
+  const goalsSubtitle = aboutGoalsSubtitleBlock ? pickTitle(aboutGoalsSubtitleBlock) : (isAr ? 'أهداف استراتيجية محددة تقود كافة المبادرات والتطوير التشغيلي للمركز' : 'Strategic objectives guiding all center initiatives and operational development');
 
   // Fallback arrays from i18n if DB empty
   const fallbackGoals = [t.goal1, t.goal2, t.goal3, t.goal4, t.goal5, t.goal6, t.goal7, t.goal8];
@@ -98,9 +123,9 @@ export default function AboutClientPage({ initialContent }: Props) {
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: '2.5rem', alignItems: 'start' }}>
             <div>
-              <span className="section-tag">{isAr ? 'النشأة والرؤية' : 'Identity & Foundation'}</span>
+              <span className="section-tag">{overviewTag}</span>
               <h2 className="section-title" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.1rem)', marginBottom: '1.25rem' }}>
-                {isAr ? 'التعريف والنشأة المؤسسية' : 'Institutional Genesis & Mandate'}
+                {overviewTitle}
               </h2>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.85, marginBottom: '1.25rem', fontSize: '1.02rem' }}>
                 {aboutP1 ? pickDesc(aboutP1) : t.aboutParagraph1}
@@ -184,12 +209,12 @@ export default function AboutClientPage({ initialContent }: Props) {
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.pillarsTitle}</span>
+            <span className="section-tag">{principlesSectionTag}</span>
             <h2 className="section-title">
-              {t.pillarsTitle}
+              {principlesSectionTitle}
             </h2>
             <p className="section-subtitle">
-              {t.pillarsSubtitle}
+              {principlesSectionSubtitle}
             </p>
           </div>
 
@@ -246,7 +271,7 @@ export default function AboutClientPage({ initialContent }: Props) {
               {t.goalsTitle}
             </h2>
             <p className="section-subtitle">
-              {isAr ? 'أهداف استراتيجية محددة تقود كافة المبادرات والتطوير التشغيلي للمركز' : 'Strategic objectives guiding all center initiatives and operational development'}
+              {goalsSubtitle}
             </p>
           </div>
 
@@ -374,15 +399,19 @@ export default function AboutClientPage({ initialContent }: Props) {
               );
             })}
             {activityBlocks.length === 0 && [
-              { title: t.field1Title, desc: t.field1Desc }, { title: t.field2Title, desc: t.field2Desc },
-              { title: t.field3Title, desc: t.field3Desc }, { title: t.field4Title, desc: t.field4Desc },
-              { title: t.field5Title, desc: t.field5Desc }, { title: t.field6Title, desc: t.field6Desc },
+              { title: t.field1Title, desc: t.field1Desc, href: '/services#guarding-protective-security' },
+              { title: t.field2Title, desc: t.field2Desc, href: '/services#field-monitoring-early-warning' },
+              { title: t.field3Title, desc: t.field3Desc, href: '/services#field-studies-analysis-monitoring' },
+              { title: t.field4Title, desc: t.field4Desc, href: '/services#training-capacity-coordination' },
+              { title: t.field5Title, desc: t.field5Desc, href: '/services#safety-systems-equipment' },
             ].map((f, i) => (
-              <div key={i} className="service-card">
-                <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.75rem' }}>{String(i + 1).padStart(2, '0')}</span>
-                <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.65rem' }}>{f.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
-              </div>
+              <Link key={i} href={f.href} style={{ textDecoration: 'none' }}>
+                <div className="service-card">
+                  <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.75rem' }}>{String(i + 1).padStart(2, '0')}</span>
+                  <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.65rem' }}>{f.title}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -464,19 +493,19 @@ export default function AboutClientPage({ initialContent }: Props) {
       >
         <div className="container" style={{ maxWidth: '820px' }}>
           <h2 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.2rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.85rem' }}>
-            {isAr ? 'هل تحتاج إلى استشارة أمنية أو تقييم مخاطر ميدانية؟' : 'Need Institutional Security Advisory or Risk Assessment?'}
+            {aboutCtaTitle}
           </h2>
           <p style={{ color: 'var(--text-on-dark-muted)', marginBottom: '2rem', maxWidth: '640px', marginInline: 'auto', fontSize: '1rem', lineHeight: 1.75 }}>
-            {isAr ? 'تواصل مع إدارة المركز لتقديم طلب خدمة أو استشارة تقييم المخاطر وبناء خطط الوقاية والجاهزية.' : 'Contact center coordination to initiate specialized advisory requests or field risk assessments.'}
+            {aboutCtaDesc}
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/request-service" className="btn btn-gold btn-lg">
+            <Link href={aboutCtaPrimaryBtnLink} className="btn btn-gold btn-lg">
               <Shield size={18} />
-              <span>{t.navRequestService}</span>
+              <span>{aboutCtaPrimaryBtnText}</span>
               <ArrowIcon size={16} />
             </Link>
-            <Link href="/contact" className="btn btn-outline-dark btn-lg">
-              <span>{isAr ? 'اتصل بنا' : 'Contact Us'}</span>
+            <Link href={aboutCtaSecondaryBtnLink} className="btn btn-outline-dark btn-lg">
+              <span>{aboutCtaSecondaryBtnText}</span>
             </Link>
           </div>
         </div>

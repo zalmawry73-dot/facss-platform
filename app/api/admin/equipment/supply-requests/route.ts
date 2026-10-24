@@ -15,16 +15,19 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const fulfillmentStatus = searchParams.get('fulfillmentStatus');
+    const serviceRequestId = searchParams.get('serviceRequestId');
 
-    const where: any = {
-      OR: [
+    const where: any = {};
+    if (serviceRequestId) {
+      where.id = serviceRequestId;
+    } else {
+      where.OR = [
         { supplyItems: { some: {} } },
         { service: { slug: 'safety-equipment-supplies' } },
-      ],
-    };
-
-    if (status) where.status = status;
-    if (fulfillmentStatus) where.fulfillmentStatus = fulfillmentStatus;
+      ];
+      if (status) where.status = status;
+      if (fulfillmentStatus) where.fulfillmentStatus = fulfillmentStatus;
+    }
 
     const requests = await prisma.serviceRequest.findMany({
       where,

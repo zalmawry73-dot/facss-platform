@@ -15,6 +15,8 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import { getContentBlock } from '@/lib/content';
+
 export const revalidate = 0;
 
 const DURATION_TRANSLATIONS: Record<string, string> = {
@@ -70,11 +72,33 @@ export default async function TrainingPage() {
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
-  const courses = await prisma.course.findMany({
-    where: { status: 'OPEN', courseType: 'PUBLIC' },
-    include: { category: true },
-    orderBy: { createdAt: 'desc' },
-  });
+  const [courses, bannerBlock, catalogHeaderBlock] = await Promise.all([
+    prisma.course.findMany({
+      where: { status: 'OPEN', courseType: 'PUBLIC' },
+      include: { category: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+    getContentBlock('page_banners', 'banner_training'),
+    getContentBlock('training_page', 'training_catalog_header'),
+  ]);
+
+  let bannerMeta: any = {};
+  try { bannerMeta = bannerBlock?.metadata ? JSON.parse(bannerBlock.metadata) : {}; } catch {}
+
+  const bannerTag = (isAr ? bannerMeta.tagAr : bannerMeta.tagEn) || t.trainingAcademy;
+  const bannerTitle = (isAr ? (bannerBlock?.titleAr || bannerBlock?.titleEn) : (bannerBlock?.titleEn || bannerBlock?.titleAr)) || (isAr ? 'التدريب وبناء القدرات والجاهزية الميدانية' : 'Field Safety & Institutional Capacity Building');
+  const bannerDesc = (isAr ? (bannerBlock?.descriptionAr || bannerBlock?.descriptionEn) : (bannerBlock?.descriptionEn || bannerBlock?.descriptionAr)) || (isAr
+    ? 'برامج تدريبية وتطبيقية متخصصة تهدف إلى رفع جاهزية الكوادر الميدانية والمنظمات الإنسانية والشركاء في مجالات إدارة المخاطر، إجراءات السلامة الشخصية، التفاوض لتسهيل الوصول، والإسعافات الأولية.'
+    : 'Specialized training curricula dedicated to enhancing field personnel and organizational readiness in operational risk management, safety protocols, access negotiation, and first aid.');
+
+  let catalogMeta: any = {};
+  try { catalogMeta = catalogHeaderBlock?.metadata ? JSON.parse(catalogHeaderBlock.metadata) : {}; } catch {}
+
+  const catalogTag = (isAr ? catalogMeta.tagAr : catalogMeta.tagEn) || (isAr ? 'البرامج المتاحة حالياً للتسجيل' : 'Currently Open Programs');
+  const catalogTitle = (isAr ? (catalogHeaderBlock?.titleAr || catalogHeaderBlock?.titleEn) : (catalogHeaderBlock?.titleEn || catalogHeaderBlock?.titleAr)) || (isAr ? 'برامج التدريب وبناء القدرات الميدانية' : 'Field Training & Capacity Building Programs');
+  const catalogSubtitle = (isAr ? (catalogHeaderBlock?.descriptionAr || catalogHeaderBlock?.descriptionEn) : (catalogHeaderBlock?.descriptionEn || catalogHeaderBlock?.descriptionAr)) || (isAr
+    ? 'شهادات إتمام وتأهيل عملي مبنية على محاكاة التحديات الميدانية الواقعية'
+    : 'Applied completion credentials designed around practical field context scenarios.');
 
   return (
     <div>
@@ -83,15 +107,13 @@ export default async function TrainingPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="hero-badge-pill" style={{ marginBottom: '1.25rem' }}>
             <GraduationCap size={15} style={{ color: 'var(--color-gold-400)' }} />
-            <span>{t.trainingAcademy}</span>
+            <span>{bannerTag}</span>
           </div>
           <h1 style={{ fontSize: 'clamp(1.8rem, 3.8vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-            {isAr ? 'التدريب وبناء القدرات والجاهزية الميدانية' : 'Field Safety & Institutional Capacity Building'}
+            {bannerTitle}
           </h1>
           <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.05rem', maxWidth: '820px', marginInline: 'auto', lineHeight: 1.75 }}>
-            {isAr
-              ? 'برامج تدريبية وتطبيقية متخصصة تهدف إلى رفع جاهزية الكوادر الميدانية والمنظمات الإنسانية والشركاء في مجالات إدارة المخاطر، إجراءات السلامة الشخصية، التفاوض لتسهيل الوصول، والإسعافات الأولية.'
-              : 'Specialized training curricula dedicated to enhancing field personnel and organizational readiness in operational risk management, safety protocols, access negotiation, and first aid.'}
+            {bannerDesc}
           </p>
         </div>
       </section>
@@ -101,15 +123,13 @@ export default async function TrainingPage() {
         <div className="container">
           <div className="section-title-wrap">
             <span className="section-tag">
-              {isAr ? 'البرامج المتاحة حالياً للتسجيل' : 'Currently Open Programs'}
+              {catalogTag}
             </span>
             <h2 className="section-title">
-              {isAr ? 'برامج التدريب وبناء القدرات الميدانية' : 'Field Training & Capacity Building Programs'}
+              {catalogTitle}
             </h2>
             <p className="section-subtitle">
-              {isAr
-                ? 'شهادات إتمام وتأهيل عملي مبنية على محاكاة التحديات الميدانية الواقعية'
-                : 'Applied completion credentials designed around practical field context scenarios.'}
+              {catalogSubtitle}
             </p>
           </div>
 

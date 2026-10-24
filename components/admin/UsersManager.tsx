@@ -19,7 +19,16 @@ import {
   Mail,
   Phone,
   Building,
-  Sliders
+  Sliders,
+  Briefcase,
+  ShieldAlert,
+  AlertTriangle,
+  GraduationCap,
+  BookOpen,
+  Settings,
+  Package,
+  Check,
+  Layers
 } from 'lucide-react';
 import {
   AdminPageHeader,
@@ -55,20 +64,15 @@ interface Props {
   currentUserId: string;
 }
 
-const CAPABILITY_DEFINITIONS = [
-  { id: 'manage_requests', get label() { return tx("إدارة طلبات الخدمات الأمنية"); }, get desc() { return tx("استعراض وتحديث ومتابعة طلبات الحماية والاستشارات الأمنية"); } },
-  { id: 'manage_training', get label() { return tx("إدارة برامج التدريب والتأهيل"); }, get desc() { return tx("إنشاء الدورات التدريبية وتحديث المحاضرين ومتابعة المتدربين"); } },
-  { id: 'manage_research', get label() { return tx("إدارة الدراسات والتقارير الاستراتيجية"); }, get desc() { return tx("إعداد ونشر الأوراق البحثية والتقارير الأمنية الحصرية"); } },
-  { id: 'manage_messages', get label() { return tx("إدارة رسائل التواصل والاستفسارات"); }, get desc() { return tx("مراجعة رسائل نموذج الاتصال وتوثيق الردود والأرشفة"); } },
-  { id: 'manage_settings', get label() { return tx("إدارة إعدادات وبيانات الاتصال الرسمية"); }, get desc() { return tx("تحديث هواتف المركز، البريد الرسمي، وساعات الدوام"); } },
-  { id: 'view_audit_logs', get label() { return tx("استعراض سجلات التدقيق والنشاط الأمني"); }, get desc() { return tx("مراقبة كافة العمليات الحساسة وتتبع نشاط الإداريين"); } },
-  { id: 'manage_users', get label() { return tx("إدارة المستخدمين وتعيين الصلاحيات"); }, get desc() { return tx("تفعيل/تعطيل الحسابات ومنح الصلاحيات الدقيقة للكوادر"); } },
-  { id: 'submit_incident', get label() { return tx("تقديم البلاغات الميدانية"); }, get desc() { return tx("إرسال واستقبال تقارير الحوادث والبلاغات الميدانية الحساسة"); } },
-  { id: 'verify_incident', get label() { return tx("التحقق الميداني من البلاغات"); }, get desc() { return tx("مراجعة وتقييم وتأكيد صحة البلاغات وإسنادات التحقق"); } },
-  { id: 'analyze_incident', get label() { return tx("تحليل وتقييم مخاطر البلاغات"); }, get desc() { return tx("تصنيف وتحليل الأثر والمخاطر وإعداد النسخ المنقحة"); } },
-  { id: 'draft_incident_alert', get label() { return tx("صياغة مسودات التنبيهات الأمنية"); }, get desc() { return tx("إعداد وصياغة مسودات التنبيهات ونطاق المستلمين"); } },
-  { id: 'approve_incident_alert', get label() { return tx("اعتماد وإصدار التنبيهات الأمنية"); }, get desc() { return tx("الموافقة النهائية ونشر التنبيهات وتجميد المستلمين (إدارة عليا)"); } },
-];
+import UserPermissionsModal, { 
+  CAPABILITY_CATEGORIES, 
+  ALL_CAPABILITY_DEFINITIONS as CAPABILITY_DEFINITIONS,
+  getRoleInheritedCapabilities,
+  type CapabilityCategoryItem,
+  type CapabilityItem
+} from './UserPermissionsModal';
+
+export { CAPABILITY_CATEGORIES, CAPABILITY_DEFINITIONS, getRoleInheritedCapabilities, type CapabilityCategoryItem, type CapabilityItem };
 
 const FUNCTIONAL_AREAS = [
   { id: 'PROGRAMS_OPERATIONS', get label() { return tx("دائرة البرامج والعمليات الميدانية"); } },
@@ -85,7 +89,6 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
   const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
-  const [updatingCap, setUpdatingCap] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // Create User Modal State
@@ -136,44 +139,6 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
       setFeedback({ type: 'error', message: err.message });
     } finally {
       setTogglingUserId(null);
-    }
-  };
-
-  // Toggle capability for user
-  const handleToggleCapability = async (capabilityId: string) => {
-    if (!selectedUser) return;
-
-    const currentCaps = selectedUser.assignedCapabilities || [];
-    const hasCap = currentCaps.includes(capabilityId);
-    const newCaps = hasCap
-      ? currentCaps.filter((c) => c !== capabilityId)
-      : [...currentCaps, capabilityId];
-
-    setUpdatingCap(capabilityId);
-    setFeedback(null);
-
-    try {
-      const res = await fetch(`/api/admin/users/${selectedUser.id}/capabilities`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ capabilities: newCaps }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || tx("تعذر تحديث الصلاحية"));
-
-      const updatedUser = { ...selectedUser, assignedCapabilities: newCaps };
-      setSelectedUser(updatedUser);
-      setUsers((prev) => prev.map((u) => (u.id === selectedUser.id ? updatedUser : u)));
-
-      setFeedback({
-        type: 'success',
-        message: tx("تم {0} الصلاحية [{1}] للمستخدم بنجاح", hasCap ? tx("سحب") : tx("منح"), capabilityId),
-      });
-    } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message });
-    } finally {
-      setUpdatingCap(null);
     }
   };
 
@@ -284,7 +249,8 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
         if (u.role === 'SUPER_ADMIN') {
           return <AdminStatusBadge status="ACTIVE" variant="warning" label={tx("صلاحيات مطلقة (SUPER_ADMIN)")} icon={ShieldCheck} />;
         }
-        const count = u.assignedCapabilities?.length || 0;
+        const inherited = getRoleInheritedCapabilities(u.role);
+        const totalEffective = Array.from(new Set([...(u.assignedCapabilities || []), ...inherited])).length;
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
             <span
@@ -292,13 +258,13 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
                 fontSize: '0.74rem',
                 padding: '0.15rem 0.5rem',
                 borderRadius: '4px',
-                background: count > 0 ? 'var(--admin-status-info-bg)' : 'var(--surface-bg)',
-                color: count > 0 ? 'var(--admin-status-info-text)' : 'var(--text-muted)',
+                background: totalEffective > 0 ? 'var(--admin-status-info-bg)' : 'var(--surface-bg)',
+                color: totalEffective > 0 ? 'var(--admin-status-info-text)' : 'var(--text-muted)',
                 fontWeight: 700,
-                border: count > 0 ? '1px solid var(--admin-status-info-border)' : '1px solid var(--admin-card-border)',
+                border: totalEffective > 0 ? '1px solid var(--admin-status-info-border)' : '1px solid var(--admin-card-border)',
               }}
             >
-              {count} {tx("صلاحية ممنوحة")}
+              {totalEffective} {tx("صلاحية معتمدة")}
             </span>
             {isSuperAdmin && (
               <AdminButton
@@ -508,66 +474,24 @@ export default function UsersManager({ initialUsers, currentUserRole, currentUse
         }}
       />
 
-      {/* Edit Capabilities Modal */}
+      {/* Redesigned User Permissions Modal */}
       {selectedUser && (
-        <AdminModal
+        <UserPermissionsModal
           isOpen={Boolean(selectedUser)}
+          user={selectedUser}
           onClose={() => setSelectedUser(null)}
-          title={tx("تعديل الصلاحيات: {0}", selectedUser.fullName)}
-          description={tx("الرتبة: {0} • البريد: {1}", selectedUser.role, selectedUser.email)}
-          maxWidth="640px"
-        >
-          {selectedUser.role === 'SUPER_ADMIN' ? (
-            <AdminAlert variant="warning">
-              {tx("حساب الإدارة العليا (SUPER_ADMIN) يمتلك كافة الصلاحيات التشغيلية والأمنية تلقائياً وبشكل دائم.")}
-            </AdminAlert>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>
-                {tx("حدد الصلاحيات التشغيلية الممنوحة لهذا الحساب:")}
-              </span>
-
-              {CAPABILITY_DEFINITIONS.map((cap) => {
-                const isAssigned = (selectedUser.assignedCapabilities || []).includes(cap.id);
-                const isUpdating = updatingCap === cap.id;
-
-                return (
-                  <div
-                    key={cap.id}
-                    style={{
-                      padding: '0.75rem 1rem',
-                      background: isAssigned ? 'rgba(181, 146, 84, 0.08)' : 'var(--surface-bg)',
-                      border: isAssigned ? '1px solid var(--color-gold-500)' : '1px solid var(--admin-card-border)',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '0.85rem',
-                    }}
-                  >
-                    <div>
-                      <strong style={{ fontSize: '0.86rem', color: 'var(--text-primary)', display: 'block' }}>
-                        {cap.label}
-                      </strong>
-                      <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                        {cap.desc}
-                      </span>
-                    </div>
-
-                    <AdminButton
-                      variant={isAssigned ? 'danger' : 'primary'}
-                      size="sm"
-                      loading={isUpdating}
-                      onClick={() => handleToggleCapability(cap.id)}
-                    >
-                      {isAssigned ? tx("سحب") : tx("منح")}
-                    </AdminButton>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </AdminModal>
+          onSaved={(userId, updatedCapabilities) => {
+            const updatedUser = { ...selectedUser, assignedCapabilities: updatedCapabilities };
+            setSelectedUser(updatedUser);
+            setUsers((prev) => prev.map((u) => (u.id === userId ? updatedUser : u)));
+            setFeedback({
+              type: 'success',
+              message: tx("تم تحديث وحفظ مصفوفة صلاحيات المستخدم [{0}] بنجاح.", selectedUser.fullName),
+            });
+          }}
+          currentUserRole={currentUserRole}
+          currentUserId={currentUserId}
+        />
       )}
 
       {/* Create User Modal */}

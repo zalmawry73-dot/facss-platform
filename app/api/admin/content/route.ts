@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { section, key, titleAr, titleEn, descriptionAr, descriptionEn, icon, link, order, isVisible } = body;
+    const { section, key, titleAr, titleEn, descriptionAr, descriptionEn, icon, link, order, isVisible, metadata } = body;
 
     if (!section || typeof section !== 'string' || section.length > 60) {
       return NextResponse.json({ error: 'section مطلوب وأقل من 60 حرف' }, { status: 400 });
@@ -102,23 +102,51 @@ export async function POST(req: NextRequest) {
           link: link?.trim() || null,
           order: orderVal,
           isVisible: isVisVal,
+          metadata: metadata ? (typeof metadata === 'string' ? metadata : JSON.stringify(metadata)) : null,
           updatedByName: updater,
         },
       });
     } else {
       const newId = 'cb_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      const metaStr = metadata ? (typeof metadata === 'string' ? metadata : JSON.stringify(metadata)) : null;
       const rows = await prisma.$queryRaw<any[]>`
         INSERT INTO "ContentBlock" (
           "id", "section", "key", "titleAr", "titleEn", "descriptionAr", "descriptionEn",
-          "icon", "link", "order", "isVisible", "updatedByName", "createdAt", "updatedAt"
+          "icon", "link", "order", "isVisible", "metadata", "updatedByName", "createdAt", "updatedAt"
         ) VALUES (
           ${newId}, ${section}, ${key}, ${titleAr?.trim() || null}, ${titleEn?.trim() || null},
           ${descriptionAr?.trim() || null}, ${descriptionEn?.trim() || null},
           ${icon?.trim() || null}, ${link?.trim() || null}, ${orderVal}, ${isVisVal},
-          ${updater}, NOW(), NOW()
+          ${metaStr}, ${updater}, NOW(), NOW()
         ) RETURNING *
       `;
       block = rows[0];
+    }
+
+    // Sync with ServiceCategory if creating activity_fields
+    if (block && block.section === 'activity_fields') {
+      try {
+        await prisma.serviceCategory.upsert({
+          where: { slug: block.key },
+          create: {
+            slug: block.key,
+            titleAr: block.titleAr || block.key,
+            titleEn: block.titleEn || block.key,
+            icon: block.icon || 'ShieldCheck',
+            order: block.order || 1,
+            isActive: block.isVisible ?? true,
+          },
+          update: {
+            titleAr: block.titleAr || undefined,
+            titleEn: block.titleEn || undefined,
+            icon: block.icon || undefined,
+            order: block.order || undefined,
+            isActive: block.isVisible ?? true,
+          },
+        });
+      } catch (syncErr) {
+        console.error('[content POST sync with serviceCategory error]', syncErr);
+      }
     }
 
     return NextResponse.json({ block }, { status: 201 });
@@ -139,7 +167,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { id, titleAr, titleEn, descriptionAr, descriptionEn, icon, link, order, isVisible } = body;
+    const { id, titleAr, titleEn, descriptionAr, descriptionEn, icon, link, order, isVisible, metadata } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'id مطلوب' }, { status: 400 });
@@ -175,6 +203,9 @@ export async function PATCH(req: NextRequest) {
       if (link !== undefined) updateData.link = link?.trim() || null;
       if (typeof order === 'number') updateData.order = order;
       if (typeof isVisible === 'boolean') updateData.isVisible = isVisible;
+      if (metadata !== undefined) {
+        updateData.metadata = metadata ? (typeof metadata === 'string' ? metadata : JSON.stringify(metadata)) : null;
+      }
 
       block = await (prisma as any).contentBlock.update({ where: { id }, data: updateData });
     } else {
@@ -186,6 +217,9 @@ export async function PATCH(req: NextRequest) {
       const nextLink = link !== undefined ? (link?.trim() || null) : existing.link;
       const nextOrder = typeof order === 'number' ? order : existing.order;
       const nextIsVisible = typeof isVisible === 'boolean' ? isVisible : existing.isVisible;
+      const nextMeta = metadata !== undefined
+        ? (metadata ? (typeof metadata === 'string' ? metadata : JSON.stringify(metadata)) : null)
+        : existing.metadata;
 
       const rows = await prisma.$queryRaw<any[]>`
         UPDATE "ContentBlock" SET
@@ -197,12 +231,32 @@ export async function PATCH(req: NextRequest) {
           "link" = ${nextLink},
           "order" = ${nextOrder},
           "isVisible" = ${nextIsVisible},
+          "metadata" = ${nextMeta},
           "updatedByName" = ${updater},
           "updatedAt" = NOW()
         WHERE "id" = ${id}
         RETURNING *
       `;
       block = rows[0];
+    }
+
+    // Sync with ServiceCategory if updating activity_fields
+    if (block && (block.section === 'activity_fields' || existing.section === 'activity_fields')) {
+      try {
+        const catSlug = block.key || existing.key;
+        await prisma.serviceCategory.updateMany({
+          where: { slug: catSlug },
+          data: {
+            ...(block.titleAr ? { titleAr: block.titleAr } : {}),
+            ...(block.titleEn ? { titleEn: block.titleEn } : {}),
+            ...(block.icon ? { icon: block.icon } : {}),
+            ...(typeof block.order === 'number' ? { order: block.order } : {}),
+            ...(typeof block.isVisible === 'boolean' ? { isActive: block.isVisible } : {}),
+          },
+        });
+      } catch (syncErr) {
+        console.error('[content PATCH sync with serviceCategory error]', syncErr);
+      }
     }
 
     return NextResponse.json({ block });
@@ -242,10 +296,14 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'العنصر غير موجود' }, { status: 404 });
     }
 
-    // Protect core identity items from deletion
-    const PROTECTED_KEYS = ['vision', 'mission', 'about_paragraph_1', 'about_paragraph_2', 'why_us'];
-    if (existing.section === 'identity' && PROTECTED_KEYS.includes(existing.key)) {
-      return NextResponse.json({ error: 'لا يمكن حذف عناصر الهوية الأساسية. يمكنك إخفاؤها فقط.' }, { status: 403 });
+    // Protect core structural items from deletion
+    const PROTECTED_KEYS = [
+      'vision', 'mission', 'about_paragraph_1', 'about_paragraph_2', 'why_us',
+      'hero_headline', 'hero_subtitle', 'hero_badge_1', 'hero_badge_2', 'hero_badge_3',
+      'about_cta', 'brand_names', 'footer_content', 'banner_services', 'banner_training', 'banner_research'
+    ];
+    if (PROTECTED_KEYS.includes(existing.key)) {
+      return NextResponse.json({ error: 'لا يمكن حذف هذا العنصر الهيكلي الأساسي. يمكنك تعديله أو إخفاؤه فقط.' }, { status: 403 });
     }
 
     if ((prisma as any).contentBlock) {

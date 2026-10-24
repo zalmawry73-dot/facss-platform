@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير التدقيق الوظيفي لدورة حياة البلاغات والتنبيهات والمخاطر | منصة FACSS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0F3D2E;
+      --primary-dark: #07231A;
+      --primary-light: #1A5A44;
+      --gold: #C59B27;
+      --gold-light: #DFBA4E;
+      --gold-subtle: rgba(197, 155, 39, 0.12);
+      --bg: #0A130F;
+      --surface: #12211B;
+      --surface-card: #182B23;
+      --surface-card-hover: #1F362D;
+      --border: rgba(197, 155, 39, 0.25);
+      --border-light: rgba(255, 255, 255, 0.08);
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --text-dim: #6B7280;
+      --danger: #EF4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --warning: #F59E0B;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --success: #10B981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --info: #38BDF8;
+      --info-bg: rgba(56, 189, 248, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      padding: 0;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* Header */
+    header.report-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--surface) 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header.report-header::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -20%;
+      width: 140%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(197, 155, 39, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .badge-gold {
+      background: var(--gold-subtle);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+    }
+
+    .badge-danger {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+      color: #FCA5A5;
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning);
+      color: #FCD34D;
+    }
+
+    .badge-success {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      color: #6EE7B7;
+    }
+
+    .badge-info {
+      background: var(--info-bg);
+      border: 1px solid var(--info);
+      color: #7DD3FC;
+    }
+
+    h1.report-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    p.report-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 900px;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .meta-item strong {
+      color: var(--text);
+    }
+
+    /* Section Cards */
+    section.report-section {
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 2.25rem 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    section.report-section:hover {
+      border-color: rgba(197, 155, 39, 0.4);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .section-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--gold-subtle);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    h2.section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    /* Text elements */
+    p {
+      margin-bottom: 1rem;
+      color: #D1D5DB;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    ul, ol {
+      margin-right: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #D1D5DB;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Stat Grid */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+    }
+
+    .stat-title {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-desc {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      background: var(--surface-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    thead th {
+      background: rgba(15, 61, 46, 0.7);
+      color: var(--gold-light);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-light);
+      color: #E5E7EB;
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Diagrams & Flows */
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .flow-step {
+      display: flex;
+      gap: 1.25rem;
+      background: var(--surface-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .flow-step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .flow-step-content h4 {
+      margin: 0 0 0.35rem 0;
+      color: var(--gold-light);
+    }
+
+    .flow-step-content p {
+      margin-bottom: 0.35rem;
+      font-size: 0.88rem;
+    }
+
+    .flow-step-meta {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .callout-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning);
+      color: #FDE68A;
+    }
+
+    .callout-danger {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+      color: #FCA5A5;
+    }
+
+    .callout-info {
+      background: var(--info-bg);
+      border: 1px solid var(--info);
+      color: #BAE6FD;
+    }
+
+    .callout-success {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      color: #A7F3D0;
+    }
+
+    .callout-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    /* Tag pill */
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tag-file {
+      background: rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .tag-api {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Matrix 5x5 Grid representation */
+    .risk-matrix-table {
+      margin: 1.5rem auto;
+      border-collapse: collapse;
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .risk-matrix-table td, .risk-matrix-table th {
+      border: 1px solid #334155;
+      padding: 0.6rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .matrix-cell-critical { background: rgba(220, 38, 38, 0.4); color: #FCA5A5; }
+    .matrix-cell-high { background: rgba(234, 88, 12, 0.4); color: #FDBA74; }
+    .matrix-cell-medium { background: rgba(217, 119, 6, 0.4); color: #FDE047; }
+    .matrix-cell-low { background: rgba(22, 163, 74, 0.4); color: #86EFAC; }
+
+    footer.report-footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      border-top: 1px solid var(--border-light);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="report-header">
+    <div class="container">
+      <div class="badge-pill badge-gold">
+        <span>🛡️ منصة ميثاق للحلول المتكاملة للأمن والسلامة (FACSS)</span>
+      </div>
+      <h1 class="report-title">
+        تقرير التدقيق الوظيفي لدورة حياة البلاغات الميدانية والتنبيهات وسجل المخاطر التشغيلية
+      </h1>
+      <p class="report-subtitle">
+        تحليل وظيفي وتقني محايد وشامل يستند بالكامل إلى واقع الأكواد البرمجية، واجهات برمجة التطبيقات (APIs)، قواعد البيانات (Prisma Schema)، وسياسات التحكم بالوصول (RBAC) في النسخة الحالية.
+      </p>
+
+      <div class="meta-bar">
+        <div class="meta-item">
+          <span>نوع الوثيقة:</span>
+          <strong>تدقيق تحليلي معمق (Read-Only Code Audit)</strong>
+        </div>
+        <div class="meta-item">
+          <span>حالة النظام المفحوص:</span>
+          <span class="badge-pill badge-success" style="margin:0; padding: 2px 8px;">مكتمل الوظائف الأساسية ومحمي بالكامل</span>
+        </div>
+        <div class="meta-item">
+          <span>تاريخ التدقيق:</span>
+          <strong>23 أكتوبر 2026</strong>
+        </div>
+        <div class="meta-item">
+          <span>النطاق:</span>
+          <strong>البلاغات الميدانية | التنبيهات المستهدفة | سجل المخاطر</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="container">
+
+    <!-- 1. EXECUTIVE SUMMARY -->
+    <section class="report-section" id="executive-summary">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">1</div>
+          <h2 class="section-title">الملخص التنفيذي</h2>
+        </div>
+        <span class="badge-pill badge-info">نظرة عامة شمولية</span>
+      </div>
+
+      <p>
+        تم إجراء تدقيق وظيفي وهندسي شامل للوحدات الثلاث المرتبطة بالأمن الميداني في منصة FACSS:
+        <strong>(1) البلاغات الميدانية الحساسة (Field Incidents)</strong>،
+        <strong>(2) التنبيهات الميدانية المستهدفة (Targeted Field Alerts)</strong>،
+        <strong>(3) سجل المخاطر التشغيلية (Operational Risk Register)</strong>.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-title">الحماية والتشفير السيادي</div>
+          <div class="stat-value" style="color: #34D399;">AES-256-GCM</div>
+          <div class="stat-desc">تشفير فوري لأصل البلاغ ومعلومات المصدر والإحداثيات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">قاعدة الاستحقاق الثلاثي (Triple-Gate)</div>
+          <div class="stat-value" style="color: #60A5FA;">3 مستويات حماية</div>
+          <div class="stat-desc">حساب نشط + صلاحية وظيفية + تكليف رسمي نشط للبلاغ</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">موثوقية التنبيهات المجمدة</div>
+          <div class="stat-value" style="color: var(--gold-light);">SHA-256 Snapshot</div>
+          <div class="stat-desc">لقطات غير قابلة للتلاعب وحجب فوري عند أي تعديل</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">مصفوفة المخاطر التشغيلية</div>
+          <div class="stat-value" style="color: #F87171;">5 × 5 (1-25)</div>
+          <div class="stat-desc">حساب دقيق لدرجة الخطر وسجل تدقيقي تاريخي لكل إعادة تقييم</div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div>
+          <strong>النتيجة الإجمالية للتدقيق:</strong>
+          تتميز المنصة ببنية أمنية فائقة الصرامة مصممة بمبدأ «الخصوصية منذ التصميم» (Privacy by Design) وحماية المصادر (Whistleblower Protection). المنطق الرياضي والأمني للخادم متين ومتقن. ومع ذلك، تم اكتشاف <strong>خطأين برمجيين مؤكدين (Confirmed Bugs)</strong> في الواجهة الأمامية يعطلان سحب التكليفات والملء التلقائي للمخاطر، بالإضافة إلى <strong>فجوة تشغيلية رئيسية (Major Operational Gap)</strong> تتمثل في غياب واجهة المستخدم لصياغة مسودات التنبيهات في لوحة التحكم، مما يحصر إنشاء التنبيهات ببيئات الاختبار أو استدعاءات API المباشرة.
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SYSTEM ARCHITECTURE & ROLES -->
+    <section class="report-section" id="architecture-roles">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">2</div>
+          <h2 class="section-title">خريطة الوحدات والواجهات والأدوار</h2>
+        </div>
+        <span class="badge-pill badge-gold">مصفوفة الصلاحيات والاستحقاق</span>
+      </div>
+
+      <p>
+        تعتمد المنصة نموذج فصل صارم بين بوابات المستخدمين، حيث تخضع كل بوابة لقواعد تحكم وسيطة (<span class="tag tag-file">middleware.ts</span>) وصلاحيات دقيقة على مستوى كل API (<span class="tag tag-file">lib/rbac.ts</span>).
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>الدور (Role)</th>
+              <th>تقديم بلاغ ميداني</th>
+              <th>عرض البلاغات وإدارتها</th>
+              <th>صياغة التنبيهات</th>
+              <th>اعتماد ونشر التنبيهات</th>
+              <th>استلام التنبيهات</th>
+              <th>سجل المخاطر التشغيلية</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>SUPER_ADMIN</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">الإدارة العليا</span></td>
+              <td><span class="badge-pill badge-success">مصرح بالكامل</span></td>
+              <td><span class="badge-pill badge-success">نفاذ كامل + فك تشفير الأصل الحساس</span></td>
+              <td><span class="badge-pill badge-success">مصرح</span></td>
+              <td><span class="badge-pill badge-success">الجهة الحصرية للاعتماد والتوزيع</span></td>
+              <td><span class="badge-pill badge-success">استعراض لكافة الفئات</span></td>
+              <td><span class="badge-pill badge-success">إدارة وتقييم وإلغاء كامل</span></td>
+            </tr>
+            <tr>
+              <td><strong>ADMIN</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">إدارة العمليات</span></td>
+              <td><span class="badge-pill badge-danger">ممنوع (إلا بصلاحية مخصصة)</span></td>
+              <td><span class="badge-pill badge-warning">مشروط بالتكليف الرسمي (المنقح فقط)</span></td>
+              <td><span class="badge-pill badge-warning">مشروط بصلاحية draft_incident_alert والتكليف</span></td>
+              <td><span class="badge-pill badge-danger">ممنوع قطعياً</span></td>
+              <td><span class="badge-pill badge-info">بحسب التوزيع والتكليف</span></td>
+              <td><span class="badge-pill badge-warning">مشروط بصلاحية view_risk_register</span></td>
+            </tr>
+            <tr>
+              <td><strong>STAFF / EMPLOYEE</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">المحللون والمحققون</span></td>
+              <td><span class="badge-pill badge-danger">ممنوع افتراضياً</span></td>
+              <td><span class="badge-pill badge-warning">قاعدة الاستحقاق الثلاثي (البلاغات المكلف بها فقط)</span></td>
+              <td><span class="badge-pill badge-warning">مشروط بصلاحية صريحة + تكليف بالبلاغ</span></td>
+              <td><span class="badge-pill badge-danger">ممنوع</span></td>
+              <td><span class="badge-pill badge-info">إذا تم إدراج حسابه في قائمة المستلمين</span></td>
+              <td><span class="badge-pill badge-warning">مشروط بصلاحية صريحة</span></td>
+            </tr>
+            <tr>
+              <td><strong>FIELD_FOCAL_POINT</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">منسق الاتصال الميداني</span></td>
+              <td><span class="badge-pill badge-success">مصرح (البوابة الميدانية فقط)</span></td>
+              <td><span class="badge-pill badge-danger">محجوب تماماً (لا يرى أرشيف البلاغات)</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب افتراضياً لحمايته</span></td>
+              <td><span class="badge-pill badge-danger">محجوب تماماً</span></td>
+            </tr>
+            <tr>
+              <td><strong>CLIENT</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">العميل المؤسسي</span></td>
+              <td><span class="badge-pill badge-danger">محجوب وممنوع قطيعاً</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-success">يستلم التنبيه الموزع لحسابه (Tier 1 أو Tier 2)</span></td>
+              <td><span class="badge-pill badge-danger">محجوب (سجل داخلي للمركز)</span></td>
+            </tr>
+            <tr>
+              <td><strong>TRAINEE</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">المتدرب الأكاديمي</span></td>
+              <td><span class="badge-pill badge-danger">محجوب وممنوع</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب عن التنبيهات الميدانية الحساسة</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+            </tr>
+            <tr>
+              <td><strong>الزائر غير المسجل</strong><br><span style="font-size:0.75rem; color:var(--text-dim)">Public Guest</span></td>
+              <td><span class="badge-pill badge-danger">إعادة توجيه لصفحة الدخول</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+              <td><span class="badge-pill badge-danger">محجوب</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. INCIDENT LIFECYCLE AUDIT -->
+    <section class="report-section" id="incidents-lifecycle">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">3</div>
+          <h2 class="section-title">تدقيق دورة حياة البلاغات الميدانية والتحقيق في النموذج</h2>
+        </div>
+        <span class="badge-pill badge-info">من التقديم إلى الإغلاق والتنقيح</span>
+      </div>
+
+      <h3>أ. تسلسل مراحل دورة حياة البلاغ</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content">
+            <h4>الرصد والتقديم الميداني المشفر (Field Intake)</h4>
+            <p>يدخل منسق الاتصال أو المسؤول المصرح إلى البوابة الميدانية <span class="tag tag-file">/portal/field/intake</span>. يقوم بتعبئة المراحل الخمس في نموذج واحد مستمر، ثم يضغط «مراجعة وتشفير وإرسال البلاغ» وتظهر نافذة التأكيد.</p>
+            <div class="flow-step-meta">الواجهة: <span class="tag tag-file">app/portal/field/intake/page.tsx</span> | API: <span class="tag tag-api">POST /api/incidents/intake</span></div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content">
+            <h4>المعالجة والتشفير السيادي وحساب SLA في الخادم</h4>
+            <p>يتحقق الخادم من هوية ونشاط الحساب، ويفحص التكرار خلال 60 ثانية. يتم تشفير الحقول الحساسة (اسم المصدر، هاتفه، جهته، السرد التفصيلي، الإحداثيات GPS الدقيقة، الوصف المكاني) فورياً بواسطة مفتاح خوارزمية <code>AES-256-GCM</code>. تُحسب مهلة SLA وتاريخ الاستحقاق <code>dueAt</code> فورياً. يُحفظ البلاغ برقم تتبع <code>FACSS-INC-YYYY-XXXXXX</code> بحالة <strong>RECEIVED</strong>.</p>
+            <div class="flow-step-meta">الملف المسؤول: <span class="tag tag-file">lib/security/crypto.ts</span> و <span class="tag tag-file">lib/sla-engine.ts</span></div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content">
+            <h4>الفرز الإداري وإعداد النسخة المنقحة (Redaction & De-identification)</h4>
+            <p>تستعرض الإدارة العليا (SUPER_ADMIN) البلاغ وتفك تشفير الأصل الحساس عند الضرورة القصوى. تُنشئ الإدارة العليا «نسخة منقحة» (Redacted Version) معقمة من أي بيانات قد تكشف هوية المصدر أو موقعه الدقيق. يتحقق النظام برمجياً عبر خوارزمية Anti-Leakage Guard لمنع تسرب اسم المصدر أو هاتفه. باعتماد النسخة المنقحة تتحول حالة البلاغ إلى <strong>REDACTED</strong>.</p>
+            <div class="flow-step-meta">الواجهة: <span class="tag tag-file">components/admin/IncidentDetailManager.tsx</span> | API: <span class="tag tag-api">POST /api/admin/incidents/[id]/redacted</span></div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content">
+            <h4>إسناد التكليف وتطبيق قاعدة الاستحقاق الثلاثي (Triple-Gate Enforcement)</h4>
+            <p>تسند الإدارة العليا مهمة التحقق أو التحليل لموظف معين (<span class="tag tag-file">IncidentAssignment</span>) بدور <code>VERIFIER</code> أو <code>ANALYST</code>. بمجرد الإسناد تتحول حالة البلاغ إلى <strong>ASSIGNED</strong> ويُسجل توقيت أول استجابة <code>firstResponseAt</code>. الموظف المكلف هو الوحيد القادر على رؤية البلاغ، ولا يرى سوى النسخة المنقحة المعتمدة والمرفقات المعقمة (REDACTED_SAFE).</p>
+            <div class="flow-step-meta">قاعدة الحماية: <span class="tag tag-file">lib/rbac.ts: canAccessRedactedIncident</span></div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-content">
+            <h4>توثيق التحقق الميداني بمعيار أدميرالتي (Admiralty System)</h4>
+            <p>يقوم المحقق بتنفيذ التقصي وتوثيق النتيجة وفق نظام أدميرالتي الاستخباراتي المزدوج: موثوقية المصدر (A إلى F) ومصداقية المعلومة (1 إلى 6) لإنتاج كود التحقق (مثل A1, B2, C3). عند الاعتماد تتحول حالة البلاغ إلى <strong>VERIFIED</strong> أو حالات استبعاد أخرى (UNCONFIRMED, CONTRADICTED, DISPROVED).</p>
+            <div class="flow-step-meta">API: <span class="tag tag-api">POST /api/admin/incidents/[id]/verifications</span></div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">6</div>
+          <div class="flow-step-content">
+            <h4>الاشتقاق التشغيلي، التصعيد، والإغلاق النهائي</h4>
+            <p>البلاغ المتحقق منه (VERIFIED) يتيح زرين تشغيليين: اشتقاق تنبيه ميداني، أو اشتقاق قيد في سجل المخاطر. في حال تأخر المعالجة يمكن التصعيد اليدوي أو الآلي (<span class="tag tag-file">escalateIncidentInternal</span>) مما يخطر المشرفين. عند اكتمال التعامل يغير SuperAdmin الحالة إلى <strong>CLOSED</strong> ويقفل مؤشر SLA كـ <code>CLOSED_ON_TIME</code> أو <code>CLOSED_BREACHED</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>ب. التحقيق المعمق في حقول وسلوك نموذج البلاغ</h3>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>الحقل / السلوك</th>
+              <th>المصدر الفعلي في الشيفرة</th>
+              <th>هل هو قابل للإدارة من لوحة التحكم؟</th>
+              <th>الأثر التشغيلي والوظيفي في النظام</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>تصنيف البلاغ الأمني الميداني</strong><br>(Category)</td>
+              <td>قائمة ثابتة في مصفوفة برمجية <span class="tag tag-file">CATEGORIES</span> في <span class="tag tag-file">page.tsx</span> و <span class="tag tag-file">enum IncidentCategory</span> في قاعدة البيانات (14 تصنيفاً).</td>
+              <td><span class="badge-pill badge-danger">غير قابل للإدارة</span><br>ثابت برمجياً ويتطلب تعديل الكود وعمل Migration للـ Prisma.</td>
+              <td>يحدد نوع الحادث، ويُستخدم في فلترة البلاغات، واحتساب إحصائيات KPI، ويتحول تلقائياً إلى تصنيف خطر تشغيلي مطابق في دالة <code>mapIncidentCategoryToRiskCategory</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>مستوى الأولوية والخطورة</strong><br>(Priority)</td>
+              <td>مصفوفة ثابتة في الكود <span class="tag tag-file">PRIORITIES</span>: LOW, MEDIUM, HIGH, CRITICAL_EMERGENCY.</td>
+              <td><span class="badge-pill badge-danger">الخيارات ثابتة</span><br>لكن <em>المهل الزمنية (SLA)</em> التابعة لكل أولوية قابلة للإدارة من جدول <span class="tag tag-file">SystemSetting</span>.</td>
+              <td>يتحكم مباشرة في اتفاقية مستوى الخدمة (SLA):<br>
+                - طارئة: 15 دقيقة افتراضياً.<br>
+                - عالية: 60 دقيقة.<br>
+                - متوسطة: 240 دقيقة (4 ساعات).<br>
+                - منخفضة: 1440 دقيقة (24 ساعة).<br>
+                وعند تجاوزه تتغير الحالة إلى <code>BREACHED</code> ويُرسل إشعار تصعيد.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>صفة المصدر الميداني</strong><br>(Source Type)</td>
+              <td>قائمة ثابتة برمجياً <span class="tag tag-file">SOURCE_TYPES</span>:<br>
+                - نقطة اتصال ميدانية (FIELD_FOCAL_POINT)<br>
+                - كادر أو باحث ميداني (FIELD_STAFF)<br>
+                - شاهد عيان مباشر (EYEWITNESS)<br>
+                - مصدر محلي / شخصية اعتبارية (COMMUNITY_LEADER)</td>
+              <td><span class="badge-pill badge-danger">غير قابل للإدارة</span><br>ثابت في الواجهة الأمامية ويُخزن كنص.</td>
+              <td>يُحفظ مشفراً ضمن سجل <span class="tag tag-file">IncidentOriginal</span>. يُعرض حصرياً لـ SUPER_ADMIN لتقييم خلفية البلاغ قبل صياغة النسخة المنقحة. لا يظهر لأي مستخدم آخر.</td>
+            </tr>
+            <tr>
+              <td><strong>نافذة التأكيد والإرسال</strong><br>(Confirmation Modal)</td>
+              <td>مكون حواري في <span class="tag tag-file">page.tsx:1651</span> يعمل عند الضغط على زر الإرسال إذا اجتاز النموذج الفحص.</td>
+              <td>نص ثابت مبرمج</td>
+              <td>
+                <strong>سبب عدم وضوح الرسالة لبعض المستخدمين:</strong><br>
+                الرسالة تنص على أن البلاغ سيُشفر ولن يمكن عرضه على هذا الجهاز مجدداً، لكنها لا توضح للمستخدم أن <em>المرفقات تم تجهيزها بالفعل كـ Base64</em> وسيتم إرسالها ضمن نفس العملية، ولا تشرح ما إذا كان البلاغ ينتقل فوراً للتدقيق أم سيتطلب تدخلاً إضافياً.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>سلوك طلب اختيار ملف بعد التأكيد</strong><br>(File Picker Behavior)</td>
+              <td>منطقة السحب والإفلات <span class="tag tag-file">.field-upload-dropzone</span> ترتبط بـ <span class="tag tag-file">fileInputRef</span> المخفي.</td>
+              <td>سلوك تفاعلي غير مقصود (Event Leakage / Click-through)</td>
+              <td>
+                <strong>التحقيق التقني الدقيق:</strong><br>
+                1. المرفقات في FACSS تُرفع <strong>قبل</strong> التأكيد في المرحلة 5، وتتحول فورياً إلى Base64 في الذاكرة.<br>
+                2. البلاغ <strong>لا يتطلب أي مرفق إجباري</strong> ويمكن إكماله بنجاح دونه تماماً.<br>
+                3. عند الضغط على زر «تأكيد الإرسال الآن»، يتم استدعاء <code>setShowConfirmModal(false)</code> فورياً مما يحذف نافذة التأكيد من الـ DOM.<br>
+                4. نظراً لأن منطقة السحب والإفلات تمتلك <code>tabIndex={0}</code> ومستمع نقر <code>onClick={() => fileInputRef.current?.click()}</code>، فإذا كان مؤشر الماوس أو تركيز لوحة المفاتيح (Enter) عند إغلاق النافذة يتقاطع مع هذه المنطقة، يحدث <strong>نقرة اختراقية (Click-Through / Ghost Click)</strong> تؤدي لفتح نافذة اختيار الملفات للمتصفح تلقائياً بعد الإرسال! هذا <strong>سلوك غير مقصود ناتج عن آلية إغلاق النافذة</strong> وليس مرحلة مبرمجة لطلب الملفات.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. FIELD ALERTS AUDIT -->
+    <section class="report-section" id="alerts-lifecycle">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">4</div>
+          <h2 class="section-title">تدقيق التنبيهات الميدانية المستهدفة</h2>
+        </div>
+        <span class="badge-pill badge-warning">المستويان واللقطات المجمدة الموثقة</span>
+      </div>
+
+      <h3>أ. دورة حياة التنبيه الميداني</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content">
+            <h4>إعداد المسودة والربط الإلزامي بالبلاغ المنقح</h4>
+            <p>يشترط النظام برمجياً في <span class="tag tag-api">POST /api/admin/incidents/[id]/alerts</span> أن يرتبط التنبيه ببلاغ ميداني يمتلك <strong>نسخة منقحة معتمدة صراحة (isApproved: true)</strong>. يقوم النظام بإجراء فحص أمني آلي في الذاكرة (<span class="tag tag-file">lib/validations/alerts.ts: validateAlertDraftInput</span>) لمقارنة نصوص التنبيه مع الأصل الحساس لضمان عدم تسرب أي أسماء أو أرقام هواتف أو إحداثيات دقيقة.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content">
+            <h4>صياغة محتوى التنبيه المستقل بمستويين (Dual-Tier Content)</h4>
+            <p>يفرض النظام صياغة مستويين مستقلين من المحتوى:<br>
+              - <strong>المستوى الأول (Tier 1: REDACTED_OPERATIONAL_BRIEFING):</strong> إحاطة تشغيلية منقحة موجهة للفرق الميدانية ومنسقي الأمن تتضمن السرد المنقح وإرشادات التحرك.<br>
+              - <strong>المستوى الثاني (Tier 2: EXECUTIVE_FLASH_SUMMARY):</strong> ملخص تنفيذي موجز ومستقل لا يقل عن 15 حرفاً موجهاً لمدراء المنظمات والقيادات العليا لاتخاذ قرارات استراتيجية سريعة.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content">
+            <h4>إدارة المستلمين والتجميد الأمني (Recipients Management)</h4>
+            <p>تُحدد قائمة المستلمين من بين الحسابات النشطة حصراً عبر <span class="tag tag-api">POST /api/admin/alerts/[id]/recipients</span>. يُحظر تماماً إدراج المتدربين (TRAINEE) أو منسقي الميدان (FIELD_FOCAL_POINT) دون إذن خاص لحمايتهم. كل مستلم يُحدد له المستوى المصرح به (Tier 1 أو Tier 2).</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content">
+            <h4>الاعتماد وتجميد اللقطة المشفرة (Immutable Snapshot & SHA-256)</h4>
+            <p>محصور حصراً بالمدير الأعلى (SUPER_ADMIN) عبر <span class="tag tag-api">POST /api/admin/alerts/[id]/approve</span>. يتم تجميد النصوص والمحافظة والمستلمين المصرحين في سجل <span class="tag tag-file">AlertSnapshot</span> وتوليد بصمة تجزئة قطعية مشفرة <code>SHA-256</code>. أي تعديل لاحق على نصوص التنبيه أو مستلميه يبطل الاعتماد فورياً ويعيده إلى مسودة <strong>DRAFT</strong>.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-content">
+            <h4>التوزيع الداخلي المحمي والتحقق المشفر من عدم التلاعب</h4>
+            <p>عند تنفيذ التوزيع بواسطة SuperAdmin عبر <span class="tag tag-api">POST /api/admin/alerts/[id]/dispatch</span>، يعيد النظام حساب بصمة SHA-256 للقطة المجمدة (<span class="tag tag-file">verifySnapshotIntegrity</span>). إذا حدث أي تغيير أو تلاعب في قاعدة البيانات، يفشل التوزيع فوراً مع تحذير (Snapshot Tamper Detected). يتم التوزيع <strong>حصراً داخل البوابة (In-App)</strong> مع إنشاء إشعار وسجل تسليم بمفتاح منع التكرار (Idempotency Key)، دون أي إرسال خارجي (SMS/WhatsApp) لمنع اعتراض الرسائل.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-icon">🚨</div>
+        <div>
+          <strong>فجوة تشغيلية كبرى مكتشفة (Major Operational Gap):</strong>
+          على الرغم من أن الخادم وواجهات API تدعم صياغة التنبيهات بالكامل عبر <code>POST /api/admin/incidents/[id]/alerts</code>، إلا أنه <strong>لا يوجد في الواجهة الأمامية للمنصة أي نموذج أو نافذة منبثقة لإنشاء مسودة تنبيه جديدة!</strong><br>
+          الزر الموجود في تفاصيل البلاغ <code>/admin/incidents/[id]</code> ينقل المستخدم فقط إلى قائمة التنبيهات <code>/admin/alerts</code>، وفي تلك الصفحة لا يوجد زر لإنشاء تنبيه جديد! هذا يعني أن المستخدم العادي في بيئة الإنتاج لا يستطيع إنشاء تنبيه جديد إلا عبر أدوات API الخارجية مثل cURL أو Postman أو السجلات المسبقة الإدخال.
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. OPERATIONAL RISK REGISTER AUDIT -->
+    <section class="report-section" id="risks-lifecycle">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">5</div>
+          <h2 class="section-title">تدقيق سجل المخاطر التشغيلية</h2>
+        </div>
+        <span class="badge-pill badge-success">المصفوفة، تدابير التخفيف، وإعادة التقييم</span>
+      </div>
+
+      <h3>أ. تسجيل الخطر المستقل والمستند إلى بلاغ</h3>
+      <p>
+        يدير سجل المخاطر (<span class="tag tag-file">app/admin/risks</span>) التهديدات التشغيلية والميدانية عبر معيار ISO 31000.
+        يمكن تسجيل الخطر بمسارين:
+        <strong>(1) خطر مستقل:</strong> يُسجل مباشرة بواسطة مسؤول إدارة المخاطر.
+        <strong>(2) خطر مشتق من بلاغ ميداني:</strong> يشترط الخادم برمجياً في <span class="tag tag-file">app/api/admin/risks/route.ts:192</span> أن يكون البلاغ في حالة <strong>VERIFIED</strong> أو صيغ/اعتمد تنبيه عنه، لمنع إدراج إشاعات أو بلاغات غير محققة في سجل المخاطر المؤسسي.
+      </p>
+
+      <h3>ب. مصفوفة المخاطر وحساب مستوى الخطر (5 × 5)</h3>
+      <p>
+        يعتمد النظام معيار الضرب الحسابي الإلزامي: <code>درجة الخطر = الاحتمالية (1 إلى 5) × شدة الأثر (1 إلى 5)</code>، والنتيجة تتراوح بين 1 و 25 وفق التقسيم البرمجي الصارم في <span class="tag tag-file">lib/risk-engine.ts</span>:
+      </p>
+
+      <table class="risk-matrix-table">
+        <thead>
+          <tr>
+            <th>الاحتمالية \ الأثر</th>
+            <th>1 (طفيف)</th>
+            <th>2 (محدود)</th>
+            <th>3 (متوسط)</th>
+            <th>4 (جسيم)</th>
+            <th>5 (كارثي)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>5 (شبه مؤكد)</th>
+            <td class="matrix-cell-medium">5 (متوسط)</td>
+            <td class="matrix-cell-high">10 (مرتفع)</td>
+            <td class="matrix-cell-high">15 (مرتفع)</td>
+            <td class="matrix-cell-critical">20 (حرج)</td>
+            <td class="matrix-cell-critical">25 (حرج)</td>
+          </tr>
+          <tr>
+            <th>4 (محتمل جداً)</th>
+            <td class="matrix-cell-low">4 (منخفض)</td>
+            <td class="matrix-cell-medium">8 (متوسط)</td>
+            <td class="matrix-cell-high">12 (مرتفع)</td>
+            <td class="matrix-cell-high">16 (مرتفع)</td>
+            <td class="matrix-cell-critical">20 (حرج)</td>
+          </tr>
+          <tr>
+            <th>3 (ممكن)</th>
+            <td class="matrix-cell-low">3 (منخفض)</td>
+            <td class="matrix-cell-medium">6 (متوسط)</td>
+            <td class="matrix-cell-medium">9 (متوسط)</td>
+            <td class="matrix-cell-high">12 (مرتفع)</td>
+            <td class="matrix-cell-critical">15 (مرتفع)</td>
+          </tr>
+          <tr>
+            <th>2 (غير مرجح)</th>
+            <td class="matrix-cell-low">2 (منخفض)</td>
+            <td class="matrix-cell-low">4 (منخفض)</td>
+            <td class="matrix-cell-medium">6 (متوسط)</td>
+            <td class="matrix-cell-medium">8 (متوسط)</td>
+            <td class="matrix-cell-high">10 (مرتفع)</td>
+          </tr>
+          <tr>
+            <th>1 (نادر)</th>
+            <td class="matrix-cell-low">1 (منخفض)</td>
+            <td class="matrix-cell-low">2 (منخفض)</td>
+            <td class="matrix-cell-low">3 (منخفض)</td>
+            <td class="matrix-cell-low">4 (منخفض)</td>
+            <td class="matrix-cell-medium">5 (متوسط)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>ج. تدابير التخفيف (Mitigation Actions)</h3>
+      <p>
+        تُضاف التدابير عبر <span class="tag tag-api">POST /api/admin/risks/[id]/mitigations</span>:
+      </p>
+      <ul>
+        <li><strong>أنواع الإجراءات:</strong> وقائي (PREVENTIVE)، طوارئ واحترازي (CONTINGENCY)، تصحيحي (CORRECTIVE).</li>
+        <li><strong>أثر إضافة التدبير:</strong> بمجرد إضافة أول تدبير تخفيف، تنتقل حالة الخطر تلقائياً من <code>IDENTIFIED</code> أو <code>ASSESSED</code> إلى <strong>TREATMENT_IN_PROGRESS (قيد المعالجة والتخفيف)</strong>.</li>
+        <li><strong>الحالات والمتابعة:</strong> مخطط (PLANNED)، قيد التنفيذ (IN_PROGRESS)، مكتمل (COMPLETED - يُسجل توقيت الإنجاز تلقائياً)، متأخر (DELAYED)، ملغي (CANCELLED).</li>
+      </ul>
+
+      <h3>د. إعادة التقييم وسجل المراجعات التاريخي (Reassessments & Audit Trail)</h3>
+      <p>
+        عند مراجعة الخطر بعد تطبيق التدابير، لا يُمسح التقييم السابق، بل يستدعي المحلل <span class="tag tag-api">POST /api/admin/risks/[id]/assess</span>:
+      </p>
+      <ul>
+        <li>يُشترط إدخال <strong>مبررات إعادة التقييم (Rationale)</strong> بما لا يقل عن 5 أحرف.</li>
+        <li>يُنشأ سجل غير قابل للحذف في <span class="tag tag-file">RiskAssessmentHistory</span> يوثق القيم السابقة، القيم الجديدة، اسم المقيّم وتوقيت المراجعة.</li>
+        <li>يتم تحديث درجة الخطر المتبقي (Residual Risk Score) في السجل الرئيسي فورياً.</li>
+      </ul>
+
+      <div class="callout callout-danger">
+        <div class="callout-icon">🐛</div>
+        <div>
+          <strong>خطأ برمجي مؤكد في الواجهة (Confirmed Bug):</strong>
+          عند اختيار اشتقاق خطر من بلاغ في النافذة المنبثقة، يقوم المكون <span class="tag tag-file">components/admin/RiskRegisterManager.tsx:243</span> بطلب معاينة البلاغ، لكن الكود يبحث عن الخاصية <code>data.preview</code> والحقول <code>suggestedTitle</code> و <code>suggestedDescription</code>. في المقابل، يُرجع الخادم <span class="tag tag-file">app/api/admin/risks/[id]/risk-preview/route.ts</span> الخاصية <code>data.data</code> والحقول باسم <code>title</code> و <code>description</code>!
+          <br><strong>النتيجة للمستخدم:</strong> النموذج يظل فارغاً تماماً ولا يتم سحب بيانات البلاغ آلياً كما كان مخططاً، ويضطر المستخدم لإدخال البيانات يدوياً.
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. SYSTEM-WIDE INTEGRATION MAP -->
+    <section class="report-section" id="integrations">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">6</div>
+          <h2 class="section-title">خريطة التكامل الفعلي بين الوحدات وبقية المنصة</h2>
+        </div>
+        <span class="badge-pill badge-info">التكاملات، الانقطاعات، وحركة البيانات</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>الوحدة المرتبطة</th>
+              <th>طبيعة الربط الفعلي</th>
+              <th>البيانات التي تنتقل</th>
+              <th>الإجراء البادئ والمسؤول</th>
+              <th>القيود وحالات الانقطاع / التكرار</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>العمليات والخدمات الميدانية</strong><br>(Service Requests)</td>
+              <td><span class="badge-pill badge-danger">غير موجود (منفصل)</span></td>
+              <td>لا تنتقل أي بيانات برمجياً بين طلبات الحراسة/المرافقة وبين بلاغات الحوادث.</td>
+              <td>لا يوجد إجراء مشترك.</td>
+              <td>انفصال تام بين المنظومتين؛ إذا تعرضت مرافقة أمنية لحادث لا يتم ربط البلاغ برقم طلب الخدمة تلقائياً.</td>
+            </tr>
+            <tr>
+              <td><strong>العملاء والجهات المؤسسية</strong><br>(Client Profiles)</td>
+              <td><span class="badge-pill badge-warning">يدوي ومستهدف (تنبيهات فقط)</span></td>
+              <td>رقم التنبيه، العنوان، الملخص التنفيذي، المحافظة، إرشادات الحركة (Tier 1 أو Tier 2).</td>
+              <td>يبدأ عندما يضيف SuperAdmin حساب العميل في قائمة مستلمي التنبيه ويعتمد نشره.</td>
+              <td>العميل لا يرى البلاغات أو المخاطر نهائياً، ولا يستلم التنبيه إلا إذا حُدد حسابه يدوياً قبل التجميد.</td>
+            </tr>
+            <tr>
+              <td><strong>المخازن والتجهيزات والسلامة</strong><br>(Inventory & Equipment)</td>
+              <td><span class="badge-pill badge-danger">مفاهيمي فقط (لا يوجد ربط بقاعدة البيانات)</span></td>
+              <td>تصنيفات البلاغات تتضمن THEFT و VEHICLE_INCIDENT، ولكن لا ترتبط برقم الأصل المعداتي.</td>
+              <td>لا يوجد إجراء آلي.</td>
+              <td>لا يوجد حقل <code>equipmentId</code> في البلاغات لتحديث حالة المعدة إلى عاطلة أو مسروقة تلقائياً.</td>
+            </tr>
+            <tr>
+              <td><strong>التدريب والأكاديمية</strong><br>(Courses & Trainees)</td>
+              <td><span class="badge-pill badge-danger">معزول تماماً</span></td>
+              <td>لا تنتقل أي بيانات.</td>
+              <td>لا يوجد.</td>
+              <td>المتدربون محجوبون برمجياً عن بوابات البلاغات والتنبيهات الميدانية لحماية سرية الميدان.</td>
+            </tr>
+            <tr>
+              <td><strong>الدراسات والبحوث الميدانية</strong><br>(Research Publications)</td>
+              <td><span class="badge-pill badge-danger">منفصل تشغيلياً</span></td>
+              <td>لا يوجد نقل آلي للبيانات الميدانية لدعم مسودات الأبحاث.</td>
+              <td>تفريغ يدوي من قبل الباحثين إن وجد.</td>
+              <td>قاعدة بيانات الأبحاث منفصلة تماماً عن جداول البلاغات والمخاطر.</td>
+            </tr>
+            <tr>
+              <td><strong>الإشعارات وسجلات التدقيق</strong><br>(Notifications & ActivityLog)</td>
+              <td><span class="badge-pill badge-success">ربط آلي كامل ومباشر</span></td>
+              <td>معرف البلاغ/التنبيه/الخطر، نوع العملية، هوية المستخدم، النص المعقم غير الحساس.</td>
+              <td>أي إجراء (إرسال، تنقيح، تكليف، تحقق، اعتماد، تصعيد، تقييم) يولد سجلاً فورياً.</td>
+              <td>الإشعارات داخلية حصراً (In-App) في جدول <span class="tag tag-file">Notification</span>؛ لا توجد قنوات خارجية نشطة.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7. ISSUE REGISTRY & RECOMMENDATIONS -->
+    <section class="report-section" id="issues-recommendations">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-number">7</div>
+          <h2 class="section-title">جدول المشكلات والفجوات والتوصيات مرتبة حسب الأولوية</h2>
+        </div>
+        <span class="badge-pill badge-danger">خارطة طريق التحسين</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>المعرف</th>
+              <th>التصنيف</th>
+              <th>الأولوية</th>
+              <th>الدليل من الشيفرة البرمجية</th>
+              <th>السلوك الحالي والأثر التشغيلي</th>
+              <th>التوصية الفنية المحددة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ISS-01</strong></td>
+              <td><span class="badge-pill badge-danger">خطأ مؤكد (Bug)</span></td>
+              <td><span class="badge-pill badge-danger">حرجة / عاجلة</span></td>
+              <td><span class="tag tag-file">components/admin/IncidentDetailManager.tsx:321</span> يستدعي <code>PATCH</code> بينما <span class="tag tag-file">app/api/admin/incidents/[id]/assignments/route.ts</span> يعرف فقط <code>DELETE</code>.</td>
+              <td>فشل عملية سحب التكليف من الموظف عبر الواجهة بنتيجة <code>405 Method Not Allowed</code>، مما يمنع إلغاء صلاحية وصول الموظف إلى البلاغ المنقح بعد إسناده.</td>
+              <td>توحيد الطريقة إما بدعم <code>PATCH</code> في الخادم لتحديث <code>isActive: false</code>، أو تعديل استدعاء الواجهة ليستخدم <code>DELETE ?assignmentId=...</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>ISS-02</strong></td>
+              <td><span class="badge-pill badge-danger">خطأ مؤكد (Bug)</span></td>
+              <td><span class="badge-pill badge-danger">عالية</span></td>
+              <td><span class="tag tag-file">components/admin/RiskRegisterManager.tsx:245</span> يبحث عن <code>data.preview.suggestedTitle</code>، بينما API في <span class="tag tag-file">risk-preview/route.ts:80</span> يُرجع <code>data.data.title</code>.</td>
+              <td>عند محاولة إنشاء خطر مستند إلى بلاغ، لا تُملأ حقول العنوان والوصف والتصنيف تلقائياً، ويبقى النموذج فارغاً مما يربك المستخدم ويهدر الوقت.</td>
+              <td>تعديل قراءة الاستجابة في المكون إلى <code>const incData = data.data;</code> وقراءة <code>incData.title</code> و <code>incData.description</code> و <code>incData.category</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>ISS-03</strong></td>
+              <td><span class="badge-pill badge-warning">فجوة وظيفية (Gap)</span></td>
+              <td><span class="badge-pill badge-danger">حرجة وظيفياً</span></td>
+              <td>غياب أي استدعاء لـ <span class="tag tag-api">POST /api/admin/incidents/[id]/alerts</span> في كامل واجهات <span class="tag tag-file">components/admin</span>.</td>
+              <td>زر «صياغة مسودة تنبيه» في صفحة البلاغ يعيد التوجيه فقط لصفحة القائمة <code>/admin/alerts</code>، ولا يوجد نموذج لإنشاء مسودة التنبيه في الواجهة نهائياً.</td>
+              <td>بناء نافذة حوارية أو صفحة مستقلة لإنشاء مسودة التنبيه وربطها بالـ API الموجود بالفعل، وتمرير معرف البلاغ في الرابط <code>/admin/alerts/new?incidentId=...</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>ISS-04</strong></td>
+              <td><span class="badge-pill badge-warning">سلوك واجهة (UX Glitch)</span></td>
+              <td><span class="badge-pill badge-warning">متوسطة</span></td>
+              <td><span class="tag tag-file">app/portal/field/intake/page.tsx:1451,1654</span><br>إغلاق نافذة التأكيد وحذفها السريع من الـ DOM يعرض مستمع النقر في Dropzone لنقرة اختراقية.</td>
+              <td>ظهور نافذة اختيار الملفات للمتصفح بشكل مفاجئ وغير متوقع فور تأكيد إرسال البلاغ لدى بعض المستخدمين بسبب تقاطع مؤشر النقر مع منطقة السحب.</td>
+              <td>إضافة تأخير زمني بسيط أو حظر النقر على Dropzone أثناء حالة الإرسال <code>isSubmitting</code>، وتجريد <code>tabIndex</code> عند عدم التفاعل.</td>
+            </tr>
+            <tr>
+              <td><strong>ISS-05</strong></td>
+              <td><span class="badge-pill badge-info">تحسين مقترح (Enhancement)</span></td>
+              <td><span class="badge-pill badge-warning">متوسطة</span></td>
+              <td><span class="tag tag-file">app/portal/field/intake/page.tsx</span><br>النموذج لا يحفظ مسودة محلياً في <code>localStorage</code> أو في قاعدة البيانات.</td>
+              <td>في حال انقطاع الإنترنت أو إغلاق المتصفح أثناء تعبئة السرد المطول في الميدان، يفقد منسق الميدان كافة البيانات المدخلة ويضطر لإعادة كتابتها.</td>
+              <td>إضافة ميزة الحفظ التلقائي كمسودة محلية مشفرة في المتصفح أو زر «حفظ مسودة غير مكتملة» لاستئنافها لاحقاً قبل التشفير النهائي.</td>
+            </tr>
+            <tr>
+              <td><strong>ISS-06</strong></td>
+              <td><span class="badge-pill badge-info">تحسين مقترح (Enhancement)</span></td>
+              <td><span class="badge-pill badge-info">منخفضة</span></td>
+              <td>التصنيفات في <span class="tag tag-file">CATEGORIES</span> و <span class="tag tag-file">VALID_RISK_CATEGORIES</span> قوائم ثابتة في الكود و Prisma.</td>
+              <td>عدم قدرة مسؤولي النظام على إضافة تصنيفات أمنية أو تشغيلية جديدة أو تخصيص الأولويات إلا عبر تعديل الكود البرمجي وعمل نشر جديد.</td>
+              <td>نقل التصنيفات التشغيلية إلى جدول مرجعي في قاعدة البيانات (Lookup Table) يُدار من إعدادات النظام الإدارية.</td>
+            </tr>
+            <tr>
+              <td><strong>ISS-07</strong></td>
+              <td><span class="badge-pill badge-info">تحسين مقترح (Enhancement)</span></td>
+              <td><span class="badge-pill badge-warning">متوسطة</span></td>
+              <td><span class="tag tag-file">lib/escalation-engine.ts</span> يُستدعى فقط عند الطلب أو عند استعراض البلاغات.</td>
+              <td>غياب معالج مهام خلفي دوري (Cron Job / Scheduled Task) يقوم بفحص البلاغات المتأخرة وإطلاق التصعيد التلقائي في حال عدم دخول أي مشرف للنظام.</td>
+              <td>تفعيل Cron Job مجدول كل 5 دقائق لفحص البلاغات التي تجاوزت <code>dueAt</code> وتصعيدها تلقائياً مع تسجيل السبب كـ SLA Breach.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="report-footer">
+    <div class="container">
+      <p>منصة FACSS — المركز الدولي للأمن والسلامة والدراسات الاستراتيجية</p>
+      <p style="margin-top: 0.5rem; font-size: 0.78rem;">
+        وثيقة تدقيق وظيفي وهندسي رسمية | تم الفحص والتوثيق دون أي تعديل على ملفات المشروع البرمجية.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -139,7 +139,7 @@ export async function POST(request: Request, { params }: RouteContext) {
   }
 }
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleRevocation(request: Request, params: { id: string }) {
   try {
     const session = await getCurrentUser(true);
     if (!session || session.role !== ROLES.SUPER_ADMIN) {
@@ -150,7 +150,12 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     }
 
     const { searchParams } = new URL(request.url);
-    const assignmentId = searchParams.get('assignmentId');
+    let assignmentId = searchParams.get('assignmentId');
+
+    if (!assignmentId) {
+      const body = await request.json().catch(() => ({}));
+      assignmentId = body.assignmentId;
+    }
 
     if (!assignmentId) {
       return NextResponse.json({ error: 'معلمة assignmentId مطلوبة' }, { status: 400 });
@@ -195,3 +200,12 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request, { params }: RouteContext) {
+  return handleRevocation(request, params);
+}
+
+export async function DELETE(request: Request, { params }: RouteContext) {
+  return handleRevocation(request, params);
+}
+

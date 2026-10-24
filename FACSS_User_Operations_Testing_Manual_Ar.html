@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>دليل التشغيل والاختبار العملي لمنصة مركز الحلول المتكاملة للأمن والسلامة (FACSS)</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+    
+    @page {
+        size: A4 portrait;
+        margin: 11mm 13mm 11mm 13mm;
+        @bottom-right {
+            content: "مركز الحلول المتكاملة للأمن والسلامة (FACSS) — دليل التشغيل والاختبار الميداني";
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 8pt;
+            color: #718096;
+        }
+        @bottom-left {
+            content: "صفحة " counter(page);
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 8pt;
+            color: #B59254;
+            font-weight: bold;
+        }
+    }
+    
+    @page:first {
+        margin: 0;
+        @bottom-right { content: normal; }
+        @bottom-left { content: normal; }
+    }
+    
+    * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body {
+        font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+        direction: rtl;
+        text-align: right;
+        color: #1A202C;
+        background-color: #FFFFFF;
+        margin: 0;
+        padding: 0;
+        font-size: 8.8pt;
+        line-height: 1.5;
+    }
+    
+    /* Cover Page */
+    .cover-page {
+        width: 100vw;
+        height: 100vh;
+        min-height: 297mm;
+        background: linear-gradient(145deg, #071910 0%, #0B2518 50%, #133E2B 100%);
+        color: #FFFFFF;
+        padding: 35mm 20mm 20mm 20mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        page-break-after: always;
+        overflow: hidden;
+    }
+    
+    .cover-page::before {
+        content: "";
+        position: absolute;
+        top: -150px;
+        left: -150px;
+        width: 450px;
+        height: 450px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(197, 155, 39, 0.15) 0%, rgba(0,0,0,0) 70%);
+    }
+    
+    .cover-page::after {
+        content: "";
+        position: absolute;
+        bottom: -150px;
+        right: -150px;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(197, 155, 39, 0.12) 0%, rgba(0,0,0,0) 70%);
+    }
+    
+    .cover-top {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .cover-entity-ar {
+        font-size: 21pt;
+        font-weight: 800;
+        color: #FFFFFF;
+        letter-spacing: 0.5px;
+        margin: 0;
+        line-height: 1.3;
+    }
+    
+    .cover-entity-en {
+        font-size: 11pt;
+        font-weight: 600;
+        color: #B59254;
+        margin-top: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .cover-divider {
+        width: 90px;
+        height: 4px;
+        background: linear-gradient(90deg, #B59254, #D4B26F);
+        margin: 20px auto;
+        border-radius: 2px;
+    }
+    
+    .cover-middle {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        background: rgba(11, 37, 24, 0.65);
+        border: 1px solid rgba(197, 155, 39, 0.35);
+        border-radius: 12px;
+        padding: 26px 20px;
+        backdrop-filter: blur(5px);
+        margin: 15px 0;
+    }
+    
+    .doc-badge {
+        display: inline-block;
+        background: rgba(197, 155, 39, 0.2);
+        border: 1px solid #B59254;
+        color: #DFB743;
+        font-size: 9pt;
+        font-weight: 700;
+        padding: 4px 18px;
+        border-radius: 30px;
+        margin-bottom: 12px;
+    }
+    
+    .cover-title {
+        font-size: 22pt;
+        font-weight: 900;
+        color: #FFFFFF;
+        margin: 5px 0 10px 0;
+        line-height: 1.3;
+    }
+    
+    .cover-subtitle {
+        font-size: 11pt;
+        color: #E2E8F0;
+        font-weight: 400;
+        margin: 0;
+        line-height: 1.5;
+    }
+    
+    .cover-slogans {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        margin-top: 15px;
+        font-size: 9pt;
+        color: #B59254;
+        font-weight: 700;
+    }
+    
+    .cover-bottom {
+        position: relative;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: 10px;
+        padding: 14px 20px;
+        border-right: 4px solid #B59254;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .author-box h4 {
+        margin: 0 0 3px 0;
+        font-size: 8.5pt;
+        color: #A0AEC0;
+        font-weight: 400;
+    }
+    
+    .author-name {
+        font-size: 12pt;
+        font-weight: 800;
+        color: #B59254;
+        margin: 0;
+    }
+    
+    .author-title {
+        font-size: 8.5pt;
+        color: #CBD5E0;
+        margin: 2px 0 0 0;
+    }
+    
+    .meta-box {
+        text-align: left;
+        font-size: 8.5pt;
+        color: #A0AEC0;
+        line-height: 1.4;
+    }
+    
+    /* Content Pages Layout */
+    .page {
+        page-break-after: always;
+        padding-top: 1mm;
+    }
+    
+    .page:last-child {
+        page-break-after: avoid;
+    }
+    
+    .page-header {
+        border-bottom: 2px solid #0B2518;
+        padding-bottom: 5px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+    
+    .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .header-icon-box {
+        width: 28px;
+        height: 28px;
+        background: #0B2518;
+        color: #B59254;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11pt;
+        font-weight: bold;
+    }
+    
+    .header-title {
+        font-size: 12.5pt;
+        font-weight: 800;
+        color: #0B2518;
+        margin: 0;
+    }
+    
+    .header-subtitle {
+        font-size: 8pt;
+        color: #718096;
+        margin: 0;
+    }
+    
+    .header-tag {
+        font-size: 7.5pt;
+        font-weight: 700;
+        background: #F7FAFC;
+        border: 1px solid #E2E8F0;
+        color: #B59254;
+        padding: 2px 8px;
+        border-radius: 20px;
+    }
+    
+    /* Typography & Sections */
+    h2 {
+        font-size: 10.2pt;
+        font-weight: 800;
+        color: #0B2518;
+        margin: 10px 0 5px 0;
+        border-right: 3px solid #B59254;
+        padding-right: 7px;
+    }
+    
+    h3 {
+        font-size: 9.2pt;
+        font-weight: 700;
+        color: #133E2B;
+        margin: 7px 0 3px 0;
+    }
+    
+    p {
+        margin: 0 0 5px 0;
+        color: #2D3748;
+        font-size: 8.5pt;
+        line-height: 1.5;
+        text-align: justify;
+    }
+    
+    /* Action Scenario Box */
+    .scenario-box {
+        background: #FFFFFF;
+        border: 1px solid #CBD5E0;
+        border-right: 4px solid #0B2518;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    
+    .scenario-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+        border-bottom: 1px solid #EDF2F7;
+        padding-bottom: 4px;
+    }
+    
+    .scenario-title {
+        font-size: 9.2pt;
+        font-weight: 800;
+        color: #0B2518;
+    }
+    
+    .scenario-badge {
+        font-size: 7.2pt;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: #FEF3C7;
+        color: #92400E;
+        border: 1px solid #FCD34D;
+    }
+    
+    /* Steps Container */
+    .step-item {
+        margin-bottom: 7px;
+        padding-right: 14px;
+        position: relative;
+    }
+    
+    .step-item::before {
+        content: "◀";
+        position: absolute;
+        right: 0;
+        top: 1px;
+        color: #B59254;
+        font-size: 7.5pt;
+    }
+    
+    .step-label {
+        font-weight: 700;
+        color: #133E2B;
+        font-size: 8.5pt;
+    }
+    
+    .io-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 5px 0;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 5px;
+        padding: 6px 8px;
+    }
+    
+    .io-col-in {
+        border-left: 1px solid #E2E8F0;
+        padding-left: 6px;
+    }
+    
+    .io-col-out {
+        padding-right: 2px;
+    }
+    
+    .io-tag {
+        display: inline-block;
+        font-size: 7pt;
+        font-weight: 800;
+        padding: 1px 5px;
+        border-radius: 3px;
+        margin-bottom: 3px;
+    }
+    
+    .io-tag-in {
+        background: #EBF8FF;
+        color: #2B6CB0;
+        border: 1px solid #BEE3F8;
+    }
+    
+    .io-tag-out {
+        background: #F0FFF4;
+        color: #276749;
+        border: 1px solid #C6F6D5;
+    }
+    
+    .io-content {
+        font-size: 8pt;
+        color: #4A5568;
+        line-height: 1.4;
+    }
+    
+    /* Grids and Cards */
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 7px;
+        margin-bottom: 8px;
+    }
+    
+    .card {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 7px 9px;
+        position: relative;
+    }
+    
+    .card-accent {
+        border-top: 3px solid #B59254;
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    
+    .card-title {
+        font-size: 8.5pt;
+        font-weight: 700;
+        color: #0B2518;
+        margin: 0 0 2px 0;
+    }
+    
+    .card-desc {
+        font-size: 7.8pt;
+        color: #4A5568;
+        margin: 0;
+        line-height: 1.4;
+    }
+    
+    /* Feature Highlight Box */
+    .highlight-box {
+        background: linear-gradient(145deg, #0B2518 0%, #133E2B 100%);
+        color: #FFFFFF;
+        border-radius: 6px;
+        padding: 9px 12px;
+        margin: 8px 0;
+        border-right: 4px solid #B59254;
+    }
+    
+    .highlight-box h3 {
+        color: #B59254;
+        font-size: 9.3pt;
+        margin: 0 0 3px 0;
+    }
+    
+    .highlight-box p {
+        color: #E2E8F0;
+        font-size: 8pt;
+        margin: 0;
+        line-height: 1.45;
+    }
+    
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 7px 0;
+        font-size: 7.8pt;
+    }
+    
+    th {
+        background: #0B2518;
+        color: #FFFFFF;
+        text-align: right;
+        padding: 5px 7px;
+        font-weight: 700;
+        border: 1px solid #0B2518;
+    }
+    
+    td {
+        padding: 4px 7px;
+        border: 1px solid #E2E8F0;
+        color: #2D3748;
+        line-height: 1.35;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #F8FAFC;
+    }
+    
+    .footer-note {
+        margin-top: 10px;
+        padding-top: 6px;
+        border-top: 1px dashed #CBD5E0;
+        font-size: 7.5pt;
+        color: #718096;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+    <!-- ==================== COVER PAGE ==================== -->
+    <div class="cover-page">
+        <div class="cover-top">
+            <h1 class="cover-entity-ar">مركز الحلول المتكاملة للأمن والسلامة</h1>
+            <div class="cover-entity-en">Integrated Solutions Center for Safety and Security (FACSS)</div>
+            <div class="cover-divider"></div>
+        </div>
+        
+        <div class="cover-middle">
+            <div class="doc-badge">دليل العمليات والتطبيق الميداني المعتمد — 2026م</div>
+            <div class="cover-title">دليل التشغيل والاختبار العملي الشامل للمنصة</div>
+            <p class="cover-subtitle">دليل تطبيقي وإجرائي خطوة بخطوة يوضح لمسؤولي المركز والعملاء كيفية استخدام كافة واجهات وبوابات المنصة، وتنفيذ سيناريوهات العمل، وتتبع المدخلات والمخرجات الميدانية بدقة</p>
+            <div class="cover-slogans">
+                <span>🛡️ «السلامة أولاً»</span>
+                <span>•</span>
+                <span>⚙️ «إجراءات تشغيلية واضحة وموثقة»</span>
+                <span>•</span>
+                <span>📋 «من المدخلات الميدانية إلى المخرجات المعتمدة»</span>
+            </div>
+        </div>
+        
+        <div class="cover-bottom">
+            <div class="author-box">
+                <h4>وثيقة التوجيه والتدريب التشغيلي:</h4>
+                <div class="author-name">مركز الحلول المتكاملة للأمن والسلامة (FACSS)</div>
+                <div class="author-title">إدارة العمليات والجودة وضبط الأداء المؤسسي — العاصمة عدن</div>
+            </div>
+            <div class="meta-box">
+                <div><strong>نوع الوثيقة:</strong> دليل إجراءات وتشغيل عملي (SOP)</div>
+                <div><strong>الإصدار:</strong> Ver 2.5 — الإصدار التطبيقي النهائي</div>
+                <div><strong>تاريخ الاعتماد:</strong> أكتوبر 2026م</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 1: QUICK START & ARCHITECTURE ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">01</div>
+                <div>
+                    <h1 class="header-title">البدء السريع وبيئة العمليات والتشغيل</h1>
+                    <p class="header-subtitle">روابط الوصول المباشر، بيانات الحسابات التشغيلية، ومسار البيانات</p>
+                </div>
+            </div>
+            <div class="header-tag">البدء السريع</div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>منهجية العمل في هذا الدليل: (المدخلات ◀ المعالجة ◀ المخرجات والنتائج)</h3>
+            <p>صُمم هذا الدليل ليكون مرجعاً عملياً للشخص المسؤول عن استخدام المنصة واختبارها؛ حيث يشرح لكل وظيفة: <strong>أين يدخل المستخدم، ما هي البيانات والخيارات التي يدخلها (المدخلات)، ما هو الإجراء المطلوب تنفيذه، وما هي النتيجة الفورية الملموسة التي ستظهر على الشاشة (المخرجات).</strong></p>
+        </div>
+
+        <h2>روابط الوصول المباشر لواجهات وبوابات المنصة:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 28%;">الواجهة أو البوابة</th>
+                    <th style="width: 27%;">الرابط المباشر للمعاينة</th>
+                    <th style="width: 45%;">الهدف التشغيلي والجمهور المستهدف</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>الواجهة العامة للمركز</strong></td>
+                    <td><code>http://localhost:3000</code></td>
+                    <td>استعراض الخدمات الميدانية، المبادئ، التجهيزات، والأبحاث لكافة الزوار.</td>
+                </tr>
+                <tr>
+                    <td><strong>طلب خدمة أو استشارة</strong></td>
+                    <td><code>/request-service</code></td>
+                    <td>تقديم طلبات الحراسة والاستشارات وتقييم المقرات وتوليد كود التتبع.</td>
+                </tr>
+                <tr>
+                    <td><strong>بوابة التحقق من الوثائق</strong></td>
+                    <td><code>/verify</code></td>
+                    <td>فحص ومطابقة صحة الشهادات والتقارير الميدانية بالرقم التسلسلي لمنع التزوير.</td>
+                </tr>
+                <tr>
+                    <td><strong>بوابة العملاء والشركاء</strong></td>
+                    <td><code>/portal/client</code></td>
+                    <td>متابعة مراحل الطلبات، المراسلة مع غرفة العمليات، وتحميل التقارير الأمنية.</td>
+                </tr>
+                <tr>
+                    <td><strong>بوابة المتدربين والشهادات</strong></td>
+                    <td><code>/portal/trainee</code></td>
+                    <td>متابعة الدورات المسجل بها المتدرب، جدول الساعات، واستلام الشهادات الرقمية.</td>
+                </tr>
+                <tr>
+                    <td><strong>لوحة القيادة والإدارة</strong></td>
+                    <td><code>/admin</code> أو <code>/admin/content</code></td>
+                    <td>إدارة العمليات والطلبات والمستخدمين وتعديل نصوص الموقع 100% ذاتياً.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>جدول الحسابات التشغيلية المعتمدة لتنفيذ سيناريوهات الاختبار:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">الدور الوظيفي</th>
+                    <th style="width: 32%;">البريد الإلكتروني المعتمد</th>
+                    <th style="width: 20%;">كلمة المرور</th>
+                    <th style="width: 23%;">الصلاحيات والمهام</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>المدير العام للمركز</strong></td>
+                    <td><code>admin@facss.org</code></td>
+                    <td><code>Admin@FACSS2026</code></td>
+                    <td>إشراف كامل على المحتوى والعمليات والبيانات والإعدادات.</td>
+                </tr>
+                <tr>
+                    <td><strong>مدير العمليات الميدانية</strong></td>
+                    <td><code>services@facss-aden.com</code></td>
+                    <td><code>Service@FACSS2026</code></td>
+                    <td>استقبال طلبات الخدمات، تغيير الحالات، وتكليف الفرق.</td>
+                </tr>
+                <tr>
+                    <td><strong>مدير التدريب والتأهيل</strong></td>
+                    <td><code>training@facss-aden.com</code></td>
+                    <td><code>Train@FACSS2026</code></td>
+                    <td>إدارة البرامج، قبول المتدربين، وتأكيد الشهادات.</td>
+                </tr>
+                <tr>
+                    <td><strong>حساب عميل مؤسسي (بنك / منظمة)</strong></td>
+                    <td><code>client@yemen-bank.com</code></td>
+                    <td><code>Client@FACSS2026</code></td>
+                    <td>تقديم الطلبات، متابعة الحالات، والملاحظات الميدانية.</td>
+                </tr>
+                <tr>
+                    <td><strong>حساب متدرب أمني</strong></td>
+                    <td><code>trainee@facss-aden.com</code></td>
+                    <td><code>Trainee@FACSS2026</code></td>
+                    <td>استعراض المقررات المسجل بها وتحميل الشهادة المعتمدة.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== PAGE 2: SERVICE REQUEST LIFECYCLE ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">02</div>
+                <div>
+                    <h1 class="header-title">السيناريو 1: دورة حياة طلب خدمة واستشارة أمنية</h1>
+                    <p class="header-subtitle">من تقديم الطلب، التتبع الفوري، المراجعة العملياتية، حتى التسليم</p>
+                </div>
+            </div>
+            <div class="header-tag">طلبات الخدمات</div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المرحلة الأولى: تقديم طلب خدمة من واجهة العميل</span>
+                <span class="scenario-badge">بوابة طالبي الخدمة</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 1: الدخول لنافذة تقديم الطلبات:</span>
+                انقر على زر <strong>«طلب خدمة أو استشارة»</strong> في ترويسة الموقع، أو ادخل على الرابط <code>/request-service</code>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة من المستخدم</span>
+                    <div class="io-content">
+                        • <strong>القطاع:</strong> اختيار «قطاع الحراسات وخدمات الأمن والسلامة»<br>
+                        • <strong>الخدمة:</strong> اختيار «خدمات الحراسات والحماية الميدانية»<br>
+                        • <strong>بيانات الجهة:</strong> اسم المنشأة (مثال: بنك الأمانة الدولي)<br>
+                        • <strong>مسؤول الاتصال:</strong> الاسم، البريد الرسمي، ورقم الهاتف<br>
+                        • <strong>الموقع وتفاصيل الاحتياج:</strong> العاصمة عدن — تأمين المقر الرئيسي.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والنتيجة الفورية الظاهرة</span>
+                    <div class="io-content">
+                        • النقر على زر <strong>«إرسال الطلب»</strong>.<br>
+                        • ظهور شاشة خضراء تؤكد نجاح العملية وتمنحك <strong>كود التتبع الرسمي الموحد</strong> مثل:<br>
+                        <strong style="color:#0B2518;display:inline-block;padding:2px 6px;background:#DEF7EC;border-radius:4px;margin-top:2px;">FACSS-SR-2026-359204</strong><br>
+                        • رسالة تفيد بتحويل الملف فوراً إلى غرفة العمليات لدراسته.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المرحلة الثانية: مراجعة واعتماد الطلب من لوحة إدارة العمليات</span>
+                <span class="scenario-badge">لوحة إدارة المركز (/admin)</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 2: الدخول للوحة التحكم وقبول ومعالجة الطلب:</span>
+                سجل الدخول بحساب مسؤول العمليات (<code>services@facss-aden.com</code>) وادخل على <strong>«إدارة طلبات الخدمة»</strong>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">إجراءات ومدخلات مسؤول العمليات</span>
+                    <div class="io-content">
+                        • فتح الطلب الجديد ومراجعة التفاصيل الجغرافية.<br>
+                        • <strong>تغيير الحالة:</strong> تحويل الحالة من (جديد) إلى <strong>«قيد التنفيذ الميداني»</strong>.<br>
+                        • <strong>كتابة إفادة عملياتية:</strong> كتابة في صندوق الملاحظات: <em>«تم تكليف وحدة الحماية وتدقيق بوابات المنشأة ووضع خطة الحراسة الميدانية».</em><br>
+                        • تعيين الضابط الميداني المسؤول عن المتابعة.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والنتيجة التشغيلية</span>
+                    <div class="io-content">
+                        • الضغط على زر <strong>«تحديث حالة الطلب»</strong>.<br>
+                        • ظهور شارة النجاح الخضراء <em>«تم تحديث بيانات الطلب بنجاح»</em>.<br>
+                        • انتقال الطلب تلقائياً في قائمة الطلبات إلى تصنيف (قيد التنفيذ).<br>
+                        • تسجيل العملية في سجل الرقابة الميداني بالتاريخ والدقيقة.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المرحلة الثالثة: التحقق من انعكاس الحالة في بوابة العميل ومتابعة الإنجاز</span>
+                <span class="scenario-badge">بوابة العميل المؤسسية</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 3: استعراض النتيجة من حساب العميل:</span>
+                افتح الرابط <code>/portal/client</code> بحساب العميل (<code>client@yemen-bank.com</code>) وادخل لقائمة الطلبات.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات والمشاهدة</span>
+                    <div class="io-content">
+                        • النقر على رقم الطلب <code>FACSS-SR-2026-359204</code>.<br>
+                        • قراءة حالة الطلب وملاحظات غرفة العمليات.<br>
+                        • كتابة استفسار في صندوق الملاحظات: <em>«يرجى موافاتنا بالتقرير الميداني للوردية الصباحية».</em>
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات المحققة</span>
+                    <div class="io-content">
+                        • تظهر حالة الطلب محدثة بشارة: <strong>قيد التنفيذ الميداني</strong>.<br>
+                        • ظهور الملاحظة التي كتبها مسؤول المركز مطابقة بالوقت والتاريخ.<br>
+                        • ظهور رسالة العميل الجديدة في لوحة إدارة العمليات فوراً.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 3: TRAINING & VERIFICATION ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">03</div>
+                <div>
+                    <h1 class="header-title">السيناريو 2: التسجيل في التدريب وإصدار وفحص الشهادات</h1>
+                    <p class="header-subtitle">من طلب الالتحاق بالدورة، الاعتماد التدريبي، حتى فحص الوثيقة المعتمدة</p>
+                </div>
+            </div>
+            <div class="header-tag">التدريب والتحقق</div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المرحلة الأولى: استعراض وتسجيل متدرب في برنامج تدريبي تخصصي</span>
+                <span class="scenario-badge">أكاديمية التدريب الميداني</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 1: اختيار الدورة وتقديم طلب الالتحاق:</span>
+                افتح صفحة <strong>«التدريب الميداني»</strong> عبر الرابط <code>/training</code> وتصفح البرامج المتاحة للتسجيل.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة للتسجيل</span>
+                    <div class="io-content">
+                        • اختيار برنامج: «السلامة الشخصية وإدارة مخاطر الحركة في البيئات الحرجة».<br>
+                        • النقر على زر <strong>«التسجيل في البرنامج»</strong>.<br>
+                        • <strong>بيانات المتدرب:</strong> الاسم الكامل، الجهة التابع لها، رقم الهاتف، والبريد.<br>
+                        • تحديد نوع الالتحاق (ترشيح مؤسسي عبر جهة عمل أو فردي).
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والنتيجة الفورية</span>
+                    <div class="io-content">
+                        • النقر على <strong>«تأكيد إرسال طلب التسجيل»</strong>.<br>
+                        • ظهور إشعار تأكيد رسمي: <em>«تم استلام طلب الالتحاق بالبرنامج بنجاح، وسيتم إخطاركم بجدول القاعة ومواعيد التدريب التكتيكي».</em><br>
+                        • وصول قيد المتدرب تلقائياً إلى لوحة إدارة التدريب بالمركز.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المرحلة الثانية: اعتماد المتدرب وتأكيد حضوره وإصدار الشهادة</span>
+                <span class="scenario-badge">إدارة التدريب والأكاديمية (/admin/training)</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 2: الدخول للوحة إدارة التدريب واعتماد السجل:</span>
+                سجل الدخول بحساب مدير التدريب (<code>training@facss-aden.com</code>) وادخل على <strong>«إدارة الدورات والتدريب»</strong>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">إجراءات مسؤول التدريب</span>
+                    <div class="io-content">
+                        • فتح قائمة المسجلين في دورة السلامة الميدانية.<br>
+                        • تغيير حالة المتدرب إلى <strong>«مقبول ومؤكد الحضور»</strong>.<br>
+                        • عند اكتمال ساعات التدريب الميداني واجتياز التقييم، يتم اعتماد إصدار الشهادة الرسمية وتوليد رقمها التسلسلي المعتمد (مثال: <code>FACSS-CERT-2026-8841</code>).
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والنتيجة</span>
+                    <div class="io-content">
+                        • الضغط على زر <strong>«حفظ واعتماد التقييم»</strong>.<br>
+                        • تفعيل حالة التخرج بنجاح في سجلات المركز.<br>
+                        • إتاحة تحميل الشهادة الرقمية فوراً للمتدرب في بوابته الشخصية <code>/portal/trainee</code> حاملة كود الفحص الرقمي.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المرحلة الثالثة: فحص الشهادة والتحقق من صحتها وسريانها</span>
+                <span class="scenario-badge">بوابة التحقق الفوري (/verify)</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 3: التحقق الفوري لمنع التزوير وإثبات الكفاءة:</span>
+                تقوم جهة العمل أو المنظمة بالدخول إلى رابط <strong>«التحقق من الشهادات والوثائق»</strong> عبر الرابط <code>/verify</code>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة</span>
+                    <div class="io-content">
+                        • إدخال الرقم التسلسلي في خانة البحث: <code>FACSS-CERT-2026-8841</code>.<br>
+                        • النقر على زر <strong>«التحقق من الوثيقة»</strong>.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والنتيجة المؤكدة</span>
+                    <div class="io-content">
+                        • ظهور بطاقة اعتماد خضراء رسمية تحمل شعار المركز وتتضمن:<br>
+                        <strong>✓ حالة الوثيقة:</strong> صالحة ومعتمدة رسمياً.<br>
+                        <strong>✓ اسم المتدرب:</strong> مطابق للاسم المعتمد.<br>
+                        <strong>✓ اسم الدورة:</strong> برنامج السلامة الشخصية وإدارة مخاطر الحركة.<br>
+                        <strong>✓ عدد الساعات وتاريخ الاعتماد:</strong> 32 ساعة تدريبية تطبيقية.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 4: CONTENT DYNAMIC CONTROL ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">04</div>
+                <div>
+                    <h1 class="header-title">السيناريو 3: التخصيص الذاتي للمحتوى بنسبة 100%</h1>
+                    <p class="header-subtitle">تعديل شارات الهيرو، ترويسات الأقسام، لافتات الصفحات، ومعلومات التواصل</p>
+                </div>
+            </div>
+            <div class="header-tag">إدارة المحتوى</div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المهمة أ: تعديل مسميات وأيقونات شارات الهيرو بالصفحة الرئيسية</span>
+                <span class="scenario-badge">لوحة التحكم (/admin/content)</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 1: اختيار الشارة وتعديل نصوصها:</span>
+                سجل الدخول بحساب المدير (<code>admin@facss.org</code>)، افتح <strong>«إدارة المحتوى»</strong>، ثم اختر تبويب <strong>«الصفحة الرئيسية (Homepage)»</strong>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة في شاشة التعديل</span>
+                    <div class="io-content">
+                        • تحديد العنصر: <code>hero_badge_1</code> والنقر على <strong>«تعديل»</strong>.<br>
+                        • <strong>العنوان بالعربية (Title AR):</strong> غيّر النص إلى: <em>«الحراسات الميدانية والحماية المشددة»</em>.<br>
+                        • <strong>العنوان بالإنجليزية (Title EN):</strong> غيّر النص إلى: <em>«Field Guarding & Tight Protection»</em>.<br>
+                        • <strong>الأيقونة (Icon):</strong> اختيار أيقونة <code>Lock</code> أو <code>BadgeCheck</code> من القائمة.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والانعكاس الفوري</span>
+                    <div class="io-content">
+                        • النقر على زر <strong>«حفظ التعديلات»</strong>.<br>
+                        • ظهور تنبيه أخضر: <em>«تم تحديث العنصر بنجاح»</em>.<br>
+                        • افتح الصفحة الرئيسية للموقع (<code>/</code>) واعمل تحديث (F5).<br>
+                        • <strong>المخرج المشاهد:</strong> ظهور النص الجديد والأيقونة الجديدة فوراً في الكبسولة المذهبة بالهيرو مع بقاء التصميم والألوان 100% كما هي.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المهمة ب: تعديل لافتات وعناوين الصفحات الرئيسية (Page Banners)</span>
+                <span class="scenario-badge">تبويب لافتات الصفحات</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 2: تغيير نصوص لافتة صفحة مجالات النشاط أو التدريب:</span>
+                من شاشة إدارة المحتوى، انقر على تبويب <strong>«لافتات الصفحات (Page Banners)»</strong>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة</span>
+                    <div class="io-content">
+                        • اختيار اللافتة: <code>banner_services</code> والنقر على <strong>«تعديل»</strong>.<br>
+                        • <strong>الوصف بالعربية:</strong> أدخل النص: <em>«منظومة متكاملة لحلول الحراسات الأمنية الوقائية، الرصد المبكر، والدراسات الميدانية لبيئات عمل أكثر أماناً».</em><br>
+                        • النقر على زر <strong>«حفظ التعديلات»</strong>.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات في صفحة الخدمات</span>
+                    <div class="io-content">
+                        • الدخول إلى صفحة مجالات النشاط: <code>/services</code>.<br>
+                        • <strong>المخرج المشاهد:</strong> ترويسة الصفحة في أعلى الشاشة تعرض فوراً النص الجديد المعتمد دون أي تداخل أو انكسار في التنسيق.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المهمة ج: تعديل بيانات التواصل وأرقام الهواتف الرسمية بالفوتر والهيدر</span>
+                <span class="scenario-badge">إعدادات النظام (/admin/system)</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 3: تحديث العنوان والبريد الرسمي:</span>
+                ادخل إلى <strong>«إعدادات المنصة»</strong> عبر الرابط <code>/admin/system</code>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة</span>
+                    <div class="io-content">
+                        • <strong>العنوان بالعربية:</strong> العاصمة عدن — خورمكسر — المجمع الدبلوماسي.<br>
+                        • <strong>البريد الإلكتروني الرسمي:</strong> <code>operations@facss.org</code>.<br>
+                        • <strong>رقم الهاتف المباشر:</strong> تحديث رقم غرفة التنسيق الميداني.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات في كافة الصفحات</span>
+                    <div class="io-content">
+                        • الضغط على زر <strong>«حفظ الإعدادات»</strong>.<br>
+                        • النزول إلى تذييل (فوتر) أي صفحة في الموقع العام أو صفحة «اتصل بنا».<br>
+                        • <strong>المخرج المشاهد:</strong> ظهور العنوان الجديد ورابط البريد الإلكتروني الجديد فوراً في كافة صفحات المنصة.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 5: INQUIRIES & MULTILINGUAL ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">05</div>
+                <div>
+                    <h1 class="header-title">السيناريو 4: رسائل الجمهور والتحول اللغوي الفوري</h1>
+                    <p class="header-subtitle">استقبال الاستفسارات والتواصل، وتجربة تصفح المنصة باللغة الإنجليزية</p>
+                </div>
+            </div>
+            <div class="header-tag">التواصل واللغات</div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المهمة الأولى: إرسال استفسار من صفحة «اتصل بنا» واستقباله في الإدارة</span>
+                <span class="scenario-badge">صفحة التواصل وصندوق الوارد</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 1: تعبئة نموذج الاستفسار من جهة الزائر:</span>
+                افتح صفحة <strong>«اتصل بنا»</strong> عبر الرابط <code>/contact</code> وانزل لنموذج المراسلة.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">المدخلات المطلوبة من الزائر</span>
+                    <div class="io-content">
+                        • <strong>الاسم:</strong> أ / فهد الشميري — منسق أمني.<br>
+                        • <strong>البريد الإلكتروني:</strong> <code>fahd@aid-mission.org</code>.<br>
+                        • <strong>رقم الهاتف:</strong> <code>+967-770000000</code>.<br>
+                        • <strong>الموضوع:</strong> طلب استشارة لتأمين قافلة إغاثية.<br>
+                        • <strong>نص الرسالة:</strong> نطلب عقد اجتماع تنسيقي لتقييم مسار الحركة.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات الظاهرة للزائر</span>
+                    <div class="io-content">
+                        • النقر على زر <strong>«إرسال الرسالة»</strong>.<br>
+                        • ظهور نافذة خضراء تؤكد: <em>«تم إرسال رسالتكم بنجاح، وسيتواصل معكم فريق التنسيق والعمليات بالمركز خلال ساعات العمل الرسمية».</em><br>
+                        • تفريغ حقول النموذج تلقائياً لمنع التكرار.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-item" style="margin-top:8px;">
+                <span class="step-label">خطوة 2: استعراض الرسالة في لوحة الإدارة:</span>
+                سجل الدخول بحساب الإدارة وادخل على شاشة <strong>«صندوق الرسائل والاستفسارات»</strong>.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">إجراءات المتابعة والرد</span>
+                    <div class="io-content">
+                        • مشاهدة الرسالة الجديدة في أعلى جدول الوارد.<br>
+                        • قراءة تفاصيل الطلب وأرقام الاتصال.<br>
+                        • تغيير حالة الرسالة من (جديدة) إلى <strong>«تمت المتابعة والتواصل»</strong>.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات الإدارية</span>
+                    <div class="io-content">
+                        • تمييز الرسالة بعلامة تمت القراءة لتنظيم صندوق الوارد.<br>
+                        • حفظ تاريخ وتوقيت الاستلام واسم المسؤول الذي باشر المتابعة.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-box">
+            <div class="scenario-header">
+                <span class="scenario-title">المهمة الثانية: اختبار التبديل الفوري للغة الإنجليزية (English LTR Experience)</span>
+                <span class="scenario-badge">ثنائية اللغة المؤسسية</span>
+            </div>
+            <div class="step-item">
+                <span class="step-label">خطوة 3: تبديل لغة المنصة والتحقق من التناسق البصري:</span>
+                في أي صفحة من صفحات الموقع، انقر على زر <strong>«English»</strong> الموجود في أعلى يسار شريط الترويسة.
+            </div>
+            <div class="io-grid">
+                <div class="io-col-in">
+                    <span class="io-tag io-tag-in">الإجراء المنفذ</span>
+                    <div class="io-content">
+                        • النقر على زر تبديل اللغة <strong>EN</strong>.<br>
+                        • الانتقال بين صفحات: الرئيسية، الخدمات، والأبحاث.
+                    </div>
+                </div>
+                <div class="io-col-out">
+                    <span class="io-tag io-tag-out">المخرجات والتحول الفوري</span>
+                    <div class="io-content">
+                        • تحول اتجاه الصفحة بالكامل من اليسار إلى اليمين (LTR).<br>
+                        • ظهور اسم المركز الرسمي: <em>Integrated Solutions Center for Safety and Security (FACSS)</em>.<br>
+                        • ظهور كافة الشارات واللافتات والخدمات بترجمتها الإنجليزية المعتمدة.<br>
+                        • الحفاظ التام على هوية الألوان (الأخضر والذهبي) والخط اللاتيني الأنيق (Outfit).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 6: UAT SIGN-OFF SHEET ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">06</div>
+                <div>
+                    <h1 class="header-title">جدول التحقق واعتماد نتائج الاختبار (UAT Sign-off)</h1>
+                    <p class="header-subtitle">قائمة التدقيق الميداني لتأكيد نجاح كافة العمليات والتسليم الرسمي</p>
+                </div>
+            </div>
+            <div class="header-tag">محضر الاعتماد</div>
+        </div>
+
+        <p>يستخدم هذا الجدول من قبل فريق العمل وفريق العميل لتسجيل وتوثيق اجتياز كل سيناريو تشغيلي قبل التوقيع والاعتماد النهائي:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">العملية والسيناريو المنفذ</th>
+                    <th style="width: 32%;">المدخلات المنفذة للتجربة</th>
+                    <th style="width: 26%;">النتيجة والمخرج المتوقع</th>
+                    <th style="width: 12%;">حالة الاختبار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><strong>تقديم طلب خدمة أمنية</strong></td>
+                    <td>تعبئة نموذج طلب الحراسة واختيار القطاع وإدخال بيانات الاتصال.</td>
+                    <td>إصدار كود تتبع رسمي مثل <code>FACSS-SR-2026-XXXX</code>.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>معالجة الطلب في الإدارة</strong></td>
+                    <td>تغيير الحالة إلى «قيد التنفيذ الميداني» وكتابة ملاحظة وتكليف الفريق.</td>
+                    <td>تحديث فوري للحالة وتوثيق الإجراء في سجل العمليات.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>متابعة العميل لطلبه</strong></td>
+                    <td>الدخول لبوابة العميل <code>/portal/client</code> واستعراض تفاصيل الطلب.</td>
+                    <td>مشاهدة الحالة المحدثة وملاحظات غرفة العمليات بدقة.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>التسجيل في دورة تدريبية</strong></td>
+                    <td>اختيار دورة السلامة الميدانية وتعبئة بيانات المتدرب وجهة العمل.</td>
+                    <td>إشعار تأكيد استلام الطلب وتوجيهه لمدير التدريب.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><strong>اعتماد المتدرب والشهادة</strong></td>
+                    <td>قبول المتدرب واعتماد اجتيازه وإصدار رقم الشهادة المعتمد.</td>
+                    <td>إتاحة تحميل الشهادة برقم تسلسلي في حساب المتدرب.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><strong>فحص الشهادة ببوابة التحقق</strong></td>
+                    <td>إدخال الرقم التسلسلي للشهادة في بوابة <code>/verify</code> والنقر على فحص.</td>
+                    <td>ظهور بطاقة الاعتماد الخضراء بكافة بيانات الدورة والمتدرب.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><strong>تعديل شارات الهيرو ذاتياً</strong></td>
+                    <td>تغيير نص وأيقونة <code>hero_badge_1</code> من لوحة المحتوى وحفظه.</td>
+                    <td>ظهور النص والأيقونة فوراً بالهيرو دون تغيير بالألوان أو التصميم.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><strong>تعديل لافتات الصفحات</strong></td>
+                    <td>تعديل وصف لافتة الخدمات <code>banner_services</code> وحفظها.</td>
+                    <td>انعكاس النص الجديد في ترويسة صفحة الخدمات <code>/services</code> فوراً.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td><strong>تحديث بيانات الفوتر والتواصل</strong></td>
+                    <td>تعديل الهاتف والبريد وحقوق الملكية من إعدادات النظام.</td>
+                    <td>تحديث الفوتر والترويسة بكافة صفحات المنصة بنقرة واحدة.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td><strong>التحويل الفوري للإنجليزية</strong></td>
+                    <td>الضغط على زر <code>English</code> بأعلى الهيدر والتنقل بين الصفحات.</td>
+                    <td>تحول الاتجاه إلى LTR وعرض المحتوى بالإنجليزية بتناسق تام.</td>
+                    <td><span class="badge" style="background:#DEF7EC;color:#03543F;">[✓] اجتاز بنجاح</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>محضر الاعتماد والتسليم التشغيلي الرسمي:</h2>
+        <div class="grid-2" style="margin-top:10px;">
+            <div class="card" style="border:1px solid #CBD5E0;padding:10px;">
+                <div class="card-title" style="color:#0B2518;">جهة الإعداد والتنفيذ الفني:</div>
+                <p style="font-size:8pt;margin:4px 0;">مركز الحلول المتكاملة للأمن والسلامة (FACSS)<br>
+                <strong>المسؤول:</strong> م / زكريا الماوري — مطور ومنفذ المنصة<br>
+                <strong>التوقيع:</strong> ....................................................<br>
+                <strong>التاريخ:</strong> 17 أكتوبر 2026م</p>
+            </div>
+            <div class="card" style="border:1px solid #CBD5E0;padding:10px;">
+                <div class="card-title" style="color:#0B2518;">جهة المعاينة والاستلام والاعتماد:</div>
+                <p style="font-size:8pt;margin:4px 0;">إدارة العمليات والجهة المستفيدة<br>
+                <strong>المسؤول:</strong> ....................................................<br>
+                <strong>الصفة الوظيفية:</strong> ...........................................<br>
+                <strong>التوقيع والختم:</strong> ...........................................</p>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            تم إعداد وتوثيق هذا الدليل الإجرائي والتشغيلي لضمان أعلى معايير الحوكمة والجودة المؤسسية لمنصة مركز الحلول المتكاملة للأمن والسلامة — العاصمة عدن.
+        </div>
+    </div>
+
+</body>
+</html>

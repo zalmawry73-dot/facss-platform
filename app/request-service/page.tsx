@@ -10,10 +10,12 @@ import {
   CheckCircle2, 
   AlertCircle, 
   ArrowLeft, 
-  ArrowRight,
+  ArrowRight, 
   FileCheck, 
   Lock, 
-  Building 
+  Building,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 interface ServiceItem {
@@ -25,9 +27,10 @@ interface ServiceItem {
 
 function RequestServiceForm() {
   const { t, locale } = useLanguage();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
   const preselectedSlug = searchParams.get('service');
+  const returnUrl = preselectedSlug ? `/request-service?service=${encodeURIComponent(preselectedSlug)}` : '/request-service';
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
@@ -188,6 +191,72 @@ function RequestServiceForm() {
                 <Link href="/" className="btn btn-outline btn-lg">
                   {t.home}
                 </Link>
+              </div>
+            </div>
+          ) : authLoading ? (
+            <div className="card-institutional" style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              <p style={{ margin: 0, fontWeight: 600 }}>{isAr ? 'جارٍ التحقق من بيانات الجلسة المؤسسية...' : 'Verifying institutional session...'}</p>
+            </div>
+          ) : !user ? (
+            /* Institutional Authentication Required Gate */
+            <div className="card-institutional" style={{ padding: 'clamp(2.5rem, 5vw, 3.5rem) 2rem', textAlign: 'center', borderTop: '4px solid var(--color-gold-500)', boxShadow: '0 20px 40px -15px rgba(11, 61, 46, 0.08)' }}>
+              <div
+                style={{
+                  width: '76px',
+                  height: '76px',
+                  borderRadius: '50%',
+                  background: 'rgba(181, 146, 84, 0.12)',
+                  border: '2px solid var(--color-gold-500)',
+                  color: 'var(--color-gold-700)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginInline: 'auto',
+                  marginBottom: '1.75rem',
+                }}
+              >
+                <Lock size={38} />
+              </div>
+
+              <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 1.85rem)', fontWeight: 900, color: 'var(--color-primary-950)', marginBottom: '0.8rem', letterSpacing: '-0.01em' }}>
+                {isAr ? 'تسجيل الدخول المؤسسي مطلوب لطلب الخدمة' : 'Institutional Sign-In Required'}
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.02rem', maxWidth: '640px', marginInline: 'auto', lineHeight: 1.8, marginBottom: '2.25rem' }}>
+                {isAr 
+                  ? 'خدمات واستشارات مركز ميثاق (FACSS) هي عمليات ميدانية أمنية معتمدة تتطلب التحقق من هوية المنشأة لضمان أمان ومتابعة التكليفات وإصدار عروض الأسعار والتقارير الميدانية داخل بوابتكم الخاصة.'
+                  : 'FACSS services and field advisory are accredited institutional operations requiring verified corporate access to manage requisitions, quotations, and official final reports.'}
+              </p>
+
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+                <Link 
+                  href={`/login?redirect=${encodeURIComponent(returnUrl)}&reason=request_service`} 
+                  className="btn btn-gold btn-lg"
+                  style={{ minWidth: '220px' }}
+                >
+                  <LogIn size={18} />
+                  <span>{isAr ? 'تسجيل الدخول إلى حساب المنشأة' : 'Sign In to Your Account'}</span>
+                  <ArrowIcon size={18} />
+                </Link>
+                <Link 
+                  href={`/register?role=CLIENT&redirect=${encodeURIComponent(returnUrl)}`} 
+                  className="btn btn-outline btn-lg"
+                  style={{ minWidth: '220px' }}
+                >
+                  <UserPlus size={18} />
+                  <span>{isAr ? 'إنشاء حساب عميل مؤسسي جديد' : 'Register New Client Account'}</span>
+                </Link>
+              </div>
+
+              <div style={{ background: '#F4F1EA', borderRadius: '12px', padding: '1.35rem 1.75rem', border: '1px solid rgba(181, 146, 84, 0.25)', maxWidth: '640px', marginInline: 'auto', textAlign: isAr ? 'right' : 'left' }}>
+                <div style={{ fontWeight: 800, color: 'var(--color-primary-950)', marginBottom: '0.6rem', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Shield size={16} color="var(--color-gold-600)" />
+                  <span>{isAr ? 'مزايا امتلاك حساب عميل مؤسسي معتمد:' : 'Benefits of an Authenticated Client Account:'}</span>
+                </div>
+                <ul style={{ margin: 0, paddingInlineStart: '1.35rem', fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.85 }}>
+                  <li>{isAr ? 'متابعة حية ولحظية لحالة الطلب وتعيين المنسقين والمشرفين الميدانيين.' : 'Live tracking of request status and assigned field supervisors.'}</li>
+                  <li>{isAr ? 'استعراض واعتماد عروض الأسعار والدراسات الاستشارية رسمياً.' : 'Official review and approval of commercial quotations and studies.'}</li>
+                  <li>{isAr ? 'الوصول المباشر للتقارير الميدانية النهائية وشهادات التدقيق المعتمدة وتنزيلها.' : 'Direct access to verified final field reports and downloadable audit certificates.'}</li>
+                </ul>
               </div>
             </div>
           ) : (

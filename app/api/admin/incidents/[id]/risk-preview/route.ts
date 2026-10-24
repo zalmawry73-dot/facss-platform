@@ -76,10 +76,19 @@ export async function GET(request: Request, { params }: RouteContext) {
     }
 
     const sanitizedData = extractSanitizedIncidentData(incident);
+    const previewData = {
+      ...sanitizedData,
+      suggestedTitle: sanitizedData.title,
+      suggestedDescription: sanitizedData.description,
+      suggestedCategory: sanitizedData.category,
+      suggestedLikelihood: sanitizedData.suggestedLikelihood,
+      suggestedImpact: sanitizedData.suggestedImpact,
+    };
 
     return NextResponse.json({
       success: true,
       data: sanitizedData,
+      preview: previewData,
     });
   } catch (error: any) {
     console.error('Error extracting sanitized incident for risk preview:', error);

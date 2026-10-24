@@ -242,17 +242,18 @@ export default function RiskRegisterManager({ currentUser }: RiskRegisterManager
     try {
       const res = await fetch(`/api/admin/incidents/${incId}/risk-preview`);
       const data = await res.json();
-      if (res.ok && data.preview) {
-        setIncidentPreviewData(data.preview);
+      if (res.ok && (data.preview || data.data)) {
+        const preview = data.preview || data.data;
+        setIncidentPreviewData(preview);
         setFormData({
-          title: data.preview.suggestedTitle,
-          description: data.preview.suggestedDescription,
-          category: data.preview.suggestedCategory,
-          governorate: data.preview.governorate,
-          district: data.preview.district || '',
-          generalLocation: data.preview.generalLocation || '',
-          likelihood: data.preview.suggestedLikelihood || 3,
-          impact: data.preview.suggestedImpact || 3,
+          title: preview.suggestedTitle || preview.title || '',
+          description: preview.suggestedDescription || preview.description || '',
+          category: (preview.suggestedCategory || preview.category || 'ARMED_CONFLICT_SECURITY') as RiskCategoryType,
+          governorate: preview.governorate || 'عدن',
+          district: preview.district || '',
+          generalLocation: preview.generalLocation || '',
+          likelihood: preview.suggestedLikelihood || preview.likelihood || 3,
+          impact: preview.suggestedImpact || preview.impact || 3,
           targetResolutionDate: '',
         });
       }

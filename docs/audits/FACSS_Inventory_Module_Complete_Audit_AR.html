@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير التدقيق الفني الشامل لوحدة المعدات والمخزون وسلاسل الإمداد — FACSS</title>
+  <style>
+    :root {
+      --primary: #0F172A;
+      --primary-light: #1E293B;
+      --primary-dark: #0A0F1D;
+      --gold: #D4AF37;
+      --gold-dark: #B59254;
+      --gold-light: #FDFBF7;
+      --accent: #0284C7;
+      --accent-dark: #0369A1;
+      --accent-light: #E0F2FE;
+      --success: #10B981;
+      --success-dark: #047857;
+      --success-light: #ECFDF5;
+      --warning: #F59E0B;
+      --warning-dark: #D97706;
+      --warning-light: #FFFBEB;
+      --danger: #EF4444;
+      --danger-dark: #B91C1C;
+      --danger-light: #FEF2F2;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --border-dark: #334155;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+
+    /* Header Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #0A0F1D 0%, #1E293B 100%);
+      color: #FFFFFF;
+      padding: 3.5rem 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner::before {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+
+    .header-subtitle {
+      font-size: 1.15rem;
+      color: #CBD5E1;
+      max-width: 1000px;
+      line-height: 1.75;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.88rem;
+      color: #94A3B8;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-item strong {
+      color: #F8FAFC;
+    }
+
+    /* Sticky Navigation */
+    .nav-bar {
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-link {
+      color: #CBD5E1;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold);
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-title .icon-holder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: rgba(212, 175, 55, 0.12);
+      color: var(--gold-dark);
+      border-radius: var(--radius-sm);
+      font-size: 1.3rem;
+    }
+
+    /* KPI / Metric Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.4rem;
+      position: relative;
+    }
+
+    .kpi-card.danger { border-right: 4px solid var(--danger); }
+    .kpi-card.warning { border-right: 4px solid var(--warning); }
+    .kpi-card.success { border-right: 4px solid var(--success); }
+    .kpi-card.accent { border-right: 4px solid var(--accent); }
+    .kpi-card.gold { border-right: 4px solid var(--gold); }
+
+    .kpi-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .kpi-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .kpi-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+    }
+
+    .data-table th, .data-table td {
+      padding: 1rem 1.15rem;
+      border: 1px solid var(--border);
+      text-align: right;
+      vertical-align: top;
+    }
+
+    .data-table th {
+      background: #F8FAFC;
+      font-weight: 800;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .data-table tr:hover td {
+      background: #FDFBF7;
+    }
+
+    /* Badges */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status-tag.working { background: var(--success-light); color: var(--success-dark); border: 1px solid #A7F3D0; }
+    .status-tag.partial { background: var(--warning-light); color: var(--warning-dark); border: 1px solid #FCD34D; }
+    .status-tag.missing { background: var(--danger-light); color: var(--danger-dark); border: 1px solid #FCA5A5; }
+    .status-tag.orphaned { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
+    .status-tag.blocked { background: #FEF2F2; color: #991B1B; border: 1px solid #EF4444; font-weight: 900; }
+
+    /* Callout Boxes */
+    .alert-box {
+      border-radius: var(--radius-sm);
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      border-right: 4px solid;
+    }
+
+    .alert-box.danger {
+      background: #FEF2F2;
+      border-color: var(--danger);
+      color: #991B1B;
+    }
+
+    .alert-box.warning {
+      background: #FFFBEB;
+      border-color: var(--warning);
+      color: #92400E;
+    }
+
+    .alert-box.info {
+      background: #EFF6FF;
+      border-color: var(--accent);
+      color: #1E40AF;
+    }
+
+    .alert-box.gold {
+      background: #FDFBF7;
+      border-color: var(--gold-dark);
+      color: #78350F;
+    }
+
+    .alert-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Visual Workflow Box */
+    .flow-diagram-container {
+      background: #0B1120;
+      color: #F8FAFC;
+      border: 1px solid #1E293B;
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin: 1.5rem 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      direction: ltr;
+      text-align: left;
+      overflow-x: auto;
+    }
+
+    .flow-title {
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      direction: rtl;
+      text-align: right;
+      font-family: inherit;
+    }
+
+    /* Scenario Card */
+    .scenario-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #FFFFFF;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .scenario-id {
+      display: inline-block;
+      background: var(--primary);
+      color: #FFFFFF;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.25rem 0.7rem;
+      border-radius: 4px;
+      margin-bottom: 0.35rem;
+    }
+
+    .scenario-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .scenario-col strong {
+      display: block;
+      color: var(--primary);
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .code-ref {
+      font-family: monospace;
+      font-size: 0.82rem;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    /* Test Case Card */
+    .test-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+
+    .test-header {
+      background: #F1F5F9;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .test-body {
+      padding: 1.25rem;
+      background: #FFFFFF;
+    }
+
+    .step-list {
+      padding-right: 1.5rem;
+      margin: 0.75rem 0;
+    }
+
+    .step-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      .header-banner { padding: 2rem 1.5rem; }
+      h1 { font-size: 1.7rem; }
+      .section-card { padding: 1.5rem; }
+      .nav-bar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header Banner -->
+    <header class="header-banner">
+      <div class="badge-pill">
+        <span>🛡️</span> المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية — تقرير التدقيق المستقل
+      </div>
+      <h1>تقرير التدقيق الفني والمعماري الشامل لوحدة المعدات والمخزون وسلاسل الإمداد</h1>
+      <p class="header-subtitle">
+        تحليل وظيفي ومعماري استقصائي عميق لطريقة عمل الوحدة فعليًا في الكود المصدري، قواعد البيانات، واجهات API، ونظام الصلاحيات؛ مع كشف السبب الجذري المثبت برمجياً لمشكلة تعطل التصنيفات، وتقييم مخاطر التعديل اليدوي، ومسح فجوات التكامل مع بقية المنصة، وتقديم دليل اختبارات قبول قياسية للمستخدم.
+      </p>
+
+      <div class="meta-bar">
+        <div class="meta-item">
+          <span>📅 تاريخ المراجعة والتدقيق:</span>
+          <strong>23 أكتوبر 2026</strong>
+        </div>
+        <div class="meta-item">
+          <span>🏢 المنشأة:</span>
+          <strong>مركز الحلول المتكاملة للأمن والسلامة (FACSS) — عدن</strong>
+        </div>
+        <div class="meta-item">
+          <span>🔍 طبيعة المهمة:</span>
+          <strong>تحليل وتوثيق مستقل بنسبة 100% (بدون تعديل أي كود أو قاعدة بيانات)</strong>
+        </div>
+        <div class="meta-item">
+          <span>⚙️ البيئة التقنية المفحوصة:</span>
+          <strong>Next.js 14 App Router | PostgreSQL | Prisma ORM | Granular RBAC</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sticky Navigation -->
+    <nav class="nav-bar">
+      <a href="#summary" class="nav-link">الملخص التنفيذي</a>
+      <a href="#discovery" class="nav-link">خريطة المعمارية والمسارات</a>
+      <a href="#category-investigation" class="nav-link">تحقيق التصنيفات (الحاسم)</a>
+      <a href="#tabs-analysis" class="nav-link">تحليل التبويبات السبعة</a>
+      <a href="#manual-adjustment" class="nav-link">تحقيق التعديل اليدوي</a>
+      <a href="#workflows" class="nav-link">مخططات دورات العمل</a>
+      <a href="#scenarios" class="nav-link">السيناريوهات الـ 12 الواقعية</a>
+      <a href="#integration" class="nav-link">التكامل مع بقية المنصة</a>
+      <a href="#recommendations" class="nav-link">المصفوفة والتوصيات</a>
+      <a href="#uat-plan" class="nav-link">دليل الاختبار اليدوي (UAT)</a>
+    </nav>
+
+    <!-- SECTION 1: EXECUTIVE SUMMARY -->
+    <section id="summary" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">📊</div>
+        <h2>1. الملخص التنفيذي وحدود الفحص</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem; font-size: 1.05rem; color: #334155;">
+        أجرى فريق الخبراء مراجعة تحليلية دقيقة واستقصائية لقواعد البيانات، وواجهات برمجة التطبيقات (API Routes)، ومكونات الواجهات الأمامية (React Components)، ونظام الصلاحيات المحبب (Granular RBAC)، وسجلات العمليات المرتبطة بوحدة <strong>المعدات والمخزون والتجهيزات الأمنية (Package E)</strong> في منصة FACSS.
+      </p>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card danger">
+          <div class="kpi-title">حالة إمكانية إضافة صنف جديد</div>
+          <div class="kpi-value">معطلة تماماً</div>
+          <div class="kpi-desc">Deadlocked: القائمة فارغة والتحقق الخادمي يرفض الحفظ</div>
+        </div>
+        <div class="kpi-card warning">
+          <div class="kpi-title">التكامل مع طلبات الخدمات</div>
+          <div class="kpi-value">معزول واجهياً</div>
+          <div class="kpi-desc">مسارات الـ API مكتملة بينما واجهات الطلبات لا تعرض التوريد</div>
+        </div>
+        <div class="kpi-card success">
+          <div class="kpi-title">حماية سجل الحركات (Ledger)</div>
+          <div class="kpi-value">محمي 100%</div>
+          <div class="kpi-desc">سجل الحركات تراكمي غير قابل للتعديل أو الحذف برمجياً</div>
+        </div>
+        <div class="kpi-card accent">
+          <div class="kpi-title">حجم الأكواد المفحوصة</div>
+          <div class="kpi-value">23 مسار API</div>
+          <div class="kpi-desc">مكون إداري ضخم (81.3KB) ومكتبة قواعد (27.2KB)</div>
+        </div>
+      </div>
+
+      <div class="alert-box danger">
+        <div class="alert-title">🚨 أبرز نتيجة حاسمة مثبتة بالدليل البرمجي</div>
+        <p>
+          <strong>وحدة المعدات والأصناف تعاني حالياً من حالة انسداد تشغيلي تام (Total Operational Deadlock) عند محاولة إضافة أي صنف جديد:</strong> جدول تصنيفات المعدات في قاعدة البيانات فارغ تماماً (0 سجلات)، ولا توجد أي واجهة أو تبويب أو زر في لوحة التحكم لإضافة تصنيف، في حين أن خادم الـ API وقواعد التحقق تشترط إلزامياً وجود تصنيف معتمد مسبقاً. وبالتالي لا يمكن لأي مستخدم إضافة أي معدة أو صنف من خلال النظام حتى يتم توفير واجهة لإدارة التصنيفات أو بذر بياناتها الأولية.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 1.5rem 0 0.8rem 0;">حدود المراجعة والبيانات الحية المتاحة</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>الجدول / الكيان في قاعدة البيانات</th>
+            <th>العدد الفعلي للسجلات</th>
+            <th>حالة البيانات في البيئة الحالية</th>
+            <th>أثر ذلك على استنتاجات التدقيق</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>EquipmentCategory</code> (تصنيفات المعدات)</td>
+            <td><strong>0</strong></td>
+            <td>فارغ بالكامل</td>
+            <td>سبب مباشر لتعطل إضافة الأصناف في الواجهة</td>
+          </tr>
+          <tr>
+            <td><code>EquipmentProduct</code> (أصناف المعدات)</td>
+            <td><strong>0</strong></td>
+            <td>فارغ بالكامل</td>
+            <td>تعذر رؤية حركات حقيقية، وتم فحص الكود منطقياً</td>
+          </tr>
+          <tr>
+            <td><code>Supplier</code> (الموردون)</td>
+            <td><strong>1</strong></td>
+            <td>سجل تجريبي واحد (الرمز: <code>FACSS-SUP-2026-0001</code>)</td>
+            <td>تم إثبات إمكانية إنشاء موردين والربط معهم</td>
+          </tr>
+          <tr>
+            <td><code>ProcurementOrder</code> (أوامر الشراء)</td>
+            <td><strong>0</strong></td>
+            <td>فارغ بالكامل</td>
+            <td>تم فحص المعاملات عبر شفرة <code>executeReceivingTransaction</code></td>
+          </tr>
+          <tr>
+            <td><code>InventoryMovement</code> (سجل الحركات)</td>
+            <td><strong>0</strong></td>
+            <td>فارغ بالكامل</td>
+            <td>تم التحقق من الحماية البرمجية لمنع التعديل والحذف</td>
+          </tr>
+          <tr>
+            <td><code>EquipmentInspection</code> (الفحص الفني)</td>
+            <td><strong>0</strong></td>
+            <td>فارغ بالكامل</td>
+            <td>تم فحص حاجز الفحص الفني (Inspection Gate) برمجياً</td>
+          </tr>
+          <tr>
+            <td><code>EquipmentDelivery</code> (محاضر التسليم)</td>
+            <td><strong>0</strong></td>
+            <td>فارغ بالكامل</td>
+            <td>تم فحص مولد الوثائق ومحضر الاستلام والتسليم</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 2: ARCHITECTURAL DISCOVERY -->
+    <section id="discovery" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🗺️</div>
+        <h2>2. المرحلة الأولى: الخريطة المعمارية الشاملة لوحدة المعدات</h2>
+      </div>
+
+      <p style="margin-bottom: 1.25rem;">
+        تتألف وحدة المعدات والمخزون في المنصة الحالية من صفحة إدارة رئيسية واحدة، ومكون واجهة ضخم يضم 7 تبويبات و7 نوافذ مودال تفاعلية، ومدعومة بـ 23 نقطة نهاية (API Routes) و12 جدولاً علائقياً في Prisma:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>عنصر النظام</th>
+            <th>المسار / الملف المصدري</th>
+            <th>الوظيفة والعمليات التشغيلية</th>
+            <th>الصلاحيات المطلوبة</th>
+            <th>حالة التنفيذ الفعلية</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>صفحة الخادم</strong></td>
+            <td><span class="code-ref">app/admin/equipment/page.tsx</span></td>
+            <td>جلب البيانات الأولية (أصناف، موردين، تصنيفات، KPIs) وتمريرها للمكون</td>
+            <td><code>manage_equipment</code></td>
+            <td><span class="status-tag working">منفذة وتعمل</span></td>
+          </tr>
+          <tr>
+            <td><strong>مكون الواجهة الرئيسي</strong></td>
+            <td><span class="code-ref">components/admin/EquipmentManager.tsx</span></td>
+            <td>إدارة التبويبات السبعة، التصفية، الجداول، المودالات، والنداءات اللحظية</td>
+            <td>تخضع لصلاحيات الخادم والـ API</td>
+            <td><span class="status-tag partial">منفذة جزئياً (تعطل إضافة الصنف)</span></td>
+          </tr>
+          <tr>
+            <td><strong>مكتبة قواعد المخزون</strong></td>
+            <td><span class="code-ref">lib/equipment-rules.ts</span></td>
+            <td>معاملات ذرية (Transactions)، حواجز الفحص الفني، توليد الأرقام المرجعية</td>
+            <td>دوال خادم داخلية</td>
+            <td><span class="status-tag working">قوية ومكتملة برمجياً</span></td>
+          </tr>
+          <tr>
+            <td><strong>مكتبة التحقق والمدخلات</strong></td>
+            <td><span class="code-ref">lib/validations/equipment.ts</span></td>
+            <td>مخططات التحقق الثنائي (عربي/إنجليزي) لكافة معاملات المخزون والتوريد</td>
+            <td>مشتركة</td>
+            <td><span class="status-tag working">مكتملة وصارمة</span></td>
+          </tr>
+          <tr>
+            <td><strong>محرك المؤشرات التشغيلية</strong></td>
+            <td><span class="code-ref">lib/kpi-engine.ts</span></td>
+            <td>حساب معدل الجاهزية (Readiness Rate)، النواقص، والصلاحيات</td>
+            <td>خادم داخلي</td>
+            <td><span class="status-tag working">منفذة (مع ملاحظة فلترة التواريخ)</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة تصنيفات المعدات</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/categories/route.ts</span></td>
+            <td>استعلام وإضافة تصنيفات المعدات برمجياً (GET, POST)</td>
+            <td><code>manage_equipment</code></td>
+            <td><span class="status-tag orphaned">موجودة بالخادم ومعزولة عن الواجهة</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة الأصناف والمعدات</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/products/route.ts</span></td>
+            <td>استعلام، بحث، وإضافة الأصناف وتدقيق الـ SKU والتصنيف</td>
+            <td><code>manage_equipment</code></td>
+            <td><span class="status-tag working">منفذة على الخادم</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة أوامر الشراء</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/procurement/route.ts</span></td>
+            <td>إنشاء واستعراض أوامر التوريد والشراء وتفاصيل بنود الأصناف</td>
+            <td><code>manage_procurement</code></td>
+            <td><span class="status-tag working">منفذة وتعمل</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة استلام الشحنات</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/procurement/[id]/receiving/route.ts</span></td>
+            <td>تسجيل استلام الشحنة، فرز المقبول والمرفوض، وتحديث رصيد المخزون</td>
+            <td><code>manage_procurement</code></td>
+            <td><span class="status-tag working">منفذة بمعاملة ذرية</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة التسوية اليدوية</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/inventory/adjust/route.ts</span></td>
+            <td>تعديل الرصيد بقيمة دلتا مع تسجيل السبب الإلزامي وحركة السجل</td>
+            <td><code>manage_inventory</code></td>
+            <td><span class="status-tag working">منفذة بمعاملة موثقة</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة الفحص الفني</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/inspections/route.ts</span></td>
+            <td>تسجيل محاضر الفحص، تقييم PASS/FAIL، وتحديث حالة المعدات المفردة</td>
+            <td><code>manage_inspections</code></td>
+            <td><span class="status-tag working">منفذة وتعمل</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة التسليم والتسليم</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/deliveries/route.ts</span></td>
+            <td>استعراض محاضر التسليم المعتمدة وتوليد محضر الاستلام الرسمي</td>
+            <td><code>manage_inventory</code></td>
+            <td><span class="status-tag partial">تستعرض فقط ولا تدعم الإنشاء المباشر</span></td>
+          </tr>
+          <tr>
+            <td><strong>واجهة توريد طلبات الخدمات</strong></td>
+            <td><span class="code-ref">app/api/admin/equipment/supply-requests/route.ts</span></td>
+            <td>ربط طلب الخدمة الميدانية ببنود التوريد وحجز المخزون وتسليمه</td>
+            <td><code>manage_requests</code></td>
+            <td><span class="status-tag orphaned">مكتملة بالخادم وغير مدمجة بواجهة الطلبات</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 3: SPECIAL INVESTIGATION - CATEGORIES -->
+    <section id="category-investigation" class="section-card" style="border: 2px solid var(--danger);">
+      <div class="section-title">
+        <div class="icon-holder" style="background: rgba(239, 68, 68, 0.15); color: var(--danger);">🔬</div>
+        <h2 style="color: var(--danger-dark);">3. التحقيق الخاص في حقل «التصنيف»: كشف السبب الفعلي بالدليل البرمجي القاطع</h2>
+      </div>
+
+      <div class="alert-box danger">
+        <div class="alert-title">❌ المشكلة المرصودة في بيئة الاستخدام</div>
+        <p>عند فتح نافذة <strong>«إضافة معدة / صنف جديد»</strong> في واجهة دليل الأصناف، يظهر حقل إلزامي بعنوان <strong>«التصنيف»</strong>، ولكن القائمة المنسدلة تظهر فارغة تماماً ولا تحتوي على أي خيار، مما يجعل حفظ الصنف مستحيلاً.</p>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 1.5rem 0 0.8rem 0;">خطوات التحقيق الاستقصائي والأدلة البرمجية المثبتة:</h3>
+
+      <div class="scenario-grid">
+        <div class="scenario-col">
+          <strong>1. فحص قاعدة البيانات الحية (DB Level)</strong>
+          تم الاستعلام المباشر عبر Prisma Client عن جدول <code>equipmentCategory</code>:
+          <div style="background: #0B1120; color: #34D399; padding: 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.82rem; margin-top: 0.3rem;">
+            await prisma.equipmentCategory.count() === 0
+          </div>
+          النتيجة: الجدول فارغ تماماً (0 سجلات). لا توجد أي بيانات تصنيف أولية (No Seed Data).
+        </div>
+
+        <div class="scenario-col">
+          <strong>2. فحص كود الواجهة (Frontend Level)</strong>
+          في الملف <span class="code-ref">components/admin/EquipmentManager.tsx</span> بالسطر 1121-1123:
+          <div style="background: #0B1120; color: #60A5FA; padding: 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.82rem; margin-top: 0.3rem;">
+            options={categories.map((c) => ({ value: c.id, label: c.nameAr }))}
+          </div>
+          الواجهة تعتمد كلياً على مصفوفة <code>categories</code> الممررة من صفحة الخادم. وبما أنها فارغة، تكون خيارات القائمة <code>[]</code>.
+        </div>
+      </div>
+
+      <div class="scenario-grid" style="margin-top: 1rem;">
+        <div class="scenario-col">
+          <strong>3. فحص إمكانية إضافة تصنيف من لوحة التحكم</strong>
+          تم فحص كافة مكونات الواجهة وأزرارها وتبويباتها بالكامل:
+          <br>• لا يوجد تبويب باسم «التصنيفات».
+          <br>• لا يوجد زر «+ إضافة تصنيف».
+          <br>• لا توجد نافذة مودال <code>CategoryModal</code>.
+          <br><strong>النتيجة:</strong> لا توجد أي واجهة رسومية تمكّن المدير من إضافة تصنيف في الواجهة!
+        </div>
+
+        <div class="scenario-col">
+          <strong>4. فحص قواعد الخادم (API & Validation)</strong>
+          في الملف <span class="code-ref">app/api/admin/equipment/products/route.ts</span> بالسطر 126-139:
+          <br>يشترط الخادم إلزامياً وجود <code>categoryId</code> في جدول <code>equipmentCategory</code>، وإذا لم يوجد يُرجع خطأ <code>400</code>:
+          <em>«تصنيف المنتج المحدد غير موجود»</em>.
+        </div>
+      </div>
+
+      <div class="alert-box gold" style="margin-top: 1.5rem;">
+        <div class="alert-title">⚖️ الخلاصة الحكمية للسبب الفعلي</div>
+        <p>
+          السبب الفعلي ليس عطلاً في شبكة الـ API ولا خللاً في الصلاحيات، بل هو <strong>غياب التصميم الهيكلي لإدارة التصنيفات في الواجهة (Missing UI Capability) مقترناً بغياب بذر البيانات الأولي (Missing Database Seeding)</strong>. الخادم يحتوي على مسار API كامل وجاهز لإضافة واستعلام التصنيفات في <code>app/api/admin/equipment/categories/route.ts</code>، لكن المطور الذي صمم <code>EquipmentManager.tsx</code> نسي تضمين واجهة لإدارة التصنيفات أو إضافة زر سريع لإنشاء تصنيف، مما أدى لتعطل تدفق العمل بالكامل.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TABS ANALYSIS -->
+    <section id="tabs-analysis" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">📑</div>
+        <h2>4. المرحلة الثانية: التحليل الوظيفي الدقيق لتبويبات الوحدة السبعة</h2>
+      </div>
+
+      <!-- Tab 1 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">أ. تبويب المؤشرات التشغيلية والملخص الرقابي (Overview Dashboard)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          يعرض شريط بطاقات KPI ومخطط حالة التوريد والفحص الفني والتسليم.
+        </p>
+
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>المؤشرات المعروضة ومعادلاتها</strong>
+            <ul style="padding-right: 1.2rem; font-size: 0.88rem;">
+              <li><strong>معدل جاهزية المعدات (KPI):</strong> محسوب بدالة <code>computeEquipmentReadinessRate</code> = <code>(الأصناف الجاهزة / الأصناف المتطلبة للمتابعة) * 100</code>. إذا كان المقام 0 يعيد <code>100%</code>.</li>
+              <li><strong>إجمالي الأصناف النشطة:</strong> <code>products.filter(p => p.isActive).length</code>.</li>
+              <li><strong>المخزون المتاح للطلب:</strong> <code>sum(p.quantityOnHand - p.quantityReserved)</code>.</li>
+              <li><strong>أصناف منخفضة / نفدت:</strong> <code>filter(p.isLowStock || p.isOutOfStock).length</code>.</li>
+            </ul>
+          </div>
+          <div class="scenario-col">
+            <strong>الخلل الفني المرصود في التبويب</strong>
+            <div class="alert-box warning" style="margin: 0; padding: 0.75rem;">
+              <strong>ثغرة الجلب المفرط والتحديث المبدئي:</strong>
+              في السطر 151-190 من <code>EquipmentManager.tsx</code>، عند فتح التبويب، يتم إرسال <strong>8 طلبات HTTP منفصلة متتالية</strong> (Sequential Await) بدلاً من استدعاء مجمع. وإذا فشل أحدها قد تتعطل بقية البطاقات.
+              كما أن دالة <code>calculateEquipmentKpis</code> في <span class="code-ref">lib/kpi-engine.ts</span> بالسطر 1412 تستعلم عن كافة الفحوصات والتسليمات التاريخية دون فلترة بفترة التاريخ الممررة (Period Ignored).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">ب. تبويب دليل المعدات والأصناف (Products Catalog)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          التعريف المركزي للمعدات، وحدات القياس، مستويات إعادة الطلب، وحواجز الصيانة والفحص.
+        </p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>الحقول المدعومة وقواعد التحقق</strong>
+            <ul style="padding-right: 1.2rem; font-size: 0.88rem;">
+              <li><strong>رمز الصنف / SKU:</strong> إلزامي، فريد (Unique)، محول للأحرف الكبيرة تلقائياً.</li>
+              <li><strong>الاسم (عربي / إنجليزي):</strong> إلزامي باللغتين (حد أدنى حرفين).</li>
+              <li><strong>التصنيف (categoryId):</strong> إلزامي، مدقق علائقياً بالـ Foreign Key.</li>
+              <li><strong>وحدة القياس (Unit):</strong> اختياري، افتراضي <code>piece</code> (قطعة، طقم، متر).</li>
+              <li><strong>مفاتيح التحكم (Flags):</strong> يتطلب فحصاً مسبقاً، يتطلب صيانة، تتبع انتهاء صلاحية، تتبع أرقام تسلسلية.</li>
+              <li><strong>حد الطلب الأدنى:</strong> افتراضي 5 وحدات.</li>
+            </ul>
+          </div>
+          <div class="scenario-col">
+            <strong>التعطيل والأرشفة والمعاملات التاريخية</strong>
+            يدعم النظام حقل <code>isActive: Boolean</code> لتعطيل الصنف بدلاً من حذفه.
+            عند تعطيل الصنف، يمنع الخادم في <code>lib/equipment-rules.ts</code> بالسطر 83 تسليم الصنف فوراً:
+            <em>«هذا الصنف موقف عن الخدمة وغير متاح للتسليم»</em>.
+            حذف الصنف من قاعدة البيانات محمي بمنع Cascade على حركات المخزون والفحوصات حفاظاً على السلامة المالية والرقابية.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">ج. تبويب الموردين وجهات التوريد (Suppliers Management)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          إدارة سجل الموردين المعتمدين، قنوات الاتصال، التقييم، وتوليد كود المورد الفريد.
+        </p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>الحقول وقواعد التوليد</strong>
+            <ul style="padding-right: 1.2rem; font-size: 0.88rem;">
+              <li><strong>رمز المورد:</strong> مولد تلقائياً بنمط <code>FACSS-SUP-2026-XXXX</code>.</li>
+              <li><strong>الاسم والمسؤول:</strong> اسم الشركة، اسم ضابط الاتصال، الهاتف (إلزامي)، والبريد.</li>
+              <li><strong>التصنيفات الموردة:</strong> مخزنة كمصفوفة نصوص JSON في حقل <code>categories</code>.</li>
+              <li><strong>الحالة:</strong> <code>ACTIVE</code> أو <code>INACTIVE</code> أو <code>BLACKLISTED</code>.</li>
+            </ul>
+          </div>
+          <div class="scenario-col">
+            <strong>السلوك التشغيلي وفجوة المورد المعطل</strong>
+            في واجهة <code>app/api/admin/equipment/procurement/route.ts</code> بالسطر 92، يتحقق الخادم من وجود المورد، لكنه <strong>لا يتحقق مما إذا كان المورد بحالة ACTIVE أو INACTIVE أو BLACKLISTED</strong>!
+            وهذا يعني أن النظام الحالي يسمح بإنشاء أمر شراء لمورد معطل أو في القائمة السوداء!
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">د. تبويب أوامر الشراء والاستلام (Procurement & Receiving)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          دورة الشراء من إصدار الأمر حتى وصول الشحنة وفرز المقبول والمرفوض.
+        </p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>الفرق بين أمر الشراء وإثبات الوصول</strong>
+            إنشاء أمر الشراء (<code>ProcurementOrder</code>) بحالة <code>ORDERED</code> <strong>لا يؤثر مطلقاً في رصيد المخزون الفعلي</strong>.
+            الرصيد الفعلي (<code>quantityOnHand</code>) لا يرتفع إلا عند تسجيل محضر استلام شحنة (<code>ProcurementReceiving</code>) رسمي عبر المعاملة الذرية <code>executeReceivingTransaction</code>.
+          </div>
+          <div class="scenario-col">
+            <strong>منطق فرز التوالف والمرفوضات</strong>
+            يشترط النظام إدخال: (الكمية المستلمة، الكمية المقبولة، الكمية المرفوضة، وسبب الرفض).
+            <strong>قاعدة السلامة:</strong> الرصيد الفعلي يزداد بمقدار <code>quantityAccepted</code> فقط! والكميات المرفوضة توثق في سجل الاستلام مع السبب دون دخولها للمستودع.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">هـ. تبويب المخزون وسجل الحركات (Inventory & Stock Ledger)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          المعادلات الحسابية للأرصدة وسجل الحركات الرقابي غير القابل للتعديل.
+        </p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>معادلة احتساب الأرصدة الثلاثية</strong>
+            <br>• <strong>الرصيد الفعلي بالمستودع (On Hand):</strong> الرصيد الفيزيائي الحقيقي.
+            <br>• <strong>الرصيد المحجوز (Reserved):</strong> كميات مخصصة لطلبات خدمات قيد التجهيز.
+            <br>• <strong>الرصيد المتاح للطلب (Available):</strong> <code>Math.max(0, onHand - reserved)</code>.
+          </div>
+          <div class="scenario-col">
+            <strong>خصائص سجل الحركات (InventoryMovement)</strong>
+            سجل الحركات هو <strong>دفتر أستاذ غير قابل للتعديل (Immutable Ledger)</strong>.
+            كل حركة تسجل: رقم الحركة الفريد (FACSS-MOV-XXXX)، معرف الصنف، نوع الحركة (MovementType)، الرصيد السابق، قيمة التغيير (Delta)، الرصيد اللاحق، السبب الإلزامي، واسم الموظف المنفذ.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 6 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">و. تبويب الفحص الفني والصيانة (Technical Inspections & Maintenance)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          اختبارات الصلاحية الفنية، معايرة المعدات، وجدولة الصيانة الدورية والوقائية.
+        </p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>أنظمة الفحص المدعومة</strong>
+            يدعم النظام 5 أنواع فحص: (استلام الشحنات، ما قبل التسليم، فحص دوري، فحص صيانة، فحص مرتجعات).
+            والنتائج المدعومة: <code>PASS</code> (ناجح)، <code>FAIL</code> (راسب)، <code>CONDITIONAL</code> (مشروط).
+          </div>
+          <div class="scenario-col">
+            <strong>حاجز الفحص الفني (Inspection Delivery Gate)</strong>
+            في الملف <span class="code-ref">lib/equipment-rules.ts</span> بالسطر 87-113:
+            إذا كان الصنف معلماً بـ <code>inspectionRequired = true</code>، يقوم النظام بفحص آخر محضر مسجل.
+            <strong>إذا لم يوجد فحص أو كانت النتيجة غير PASS، يتم حظر تسليم المعدة برمجياً ومنع طباعة محضر التسليم!</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 7 -->
+      <div class="scenario-card">
+        <h3 class="scenario-title">ز. تبويب محاضر التسليم والتسليم للعملاء (Deliveries & Handovers)</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">
+          إثبات تسليم المعدات للمنشآت المستفيدة وتوليد الوثائق الرسمية للمحاضر.
+        </p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>توليد محضر الاستلام الرسمي (Handover Protocol)</strong>
+            يوفر المسار <span class="code-ref">/api/admin/equipment/deliveries/[id]/handover</span> وثيقة رسمية متكاملة تتضمن: كود المحضر، كود طلب الخدمة، بيانات ممثل العميل، إقرار الاستلام القانوني، جدول الأصناف والأرقام التسلسلية وتواريخ الصلاحية وحالة الفحص المعتمد، ومجهزة للطباعة المباشرة.
+          </div>
+          <div class="scenario-col">
+            <strong>فجوة الإنشاء المباشر في الواجهة</strong>
+            تبويب التسليم في الواجهة <span class="code-ref">EquipmentManager.tsx</span> يعرض فقط قائمة المحاضر المنشأة مسبقاً وزر معاينة المحضر.
+            <strong>لا يوجد في الواجهة أي زر أو نموذج لإنشاء تسليم جديد لمعدات حرة بدون طلب خدمة مسبق!</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: SPECIAL INVESTIGATION - MANUAL ADJUSTMENT -->
+    <section id="manual-adjustment" class="section-card" style="border: 2px solid var(--warning);">
+      <div class="section-title">
+        <div class="icon-holder" style="background: rgba(245, 158, 11, 0.15); color: var(--warning-dark);">⚖️</div>
+        <h2 style="color: var(--warning-dark);">5. التحقيق الخاص في عملية «تعديل المخزون يدويًا»: تقييم السلامة والمخاطر</h2>
+      </div>
+
+      <p style="margin-bottom: 1.25rem;">
+        أجرى الفريق فحصاً دقيقاً لمعاملة التعديل اليدوي من الواجهة <span class="code-ref">EquipmentManager.tsx:1400-1437</span> والمسار <span class="code-ref">/api/admin/equipment/inventory/adjust</span> ومكتبة القواعد <span class="code-ref">lib/equipment-rules.ts:312-370</span>:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>عنصر التقييم الرقابي</th>
+            <th>الواقع البرمجي الفعلي في الكود</th>
+            <th>مستوى السلامة</th>
+            <th>التقييم الفني والأثر التشغيلي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>هل يعدل الرصيد مباشرة؟</strong></td>
+            <td>نعم، يقوم بتحديث <code>quantityOnHand = quantityOnHand + delta</code> فوراً.</td>
+            <td><span class="status-tag partial">تأثير مباشر</span></td>
+            <td>يغير رصيد المستودع الفعلي لحظة إرسال النموذج بنجاح.</td>
+          </tr>
+          <tr>
+            <td><strong>هل ينشئ حركة تسوية موثقة؟</strong></td>
+            <td>نعم، ينشئ سجلاً في <code>InventoryMovement</code> بنوع <code>ADJUSTMENT</code>.</td>
+            <td><span class="status-tag working">آمن وموثق</span></td>
+            <td>يوثق القيمة السابقة، قيمة دلتا، والقيمة اللاحقة بدقة رياضية.</td>
+          </tr>
+          <tr>
+            <td><strong>هل يتطلب سبباً إلزامياً؟</strong></td>
+            <td>نعم، حقل <code>reason</code> إلزامي في الواجهة ومخطط التحقق Zod والخادم.</td>
+            <td><span class="status-tag working">إلزامي ومشدد</span></td>
+            <td>يرفض الخادم أي عملية بدون نص يوضح سبب التسوية (تالف، خطأ جرد، إلخ).</td>
+          </tr>
+          <tr>
+            <td><strong>توثيق المستخدم والتاريخ</strong></td>
+            <td>يسجل <code>actorId</code> و <code>actorName</code> ووقت الحركة بالساعة والثانية.</td>
+            <td><span class="status-tag working">كامل التدقيق</span></td>
+            <td>يحدد هوية الموظف المسؤول تماماً في سجل الحركات وسجل التدقيق الإداري.</td>
+          </tr>
+          <tr>
+            <td><strong>الحماية من الرصيد السالب</strong></td>
+            <td>في السطر 333: <code>if (afterQty &lt; 0) throw new Error(...)</code></td>
+            <td><span class="status-tag working">محمي تماماً</span></td>
+            <td>يمنع الخادم منعاً باتاً إنقاص المخزون إلى ما دون الصفر تحت أي ظرف.</td>
+          </tr>
+          <tr>
+            <td><strong>حماية الكميات المحجوزة للعملاء</strong></td>
+            <td>في السطر 338: <code>if (afterQty &lt; product.quantityReserved) throw Error</code></td>
+            <td><span class="status-tag working">محمي تماماً</span></td>
+            <td>يمنع إنقاص المخزون الفعلي إلى مستوى يهدد الكميات المحجوزة سلفاً للعملاء.</td>
+          </tr>
+          <tr>
+            <td><strong>الصلاحيات والموافقة الإضافية</strong></td>
+            <td>يشترط فقط صلاحية <code>manage_inventory</code> وينفذ بنقرة واحدة دون موافقة مدير.</td>
+            <td><span class="status-tag partial">خطر رقابي متوسط</span></td>
+            <td>أي موظف يملك الصلاحية يستطيع تعديل كميات ضخمة بدون دورة اعتماد ثنائية (Dual Approval).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="alert-box info">
+        <div class="alert-title">💡 التوصية الرقابية لتطوير التعديل اليدوي</div>
+        <p>
+          التصميم الحالي متقن هندسياً من حيث التوثيق ومنع الرصيد السالب وحماية المحجوزات، لكن يعيبه رقابياً غياب <strong>«مبدأ التوقيع الثنائي (Four-Eyes Principle)»</strong>:
+          يوصى مستقبلاً بجعل التعديل اليدوي الذي يتجاوز سقفاً مالياً أو كمياً محدداً (مثلاً أكثر من 10 وحدات أو قيمة 500$) يدخل في حالة <code>PENDING_APPROVAL</code> بانتظار موافقة مدير العمليات أو مدير المركز.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 6: WORKFLOW DIAGRAMS -->
+    <section id="workflows" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🔄</div>
+        <h2>6. المرحلة الثالثة: المخططات البيانية لدورات العمل الفعلية</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem;">
+        فيما يلي رسوم بيانية توضح المسار المنفذ فعلياً في الكود البرمجي للمنصة مقارنة بالفجوات المرصودة:
+      </p>
+
+      <!-- Diagram 1 -->
+      <div class="flow-diagram-container">
+        <div class="flow-title">1. دورة الشراء والاستلام وتحديث المخزون (Procurement & Receiving Cycle)</div>
+[مورد معتمد (Active Supplier)]
+       │
+       ▼ (1) POST /api/admin/equipment/procurement
+[أمر شراء جديد (ProcurementOrder: ORDERED)] ──── (لا يغير رصيد المخزون الفعلي)
+       │
+       ▼ (2) وصول الشحنة لمقر المركز
+[تسجيل استلام شحنة (ProcurementReceiving)]
+       │
+       ├───► الكميات المرفوضة (quantityRejected) ──► توثق بالسجل مع سبب الرفض (لا تدخل المخزون)
+       │
+       └───► الكميات المقبولة (quantityAccepted) ──► (3) executeReceivingTransaction
+                                                           │
+                                                           ├──► زيادة الرصيد الفعلي (quantityOnHand + accepted)
+                                                           ├──► توليد حركة استلام رسمية (FACSS-MOV: RECEIPT)
+                                                           └──► تحديث حالة أمر الشراء (PARTIAL أو RECEIVED)
+      </div>
+
+      <!-- Diagram 2 -->
+      <div class="flow-diagram-container">
+        <div class="flow-title">2. دورة حجز وتسليم المعدات للعملاء (Reservation & Handover Cycle)</div>
+[طلب خدمة أمنية (ServiceRequest)]
+       │
+       ▼ (1) إضافة أصناف التوريد (SupplyRequestItem)
+[فحص توفر المخزون المتاح (Available = onHand - reserved)]
+       │
+       ├─── إن كان المخزون كافياً ──► (2) executeReservationTransaction
+       │                                       │
+       │                                       ├──► زيادة الرصيد المحجوز (quantityReserved + Q)
+       │                                       ├──► بقاء الرصيد الفعلي ثابتاً (onHand دون تغيير)
+       │                                       └──► حركة حجز بالمستودع (FACSS-MOV: RESERVATION)
+       │
+       ▼ (3) مرحلة التجهيز والفحص الفني (Inspection Gate)
+[فحص الصنف: هل يتطلب فحصاً معتمداً؟]
+       │
+       ├─── لا يتطلب فحص ──────────► يسمح بالتسليم
+       ├─── يتطلب وآخر فحص PASS ──► يسمح بالتسليم
+       └─── يتطلب ولم يفحص أو FAIL ──► 🚨 حظر التسليم برمجياً (Delivery Blocked)
+       │
+       ▼ (4) تنفيذ التسليم الفعلي: executeDeliveryTransaction
+       │
+       ├──► خصم الرصيد الفعلي (quantityOnHand - Q)
+       ├──► خصم الرصيد المحجوز (quantityReserved - Q)
+       ├──► توليد محضر تسليم رسمي (EquipmentDelivery: DELIVERED)
+       ├──► قيد حركة صرف نهائية (FACSS-MOV: ISSUE_DELIVERY)
+       └──► إصدار وثيقة الاستلام والتسليم للعميل (Handover Report JSON/Print)
+      </div>
+
+      <!-- Diagram 3 -->
+      <div class="flow-diagram-container">
+        <div class="flow-title">3. مخطط الكيانات والعلاقات الرئيسية (ERD Architecture)</div>
+┌───────────────────────┐          1:N         ┌────────────────────────┐
+│   EquipmentCategory   │ ──────────────────── │    EquipmentProduct    │
+│ id, code, nameAr...   │                      │ id, sku, onHand, res.. │
+└───────────────────────┘                      └────────────────────────┘
+                                                            │ 1:N
+               ┌────────────────────────┬───────────────────┼───────────────────┐
+               ▼                        ▼                   ▼                   ▼
+    ┌──────────────────────┐ ┌──────────────────────┐ ┌───────────┐ ┌──────────────────────┐
+    │  InventoryMovement   │ │ EquipmentInspection  │ │ PO Items  │ │ TrackedEquipmentItem │
+    │ movNumber, delta...  │ │ inspNumber, result.. │ │ qty, price│ │ serialNumber, expiry │
+    └──────────────────────┘ └──────────────────────┘ └───────────┘ └──────────────────────┘
+      </div>
+    </section>
+
+    <!-- SECTION 7: REALISTIC SCENARIOS -->
+    <section id="scenarios" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🎯</div>
+        <h2>7. المرحلة الرابعة: تحليل السيناريوهات التشغيلية الـ 12 الواقعية</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem;">
+        تم تقييم كل سيناريو بناءً على ما ينفذه الكود الفعلي وقواعد البيانات في المنصة الحالية:
+      </p>
+
+      <!-- S1 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 1</span>
+            <h3 class="scenario-title">شراء واستلام صنف لأول مرة</h3>
+          </div>
+          <span class="status-tag blocked">يتعطل عند الخطوة الأولى</span>
+        </div>
+        <p><strong>الإجراء:</strong> يضيف المسؤول صنفاً، ثم مورداً، ثم ينشئ أمر شراء، ثم يسجل استلام الكمية.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>ما يفعله النظام الحالي فعلياً</strong>
+            <span style="color: #DC2626; font-weight: 700;">يتعطل عند الخطوة الأولى تماماً!</span>
+            عند محاولة إضافة الصنف، تكون قائمة التصنيفات فارغة. وإذا حاول الحفظ يرفض الخادم لغياب <code>categoryId</code>.
+          </div>
+          <div class="scenario-col">
+            <strong>إذا تم تجاوز التصنيف عبر الـ API يدوياً</strong>
+            تنجح بقية الدورة بامتياز: يُنشأ أمر الشراء، وعند تسجيل الاستلام ترتفع الكمية المقبولة في <code>quantityOnHand</code> وتتولد حركة <code>RECEIPT</code> وتتحدث مؤشرات لوحة التحكم.
+          </div>
+        </div>
+      </div>
+
+      <!-- S2 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 2</span>
+            <h3 class="scenario-title">الاستلام الجزئي لشحنة التوريد</h3>
+          </div>
+          <span class="status-tag working">مدعوم ويعمل بنجاح</span>
+        </div>
+        <p><strong>الإجراء:</strong> أمر شراء لكمية 100 وحدة، وصل منها فعلياً 70 فقط.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي في الكود</strong>
+            يدخل المسؤول كمية 70 في محضر الاستلام. في <span class="code-ref">lib/equipment-rules.ts:291-306</span>:
+            يقارن النظام الكمية المستلمة التراكمية (70) بالمطلوبة (100). وبما أن <code>anyReceived = true</code> و <code>allCompleted = false</code>، تتحول حالة أمر الشراء تلقائياً إلى <code>PARTIALLY_RECEIVED</code>.
+          </div>
+          <div class="scenario-col">
+            <strong>الأثر المخزني</strong>
+            يزداد رصيد المخزون الفعلي بـ 70 فقط، ويبقى أمر الشراء مفتوحاً في تبويب أوامر الشراء لاستقبال الدفعة المتبقية (30 وحدة) في محضر استلام لاحق.
+          </div>
+        </div>
+      </div>
+
+      <!-- S3 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 3</span>
+            <h3 class="scenario-title">تكرار تسجيل الاستلام (Double Receiving)</h3>
+          </div>
+          <span class="status-tag missing">ثغرة: غير محمي من التكرار</span>
+        </div>
+        <p><strong>الإجراء:</strong> يحاول المستخدم تسجيل الاستلام نفسه مرتين بسبب بطء الاتصال أو إعادة الإرسال.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي في الكود</strong>
+            في <span class="code-ref">app/api/admin/equipment/procurement/[id]/receiving/route.ts</span>:
+            المسار يتحقق فقط من <code>if (po.status === 'CANCELLED')</code>.
+            <strong>لا يوجد أي تدقيق يمنع استلام كميات تتجاوز الكمية المطلوبة بأمر الشراء!</strong>
+          </div>
+          <div class="scenario-col">
+            <strong>النتيجة الكارثية المحتملة</strong>
+            إذا نقر المستخدم مرتين، سيتم إنشاء محضري استلام، وسيزداد رصيد المخزون الفعلي بمقدار الضعف (مثلاً +200 بدلاً من +100)!
+            <strong>توصية:</strong> إضافة قيد تدقيق يمنع تجاوز <code>quantityOrdered</code> وتفعيل Idempotency Key.
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 4</span>
+            <h3 class="scenario-title">تسليم معدات وتجهيزات إلى منشأة مستفيدة</h3>
+          </div>
+          <span class="status-tag partial">مدعوم بالخادم فقط</span>
+        </div>
+        <p><strong>الإجراء:</strong> طلب عميل 20 طقم إسعافات، وتجهيز المحضر والتسليم والخصم.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي</strong>
+            المسار البرمجي في <span class="code-ref">executeDeliveryTransaction</span> ينفذ الدورة بكفاءة عالية: يتحقق من الرصيد وحواجز الفحص، يخصم المخزون المحجوز والفعلي، وينشئ محضر التسليم.
+          </div>
+          <div class="scenario-col">
+            <strong>نقطة التعطل</strong>
+            المسار متاح فقط عبر <span class="code-ref">supply-requests/[id]/deliver</span>.
+            لا توجد واجهة في لوحة التحكم تسمح لضابط العمليات بإتمام هذا التسليم بنقرة زر من صفحة الطلب أو صفحة المعدات!
+          </div>
+        </div>
+      </div>
+
+      <!-- S5 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 5</span>
+            <h3 class="scenario-title">طلب كمية تفوق الرصيد المتاح (عجز مخزني)</h3>
+          </div>
+          <span class="status-tag working">محمي ويرفض العملية برمجياً</span>
+        </div>
+        <p><strong>الإجراء:</strong> الرصيد المتاح 10 وحدات، بينما المطلوب في أمر الصرف 15 وحدة.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي في الكود</strong>
+            في <span class="code-ref">lib/equipment-rules.ts:391</span>:
+            <code>if (available &lt; item.quantityToReserve) throw new Error(...)</code>
+            يرفض النظام حجز الكمية ويلغي المعاملة الذرية بالكامل مع رسالة خطأ واضحة:
+            <em>«المخزون المتاح للصنف غير كافٍ للحجز (المتاح: 10، المطلوب: 15)»</em>.
+          </div>
+          <div class="scenario-col">
+            <strong>النتيجة</strong>
+            سلامة تامة للأرصدة ومنع تولد رصيد سالب.
+          </div>
+        </div>
+      </div>
+
+      <!-- S6 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 6</span>
+            <h3 class="scenario-title">تسوية المخزون وتعديل الرصيد يدوياً</h3>
+          </div>
+          <span class="status-tag working">مدعوم وموثق بالكامل</span>
+        </div>
+        <p><strong>الإجراء:</strong> اكتشاف فارق جردي وتعديل الرصيد يدوياً مع ذكر المبرر.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي</strong>
+            تفتح نافذة التسوية من تبويب المخزون، يُدخل المسؤول قيمة دلتا (مثلاً -3 أو +5) والسبب الإلزامي.
+            تنفذ المعاملة الذرية <code>executeAdjustmentTransaction</code>، ويتعدل الرصيد، وتسجل حركة <code>ADJUSTMENT</code> موثقة بالمستخدم والوقت.
+          </div>
+          <div class="scenario-col">
+            <strong>القيود الصارمة</strong>
+            يرفض النظام العملية إذا أدت لرصيد سالب أو نزلت بالرصيد دون الكميات المحجوزة للعملاء.
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 7</span>
+            <h3 class="scenario-title">اكتشاف صنف تالف أو رسوب الفحص الفني</h3>
+          </div>
+          <span class="status-tag working">حظر فوري للتسليم</span>
+        </div>
+        <p><strong>الإجراء:</strong> تسجيل نتيجة فحص فني رسبت (FAIL) لمعدة أمنية.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي</strong>
+            تسجيل الفحص بنتيجة <code>FAIL</code> يحول حالة الوحدة إلى <code>MAINTENANCE</code>.
+            وعند محاولة تسليم هذه المعدة، يفعل حاجز الفحص الفني (Inspection Gate) فوراً:
+            <em>«تسليم الصنف محظور: آخر فحص مسجل انتهى بنتيجة FAIL»</em>.
+          </div>
+          <div class="scenario-col">
+            <strong>ملاحظة هامة</strong>
+            إذا كان الصنف عاماً بدون رقم تسلسلي (Non-tracked item)، فإن تسجيل فحص فاشل على الصنف يمنع تسليم أي كمية منه حتى يُجرى فحص ناجح (PASS).
+          </div>
+        </div>
+      </div>
+
+      <!-- S8 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 8</span>
+            <h3 class="scenario-title">محاولة إنشاء صنف في ظل غياب التصنيفات</h3>
+          </div>
+          <span class="status-tag blocked">تعطل تام (نقطة الخلل الحالية)</span>
+        </div>
+        <p><strong>الإجراء:</strong> يحاول المستخدم حفظ صنف جديد من واجهة المتصفح الحالية.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي</strong>
+            القائمة المنسدلة فارغة. عند الضغط على حفظ، تظهر رسالة التحقق:
+            <em>«تصنيف المنتج مطلوب»</em> أو خطأ الخادم: <em>«تصنيف المنتج المحدد غير موجود»</em>.
+            لا يمكن تجاوز هذه النقطة من واجهة المستخدم.
+          </div>
+          <div class="scenario-col">
+            <strong>الحل المطلوب</strong>
+            إضافة واجهة لإدارة التصنيفات أو تغذية قاعدة البيانات بالتصنيفات المعتمدة.
+          </div>
+        </div>
+      </div>
+
+      <!-- S9 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 9</span>
+            <h3 class="scenario-title">إلغاء أمر شراء أو محضر تسليم</h3>
+          </div>
+          <span class="status-tag partial">إلغاء أمر الشراء فقط</span>
+        </div>
+        <p><strong>الإجراء:</strong> تصحيح العملية أو التراجع عن أمر شراء أو محضر تسليم خاطئ.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>أمر الشراء:</strong> يدعم النظام تحويل حالة الأمر إلى <code>CANCELLED</code> في <span class="code-ref">procurement/[id]/route.ts</span>، ويمنع استلام أي شحنة له لاحقاً.
+          </div>
+          <div class="scenario-col">
+            <strong>محضر التسليم:</strong> لا توجد آلية في الواجهة لإلغاء محضر تسليم معتمد أو عمل إرجاع تلقائي، وتتطلب استخدام مسار المرتجعات <code>returns</code> غير المربوط بالواجهة.
+          </div>
+        </div>
+      </div>
+
+      <!-- S10 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 10</span>
+            <h3 class="scenario-title">مصفوفة الصلاحيات وفصل المهام (RBAC Matrix)</h3>
+          </div>
+          <span class="status-tag working">منفذة ومحمية على الخادم</span>
+        </div>
+        <p><strong>المقارنة الفعلية بين الأدوار والصلاحيات في الكود:</strong></p>
+        <table class="data-table" style="margin: 0.5rem 0;">
+          <thead>
+            <tr>
+              <th>الدور الوظيفي (Role)</th>
+              <th>صلاحية المعدات (manage_equipment)</th>
+              <th>صلاحية الشراء (manage_procurement)</th>
+              <th>صلاحية المخزون والتسليم (manage_inventory)</th>
+              <th>صلاحية الفحص الفني (manage_inspections)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>SUPER_ADMIN & ADMIN</strong></td>
+              <td>✅ كامل الصلاحيات</td>
+              <td>✅ كامل الصلاحيات</td>
+              <td>✅ كامل الصلاحيات</td>
+              <td>✅ كامل الصلاحيات</td>
+            </tr>
+            <tr>
+              <td><strong>SERVICE_MANAGER (مدير العمليات)</strong></td>
+              <td>✅ مدعومة تلقائياً</td>
+              <td>✅ مدعومة تلقائياً</td>
+              <td>✅ مدعومة تلقائياً</td>
+              <td>✅ مدعومة تلقائياً</td>
+            </tr>
+            <tr>
+              <td><strong>EMPLOYEE / FIELD_FOCAL</strong></td>
+              <td>❌ محجوبة افتراضياً</td>
+              <td>❌ محجوبة افتراضياً</td>
+              <td>❌ محجوبة افتراضياً</td>
+              <td>❌ محجوبة افتراضياً</td>
+            </tr>
+            <tr>
+              <td><strong>CLIENT / TRAINEE</strong></td>
+              <td>❌ محجوبة تماماً (401/403)</td>
+              <td>❌ محجوبة تماماً</td>
+              <td>❌ محجوبة تماماً</td>
+              <td>❌ محجوبة تماماً</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- S11 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 11</span>
+            <h3 class="scenario-title">العمليات المتزامنة وحماية السباق (Concurrency Protection)</h3>
+          </div>
+          <span class="status-tag working">محمي بالمعاملات الذرية</span>
+        </div>
+        <p><strong>الإجراء:</strong> محاولة مستخدمين تسليم آخر 10 وحدات في الوقت نفسه عبر جلستين مختلفتين.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>السلوك الفعلي في الكود</strong>
+            تستخدم كافة عمليات التعديل والحجز والتسليم والاستلام معاملة Prisma الذرية المفتوحة:
+            <code>await prisma.$transaction(async (tx) =&gt; { ... })</code>.
+          </div>
+          <div class="scenario-col">
+            <strong>النتيجة</strong>
+            المعاملة الأولى التي تصل لقاعدة البيانات تنفذ وتخصم الكمية، بينما المعاملة الثانية تقرأ الرصيد المحدث بعد الخصم (0)، فيطلق الخادم استثناء فورياً ويرفض العملية الثانية دون توليد رصيد سالب.
+          </div>
+        </div>
+      </div>
+
+      <!-- S12 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div>
+            <span class="scenario-id">السيناريو 12</span>
+            <h3 class="scenario-title">تتبع الأرقام التسلسلية والدفعات وتواريخ الصلاحية</h3>
+          </div>
+          <span class="status-tag partial">معمارية متقدمة بواجهة جزئية</span>
+        </div>
+        <p><strong>الإجراء:</strong> إدارة حقائب إسعافات لها تاريخ صلاحية ومعدات حراسة لها أرقام تسلسلية.</p>
+        <div class="scenario-grid">
+          <div class="scenario-col">
+            <strong>الدعم في قاعدة البيانات والخادم</strong>
+            مكتمل ومثالي عبر جدول <code>TrackedEquipmentItem</code>:
+            يدعم <code>serialNumber</code> فريد لكل صنف، <code>batchNumber</code>، <code>expiryDate</code>، وحالة الوحدة (AVAILABLE, QUARANTINE, MAINTENANCE).
+            وفي <span class="code-ref">lib/equipment-rules.ts:127</span> يمنع تسليم أي وحدة منتهية الصلاحية.
+          </div>
+          <div class="scenario-col">
+            <strong>نقص الواجهة الأمامية</strong>
+            واجهة استلام الشحنة في المودال تتيح إدخال أرقام الدفعات وتواريخ الصلاحية كنصوص، لكن لا توجد واجهة شجرية في تبويب المخزون لاستعراض كل رقم تسلسلي على حدة وسجل حركاته الفردية.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: INTEGRATION WITH FACSS -->
+    <section id="integration" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🔗</div>
+        <h2>8. المرحلة الخامسة: خريطة التكامل مع بقية وحدات منصة FACSS</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem;">
+        أجرى الفريق فحصاً برمجياً شاملاً لعلاقة وحدة المعدات والمخزون ببقية أجزاء المنظومة:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>الوحدة الشريكة</th>
+            <th>علاقة قاعدة البيانات</th>
+            <th>التكامل البرمجي الحالي</th>
+            <th>بيانات التدفق والتحديث</th>
+            <th>تقييم التكامل الفعلي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>طلبات الخدمات والعملاء (Service Requests)</strong></td>
+            <td><code>ServiceRequest</code> يرتبط بـ <code>supplyItems</code> و <code>deliveries</code></td>
+            <td>مسارات API موجودة (<span class="code-ref">supply-requests</span>)</td>
+            <td>حجز المخزون، ربط التجهيزات برقم الطلب، وتوليد المحضر باسم العميل</td>
+            <td><span class="status-tag partial">مكتمل بالخادم - معزول عن واجهة الطلبات</span></td>
+          </tr>
+          <tr>
+            <td><strong>بوابة العميل (Client Portal)</strong></td>
+            <td>علاقة عبر <code>userId</code> لطلب الخدمة</td>
+            <td>مسار محضر التسليم (<span class="code-ref">handover</span>) يسمح للعميل بالقراءة</td>
+            <td>لا توجد أي شاشة في بوابة العميل تعرض المعدات المستلمة أو حالتها</td>
+            <td><span class="status-tag missing">غير مدمج في واجهات العميل</span></td>
+          </tr>
+          <tr>
+            <td><strong>البلاغات والحوادث الميدانية (Incidents)</strong></td>
+            <td>لا توجد علاقة بقاعدة البيانات</td>
+            <td>لا يوجد أي ربط برمجي</td>
+            <td>لا يمكن ربط معدات متضررة أو أجهزة اتصال مستخدمة بالبلاغ الميداني</td>
+            <td><span class="status-tag missing">غير موجود (توصية مستقبلية)</span></td>
+          </tr>
+          <tr>
+            <td><strong>سجل المخاطر التشغيلية (Risk Register)</strong></td>
+            <td>لا توجد علاقة بقاعدة البيانات</td>
+            <td>لا يوجد ربط برمجي</td>
+            <td>مخاطر نفاد معدات السلامة أو توقف الموردين لا تنتقل لسجل المخاطر</td>
+            <td><span class="status-tag missing">غير موجود (توصية مستقبلية)</span></td>
+          </tr>
+          <tr>
+            <td><strong>أكاديمية التدريب (Training Academy)</strong></td>
+            <td>لا توجد علاقة بقاعدة البيانات</td>
+            <td>لا يوجد ربط برمجي</td>
+            <td>تجهيزات قاعات التدريب ومعدات التأهيل الميداني لا تخصم من المخزون</td>
+            <td><span class="status-tag missing">غير موجود (توصية مستقبلية)</span></td>
+          </tr>
+          <tr>
+            <td><strong>سجل التدقيق الإداري (Audit Logs)</strong></td>
+            <td>مرتبط عبر دالة <code>logActivity</code></td>
+            <td>مفعل في كافة مسارات الـ API (إنشاء، تعديل، استلام، فحص)</td>
+            <td>تسجيل اسم المسؤول، رقم الآي بي، نوع الكيان، وتفاصيل الحركة</td>
+            <td><span class="status-tag working">مدمج ونشط 100%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 9: RECOMMENDATIONS MATRIX -->
+    <section id="recommendations" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">💡</div>
+        <h2>9. المرحلة السابعة: مصفوفة المقارنة والتوصيات العملية</h2>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">المجال التشغيلي</th>
+            <th style="width: 35%;">الوضع الفعلي الحالي في المنصة</th>
+            <th style="width: 40%;">الوضع الموصى به لمعايير سلاسل الإمداد</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>دليل التصنيفات</strong></td>
+            <td>جدول فارغ ولا توجد واجهة لإنشاء أو إدارة التصنيفات مما عطل إضافة الأصناف.</td>
+            <td>إضافة نافذة إدارة تصنيفات سريعة في دليل الأصناف وتغذية قاعدة البيانات بالتصنيفات القياسية (معدات وقاية PPE، إطفاء، إسعافات، اتصالات).</td>
+          </tr>
+          <tr>
+            <td><strong>ضبط الاستلام ومنع التكرار</strong></td>
+            <td>الخادم يسمح بتسجيل استلام شحنة بكميات تتجاوز أمر الشراء دون تدقيق لسقف الكمية.</td>
+            <td>فرض قيد برمجي يمنع استلام أي كمية تتجاوز <code>quantityOrdered - quantityReceived</code> لمنع مضاعفة الرصيد بالخطأ.</td>
+          </tr>
+          <tr>
+            <td><strong>الربط مع طلبات الخدمات</strong></td>
+            <td>واجهات طلبات الخدمات لا تحتوي على زر لحجز أو تسليم التجهيزات الأمنية.</td>
+            <td>دمج تبويب "تجهيز وتوريد المعدات" داخل نافذة تفاصيل طلب الخدمة الميدانية لربط طلب العميل بمستودع المركز.</td>
+          </tr>
+          <tr>
+            <td><strong>التسوية اليدوية والرقابة</strong></td>
+            <td>تعديل فوري بنقرة واحدة لأي كمية بدون اشتراط موافقة مسؤول أعلى.</td>
+            <td>إضافة اعتماد ثنائي (Dual Approval) إذا تجاوزت التسوية حداً كمياً أو مالياً محدداً.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 2rem 0 1rem 0;">تصنيف التوصيات حسب الأولوية والأثر:</h3>
+      
+      <div class="alert-box danger" style="margin-bottom: 1rem;">
+        <strong>1. أخطاء ومخاطر حرجة يجب إصلاحها فوراً (Critical - Prior to Launch):</strong>
+        <ul style="padding-right: 1.5rem; margin-top: 0.5rem; font-size: 0.92rem;">
+          <li><strong>إصلاح فجوة التصنيفات:</strong> إضافة نموذج مودال لإنشاء وتعديل تصنيفات المعدات في <code>EquipmentManager.tsx</code> واستدعاء <code>/api/admin/equipment/categories</code>.</li>
+          <li><strong>حماية أوامر الشراء من الاستلام الزائد:</strong> إضافة تدقيق لسقف الكمية في مسار <code>receiving/route.ts</code> لمنع الاستلام المكرر.</li>
+          <li><strong>منع الشراء من مورد معطل:</strong> التحقق من حالة المورد <code>status === 'ACTIVE'</code> عند إنشاء أمر الشراء.</li>
+        </ul>
+      </div>
+
+      <div class="alert-box warning" style="margin-bottom: 1rem;">
+        <strong>2. تحسينات تشغيلية أساسية (Important Operational Enhancements):</strong>
+        <ul style="padding-right: 1.5rem; margin-top: 0.5rem; font-size: 0.92rem;">
+          <li>دمج إدارة أصناف التوريد وحجز المخزون داخل نافذة طلبات الخدمات <code>RequestsManager.tsx</code>.</li>
+          <li>تحسين سرعة تحميل تبويب المؤشرات بجلب البيانات في استدعاء موحد بدلاً من 8 استدعاءات متتالية.</li>
+          <li>إضافة زر لإنشاء محضر تسليم مباشر للعملاء خارج إطار طلبات الخدمات المسبقة.</li>
+        </ul>
+      </div>
+
+      <div class="alert-box info">
+        <strong>3. تحسينات استراتيجية مستقبلية (Future Enhancements):</strong>
+        <ul style="padding-right: 1.5rem; margin-top: 0.5rem; font-size: 0.92rem;">
+          <li>ربط استهلاك معدات السلامة ومواد الإسعافات بالبلاغات والحوادث الميدانية.</li>
+          <li>توفير واجهة تفصيلية لتتبع الأرقام التسلسلية الفردية وحركات كل جهاز على حدة.</li>
+          <li>تفعيل التنبيهات الآلية للمعدات المقتربة من انتهاء الصلاحية أو موعد المعايرة الفنية.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 10: USER ACCEPTANCE TESTING (UAT) MANUAL -->
+    <section id="uat-plan" class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🧪</div>
+        <h2>10. المرحلة الثامنة: دليل وقائمة اختبارات القبول اليدوية (UAT Manual)</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem;">
+        دليل عملي مصمم للمستخدم لاختبار وتدقيق وظائف المنصة يدوياً عبر المتصفح:
+      </p>
+
+      <!-- Test 1 -->
+      <div class="test-card">
+        <div class="test-header">
+          <strong>اختبار UAT-01: فحص مشكلة قائمة التصنيفات عند إنشاء صنف</strong>
+          <span class="status-tag blocked">اختبار التحقق من الخلل</span>
+        </div>
+        <div class="test-body">
+          <p><strong>الهدف:</strong> التحقق بالعين المجردة من ظاهرة القائمة الفارغة ونقطة التعطل.</p>
+          <p><strong>الدور المطلوب:</strong> مسؤول النظام أو مدير العمليات (<code>SUPER_ADMIN</code> / <code>SERVICE_MANAGER</code>).</p>
+          <ol class="step-list">
+            <li>تسجيل الدخول للمنصة والتوجه إلى الرابط: <code>http://localhost:3000/admin/equipment</code>.</li>
+            <li>النقر على تبويب <strong>«دليل المعدات والأصناف»</strong>.</li>
+            <li>النقر على الزر الأزرق أعلى الصفحة <strong>«+ إضافة معدة / صنف»</strong>.</li>
+            <li>ملاحظة حقل <strong>«التصنيف»</strong> في النموذج المفتوح.</li>
+          </ol>
+          <p><strong>النتيجة المتوقعة حالياً:</strong> القائمة فارغة تماماً ولا يوجد أي تصنيف متاح للاختيار، وعند الضغط على زر الحفظ يرفض النظام الحفظ.</p>
+          <p><strong>دلالة الفشل:</strong> يثبت صحة استنتاج التدقيق بوجود انسداد وظيفي يتطلب إضافة واجهة لإدارة التصنيفات.</p>
+        </div>
+      </div>
+
+      <!-- Test 2 -->
+      <div class="test-card">
+        <div class="test-header">
+          <strong>اختبار UAT-02: فحص إضافة مورد معتمد وتوليد الكود</strong>
+          <span class="status-tag working">اختبار وظيفة عاملة</span>
+        </div>
+        <div class="test-body">
+          <p><strong>الهدف:</strong> التحقق من سلامة تسجيل الموردين وتوليد الكود التسلسلي المرجعي.</p>
+          <p><strong>الدور المطلوب:</strong> <code>SUPER_ADMIN</code> أو <code>SERVICE_MANAGER</code>.</p>
+          <ol class="step-list">
+            <li>الدخول إلى صفحة المعدات واختيار تبويب <strong>«الموردون»</strong>.</li>
+            <li>النقر على زر <strong>«+ تسجيل مورد جديد»</strong>.</li>
+            <li>إدخال بيانات المورد: (الاسم: <em>شركة السلامة الدولية للتوريدات</em>، الهاتف: <em>777123456</em>، المسؤول: <em>أحمد اليافعي</em>).</li>
+            <li>الضغط على <strong>«حفظ بيانات المورد»</strong>.</li>
+          </ol>
+          <p><strong>النتيجة المتوقعة:</strong> يغلق النموذج بنجاح، وتظهر رسالة تأكيد خضراء، ويظهر المورد في الجدول برمز مولد تلقائياً مثل <code>FACSS-SUP-2026-0002</code> وبحالة <code>ACTIVE</code>.</p>
+        </div>
+      </div>
+
+      <!-- Test 3 -->
+      <div class="test-card">
+        <div class="test-header">
+          <strong>اختبار UAT-03: فحص التعديل اليدوي للمخزون ومنع الرصيد السالب</strong>
+          <span class="status-tag working">اختبار وظيفة عاملة مع حماية أمنية</span>
+        </div>
+        <div class="test-body">
+          <p><strong>الهدف:</strong> التأكد من عمل التسوية اليدوية واشتراط السبب ومنع النزول تحت الصفر.</p>
+          <p><strong>الدور المطلوب:</strong> مسؤول يملك صلاحية <code>manage_inventory</code>.</p>
+          <ol class="step-list">
+            <li>الانتقال إلى تبويب <strong>«المخزون وسجل الحركات»</strong>.</li>
+            <li>النقر على زر <strong>«تعديل مخزون يدويًا»</strong>.</li>
+            <li>في حقل القيمة (Delta)، إدخال رقم سالب كبير مثل <code>-999</code>.</li>
+            <li>ترك حقل السبب فارغاً ومحاولة الإرسال ➔ <em>يجب أن تمنع الواجهة الإرسال لاشتراط السبب</em>.</li>
+            <li>كتابة سبب تجريبي والضغط على تأكيد.</li>
+          </ol>
+          <p><strong>النتيجة المتوقعة:</strong> يرفض الخادم العملية وتظهر رسالة خطأ حمراء: <em>«عملية التعديل تؤدي إلى رصيد سالب غير مسموح»</em>.</p>
+        </div>
+      </div>
+
+      <!-- Test 4 -->
+      <div class="test-card">
+        <div class="test-header">
+          <strong>اختبار UAT-04: فحص تسجيل محضر فحص فني بنتيجة PASS</strong>
+          <span class="status-tag working">اختبار وظيفة عاملة</span>
+        </div>
+        <div class="test-body">
+          <p><strong>الهدف:</strong> التحقق من إمكانية تسجيل الفحص الفني وحفظ الملاحظات واسم الفني.</p>
+          <p><strong>الدور المطلوب:</strong> مسؤول يملك صلاحية <code>manage_inspections</code>.</p>
+          <ol class="step-list">
+            <li>الانتقال إلى تبويب <strong>«الفحص الفني والصيانة»</strong>.</li>
+            <li>النقر على زر <strong>«تسجيل فحص فني»</strong>.</li>
+            <li>اختيار صنف تجريبي، وتحديد نوع الفحص <em>«فحص ما قبل التسليم للعميل»</em>.</li>
+            <li>تحديد النتيجة <code>PASS (مطابق ومعتمد)</code> وإدخال ملخص الفحص وتاريخ الفحص القادم.</li>
+            <li>الضغط على <strong>«اعتماد نتيجة الفحص الفني»</strong>.</li>
+          </ol>
+          <p><strong>النتيجة المتوقعة:</strong> تسجيل المحضر برقم تسلسلي <code>FACSS-INSP-2026-XXXX</code> وظهوره في جدول الفحوصات مع شارة خضراء وتوثيق اسم المسؤول.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 11: GLOSSARY -->
+    <section class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">📖</div>
+        <h2>11. مسرد المصطلحات الفنية والتشغيلية المعتمدة (Glossary)</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div>
+          <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.3rem;">رمز الصنف (SKU - Stock Keeping Unit)</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">معرّف رمزي فريد داخلي مخصص لكل منتج أو معدة لتمييز مواصفاتها ومنع تداخل السجلات.</p>
+        </div>
+        <div>
+          <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.3rem;">المخزون المحجوز (Reserved Stock)</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">كميات موجودة في المستودع لكنها محجوزة قانونياً لطلبات خدمات قيد التجهيز ولا يجوز بيعها لعميل آخر.</p>
+        </div>
+        <div>
+          <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.3rem;">حاجز الفحص الفني (Inspection Delivery Gate)</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">قيد برمجي ذكي يمنع تسليم المعدة للعميل إلا إذا كانت تحمل شهادة فحص فني معتمدة بنتيجة PASS سارية المفعول.</p>
+        </div>
+        <div>
+          <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.3rem;">محضر الاستلام والتسليم (Handover Protocol)</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">وثيقة قانونية وفنية تثبت خروج المعدات من عهدة المركز وتسليمها لممثل المنشأة المستفيدة بحالة سليمة.</p>
+        </div>
+        <div>
+          <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.3rem;">سجل الحركات التراكمي (Immutable Ledger)</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">دفتر أستاذ مخزني رقمي يسجل كل حركة دخول أو خروج مع الرصيد السابق واللاحق، ولا يمكن تعديله أو حذفه.</p>
+        </div>
+        <div>
+          <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.3rem;">معدل الجاهزية (Equipment Readiness Rate)</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">مؤشر قياس رئيسي يعبر عن النسبة المئوية للمعدات الصالحة فوراً للتشغيل الميداني دون أي عوائق فنية أو انتهاء صلاحية.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

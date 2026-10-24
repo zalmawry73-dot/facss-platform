@@ -17,6 +17,7 @@ import {
   Clock,
   Sparkles,
   ExternalLink,
+  Plus,
 } from 'lucide-react';
 import {
   AdminPageHeader,
@@ -32,6 +33,10 @@ import {
   AdminEmptyState,
   AdminLoadingState,
   AdminAlert,
+  AdminModal,
+  AdminInput,
+  AdminTextarea,
+  AdminCheckbox,
 } from '@/components/admin/ui';
 
 interface AlertItem {
@@ -91,6 +96,123 @@ export default function AlertsManager({ currentUserRole, currentUserId }: Alerts
   const [searchQuery, setSearchQuery] = useState('');
   const [severityFilter, setSeverityFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
+
+  // Modal & Creation State
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Verified Incidents for Linking
+  const [verifiedIncidents, setVerifiedIncidents] = useState<any[]>([]);
+  const [isLoadingIncidents, setIsLoadingIncidents] = useState(false);
+  const [selectedIncidentId, setSelectedIncidentId] = useState('');
+
+  const [formData, setFormData] = useState({
+    severity: 'WARNING_HIGH',
+    titleAr: '',
+    bodyAr: '',
+    executiveTitleAr: '',
+    executiveSummaryAr: '',
+    movementAdviceAr: '',
+    targetGovernorate: 'عدن',
+    targetDistricts: '',
+    isPrecautionary: false,
+  });
+
+  const loadVerifiedIncidents = async () => {
+    setIsLoadingIncidents(true);
+    try {
+      const res = await fetch('/api/admin/incidents');
+      if (res.ok) {
+        const data = await res.json();
+        const verified = (data.incidents || []).filter(
+          (inc: any) =>
+            inc.status === 'VERIFIED' ||
+            inc.status === 'ALERT_DRAFTED' ||
+            (inc.verifications && inc.verifications.length > 0)
+        );
+        setVerifiedIncidents(verified);
+        if (verified.length > 0 && !selectedIncidentId) {
+          handleSelectIncident(verified[0].id, verified);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load verified incidents:', err);
+    } finally {
+      setIsLoadingIncidents(false);
+    }
+  };
+
+  const handleSelectIncident = (incId: string, list = verifiedIncidents) => {
+    setSelectedIncidentId(incId);
+    const inc = list.find((i: any) => i.id === incId);
+    if (inc) {
+      const curr = inc.redactedVersions?.find((r: any) => r.isCurrent) || inc.redactedVersions?.[0];
+      setFormData({
+        severity: inc.priority === 'CRITICAL_EMERGENCY' ? 'CRITICAL_FLASH' : 'WARNING_HIGH',
+        titleAr: curr?.redactedTitleAr || `إحاطة أمنية ميدانية عاجلة: ${inc.incidentNumber}`,
+        bodyAr: curr?.redactedDescAr || `رصدت غرفة العمليات الميدانية واقعة أمنية في ${inc.governorate}. يجري المتابعة وتحديث التوجيهات.`,
+        executiveTitleAr: curr?.redactedTitleAr ? `ملخص تنفيذي: ${curr.redactedTitleAr}` : `ملخص تنسيقي - ${inc.governorate}`,
+        executiveSummaryAr: curr?.immediateImpact || curr?.redactedDescAr || `إحاطة تنسيقية مقتضبة حول وقائع البلاغ رقم ${inc.incidentNumber}.`,
+        movementAdviceAr: curr?.safetyAdvisory || 'توخي الحيطة والحذر والالتزام بالمسارات الآمنة المعتمدة والتنسيق مع غرفة العمليات.',
+        targetGovernorate: inc.governorate || 'عدن',
+        targetDistricts: inc.district || '',
+        isPrecautionary: false,
+      });
+    }
+  };
+
+  const handleCreateAlert = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedIncidentId) {
+      setFormError(tx("يرجى اختيار البلاغ الميداني المصدر"));
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError(null);
+
+    try {
+      const districts = formData.targetDistricts.trim()
+        ? [formData.targetDistricts.trim()]
+        : [formData.targetGovernorate];
+
+      const payload = {
+        severity: formData.severity,
+        titleAr: formData.titleAr,
+        bodyAr: formData.bodyAr,
+        executiveTitleAr: formData.executiveTitleAr,
+        executiveSummaryAr: formData.executiveSummaryAr,
+        movementAdviceAr: formData.movementAdviceAr,
+        targetGovernorate: formData.targetGovernorate,
+        targetDistricts: districts,
+        isPrecautionary: formData.isPrecautionary,
+      };
+
+      const res = await fetch(`/api/admin/incidents/${selectedIncidentId}/alerts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || (data.validationErrors ? data.validationErrors.join(', ') : tx("تعذر صياغة مسودة التنبيه")));
+      }
+
+      setIsCreateModalOpen(false);
+      setFeedback({
+        type: 'success',
+        message: tx("تم إنشاء مسودة التنبيه الميداني بنجاح برقم [{0}]. بانتظار الاعتماد والتوزيع.", data.alert?.alertNumber || ''),
+      });
+      fetchAlerts();
+    } catch (err: any) {
+      setFormError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const fetchAlerts = async () => {
     setIsLoading(true);
@@ -309,7 +431,7 @@ export default function AlertsManager({ currentUserRole, currentUserId }: Alerts
         title={tx("منظومة التنبيهات الميدانية المستهدفة")}
         description={tx("إعداد، مراجعة، واعتماد التنبيهات الميدانية الأمنية وتوزيعها الداخلي المشفر عبر المنصة")}
         actions={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <AdminButton
               variant="secondary"
               size="sm"
@@ -320,13 +442,33 @@ export default function AlertsManager({ currentUserRole, currentUserId }: Alerts
               {tx("تحديث")}
             </AdminButton>
             <Link href="/admin/incidents" style={{ textDecoration: 'none' }}>
-              <AdminButton variant="primary" size="sm" icon={<FileCheck2 size={14} />}>
-                {tx("البلاغات الميدانية المنقحة")}
+              <AdminButton variant="outline" size="sm" icon={<FileCheck2 size={14} />}>
+                {tx("البلاغات الميدانية")}
               </AdminButton>
             </Link>
+            <AdminButton
+              variant="primary"
+              size="sm"
+              icon={<Plus size={14} />}
+              onClick={() => {
+                loadVerifiedIncidents();
+                setIsCreateModalOpen(true);
+              }}
+            >
+              {tx("صياغة مسودة تنبيه")}
+            </AdminButton>
           </div>
         }
       />
+
+      {/* Feedback Banner */}
+      {feedback && (
+        <AdminAlert
+          variant={feedback.type === 'success' ? 'success' : 'danger'}
+          message={feedback.message}
+          onDismiss={() => setFeedback(null)}
+        />
+      )}
 
       {/* Security Boundary Notice */}
       <AdminAlert
@@ -511,6 +653,172 @@ export default function AlertsManager({ currentUserRole, currentUserId }: Alerts
           }}
         />
       )}
+
+      {/* Draft Alert Creation Modal */}
+      <AdminModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        title={tx("صياغة مسودة تنبيه ميداني مستهدف جديدة")}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <AdminButton
+              variant="ghost"
+              size="sm"
+              disabled={isSubmitting}
+              onClick={() => setIsCreateModalOpen(false)}
+            >
+              {tx("إلغاء")}
+            </AdminButton>
+            <AdminButton
+              variant="primary"
+              size="sm"
+              loading={isSubmitting}
+              disabled={isSubmitting || !selectedIncidentId}
+              onClick={handleCreateAlert}
+            >
+              {isSubmitting ? tx("جاري الحفظ...") : tx("اعتماد وحفظ مسودة التنبيه")}
+            </AdminButton>
+          </div>
+        }
+      >
+        <form onSubmit={handleCreateAlert} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {formError && <AdminAlert variant="danger" message={formError} />}
+
+          <AdminAlert
+            variant="info"
+            title={tx("ضابط النزاهة الأمنية والتوزيع المشفر")}
+            message={tx("تُستنبط مسودة التنبيه حصراً من النسخة المنقحة المعتمدة للبلاغ الميداني. لن يتم تضمين أي بيانات حساسة حول هوية المصادر أو إحداثياتهم الدقيقة.")}
+          />
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("اختر البلاغ الميداني المصدر *")}
+            </label>
+            <AdminSelect
+              value={selectedIncidentId}
+              onChange={(e) => handleSelectIncident(e.target.value)}
+              options={[
+                { value: '', label: isLoadingIncidents ? tx("جارٍ تحميل البلاغات المحققة...") : tx("— اختر البلاغ الميداني المعتمد —") },
+                ...verifiedIncidents.map((inc: any) => ({
+                  value: inc.id,
+                  label: `${inc.incidentNumber} - ${inc.currentRedacted?.redactedTitleAr || inc.category} (${inc.governorate})`,
+                })),
+              ]}
+            />
+            {verifiedIncidents.length === 0 && !isLoadingIncidents && (
+              <span style={{ fontSize: '0.75rem', color: 'var(--admin-warning)', marginTop: '4px', display: 'block' }}>
+                ⚠️ {tx("لا توجد بلاغات ميدانية منقحة ومعتمدة حالياً. يجب اعتماد نسخة منقحة للبلاغ أولاً قبل صياغة تنبيه عنه.")}
+              </span>
+            )}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("مستوى خطورة التنبيه *")}
+              </label>
+              <AdminSelect
+                value={formData.severity}
+                onChange={(e) => setFormData({ ...formData, severity: e.target.value })}
+                options={[
+                  { value: 'CRITICAL_FLASH', label: tx("خاطف عاجل جداً (Critical Flash)") },
+                  { value: 'WARNING_HIGH', label: tx("تحذير أمني عالي (Warning High)") },
+                  { value: 'ADVISORY_WATCH', label: tx("إشعار مراقبة (Advisory Watch)") },
+                  { value: 'INFORMATIONAL', label: tx("إحاطة إعلامية (Informational)") },
+                ]}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("المحافظة المستهدفة *")}
+              </label>
+              <AdminInput
+                required
+                value={formData.targetGovernorate}
+                onChange={(e) => setFormData({ ...formData, targetGovernorate: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+                {tx("المديريات / النطاق الجغرافي المستهدف")}
+              </label>
+              <AdminInput
+                placeholder={tx("مثال: خور مكسر، صيرة، المعلا")}
+                value={formData.targetDistricts}
+                onChange={(e) => setFormData({ ...formData, targetDistricts: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("عنوان الإحاطة التشغيلية (المستوى الأول - Tier 1) *")}
+            </label>
+            <AdminInput
+              required
+              value={formData.titleAr}
+              onChange={(e) => setFormData({ ...formData, titleAr: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("نص الإحاطة التشغيلية الميدانية (المستوى الأول - Tier 1) *")}
+            </label>
+            <AdminTextarea
+              required
+              rows={3}
+              value={formData.bodyAr}
+              onChange={(e) => setFormData({ ...formData, bodyAr: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("عنوان الملخص التنسيقي التنفيذي (المستوى الثاني - Tier 2) *")}
+            </label>
+            <AdminInput
+              required
+              value={formData.executiveTitleAr}
+              onChange={(e) => setFormData({ ...formData, executiveTitleAr: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("نص الملخص التنسيقي التنفيذي (المستوى الثاني - Tier 2) *")}
+            </label>
+            <AdminTextarea
+              required
+              rows={2}
+              value={formData.executiveSummaryAr}
+              onChange={(e) => setFormData({ ...formData, executiveSummaryAr: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--admin-text-primary)', marginBottom: '4px' }}>
+              {tx("إرشادات وتوجيهات السلامة والتحرك")}
+            </label>
+            <AdminTextarea
+              rows={2}
+              value={formData.movementAdviceAr}
+              onChange={(e) => setFormData({ ...formData, movementAdviceAr: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <AdminCheckbox
+              id="alert-create-is-precautionary"
+              label={tx("تنبيه احترازي وقائي استباقي (غير مؤكد بنسبة 100%)")}
+              checked={formData.isPrecautionary}
+              onChange={(checked) => setFormData({ ...formData, isPrecautionary: checked })}
+            />
+          </div>
+        </form>
+      </AdminModal>
     </div>
   );
 }

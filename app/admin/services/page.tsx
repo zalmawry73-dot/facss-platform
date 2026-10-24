@@ -1,12 +1,21 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
-import { requireStaff } from '@/lib/rbac';
+import { requireAuth, getUserCapabilities, CAPABILITIES, ROLES } from '@/lib/rbac';
+import { redirect } from 'next/navigation';
 import ServicesCatalogManager from '@/components/admin/ServicesCatalogManager';
 
 export const revalidate = 0;
 
 export default async function AdminServicesCatalogPage() {
-  await requireStaff('/admin/services');
+  const session = await requireAuth('/admin/services');
+
+  if (session.role !== ROLES.SUPER_ADMIN && session.role !== ROLES.ADMIN) {
+    const caps = await getUserCapabilities(session.userId, session.role);
+    const canAccess = caps.includes(CAPABILITIES.MANAGE_REQUESTS) || caps.includes(CAPABILITIES.MANAGE_CONTENT);
+    if (!canAccess) {
+      redirect('/admin?error=forbidden');
+    }
+  }
 
   const categories = await prisma.serviceCategory.findMany({
     orderBy: { order: 'asc' },
@@ -36,6 +45,16 @@ export default async function AdminServicesCatalogPage() {
       titleAr: s.titleAr,
       titleEn: s.titleEn,
       slug: s.slug,
+      shortDescAr: s.shortDescAr,
+      shortDescEn: s.shortDescEn,
+      fullDescAr: s.fullDescAr,
+      fullDescEn: s.fullDescEn,
+      featuresAr: s.featuresAr,
+      featuresEn: s.featuresEn,
+      processAr: s.processAr,
+      processEn: s.processEn,
+      targetSectorsAr: s.targetSectorsAr,
+      targetSectorsEn: s.targetSectorsEn,
       isActive: s.isActive,
       requestsCount: s._count.requests,
     })),

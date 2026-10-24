@@ -24,7 +24,9 @@ import {
   Building,
   Target,
   Layers,
-  FileCheck
+  FileCheck,
+  ShieldCheck,
+  Cpu
 } from 'lucide-react';
 import type { ContentBlockData } from '@/lib/content';
 
@@ -46,7 +48,9 @@ const ICON_MAP: Record<string, React.ComponentType<any>> = {
   BadgeCheck,
   Building,
   Target,
-  Layers
+  Layers,
+  ShieldCheck,
+  Cpu
 };
 
 function getIcon(name: string | null | undefined, defaultIcon: React.ComponentType<any> = Shield) {
@@ -91,6 +95,80 @@ export default function HomeClientPage({ initialContent }: Props) {
     ? (pickDesc(ctaSubtitleBlock) || pickTitle(ctaSubtitleBlock))
     : (isAr ? 'تواصل مع إدارة المركز لطلب خدمات الحراسات الأمنية، الرصد والتحليل، التدريب، أو تجهيزات السلامة وفق منهجية الوقاية أولاً.' : 'Contact center coordination to request security guarding, field monitoring, studies, training, or safety equipment.');
   const sloganText = sloganBlock ? (pickDesc(sloganBlock) || pickTitle(sloganBlock)) : t.slogan;
+
+  // Dynamic Hero Badges
+  const heroBadge1Block = homepageBlocks.find(b => b.key === 'hero_badge_1');
+  const heroBadge2Block = homepageBlocks.find(b => b.key === 'hero_badge_2');
+  const heroBadge3Block = homepageBlocks.find(b => b.key === 'hero_badge_3');
+
+  const badge1Text = heroBadge1Block ? (pickTitle(heroBadge1Block) || pickDesc(heroBadge1Block)) : t.heroBadge1;
+  const Badge1Icon = getIcon(heroBadge1Block?.icon, ShieldAlert);
+
+  const badge2Text = heroBadge2Block ? (pickTitle(heroBadge2Block) || pickDesc(heroBadge2Block)) : t.heroBadge2;
+  const Badge2Icon = getIcon(heroBadge2Block?.icon, Compass);
+
+  const badge3Text = heroBadge3Block ? (pickTitle(heroBadge3Block) || pickDesc(heroBadge3Block)) : t.heroBadge3;
+  const Badge3Icon = getIcon(heroBadge3Block?.icon, GraduationCap);
+
+  // Dynamic Section Headers
+  const principlesHeaderBlock = homepageBlocks.find(b => b.key === 'section_principles_header');
+  let principlesMeta: any = {};
+  try { principlesMeta = principlesHeaderBlock?.metadata ? JSON.parse(principlesHeaderBlock.metadata) : {}; } catch {}
+  const principlesTag = (isAr ? principlesMeta.tagAr : principlesMeta.tagEn) || t.pillarsTitle;
+  const principlesTitle = principlesHeaderBlock ? pickTitle(principlesHeaderBlock) : (isAr ? 'المبادئ والقيم الحاكمة لنشاط المركز' : 'Core Humanitarian Principles & Standards');
+  const principlesSubtitle = principlesHeaderBlock ? pickDesc(principlesHeaderBlock) : t.pillarsSubtitle;
+
+  const activityHeaderBlock = homepageBlocks.find(b => b.key === 'section_activity_header');
+  let activityMeta: any = {};
+  try { activityMeta = activityHeaderBlock?.metadata ? JSON.parse(activityHeaderBlock.metadata) : {}; } catch {}
+  const activityTag = (isAr ? activityMeta.tagAr : activityMeta.tagEn) || t.servicesSectionTitle;
+  const activityTitle = activityHeaderBlock ? pickTitle(activityHeaderBlock) : (isAr ? 'مجالات النشاط والخدمات الميدانية المعتمدة' : 'Approved Humanitarian Activity Fields');
+  const activitySubtitle = activityHeaderBlock ? pickDesc(activityHeaderBlock) : t.servicesSectionSubtitle;
+
+  const beneficiariesHeaderBlock = homepageBlocks.find(b => b.key === 'section_beneficiaries_header');
+  let beneficiariesMeta: any = {};
+  try { beneficiariesMeta = beneficiariesHeaderBlock?.metadata ? JSON.parse(beneficiariesHeaderBlock.metadata) : {}; } catch {}
+  const beneficiariesTag = (isAr ? beneficiariesMeta.tagAr : beneficiariesMeta.tagEn) || t.sectorsWeServeTitle;
+  const beneficiariesTitle = beneficiariesHeaderBlock ? pickTitle(beneficiariesHeaderBlock) : (isAr ? 'الجهات والشركاء المستفيدون من أنشطة المركز' : 'Beneficiaries & Field Partners');
+  const beneficiariesSubtitle = beneficiariesHeaderBlock ? pickDesc(beneficiariesHeaderBlock) : t.sectorsWeServeSubtitle;
+
+  // Dynamic Showcase (Training & Research)
+  const showcaseTrainingBlock = homepageBlocks.find(b => b.key === 'showcase_training');
+  const showcaseResearchBlock = homepageBlocks.find(b => b.key === 'showcase_research');
+  let trainingMeta: any = {};
+  try { trainingMeta = showcaseTrainingBlock?.metadata ? JSON.parse(showcaseTrainingBlock.metadata) : {}; } catch {}
+  let researchMeta: any = {};
+  try { researchMeta = showcaseResearchBlock?.metadata ? JSON.parse(showcaseResearchBlock.metadata) : {}; } catch {}
+
+  const trainingTag = (isAr ? trainingMeta.tagAr : trainingMeta.tagEn) || (isAr ? 'بناء القدرات والتأهيل' : 'Capacity Building');
+  const trainingTitle = showcaseTrainingBlock ? pickTitle(showcaseTrainingBlock) : t.trainingSectionTitle;
+  const trainingDesc = showcaseTrainingBlock ? pickDesc(showcaseTrainingBlock) : (isAr
+    ? 'برامج تطبيقية مخصصة لبناء قدرات العاملين في الميدان في مجالات السلامة الشخصية، إدارة مخاطر الحركة، إعداد خطط الوصول، والدعم النفسي الأولي.'
+    : 'Applied programs dedicated to building field personnel capacities in personal safety, movement risk management, access planning, and psychological first aid.');
+  const trainingBtnText = (isAr ? trainingMeta.btnTextAr : trainingMeta.btnTextEn) || (isAr ? 'استعراض برامج التدريب' : 'View Training Programs');
+  const trainingLink = showcaseTrainingBlock?.link || '/training';
+  const TrainingIcon = getIcon(showcaseTrainingBlock?.icon, GraduationCap);
+
+  const researchTag = (isAr ? researchMeta.tagAr : researchMeta.tagEn) || (isAr ? 'المنتجات المعرفية' : 'Knowledge Products');
+  const researchTitle = showcaseResearchBlock ? pickTitle(showcaseResearchBlock) : t.researchSectionTitle;
+  const researchDesc = showcaseResearchBlock ? pickDesc(showcaseResearchBlock) : (isAr
+    ? 'تقارير دورية وموجزات تحليلية ترصد بيئة وسياق الوصول الإنساني، مع خرائط مخاطر ودراسات مسحية معمقة لدعم اتخاذ القرار وتأمين حركة المساعدات.'
+    : 'Periodic bulletins, analytical briefs, and access risk evaluations monitoring field context to support decision-makers in facilitating principled aid.');
+  const researchBtnText = (isAr ? researchMeta.btnTextAr : researchMeta.btnTextEn) || (isAr ? 'استعراض الدراسات والتقارير' : 'Explore Studies & Reports');
+  const researchLink = showcaseResearchBlock?.link || '/research';
+  const ResearchIcon = getIcon(showcaseResearchBlock?.icon, FileText);
+
+  // Dynamic Spotlight Verification
+  const verificationBlock = homepageBlocks.find(b => b.key === 'spotlight_verification');
+  let verificationMeta: any = {};
+  try { verificationMeta = verificationBlock?.metadata ? JSON.parse(verificationBlock.metadata) : {}; } catch {}
+  const verificationTag = (isAr ? verificationMeta.tagAr : verificationMeta.tagEn) || (isAr ? 'المصادقة والتحقق الرقمي' : 'Digital Credential Verification');
+  const verificationTitle = verificationBlock ? pickTitle(verificationBlock) : (isAr ? 'بوابة التحقق من صحة الوثائق والشهادات' : 'Official Credential Verification Portal');
+  const verificationDesc = verificationBlock ? pickDesc(verificationBlock) : (isAr
+    ? 'تتيح هذه البوابة للشركاء والجهات المعنية التحقق اللحظي من صحة وسريان الوثائق والشهادات الصادرة عن مركز الحلول المتكاملة للأمن والسلامة.'
+    : 'Empowering partners and authorities to instantly verify credentials and certificates issued by Integrated Solutions Center for Safety and Security.');
+  const verificationBtnText = (isAr ? verificationMeta.btnTextAr : verificationMeta.btnTextEn) || t.verifyCertificate;
+  const verificationLink = verificationBlock?.link || '/verify';
 
   // 2. Principles (6 Institutional Principles)
   const dbPrinciples = initialContent['principles'] || [];
@@ -157,12 +235,11 @@ export default function HomeClientPage({ initialContent }: Props) {
   // 3. Activity Fields
   const dbActivityFields = initialContent['activity_fields'] || [];
   const fallbackActivityFields = [
-    { id: 'field-1', title: t.field1Title, desc: t.field1Desc, icon: ShieldAlert, link: '/services' },
-    { id: 'field-2', title: t.field2Title, desc: t.field2Desc, icon: Compass, link: '/services' },
-    { id: 'field-3', title: t.field3Title, desc: t.field3Desc, icon: GraduationCap, link: '/training' },
-    { id: 'field-4', title: t.field4Title, desc: t.field4Desc, icon: HeartHandshake, link: '/services' },
-    { id: 'field-5', title: t.field5Title, desc: t.field5Desc, icon: Users2, link: '/services' },
-    { id: 'field-6', title: t.field6Title, desc: t.field6Desc, icon: BookOpen, link: '/research' },
+    { id: 'guarding-protective-security', title: t.field1Title, desc: t.field1Desc, icon: ShieldCheck, link: '/services#guarding-protective-security' },
+    { id: 'field-monitoring-early-warning', title: t.field2Title, desc: t.field2Desc, icon: Activity, link: '/services#field-monitoring-early-warning' },
+    { id: 'field-studies-analysis-monitoring', title: t.field3Title, desc: t.field3Desc, icon: FileText, link: '/services#field-studies-analysis-monitoring' },
+    { id: 'training-capacity-coordination', title: t.field4Title, desc: t.field4Desc, icon: GraduationCap, link: '/services#training-capacity-coordination' },
+    { id: 'safety-systems-equipment', title: t.field5Title, desc: t.field5Desc, icon: Cpu, link: '/services#safety-systems-equipment' },
   ];
 
   const activityFieldsList = dbActivityFields.length > 0
@@ -171,7 +248,7 @@ export default function HomeClientPage({ initialContent }: Props) {
         title: pickTitle(b),
         desc: pickDesc(b),
         icon: getIcon(b.icon, Compass),
-        link: b.link || (b.key.includes('training') ? '/training' : b.key.includes('knowledge') || b.key.includes('research') ? '/research' : '/services'),
+        link: b.link || `/services#${b.key}`,
       }))
     : fallbackActivityFields;
 
@@ -280,70 +357,82 @@ export default function HomeClientPage({ initialContent }: Props) {
               borderTop: '1px solid rgba(255, 255, 255, 0.12)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-              <div
-                style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '50%',
-                  background: 'rgba(181, 146, 84, 0.16)',
-                  border: '1px solid rgba(181, 146, 84, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--color-gold-400)',
-                  flexShrink: 0,
-                }}
-              >
-                <ShieldAlert size={17} />
+            {/* Institutional Highlights / Trust Anchor Strip */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+                gap: '1.25rem',
+                marginTop: '3.75rem',
+                paddingTop: '2.25rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+                <div
+                  style={{
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '50%',
+                    background: 'rgba(181, 146, 84, 0.16)',
+                    border: '1px solid rgba(181, 146, 84, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-gold-400)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Badge1Icon size={17} />
+                </div>
+                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
+                  {badge1Text}
+                </span>
               </div>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
-                {t.heroBadge1}
-              </span>
-            </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-              <div
-                style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '50%',
-                  background: 'rgba(181, 146, 84, 0.16)',
-                  border: '1px solid rgba(181, 146, 84, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--color-gold-400)',
-                  flexShrink: 0,
-                }}
-              >
-                <Compass size={17} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+                <div
+                  style={{
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '50%',
+                    background: 'rgba(181, 146, 84, 0.16)',
+                    border: '1px solid rgba(181, 146, 84, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-gold-400)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Badge2Icon size={17} />
+                </div>
+                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
+                  {badge2Text}
+                </span>
               </div>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
-                {t.heroBadge2}
-              </span>
-            </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-              <div
-                style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '50%',
-                  background: 'rgba(181, 146, 84, 0.16)',
-                  border: '1px solid rgba(181, 146, 84, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--color-gold-400)',
-                  flexShrink: 0,
-                }}
-              >
-                <GraduationCap size={17} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+                <div
+                  style={{
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '50%',
+                    background: 'rgba(181, 146, 84, 0.16)',
+                    border: '1px solid rgba(181, 146, 84, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-gold-400)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Badge3Icon size={17} />
+                </div>
+                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
+                  {badge3Text}
+                </span>
               </div>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
-                {t.heroBadge3}
-              </span>
             </div>
           </div>
         </div>
@@ -355,12 +444,12 @@ export default function HomeClientPage({ initialContent }: Props) {
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.pillarsTitle}</span>
+            <span className="section-tag">{principlesTag}</span>
             <h2 className="section-title">
-              {isAr ? 'المبادئ والقيم الحاكمة لنشاط المركز' : 'Core Humanitarian Principles & Standards'}
+              {principlesTitle}
             </h2>
             <p className="section-subtitle">
-              {t.pillarsSubtitle}
+              {principlesSubtitle}
             </p>
           </div>
 
@@ -407,12 +496,12 @@ export default function HomeClientPage({ initialContent }: Props) {
       <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.servicesSectionTitle}</span>
+            <span className="section-tag">{activityTag}</span>
             <h2 className="section-title">
-              {isAr ? 'مجالات النشاط والخدمات الميدانية المعتمدة' : 'Approved Humanitarian Activity Fields'}
+              {activityTitle}
             </h2>
             <p className="section-subtitle">
-              {t.servicesSectionSubtitle}
+              {activitySubtitle}
             </p>
           </div>
 
@@ -484,12 +573,12 @@ export default function HomeClientPage({ initialContent }: Props) {
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.sectorsWeServeTitle}</span>
+            <span className="section-tag">{beneficiariesTag}</span>
             <h2 className="section-title">
-              {isAr ? 'الجهات والشركاء المستفيدون من أنشطة المركز' : 'Beneficiaries & Field Partners'}
+              {beneficiariesTitle}
             </h2>
             <p className="section-subtitle">
-              {t.sectorsWeServeSubtitle}
+              {beneficiariesSubtitle}
             </p>
           </div>
 
@@ -556,25 +645,23 @@ export default function HomeClientPage({ initialContent }: Props) {
                       justifyContent: 'center',
                     }}
                   >
-                    <GraduationCap size={24} />
+                    <TrainingIcon size={24} />
                   </div>
                   <div>
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-gold-700)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {isAr ? 'بناء القدرات والتأهيل' : 'Capacity Building'}
+                      {trainingTag}
                     </span>
                     <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                      {t.trainingSectionTitle}
+                      {trainingTitle}
                     </h3>
                   </div>
                 </div>
                 <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
-                  {isAr
-                    ? 'برامج تطبيقية مخصصة لبناء قدرات العاملين في الميدان في مجالات السلامة الشخصية، إدارة مخاطر الحركة، إعداد خطط الوصول، والدعم النفسي الأولي.'
-                    : 'Applied programs dedicated to building field personnel capacities in personal safety, movement risk management, access planning, and psychological first aid.'}
+                  {trainingDesc}
                 </p>
               </div>
-              <Link href="/training" className="btn btn-secondary">
-                <span>{isAr ? 'استعراض برامج التدريب' : 'View Training Programs'}</span>
+              <Link href={trainingLink} className="btn btn-secondary">
+                <span>{trainingBtnText}</span>
                 <ArrowIcon size={15} />
               </Link>
             </div>
@@ -603,25 +690,23 @@ export default function HomeClientPage({ initialContent }: Props) {
                       justifyContent: 'center',
                     }}
                   >
-                    <FileText size={24} />
+                    <ResearchIcon size={24} />
                   </div>
                   <div>
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary-800)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {isAr ? 'المنتجات المعرفية' : 'Knowledge Products'}
+                      {researchTag}
                     </span>
                     <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                      {t.researchSectionTitle}
+                      {researchTitle}
                     </h3>
                   </div>
                 </div>
                 <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
-                  {isAr
-                    ? 'تقارير دورية وموجزات تحليلية ترصد بيئة وسياق الوصول الإنساني، مع خرائط مخاطر ودراسات مسحية معمقة لدعم اتخاذ القرار وتأمين حركة المساعدات.'
-                    : 'Periodic bulletins, analytical briefs, and access risk evaluations monitoring field context to support decision-makers in facilitating principled aid.'}
+                  {researchDesc}
                 </p>
               </div>
-              <Link href="/research" className="btn btn-secondary">
-                <span>{isAr ? 'استعراض الدراسات والتقارير' : 'Explore Studies & Reports'}</span>
+              <Link href={researchLink} className="btn btn-secondary">
+                <span>{researchBtnText}</span>
                 <ArrowIcon size={15} />
               </Link>
             </div>
@@ -653,22 +738,20 @@ export default function HomeClientPage({ initialContent }: Props) {
                   }}
                 >
                   <BadgeCheck size={16} />
-                  <span>{isAr ? 'المصادقة والتحقق الرقمي' : 'Digital Credential Verification'}</span>
+                  <span>{verificationTag}</span>
                 </div>
                 <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.75rem', lineHeight: 1.3 }}>
-                  {isAr ? 'بوابة التحقق من صحة الوثائق والشهادات' : 'Official Credential Verification Portal'}
+                  {verificationTitle}
                 </h2>
                 <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '0.96rem', lineHeight: 1.7, margin: 0, maxWidth: '640px' }}>
-                  {isAr
-                    ? 'تتيح هذه البوابة للشركاء والجهات المعنية التحقق اللحظي من صحة وسريان الوثائق والشهادات الصادرة عن مركز الحلول المتكاملة للأمن والسلامة.'
-                    : 'Empowering partners and authorities to instantly verify credentials and certificates issued by Integrated Solutions Center for Safety and Security.'}
+                  {verificationDesc}
                 </p>
               </div>
 
               <div style={{ display: 'flex', justifyContent: dir === 'rtl' ? 'flex-start' : 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
-                <Link href="/verify" className="btn btn-gold btn-lg">
+                <Link href={verificationLink} className="btn btn-gold btn-lg">
                   <FileCheck size={18} />
-                  <span>{t.verifyCertificate}</span>
+                  <span>{verificationBtnText}</span>
                   <ArrowIcon size={16} />
                 </Link>
               </div>

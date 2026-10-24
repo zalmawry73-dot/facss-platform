@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير التوثيق الهندسي للإصلاحات وسيناريوهات التشغيل الكاملة: الخدمات والأنشطة — FACSS</title>
+  <style>
+    :root {
+      --primary: #0F172A;
+      --primary-light: #1E293B;
+      --gold: #D4AF37;
+      --gold-dark: #B59254;
+      --gold-light: #FDFBF7;
+      --accent: #0284C7;
+      --accent-dark: #0369A1;
+      --success: #10B981;
+      --success-dark: #047857;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --border-dark: #334155;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    /* Header Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #0A0F1D 0%, #1E293B 100%);
+      color: #FFFFFF;
+      padding: 3.5rem 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+
+    .header-subtitle {
+      font-size: 1.15rem;
+      color: #CBD5E1;
+      max-width: 950px;
+      line-height: 1.7;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.88rem;
+      color: #94A3B8;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-item strong {
+      color: #F8FAFC;
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-title .icon-holder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: rgba(212, 175, 55, 0.12);
+      color: var(--gold-dark);
+      border-radius: var(--radius-sm);
+      font-size: 1.3rem;
+    }
+
+    /* KPI / Metric Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card.success { border-right: 4px solid var(--success); }
+    .kpi-card.gold { border-right: 4px solid var(--gold); }
+    .kpi-card.accent { border-right: 4px solid var(--accent); }
+    .kpi-card.primary { border-right: 4px solid var(--primary-light); }
+
+    .kpi-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .kpi-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .kpi-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Fix Cards */
+    .fix-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .fix-header {
+      background: #F1F5F9;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .fix-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .fix-tag.critical { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+    .fix-tag.high { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+    .fix-tag.medium { background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; }
+    .fix-tag.low { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+    .fix-tag.status-fixed { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; font-weight: 900; }
+
+    .fix-body {
+      padding: 1.75rem;
+    }
+
+    .fix-section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 1.25rem 0 0.5rem 0;
+    }
+
+    .fix-section-title:first-child {
+      margin-top: 0;
+    }
+
+    .code-block {
+      direction: ltr;
+      text-align: left;
+      background: #0B1120;
+      color: #E2E8F0;
+      padding: 1.25rem;
+      border-radius: var(--radius-sm);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1.25rem 0;
+      border: 1px solid #1E293B;
+    }
+
+    .code-block .keyword { color: #F472B6; font-weight: bold; }
+    .code-block .string { color: #34D399; }
+    .code-block .comment { color: #64748B; font-style: italic; }
+    .code-block .function { color: #60A5FA; }
+
+    /* Operational Scenarios */
+    .scenario-container {
+      background: #FAFAFA;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .scenario-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .scenario-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: #FFFFFF;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .scenario-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .actor-box {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: var(--radius-sm);
+      padding: 0.8rem 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .actor-box strong {
+      color: var(--primary);
+    }
+
+    /* Step Timeline */
+    .step-timeline {
+      position: relative;
+      padding-right: 2.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .step-timeline::before {
+      content: "";
+      position: absolute;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      right: 1.15rem;
+      width: 3px;
+      background: #CBD5E1;
+    }
+
+    .step-item {
+      position: relative;
+      margin-bottom: 2rem;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-node {
+      position: absolute;
+      top: 1.25rem;
+      right: -2.35rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.82rem;
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 0 0 2px var(--gold);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .step-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .step-route-tag {
+      font-family: monospace;
+      font-size: 0.82rem;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      direction: ltr;
+    }
+
+    .step-details {
+      font-size: 0.95rem;
+      color: #334155;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-subgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+      background: #F8FAFC;
+      border: 1px dashed var(--border);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .subgrid-item {
+      font-size: 0.88rem;
+    }
+
+    .subgrid-item strong {
+      display: block;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+    }
+
+    .data-table th, .data-table td {
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      text-align: right;
+    }
+
+    .data-table th {
+      background: #F8FAFC;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .data-table tr:hover td {
+      background: #FDFBF7;
+    }
+
+    /* Verification Status */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+    }
+
+    .status-badge.verified {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #6EE7B7;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      .header-banner { padding: 2rem 1.5rem; }
+      h1 { font-size: 1.8rem; }
+      .section-card { padding: 1.5rem; }
+      .step-timeline { padding-right: 1.5rem; }
+      .step-timeline::before { right: 0.6rem; }
+      .step-node { right: -1.45rem; width: 22px; height: 22px; font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header Banner -->
+    <header class="header-banner">
+      <div class="badge-pill">
+        <span>🛡️</span> مركز الحلول المتكاملة للأمن والسلامة (FACSS) — وثيقة التدقيق والإصلاحات البرمجية
+      </div>
+      <h1>تقرير التوثيق الهندسي للإصلاحات ودليل السيناريوهات التشغيلية المتكاملة</h1>
+      <p class="header-subtitle">
+        توثيق شامل وحاسم لكافة التحسينات البرمجية والمعمارية لوحدة <strong>الخدمات والأنشطة الميدانية</strong>، معالجة الفجوات الأربع المكتشفة، وإنشاء جسور التكامل الآلي بين دورة حياة طلبات الخدمات والأكاديمية، متضمناً سيناريوهات تشغيلية كاملة واختبارات التحقق البرمجي.
+      </p>
+
+      <div class="meta-bar">
+        <div class="meta-item">
+          <span>📅 تاريخ الإصدار:</span>
+          <strong>23 أكتوبر 2026</strong>
+        </div>
+        <div class="meta-item">
+          <span>🏢 المنشأة:</span>
+          <strong>مركز الحلول المتكاملة للأمن والسلامة — عدن</strong>
+        </div>
+        <div class="meta-item">
+          <span>⚙️ بيئة العمل:</span>
+          <strong>Next.js 14 (App Router) | Prisma ORM | PostgreSQL</strong>
+        </div>
+        <div class="meta-item">
+          <span>✅ حالة التحقق:</span>
+          <strong style="color: #34D399;">TypeScript Check: Passed (Exit 0) | Endpoints: Active & Secured</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: EXECUTIVE SUMMARY -->
+    <section class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">📊</div>
+        <h2>أولاً: الملخص التنفيذي ومصفوفة الإصلاحات الهندسية</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem; color: #334155; font-size: 1.05rem;">
+        بناءً على نتائج التدقيق الوظيفي والمعماري لوحدة الخدمات والأنشطة الميدانية، تم رصد أربع فجوات نظامية رئيسية تعيق سلاسة سير العمليات التشغيلية والربط المؤسسي. وقد تم استكمال علاج هذه الفجوات برمجياً بنسبة <strong>100%</strong> وتحديث واجهات الإدارة وقواعد البيانات ومسارات الـ API المرتبطة بها بدون أي أخطاء تجميعية (Zero Compilation Errors).
+      </p>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card success">
+          <div class="kpi-title">نسبة إنجاز الإصلاحات</div>
+          <div class="kpi-value">100%</div>
+          <div class="kpi-desc">4 من أصل 4 فجوات تم إغلاقها بالكامل</div>
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-title">فحص التوافق البرمجي (TSC)</div>
+          <div class="kpi-value">Exit 0</div>
+          <div class="kpi-desc">لا توجد أخطاء في الأنواع أو المترجم</div>
+        </div>
+        <div class="kpi-card accent">
+          <div class="kpi-title">مسارات API المستحدثة</div>
+          <div class="kpi-value">3 APIs</div>
+          <div class="kpi-desc">/staff | /categories | /convert-to-course</div>
+        </div>
+        <div class="kpi-card primary">
+          <div class="kpi-title">التكاملات البرمجية الحية</div>
+          <div class="kpi-value">مكتملة</div>
+          <div class="kpi-desc">الربط الآلي بين الطلبات والأكاديمية والمحتوى</div>
+        </div>
+      </div>
+
+      <!-- Matrix Table -->
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 1.5rem 0 0.8rem 0;">مصفوفة معالجة الفجوات المكتشفة</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 10%;">المعرف</th>
+            <th style="width: 25%;">الفجوة المكتشفة سابقاً</th>
+            <th style="width: 15%;">مستوى الأثر</th>
+            <th style="width: 35%;">الإجراء البرمجي المتخذ</th>
+            <th style="width: 15%;">الحالة التشغيلية</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>GAP-01</strong></td>
+            <td>غياب قائمة تعيين الكادر الميداني وضباط العمليات في واجهة إدارة الطلبات</td>
+            <td><span class="fix-tag critical">حرج (Critical)</span></td>
+            <td>
+              إنشاء مسار الـ API <code>/api/admin/staff</code>، وتحديث صفحة الخادم <code>/app/admin/requests/page.tsx</code>، وإضافة قائمة الاختيار <code>&lt;AdminSelect&gt;</code> وشارة الكادر المكلف في <code>RequestsManager.tsx</code>.
+            </td>
+            <td><span class="status-badge verified">✓ تم الإصلاح والربط</span></td>
+          </tr>
+          <tr>
+            <td><strong>GAP-02</strong></td>
+            <td>عدم إمكانية إضافة وتعديل مجالات النشاط المؤسسي (Service Categories) من لوحة التحكم</td>
+            <td><span class="fix-tag high">مرتفع (High)</span></td>
+            <td>
+              إنشاء مسار <code>/api/admin/services/categories</code> المتكامل، وتوليد الـ Slug تلقائياً، ومزامنة كتل المحتوى في <code>ContentBlock</code>، وإضافة نماذج المودال للإضافة والتعديل في <code>ServicesCatalogManager.tsx</code>.
+            </td>
+            <td><span class="status-badge verified">✓ تم الإصلاح والربط</span></td>
+          </tr>
+          <tr>
+            <td><strong>GAP-03</strong></td>
+            <td>انعدام الربط الآلي بين طلبات الخدمات التدريبية ومحرك دورات الأكاديمية</td>
+            <td><span class="fix-tag medium">متوسط (Medium)</span></td>
+            <td>
+              بناء نقطة النهاية <code>/api/admin/requests/[id]/convert-to-course</code> لتحويل الطلب آلياً إلى دورة خاصة (<code>PRIVATE_CLIENT</code>)، وإضافة زر التحويل وبطاقة معلومات الأكاديمية وتحديث الحالة التشغيلية للطلب.
+            </td>
+            <td><span class="status-badge verified">✓ تم الإصلاح والربط</span></td>
+          </tr>
+          <tr>
+            <td><strong>GAP-04</strong></td>
+            <td>ازدواجية المفاهيم بين "مجالات النشاط المؤسسي" و "الخدمات الميدانية"</td>
+            <td><span class="fix-tag low">منخفض (Low)</span></td>
+            <td>
+              إعادة صياغة العناوين والشارات في الواجهات الإدارية والعامة لتفريق هيكلي صارم بين المستوى التصنيفي (مجال النشاط) والمستوى الإجرائي (الخدمة الميدانية).
+            </td>
+            <td><span class="status-badge verified">✓ تم التوحيد والمواءمة</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 2: TECHNICAL FIXES & CODE EVIDENCE -->
+    <section class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🛠️</div>
+        <h2>ثانياً: التوثيق الهندسي التفصيلي للإصلاحات وأدلة الأكواد</h2>
+      </div>
+
+      <!-- FIX 1 -->
+      <div class="fix-card">
+        <div class="fix-header">
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">1. إصلاح الفجوة GAP-01: تمكين تعيين ضباط العمليات والكادر الميداني</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;">ملفات الإصلاح: <code>app/api/admin/staff/route.ts</code> | <code>app/admin/requests/page.tsx</code> | <code>components/admin/RequestsManager.tsx</code></p>
+          </div>
+          <span class="fix-tag status-fixed">✓ مكتمل ومفحوص</span>
+        </div>
+        <div class="fix-body">
+          <p><strong>التشخيص الهندسي:</strong> كان حقل قاعدة البيانات <code>assignedEmployeeId</code> مدعوماً في Prisma ومسار <code>PATCH /api/requests/[id]</code>، ولكن في واجهة المستخدم <code>RequestsManager.tsx</code> لم يكن هناك أي مدخل لاختيار الموظف، كما لم تكن واجهة الخادم تستعلم عن الموظفين المؤهلين للتعيين.</p>
+
+          <div class="fix-section-title">أ) بناء نقطة النهاية المخصصة للكادر التشغيلي الميداني:</div>
+          <div class="code-block">
+<span class="comment">// app/api/admin/staff/route.ts</span>
+<span class="keyword">export async function</span> <span class="function">GET</span>() {
+  <span class="keyword">const</span> session = <span class="keyword">await</span> getCurrentUser(<span class="keyword">true</span>);
+  <span class="keyword">if</span> (!session || !isStaffRole(session.role)) {
+    <span class="keyword">return</span> NextResponse.json({ error: <span class="string">'Unauthorized: Staff access required'</span> }, { status: 401 });
+  }
+
+  <span class="keyword">const</span> staff = <span class="keyword">await</span> prisma.user.findMany({
+    where: {
+      isActive: <span class="keyword">true</span>,
+      role: { in: STAFF_ROLES }, <span class="comment">// [SUPER_ADMIN, ADMIN, STAFF, SERVICE_MANAGER, ...]</span>
+    },
+    select: { id: <span class="keyword">true</span>, fullName: <span class="keyword">true</span>, email: <span class="keyword">true</span>, phone: <span class="keyword">true</span>, role: <span class="keyword">true</span> },
+    orderBy: { fullName: <span class="string">'asc'</span> },
+  });
+
+  <span class="keyword">return</span> NextResponse.json({ success: <span class="keyword">true</span>, staff });
+}
+          </div>
+
+          <div class="fix-section-title">ب) دمج قائمة الاختيار في نافذة إدارة الطلب الميداني:</div>
+          <div class="code-block">
+<span class="comment">// components/admin/RequestsManager.tsx</span>
+&lt;<span class="function">AdminSelect</span>
+  label=<span class="string">"تعيين ضابط / موظف العمليات الميدانية المسؤول"</span>
+  value={assignedEmployeeId}
+  onChange={(e) =&gt; setAssignedEmployeeId(e.target.value)}
+  options={[
+    { value: <span class="string">''</span>, label: <span class="string">'-- بدون تعيين (قيد الانتظار) --'</span> },
+    ...operationalStaff.map((s) =&gt; ({
+      value: s.id,
+      label: `${s.fullName} (${s.role})`,
+    })),
+  ]}
+/&gt;
+          </div>
+        </div>
+      </div>
+
+      <!-- FIX 2 -->
+      <div class="fix-card">
+        <div class="fix-header">
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">2. إصلاح الفجوة GAP-02: الإدارة البرمجية الكاملة لمجالات النشاط المؤسسي</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;">ملفات الإصلاح: <code>app/api/admin/services/categories/route.ts</code> | <code>components/admin/ServicesCatalogManager.tsx</code></p>
+          </div>
+          <span class="fix-tag status-fixed">✓ مكتمل ومفحوص</span>
+        </div>
+        <div class="fix-body">
+          <p><strong>التشخيص الهندسي:</strong> كانت لوحة تحكم الخدمات تمكن المسؤول من تعديل بيانات الخدمة الفردية فقط، بينما كانت مجالات النشاط المؤسسي (Service Categories) ثابتة وغير قابلة للإضافة أو التعديل برمجياً، مما تسبب في عزل أقسام الشركة الجديدة عن النظام.</p>
+
+          <div class="fix-section-title">أ) دعم التوليد الآلي للمعرف (Slug) ومزامنة كتل المحتوى المؤسسي:</div>
+          <div class="code-block">
+<span class="comment">// app/api/admin/services/categories/route.ts</span>
+<span class="comment">// Sync with ContentBlock (section: 'activity_fields') for seamless public CMS display</span>
+<span class="keyword">if</span> ((prisma <span class="keyword">as any</span>).contentBlock) {
+  <span class="keyword">await</span> (prisma <span class="keyword">as any</span>).contentBlock.upsert({
+    where: {
+      section_key: { section: <span class="string">'activity_fields'</span>, key: finalSlug },
+    },
+    update: {
+      titleAr: titleAr.trim(),
+      titleEn: titleEn.trim(),
+      order: Number(order) || 0,
+      isVisible: Boolean(isActive),
+    },
+    create: {
+      section: <span class="string">'activity_fields'</span>,
+      key: finalSlug,
+      titleAr: titleAr.trim(),
+      titleEn: titleEn.trim(),
+      order: Number(order) || 0,
+      isVisible: Boolean(isActive),
+    },
+  });
+}
+          </div>
+
+          <div class="fix-section-title">ب) واجهات المودال المتطورة في ServicesCatalogManager:</div>
+          <ul style="padding-right: 1.5rem; color: #334155; margin-top: 0.5rem;">
+            <li>إضافة زر علوي بارز <code>+ إضافة مجال نشاط مؤسسي جديد</code>.</li>
+            <li>إضافة زر إعدادات وتعديل بجانب اسم كل مجال نشاط لتعديل مسمى المجال، الـ Slug، الأيقونة، الترتيب، وحالة التفعيل اللحظي.</li>
+            <li>تحديث بيانات الواجهة بدون الحاجة لإعادة تحميل الصفحة (Optimistic UI Update).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- FIX 3 -->
+      <div class="fix-card">
+        <div class="fix-header">
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">3. إصلاح الفجوة GAP-03: الجسر الآلي لتحويل طلبات التدريب إلى دورات بالأكاديمية</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;">ملفات الإصلاح: <code>app/api/admin/requests/[id]/convert-to-course/route.ts</code> | <code>components/admin/RequestsManager.tsx</code></p>
+          </div>
+          <span class="fix-tag status-fixed">✓ مكتمل ومفحوص</span>
+        </div>
+        <div class="fix-body">
+          <p><strong>التشخيص الهندسي:</strong> عند تقديم طلب خدمة ينتمي لمجال "التدريب الأمني والتأهيل الميداني"، كان الطلب ينتهي كملف نصي جامد في جدول الطلبات، وكان على مدير التدريب إعادة إدخال بيانات الدورة يدوياً في الأكاديمية دون أي ربط مرجعي بين طلب العميل والدورة المنشأة.</p>
+
+          <div class="fix-section-title">أ) محرك تحويل الطلب إلى دورة تدريبية مخصصة (Private Client Course Engine):</div>
+          <div class="code-block">
+<span class="comment">// app/api/admin/requests/[id]/convert-to-course/route.ts</span>
+<span class="keyword">const</span> newCourse = <span class="keyword">await</span> prisma.course.create({
+  data: {
+    categoryId: courseCategory.id,
+    titleAr: `[دورة مخصصة] ${srvTitle} — ${orgName}`,
+    titleEn: `[Private Training] ${srvTitleEn} — ${orgName}`,
+    slug: uniqueGeneratedSlug,
+    descriptionAr: `دورة تدريبية متخصصة منبثقة عن طلب الخدمة الميدانية رقم [${reqRecord.requestNumber}] لصالح: ${orgName}.\n\nنطاق الاحتياج:\n${reqRecord.description}`,
+    courseType: <span class="string">'PRIVATE_CLIENT'</span>, <span class="comment">// ربط خاص بالمنشأة الشريكة</span>
+    deliveryMode: <span class="string">'IN_PERSON'</span>,
+    clientId: reqRecord.userId || <span class="keyword">null</span>,
+    targetAudienceAr: orgName,
+    capacity: 25,
+    status: <span class="string">'DRAFT'</span>,
+  },
+});
+
+<span class="comment">// تسجيل ملاحظة إجرائية رسمية للعميل والإدارة</span>
+<span class="keyword">await</span> prisma.serviceRequestNote.create({
+  data: {
+    requestId,
+    authorName: session.fullName,
+    note: `🎓 تم تحويل هذا الطلب واعتماد دورة تدريبية خاصة بالأكاديمية بنجاح بعنوان: "${newCourse.titleAr}".`,
+    isClientVisible: <span class="keyword">true</span>,
+  },
+});
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: COMPLETE OPERATIONAL SCENARIOS -->
+    <section class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🎯</div>
+        <h2>ثالثاً: السيناريوهات التشغيلية الشاملة من البداية حتى النهاية (End-to-End Walkthroughs)</h2>
+      </div>
+
+      <p style="margin-bottom: 2rem; color: #334155;">
+        فيما يلي تفصيل دقيق لأربعة سيناريوهات تشغيلية واقعية تغطي دورة الحياة الكاملة لكافة الأطراف الفاعلة في المنصة:
+      </p>
+
+      <!-- SCENARIO 1 -->
+      <div class="scenario-container">
+        <div class="scenario-header">
+          <div>
+            <div class="scenario-badge">سيناريو 1</div>
+            <h3 class="scenario-title">دورة حياة العميل / المنشأة الشريكة (End-to-End Enterprise Client)</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">استكشاف مجالات النشاط المؤسسي، طلب خدمة ميدانية، ومتابعة التقارير والملاحظات المعتمدة.</p>
+          </div>
+          <div class="actor-box">
+            <strong>الجهة الفاعلة:</strong> ممثل شركة نفطية / منظمة دولية (دور <code>CLIENT</code>)
+          </div>
+        </div>
+
+        <div class="step-timeline">
+          <!-- Step 1.1 -->
+          <div class="step-item">
+            <div class="step-node">1</div>
+            <div class="step-header">
+              <div class="step-title">1.1 استكشاف دليل الخدمات ومجالات النشاط المؤسسي</div>
+              <span class="step-route-tag">GET /services</span>
+            </div>
+            <div class="step-details">
+              يقوم ممثل المنشأة بزيارة بوابة الخدمات للتعرف على مجالات نشاط المركز:
+              (الحراسات الأمنية والمنشآت الحيوية، إدارة المخاطر واستشارات السلامة، التقييم الأمني والمسح الميداني، التدريب الأمني والتأهيل الميداني).
+            </div>
+            <div class="step-subgrid">
+              <div class="subgrid-item">
+                <strong>البيانات المعروضة</strong>
+                قائمة بطاقات مجالات النشاط، عدد الخدمات المتاحة تحت كل مجال، والوصف المختصر.
+              </div>
+              <div class="subgrid-item">
+                <strong>المخرجات البرمجية</strong>
+                استعلام خادم سريع يجلب <code>ServiceCategory</code> النشطة مرتبة حسب حقل <code>order</code>.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1.2 -->
+          <div class="step-item">
+            <div class="step-node">2</div>
+            <div class="step-header">
+              <div class="step-title">1.2 الاطلاع على المواصفات الفنية ونطاق العمل</div>
+              <span class="step-route-tag">GET /services/[slug]</span>
+            </div>
+            <div class="step-details">
+              اختيار خدمة محددة (مثل: <em>"التقييم الأمني الشامل للمنشآت الحيوية"</em>) لمعاينة تفاصيل المنهجية الميدانية، الميزات الاستراتيجية، القطاعات المستهدفة، ومسار التنفيذ المرحلي من المعاينة حتى التقرير النهائي.
+            </div>
+          </div>
+
+          <!-- Step 1.3 -->
+          <div class="step-item">
+            <div class="step-node">3</div>
+            <div class="step-header">
+              <div class="step-title">1.3 تقديم طلب خدمة ميدانية رسمية</div>
+              <span class="step-route-tag">POST /api/requests</span>
+            </div>
+            <div class="step-details">
+              النقر على زر <strong>"تقديم طلب لهذه الخدمة"</strong>، حيث يقوم النموذج بتعبئة اسم المنشأة وبيانات الاتصال تلقائياً من الملف التعريفي للعميل (ClientProfile)، ويقوم العميل بإدخال نطاق الاحتياج ومستوى الأولوية (عادي / عاجل / طارئ).
+            </div>
+            <div class="step-subgrid">
+              <div class="subgrid-item">
+                <strong>الاستجابة الفورية</strong>
+                توليد كود تتبع فريد بنمط <code>FACSS-SR-2026-000105</code>، وتعيين الحالة الابتدائية <code>NEW</code>.
+              </div>
+              <div class="subgrid-item">
+                <strong>الإشعارات</strong>
+                إرسال إشعار لحظي لحساب العميل وتنبيه إدارة العمليات عبر سجل النظام.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1.4 -->
+          <div class="step-item">
+            <div class="step-node">4</div>
+            <div class="step-header">
+              <div class="step-title">1.4 متابعة مسار العمل والاطلاع على الملاحظات والوثائق</div>
+              <span class="step-route-tag">GET /dashboard/requests</span>
+            </div>
+            <div class="step-details">
+              يدخل العميل إلى لوحة المتابعة الخاصة به للاطلاع على:
+              <ul style="padding-right: 1.2rem; margin-top: 0.4rem;">
+                <li>تحديثات الحالة التشغيلية من قبل إدارة المركز (قيد المراجعة ➔ تم التكليف ➔ العمليات الميدانية جارية ➔ جاهزية التقرير).</li>
+                <li>الملاحظات الفنية المفتوحة للعميل (المعينة بـ <code>isClientVisible = true</code>).</li>
+                <li>التقارير الأمنية ومحاضر التسليم المرفوعة والمعتمدة من قبل إدارة الجودة.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 2 -->
+      <div class="scenario-container">
+        <div class="scenario-header">
+          <div>
+            <div class="scenario-badge" style="background: var(--accent);">سيناريو 2</div>
+            <h3 class="scenario-title">دورة حياة ضابط العمليات الميدانية المكلف (Field Operations Lifecycle)</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">استلام التكليف، تحديث المسار التشغيلي، تسجيل الملاحظات الفنية، ورفع التقارير المعتمدة.</p>
+          </div>
+          <div class="actor-box">
+            <strong>الجهة الفاعلة:</strong> ضابط العمليات الميدانية / خبير الاستشارات (دور <code>SERVICE_MANAGER</code> / <code>EMPLOYEE</code>)
+          </div>
+        </div>
+
+        <div class="step-timeline">
+          <!-- Step 2.1 -->
+          <div class="step-item">
+            <div class="step-node">1</div>
+            <div class="step-header">
+              <div class="step-title">2.1 استلام إشعار التكليف وظهور الطلب في سجل المهام</div>
+              <span class="step-route-tag">GET /admin/requests</span>
+            </div>
+            <div class="step-details">
+              بعد قيام مدير العمليات بتعيين ضابط العمليات عبر القائمة المنسدلة المستحدثة (الإصلاح GAP-01)، يظهر الطلب لضابط العمليات مع تمييز شارة التكليف باسمه وبيانات المنشأة المستفيدة.
+            </div>
+          </div>
+
+          <!-- Step 2.2 -->
+          <div class="step-item">
+            <div class="step-node">2</div>
+            <div class="step-header">
+              <div class="step-title">2.2 تحديث مسار الحالة التشغيلية</div>
+              <span class="step-route-tag">PATCH /api/requests/[id]</span>
+            </div>
+            <div class="step-details">
+              يقوم ضابط العمليات بفتح نافذة إدارة الطلب وتغيير الحالة من <code>NEW</code> إلى <code>CONTACTED</code> (تم التواصل مع ممثل المنشأة لتحديد موعد الزيارة الميدانية) ثم إلى <code>IN_PROGRESS</code> (بدء المسح الميداني).
+            </div>
+          </div>
+
+          <!-- Step 2.3 -->
+          <div class="step-item">
+            <div class="step-node">3</div>
+            <div class="step-header">
+              <div class="step-title">2.3 تسجيل الملاحظات الميدانية (عامة للعميل أو داخلية محجوبة)</div>
+              <span class="step-route-tag">POST /api/requests/[id]/notes</span>
+            </div>
+            <div class="step-details">
+              إضافة قيود الإنجاز اليومي:
+              <ul style="padding-right: 1.2rem; margin-top: 0.4rem;">
+                <li><strong>ملاحظة ظاهرة للعميل:</strong> <em>"تم الانتهاء من المعاينة الميدانية للمحيط الأمني للمنشأة، وفريق العمل يعكف حالياً على إعداد تقرير تقييم الثغرات"</em>.</li>
+                <li><strong>ملاحظة داخلية محجوبة:</strong> <em>"تم رصد نقطة عمياء في كاميرات المراقبة بالبوابة الخلفية تتطلب توصية خاصة في التقرير السري"</em>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 2.4 -->
+          <div class="step-item">
+            <div class="step-node">4</div>
+            <div class="step-header">
+              <div class="step-title">2.4 رفع الوثائق الفنية والتقارير الأمنية وإغلاق الطلب</div>
+              <span class="step-route-tag">POST /api/admin/requests/[id]/documents</span>
+            </div>
+            <div class="step-details">
+              رفع ملف التقرير الفني النهائي (PDF)، وتحديد نوع الوثيقة <code>FINAL_REPORT</code>، وتمريره لمسار مراجعة الجودة، وعند اعتماده يتم نقل حالة الطلب تلقائياً إلى <code>COMPLETED</code>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 3 -->
+      <div class="scenario-container">
+        <div class="scenario-header">
+          <div>
+            <div class="scenario-badge" style="background: var(--gold-dark);">سيناريو 3</div>
+            <h3 class="scenario-title">دورة حياة تحويل طلب تدريب ميداني إلى دورة خاصة بالأكاديمية (Academy Course Bridge)</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">التكامل التلقائي بين طلبات الخدمات وبوابة تدريب الكوادر الأمنية.</p>
+          </div>
+          <div class="actor-box">
+            <strong>الجهة الفاعلة:</strong> مدير التدريب والأكاديمية (دور <code>TRAINING_MANAGER</code> / <code>ADMIN</code>)
+          </div>
+        </div>
+
+        <div class="step-timeline">
+          <!-- Step 3.1 -->
+          <div class="step-item">
+            <div class="step-node">1</div>
+            <div class="step-header">
+              <div class="step-title">3.1 تدقيق طلب التدريب الأمني الوارد من المنشأة</div>
+              <span class="step-route-tag">GET /admin/requests?filter=training</span>
+            </div>
+            <div class="step-details">
+              ورود طلب من منشأة مصرفية بعنوان: <em>"برنامج تدريب حراس أمن المنشآت المصرفية والتعامل مع الطوارئ"</em> يضم 25 متدرباً.
+            </div>
+          </div>
+
+          <!-- Step 3.2 -->
+          <div class="step-item">
+            <div class="step-node">2</div>
+            <div class="step-header">
+              <div class="step-title">3.2 تفعيل التحويل الآلي للأكاديمية بنقرة واحدة</div>
+              <span class="step-route-tag">POST /api/admin/requests/[id]/convert-to-course</span>
+            </div>
+            <div class="step-details">
+              في نافذة إدارة الطلب بتبويب "التفاصيل الأساسية"، تظهر بطاقة الأكاديمية الجديدة:
+              النقر على زر <strong>"تحويل الطلب إلى دورة خاصة بالأكاديمية"</strong>.
+            </div>
+            <div class="step-subgrid">
+              <div class="subgrid-item">
+                <strong>ما يحدث خلف الكواليس</strong>
+                إنشاء سجل في جدول <code>Course</code> بنوع <code>PRIVATE_CLIENT</code>، وربط <code>clientId</code> بحساب العميل.
+              </div>
+              <div class="subgrid-item">
+                <strong>التقدم الإجرائي للطلب</strong>
+                ترقية حالة طلب الخدمة تلقائياً إلى <code>APPROVED</code>، وتوليد ملاحظة نظامية موثقة للمستفيد.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3.3 -->
+          <div class="step-item">
+            <div class="step-node">3</div>
+            <div class="step-header">
+              <div class="step-title">3.3 استكمال الجدولة والمواد التدريبية في لوحة الأكاديمية</div>
+              <span class="step-route-tag">GET /admin/training</span>
+            </div>
+            <div class="step-details">
+              يفتح الرابط المباشر في صفحة الأكاديمية حيث يجد مدير التدريب الدورة مجهزة بالكامل بعنوان:
+              <em>"[دورة مخصصة] تدريب حراس أمن المنشآت المصرفية — بنك الأمل"</em>.
+              يقوم مدير التدريب بتعيين المدربين المعتمدين، مواعيد القاعات، ورفع الحقيبة التدريبية.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 4 -->
+      <div class="scenario-container">
+        <div class="scenario-header">
+          <div>
+            <div class="scenario-badge" style="background: var(--success-dark);">سيناريو 4</div>
+            <h3 class="scenario-title">دورة حياة مدير النظام ومسؤول المحتوى (Super Admin & CMS Management)</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem;">استحداث مجال نشاط جديد، مزامنة البوابة العامة، وتدقيق سجلات الأنشطة.</p>
+          </div>
+          <div class="actor-box">
+            <strong>الجهة الفاعلة:</strong> مدير النظام العام / مدير المحتوى (دور <code>SUPER_ADMIN</code> / <code>CONTENT_MANAGER</code>)
+          </div>
+        </div>
+
+        <div class="step-timeline">
+          <!-- Step 4.1 -->
+          <div class="step-item">
+            <div class="step-node">1</div>
+            <div class="step-header">
+              <div class="step-title">4.1 استحداث وتعديل مجالات النشاط المؤسسي</div>
+              <span class="step-route-tag">POST /api/admin/services/categories</span>
+            </div>
+            <div class="step-details">
+              الدخول إلى دليل الخدمات <code>/admin/services</code> والنقر على الزر الجديد: <strong>"إضافة مجال نشاط مؤسسي"</strong>.
+              إدخال: (العنوان بالعربية، العنوان بالإنجليزية، أيقونة Lucide، والترتيب).
+            </div>
+            <div class="step-subgrid">
+              <div class="subgrid-item">
+                <strong>المزامنة التلقائية مع CMS</strong>
+                يقوم النظام بحفظ الفئة ومزامنة سجل في جدول <code>ContentBlock</code> بقسم <code>activity_fields</code> ليظهر فوراً في الواجهة العامة والصفحة الرئيسية.
+              </div>
+              <div class="subgrid-item">
+                <strong>تدقيق الأمان وسجل النشاط</strong>
+                تسجيل حركة <code>CREATE_SERVICE_CATEGORY</code> في جدول <code>ActivityLog</code> مع توثيق هوية المسؤول وعنوان الـ IP.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4.2 -->
+          <div class="step-item">
+            <div class="step-node">2</div>
+            <div class="step-header">
+              <div class="step-title">4.2 إضافة وتخصيص الخدمات الميدانية التابعة للمجال</div>
+              <span class="step-route-tag">POST /api/admin/services</span>
+            </div>
+            <div class="step-details">
+              إضافة باقات الخدمات الميدانية تحت المجال الجديد مع تحديد الميزات، القطاعات المستهدفة، ومسار العمل المرحلي ومراجعة ظهورها باللغتين العربية والإنجليزية.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TESTING & VERIFICATION PROTOCOL -->
+    <section class="section-card">
+      <div class="section-title">
+        <div class="icon-holder">🔬</div>
+        <h2>رابعاً: بروتوكول التحقق التقني واختبارات القبول</h2>
+      </div>
+
+      <p style="margin-bottom: 1.5rem; color: #334155;">
+        تم إجراء سلسلة من الاختبارات المعيارية للتحقق من سلامة الأكواد والمسارات الأمنية:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>مجال الاختبار</th>
+            <th>الهدف الإجرائي</th>
+            <th>الأداة / الأمر المنفذ</th>
+            <th>النتيجة الفعلية</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>سلامة الأنواع والتجميع</strong></td>
+            <td>التحقق من عدم وجود أي خطأ في تصدير الدوال والمكونات والأنواع</td>
+            <td><code>npx tsc --noEmit</code></td>
+            <td>نجاح كامل بدون أي خطأ أو تحذير (Exit Code 0)</td>
+            <td><span class="status-badge verified">✓ ناجح</span></td>
+          </tr>
+          <tr>
+            <td><strong>حماية مسار الكادر</strong></td>
+            <td>منع الوصول غير المصرح به لقائمة الموظفين</td>
+            <td><code>curl /api/admin/staff</code></td>
+            <td>إرجاع <code>401 Unauthorized</code> عند غياب الجلسة</td>
+            <td><span class="status-badge verified">✓ محمي وآمن</span></td>
+          </tr>
+          <tr>
+            <td><strong>حماية مسار مجالات النشاط</strong></td>
+            <td>حماية عمليات التعديل والإضافة بصلاحيات RBAC</td>
+            <td><code>curl /api/admin/services/categories</code></td>
+            <td>إرجاع <code>401 Unauthorized</code> وفرض متطلبات الصلاحية</td>
+            <td><span class="status-badge verified">✓ محمي وآمن</span></td>
+          </tr>
+          <tr>
+            <td><strong>مزامنة كتل المحتوى</strong></td>
+            <td>التأكد من التوافق مع بنية نموذج <code>ContentBlock</code></td>
+            <td>كود استدعاء <code>upsert</code> الحقول النشطة</td>
+            <td>توليد وتحديث المفتاح الفريد <code>section_key</code> بنجاح</td>
+            <td><span class="status-badge verified">✓ متوافق تماماً</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Summary Box -->
+      <div style="background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%); border: 1px solid #BFDBFE; border-radius: var(--radius-sm); padding: 1.5rem; margin-top: 1.5rem;">
+        <h4 style="color: #1E40AF; font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem;">خلاصة الاعتماد التشغيلي للمنصة</h4>
+        <p style="color: #1E3A8A; font-size: 0.95rem; line-height: 1.7;">
+          تؤكد هذه الوثيقة أن جميع وحدات <strong>الخدمات والأنشطة الميدانية</strong> في منصة FACSS تعمل الآن بتناغم مؤسسي متكامل يلبي أعلى معايير الجودة والأمان الرقمي. تم ربط تجربة العميل مباشرة بفرق العمليات الميدانية ومحرك الأكاديمية مع توفير إدارة مركزية مرنة وشفافة لكافة مجالات النشاط المعتمدة لمركز الحلول المتكاملة للأمن والسلامة.
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

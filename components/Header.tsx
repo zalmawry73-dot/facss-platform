@@ -18,12 +18,24 @@ import {
 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 
-export default function Header() {
+interface HeaderProps {
+  brandData?: {
+    primaryAr?: string;
+    primaryEn?: string;
+    secondaryAr?: string;
+    secondaryEn?: string;
+  };
+}
+
+export default function Header({ brandData }: HeaderProps = {}) {
   const { t, locale, toggleLocale, dir } = useLanguage();
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  const brandPrimary = (locale === 'ar' ? brandData?.primaryAr : brandData?.primaryEn) || (locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center');
+  const brandSecondary = (locale === 'ar' ? brandData?.secondaryAr : brandData?.secondaryEn) || (locale === 'ar' ? 'للأمن والسلامة' : 'for Safety and Security');
 
   // Close menus on route navigation
   useEffect(() => {
@@ -97,10 +109,10 @@ export default function Header() {
             />
             <div className="brand-title-wrap">
               <span className="brand-name-primary">
-                {locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center'}
+                {brandPrimary}
               </span>
               <span className="brand-name-secondary">
-                {locale === 'ar' ? 'للأمن والسلامة' : 'for Safety and Security'}
+                {brandSecondary}
               </span>
             </div>
           </Link>

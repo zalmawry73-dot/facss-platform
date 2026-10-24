@@ -56,13 +56,12 @@ export async function POST(request: Request) {
     const isHttps = process.env.APP_URL?.startsWith('https://') ?? false;
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // Set secure HTTP-only cookie
+    // Set secure HTTP-only Session Cookie (Strict Banking-Grade: expires when browser closes)
     cookies().set(TOKEN_COOKIE_NAME, token, {
       httpOnly: true,
       secure: isProduction || isHttps,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     await prisma.activityLog.create({

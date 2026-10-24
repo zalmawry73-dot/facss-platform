@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   UserPlus, 
@@ -12,17 +12,19 @@ import {
   CheckCircle2 
 } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const { t, locale } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
 
   const [role, setRole] = useState<'CLIENT' | 'TRAINEE'>('CLIENT');
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: searchParams.get('name') || '',
+    email: searchParams.get('email') || '',
     password: '',
-    phone: '',
-    organization: '',
+    phone: searchParams.get('phone') || '',
+    organization: searchParams.get('org') || '',
     companySector: '',
   });
 
@@ -45,7 +47,12 @@ export default function RegisterPage() {
       if (!res.ok) {
         setError(data.error || 'فشل إنشاء الحساب');
       } else {
-        if (role === 'CLIENT') {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('facss_active_tab_session', 'active');
+        }
+        if (redirect && redirect.startsWith('/')) {
+          router.push(redirect);
+        } else if (role === 'CLIENT') {
           router.push('/portal/client');
         } else {
           router.push('/portal/trainee');
@@ -204,7 +211,10 @@ export default function RegisterPage() {
           <div style={{ textAlign: 'center', paddingTop: '1.5rem', borderTop: '1px solid rgba(181, 146, 84, 0.2)' }}>
             <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>
               {t.alreadyHaveAccount}{' '}
-              <Link href="/login" style={{ color: 'var(--color-primary-900)', fontWeight: 800 }}>
+              <Link 
+                href={redirect && redirect !== '/' ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'} 
+                style={{ color: 'var(--color-primary-900)', fontWeight: 800 }}
+              >
                 {t.loginHere}
               </Link>
             </p>
@@ -217,5 +227,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="container" style={{ padding: '5rem 0', textAlign: 'center' }}>جارٍ التحميل...</div>}>
+      <RegisterForm />
+    </Suspense>
   );
 }

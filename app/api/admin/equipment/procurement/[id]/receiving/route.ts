@@ -30,6 +30,13 @@ export async function POST(
       return NextResponse.json({ error: 'لا يمكن استلام شحنة لأمر شراء ملغى' }, { status: 400 });
     }
 
+    if (po.status === 'RECEIVED') {
+      return NextResponse.json(
+        { error: 'أمر الشراء هذا مستلم بالكامل بالفعل، ولا يمكن تسجيل شحنات استلام إضافية عليه' },
+        { status: 400 }
+      );
+    }
+
     const body = await request.json().catch(() => ({}));
     body.procurementOrderId = params.id;
 
@@ -42,6 +49,34 @@ export async function POST(
     }
 
     const input = validation.data;
+
+    // Quantity Ceiling Guard: Prevent over-receiving and duplicate receipts
+    for (const inItem of input.items) {
+      const poItem = po.items.find((it) => it.productId === inItem.productId);
+      if (!poItem) {
+        return NextResponse.json(
+          { error: `الصنف ذو المعرف (${inItem.productId}) غير موجود ضمن بنود أمر الشراء هذا` },
+          { status: 400 }
+        );
+      }
+      const remainingAllowed = poItem.quantityOrdered - poItem.quantityReceived;
+      if (inItem.quantityReceived > remainingAllowed) {
+        return NextResponse.json(
+          {
+            error: `الكمية المستلمة (${inItem.quantityReceived}) تتجاوز الكمية المتبقية من أمر الشراء (${remainingAllowed}) للصنف. إجمالي المطلوب: ${poItem.quantityOrdered}، المستلم سابقاً: ${poItem.quantityReceived}`,
+          },
+          { status: 400 }
+        );
+      }
+      if (inItem.quantityAccepted > inItem.quantityReceived) {
+        return NextResponse.json(
+          {
+            error: `الكمية المقبولة (${inItem.quantityAccepted}) لا يمكن أن تتجاوز الكمية المستلمة (${inItem.quantityReceived})`,
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // Execute atomic transaction
     const receiving = await executeReceivingTransaction({

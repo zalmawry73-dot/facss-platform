@@ -38,28 +38,39 @@ export default async function ClientDashboardPage() {
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
+  const clientOwnerCondition = {
+    OR: [
+      { userId: session.userId },
+      { contactEmail: session.email.toLowerCase() }
+    ]
+  };
+
   const totalRequests = await prisma.serviceRequest.count({
-    where: { userId: session.userId }
+    where: clientOwnerCondition
   });
 
   const activeRequests = await prisma.serviceRequest.count({
     where: {
-      userId: session.userId,
-      status: { notIn: ['COMPLETED', 'CANCELLED'] }
+      AND: [
+        clientOwnerCondition,
+        { status: { notIn: ['COMPLETED', 'CANCELLED'] } }
+      ]
     }
   });
 
   const completedRequests = await prisma.serviceRequest.count({
     where: {
-      userId: session.userId,
-      status: 'COMPLETED'
+      AND: [
+        clientOwnerCondition,
+        { status: 'COMPLETED' }
+      ]
     }
   });
 
   // Count available, unarchived final reports
   const finalReportsCount = await prisma.serviceRequestDocument.count({
     where: {
-      request: { userId: session.userId },
+      request: clientOwnerCondition,
       documentType: 'FINAL_REPORT',
       visibility: 'CLIENT_VISIBLE',
       isArchived: false,
@@ -69,7 +80,7 @@ export default async function ClientDashboardPage() {
   // Recent available final reports
   const readyReports = await prisma.serviceRequestDocument.findMany({
     where: {
-      request: { userId: session.userId },
+      request: clientOwnerCondition,
       documentType: 'FINAL_REPORT',
       visibility: 'CLIENT_VISIBLE',
       isArchived: false,
@@ -88,7 +99,7 @@ export default async function ClientDashboardPage() {
   });
 
   const recentRequests = await prisma.serviceRequest.findMany({
-    where: { userId: session.userId },
+    where: clientOwnerCondition,
     include: { service: true },
     orderBy: { createdAt: 'desc' },
     take: 5,

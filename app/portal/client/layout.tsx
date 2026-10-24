@@ -10,11 +10,12 @@ import {
   Shield, 
   FolderLock, 
   User, 
-  Plus,
-  Building2,
-  CheckCircle2,
-  ShieldCheck,
-  ExternalLink
+  Plus, 
+  Building2, 
+  CheckCircle2, 
+  ShieldCheck, 
+  ExternalLink,
+  FileCheck2
 } from 'lucide-react';
 
 export default function ClientPortalLayout({ children }: { children: React.ReactNode }) {
@@ -77,8 +78,14 @@ export default function ClientPortalLayout({ children }: { children: React.React
     },
     { 
       href: '/portal/client/requests', 
-      label: isAr ? 'طلبات الخدمات والمستندات' : 'Service Requests & Reports', 
+      label: isAr ? 'طلبات الخدمات والمشاريع' : 'Service Requests', 
       icon: Shield,
+      exact: false
+    },
+    { 
+      href: '/portal/client/documents', 
+      label: isAr ? 'الأرشيف والتقارير المعتمدة' : 'Official Reports & Documents', 
+      icon: FileCheck2,
       exact: false
     },
     { 

@@ -14,13 +14,45 @@ import {
   ArrowRight
 } from 'lucide-react';
 
+export interface FooterActivityField {
+  id?: string;
+  key?: string;
+  titleAr?: string | null;
+  titleEn?: string | null;
+  link?: string | null;
+}
+
 interface FooterProps {
   contactAddressAr?: string;
   contactAddressEn?: string;
   contactEmail?: string;
+  brandData?: {
+    primaryAr?: string;
+    primaryEn?: string;
+    secondaryAr?: string;
+    secondaryEn?: string;
+  };
+  footerData?: {
+    aboutAr?: string;
+    aboutEn?: string;
+    rightsAr?: string;
+    rightsEn?: string;
+    noticeAr?: string;
+    noticeEn?: string;
+    sloganAr?: string;
+    sloganEn?: string;
+  };
+  activityFields?: FooterActivityField[];
 }
 
-export default function Footer({ contactAddressAr, contactAddressEn, contactEmail }: FooterProps = {}) {
+export default function Footer({
+  contactAddressAr,
+  contactAddressEn,
+  contactEmail,
+  brandData,
+  footerData,
+  activityFields,
+}: FooterProps = {}) {
   const pathname = usePathname();
   if (pathname?.startsWith('/admin')) {
     return null;
@@ -32,14 +64,27 @@ export default function Footer({ contactAddressAr, contactAddressEn, contactEmai
   const address = isAr ? (contactAddressAr || 'العاصمة عدن، الجمهورية اليمنية') : (contactAddressEn || 'Aden Capital, Republic of Yemen');
   const email = contactEmail || 'info@facss.org';
 
-  const activityFields = [
-    { title: t.field1Title, href: '/services' },
-    { title: t.field2Title, href: '/services' },
-    { title: t.field3Title, href: '/training' },
-    { title: t.field4Title, href: '/services' },
-    { title: t.field5Title, href: '/services' },
-    { title: t.field6Title, href: '/research' },
+  const brandPrimary = (locale === 'ar' ? brandData?.primaryAr : brandData?.primaryEn) || (locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center');
+  const brandSecondary = (locale === 'ar' ? brandData?.secondaryAr : brandData?.secondaryEn) || (locale === 'ar' ? 'للأمن والسلامة' : 'for Safety and Security');
+  const sloganText = (locale === 'ar' ? footerData?.sloganAr : footerData?.sloganEn) || t.slogan;
+  const footerAboutText = (locale === 'ar' ? footerData?.aboutAr : footerData?.aboutEn) || t.footerAbout;
+  const footerRightsText = (locale === 'ar' ? footerData?.rightsAr : footerData?.rightsEn) || t.footerRights;
+  const footerNoticeText = (locale === 'ar' ? footerData?.noticeAr : footerData?.noticeEn) || t.institutionalNotice;
+
+  const fallbackActivityFields = [
+    { title: t.field1Title, href: '/services#guarding-protective-security' },
+    { title: t.field2Title, href: '/services#field-monitoring-early-warning' },
+    { title: t.field3Title, href: '/services#field-studies-analysis-monitoring' },
+    { title: t.field4Title, href: '/services#training-capacity-coordination' },
+    { title: t.field5Title, href: '/services#safety-systems-equipment' },
   ];
+
+  const renderedActivityFields = (activityFields && activityFields.length > 0)
+    ? activityFields.map((f) => ({
+        title: isAr ? (f.titleAr || f.titleEn || '') : (f.titleEn || f.titleAr || ''),
+        href: f.link || (f.key ? `/services#${f.key}` : '/services'),
+      }))
+    : fallbackActivityFields;
 
   return (
     <footer className="site-footer" style={{ backgroundColor: 'var(--facss-green-950)', color: 'var(--text-on-dark)', borderTop: '1px solid var(--border-dark)' }}>
@@ -55,24 +100,22 @@ export default function Footer({ contactAddressAr, contactAddressEn, contactEmai
               />
               <div>
                 <h3 className="gold-text" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-gold-400)' }}>
-                  {locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center'}
+                  {brandPrimary}
                 </h3>
                 <p style={{ fontSize: '0.78rem', color: '#E2E8F0', margin: '2px 0 0 0' }}>
-                  {locale === 'ar' 
-                    ? 'للأمن والسلامة' 
-                    : 'for Safety and Security'}
+                  {brandSecondary}
                 </p>
               </div>
             </div>
 
             <div style={{ marginTop: '1.2rem', padding: '0.75rem', background: 'rgba(181, 146, 84, 0.08)', borderRadius: '8px', border: '1px solid var(--border-dark)' }}>
               <p style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--color-gold-light)', margin: 0 }}>
-                {t.slogan}
+                {sloganText}
               </p>
             </div>
 
             <p style={{ marginTop: '1rem', fontSize: '0.86rem', color: 'var(--text-on-dark-muted)', lineHeight: 1.65 }}>
-              {t.footerAbout}
+              {footerAboutText}
             </p>
           </div>
 
@@ -94,7 +137,7 @@ export default function Footer({ contactAddressAr, contactAddressEn, contactEmai
           <div>
             <h4 className="footer-heading">{t.servicesSectionTitle}</h4>
             <ul className="footer-links">
-              {activityFields.map((field, idx) => (
+              {renderedActivityFields.map((field, idx) => (
                 <li key={idx}>
                   <Link href={field.href}>
                     {field.title}
@@ -143,11 +186,11 @@ export default function Footer({ contactAddressAr, contactAddressEn, contactEmai
 
         {/* Footer Bottom */}
         <div className="footer-bottom">
-          <p>{t.footerRights}</p>
+          <p>{footerRightsText}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-gold-light)', fontSize: '0.82rem' }}>
               <ShieldCheck size={16} />
-              <span>{t.institutionalNotice}</span>
+              <span>{footerNoticeText}</span>
             </span>
           </div>
         </div>

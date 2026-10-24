@@ -140,6 +140,31 @@ export default function EquipmentManager({
   const [selectedHandover, setSelectedHandover] = useState<any>(null);
   const [showHandoverModal, setShowHandoverModal] = useState(false);
 
+  // Categories Modal
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [categoryForm, setCategoryForm] = useState({
+    code: '',
+    nameAr: '',
+    nameEn: '',
+    description: '',
+    icon: 'Package',
+    order: 0,
+    isActive: true,
+  });
+
+  // Direct Delivery Modal
+  const [showDirectDeliveryModal, setShowDirectDeliveryModal] = useState(false);
+  const [directDeliveryForm, setDirectDeliveryForm] = useState({
+    clientName: '',
+    receivedByName: '',
+    receivedByPhone: '',
+    receivedByRole: '',
+    deliveryLocation: '',
+    notes: '',
+    items: [{ productId: '', quantityDelivered: 1, serialNumbers: '', condition: 'NEW', notes: '' }],
+  });
+
   // Load active tab data
   useEffect(() => {
     fetchTabData(activeTab);
@@ -148,12 +173,34 @@ export default function EquipmentManager({
   const fetchTabData = async (tab: string) => {
     setLoading(true);
     try {
-      if (tab === 'overview' || tab === 'products') {
-        const res = await fetch('/api/admin/equipment/products?includeInactive=true');
+      if (tab === 'overview') {
+        const res = await fetch('/api/admin/equipment/overview');
         const data = await res.json();
-        if (data.success) setProducts(data.products);
+        if (data.success) {
+          if (data.kpis) setKpis(data.kpis);
+          if (data.categories) setCategories(data.categories);
+          if (data.products) setProducts(data.products);
+          if (data.suppliers) setSuppliers(data.suppliers);
+          if (data.procurements) setProcurements(data.procurements);
+          if (data.inventorySummary) setInventorySummary(data.inventorySummary);
+          if (data.movements) setMovements(data.movements);
+          if (data.inspections) setInspections(data.inspections);
+          if (data.maintenances) setMaintenances(data.maintenances);
+          if (data.deliveries) setDeliveries(data.deliveries);
+        }
+        return;
       }
-      if (tab === 'overview' || tab === 'inventory') {
+      if (tab === 'products') {
+        const [resProd, resCat] = await Promise.all([
+          fetch('/api/admin/equipment/products?includeInactive=true'),
+          fetch('/api/admin/equipment/categories?includeInactive=true'),
+        ]);
+        const dataProd = await resProd.json();
+        const dataCat = await resCat.json();
+        if (dataProd.success) setProducts(dataProd.products);
+        if (dataCat.success) setCategories(dataCat.categories);
+      }
+      if (tab === 'inventory') {
         const [resInv, resMov] = await Promise.all([
           fetch('/api/admin/equipment/inventory'),
           fetch('/api/admin/equipment/inventory/movements?limit=30'),
@@ -163,17 +210,17 @@ export default function EquipmentManager({
         if (dataInv.success) setInventorySummary(dataInv.summary);
         if (dataMov.success) setMovements(dataMov.movements);
       }
-      if (tab === 'overview' || tab === 'procurement') {
+      if (tab === 'procurement') {
         const res = await fetch('/api/admin/equipment/procurement');
         const data = await res.json();
         if (data.success) setProcurements(data.orders);
       }
-      if (tab === 'overview' || tab === 'suppliers') {
+      if (tab === 'suppliers') {
         const res = await fetch('/api/admin/equipment/suppliers');
         const data = await res.json();
         if (data.success) setSuppliers(data.suppliers);
       }
-      if (tab === 'overview' || tab === 'inspections') {
+      if (tab === 'inspections') {
         const [resInsp, resMaint] = await Promise.all([
           fetch('/api/admin/equipment/inspections'),
           fetch('/api/admin/equipment/maintenance'),
@@ -183,7 +230,7 @@ export default function EquipmentManager({
         if (dataInsp.success) setInspections(dataInsp.inspections);
         if (dataMaint.success) setMaintenances(dataMaint.maintenances);
       }
-      if (tab === 'overview' || tab === 'deliveries') {
+      if (tab === 'deliveries') {
         const res = await fetch('/api/admin/equipment/deliveries');
         const data = await res.json();
         if (data.success) setDeliveries(data.deliveries);
@@ -192,6 +239,61 @@ export default function EquipmentManager({
       console.error('Error fetching equipment data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenNewCategory = () => {
+    setEditingCategory(null);
+    setCategoryForm({
+      code: `CAT-${Math.floor(100 + Math.random() * 900)}`,
+      nameAr: '',
+      nameEn: '',
+      description: '',
+      icon: 'Package',
+      order: categories.length + 1,
+      isActive: true,
+    });
+    setShowCategoryModal(true);
+  };
+
+  const handleEditCategory = (cat: any) => {
+    setEditingCategory(cat);
+    setCategoryForm({
+      code: cat.code || '',
+      nameAr: cat.nameAr || '',
+      nameEn: cat.nameEn || '',
+      description: cat.description || '',
+      icon: cat.icon || 'Package',
+      order: cat.order ?? 0,
+      isActive: cat.isActive ?? true,
+    });
+    setShowCategoryModal(true);
+  };
+
+  const handleSaveCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const url = editingCategory
+        ? `/api/admin/equipment/categories/${editingCategory.id}`
+        : '/api/admin/equipment/categories';
+      const method = editingCategory ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoryForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ في حفظ تصنيف المعدات'));
+
+      setFeedback({ type: 'success', message: tx('تم حفظ تصنيف المعدات بنجاح') });
+      setShowCategoryModal(false);
+      setEditingCategory(null);
+      const catRes = await fetch('/api/admin/equipment/categories?includeInactive=true');
+      const catData = await catRes.json();
+      if (catData.success) setCategories(catData.categories);
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: err.message });
     }
   };
 
@@ -242,6 +344,11 @@ export default function EquipmentManager({
   const handleSavePo = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const selectedSupplier = suppliers.find((s) => s.id === poForm.supplierId);
+      if (!selectedSupplier || selectedSupplier.status !== 'ACTIVE') {
+        throw new Error(tx('المورد المحدد غير نشط أو معطل. لا يمكن إصدار أمر شراء لمورد غير نشط'));
+      }
+
       const res = await fetch('/api/admin/equipment/procurement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -253,6 +360,43 @@ export default function EquipmentManager({
       setFeedback({ type: 'success', message: tx('تم إنشاء أمر الشراء والتوريد بنجاح (المخزون لم يتغير لحين الاستلام الفعلي)') });
       setShowPoModal(false);
       fetchTabData('procurement');
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: err.message });
+    }
+  };
+
+  const handleSaveDirectDelivery = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!directDeliveryForm.clientName.trim()) {
+        throw new Error(tx('يرجى تحديد اسم العميل أو المنظمة'));
+      }
+      if (!directDeliveryForm.receivedByName.trim()) {
+        throw new Error(tx('يرجى تحديد اسم المستلم المعتمد'));
+      }
+      if (!directDeliveryForm.items.length || !directDeliveryForm.items[0].productId) {
+        throw new Error(tx('يرجى اختيار صنف معدات واحد على الأقل'));
+      }
+
+      const res = await fetch('/api/admin/equipment/deliveries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isDirectClientDelivery: true,
+          ...directDeliveryForm,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || tx('حدث خطأ أثناء إصدار محضر التسليم'));
+
+      setFeedback({ type: 'success', message: tx('تم إصدار محضر التسليم المباشر وخصم الكميات من المخزون بنجاح') });
+      setShowDirectDeliveryModal(false);
+      fetchTabData('deliveries');
+
+      if (data.handoverDocument) {
+        setSelectedHandover(data.handoverDocument);
+        setShowHandoverModal(true);
+      }
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message });
     }
@@ -380,31 +524,41 @@ export default function EquipmentManager({
               {tx("تحديث البيانات")}
             </AdminButton>
             {activeTab === 'products' && (
-              <AdminButton
-                variant="primary"
-                size="sm"
-                icon={<Plus size={14} />}
-                onClick={() => {
-                  setEditingProduct(null);
-                  setProductForm({
-                    sku: `FACSS-EQ-${Math.floor(100 + Math.random() * 900)}`,
-                    nameAr: '',
-                    nameEn: '',
-                    categoryId: categories[0]?.id || '',
-                    unit: 'piece',
-                    manufacturer: '',
-                    specifications: '',
-                    inspectionRequired: false,
-                    maintenanceRequired: false,
-                    expiryTrackingRequired: false,
-                    serialTrackingRequired: false,
-                    minimumStockLevel: 5,
-                  });
-                  setShowProductModal(true);
-                }}
-              >
-                {tx("إضافة صنف جديد")}
-              </AdminButton>
+              <>
+                <AdminButton
+                  variant="outline"
+                  size="sm"
+                  icon={<Layers size={14} />}
+                  onClick={() => setShowCategoryModal(true)}
+                >
+                  {tx("إدارة التصنيفات")}
+                </AdminButton>
+                <AdminButton
+                  variant="primary"
+                  size="sm"
+                  icon={<Plus size={14} />}
+                  onClick={() => {
+                    setEditingProduct(null);
+                    setProductForm({
+                      sku: `FACSS-EQ-${Math.floor(100 + Math.random() * 900)}`,
+                      nameAr: '',
+                      nameEn: '',
+                      categoryId: categories[0]?.id || '',
+                      unit: 'piece',
+                      manufacturer: '',
+                      specifications: '',
+                      inspectionRequired: false,
+                      maintenanceRequired: false,
+                      expiryTrackingRequired: false,
+                      serialTrackingRequired: false,
+                      minimumStockLevel: 5,
+                    });
+                    setShowProductModal(true);
+                  }}
+                >
+                  {tx("إضافة صنف جديد")}
+                </AdminButton>
+              </>
             )}
             {activeTab === 'suppliers' && (
               <AdminButton
@@ -444,6 +598,27 @@ export default function EquipmentManager({
                 onClick={() => setShowInspectionModal(true)}
               >
                 {tx("تسجيل فحص فني")}
+              </AdminButton>
+            )}
+            {activeTab === 'deliveries' && (
+              <AdminButton
+                variant="primary"
+                size="sm"
+                icon={<Plus size={14} />}
+                onClick={() => {
+                  setDirectDeliveryForm({
+                    clientName: '',
+                    receivedByName: '',
+                    receivedByPhone: '',
+                    receivedByRole: '',
+                    deliveryLocation: '',
+                    notes: '',
+                    items: [{ productId: products[0]?.id || '', quantityDelivered: 1, serialNumbers: '', condition: 'NEW', notes: '' }],
+                  });
+                  setShowDirectDeliveryModal(true);
+                }}
+              >
+                {tx("محضر تسليم مباشر للعميل")}
               </AdminButton>
             )}
           </div>
@@ -1115,13 +1290,45 @@ export default function EquipmentManager({
             value={productForm.nameEn}
             onChange={(e) => setProductForm({ ...productForm, nameEn: e.target.value })}
           />
-          <AdminSelect
-            label={tx("التصنيف")}
-            required
-            value={productForm.categoryId}
-            onChange={(e) => setProductForm({ ...productForm, categoryId: e.target.value })}
-            options={categories.map((c) => ({ value: c.id, label: isAr ? c.nameAr : (c.nameEn || c.nameAr) }))}
-          />
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary, #9CA3AF)' }}>
+                {tx("التصنيف")} <span style={{ color: '#EF4444' }}>*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => handleOpenNewCategory()}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--facss-gold-400, #D4AF37)',
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                }}
+              >
+                <Plus size={12} />
+                <span>{tx("إضافة تصنيف جديد")}</span>
+              </button>
+            </div>
+            <select
+              className="admin-select"
+              required
+              value={productForm.categoryId}
+              onChange={(e) => setProductForm({ ...productForm, categoryId: e.target.value })}
+              style={{ width: '100%', height: 'var(--admin-control-height-md)', margin: 0 }}
+            >
+              <option value="">{tx("— اختر التصنيف —")}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {isAr ? c.nameAr : (c.nameEn || c.nameAr)} ({c.code})
+                </option>
+              ))}
+            </select>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <AdminInput
               label={tx("وحدة القياس")}
@@ -1231,16 +1438,30 @@ export default function EquipmentManager({
           title={tx("إنشاء أمر شراء وتوريد جديد")}
         >
           <form onSubmit={handleSavePo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <AdminSelect
-              label={tx("اختر المورد المعتمد")}
-              required
-              value={poForm.supplierId}
-              onChange={(e) => setPoForm({ ...poForm, supplierId: e.target.value })}
-              options={[
-                { value: '', label: tx('— غير مخصص —') },
-                ...suppliers.map((s) => ({ value: s.id, label: s.name }))
-              ]}
-            />
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary, #9CA3AF)', display: 'block', marginBottom: '0.35rem' }}>
+                {tx("اختر المورد المعتمد")} <span style={{ color: '#EF4444' }}>*</span>
+              </label>
+              <select
+                className="admin-select"
+                required
+                value={poForm.supplierId}
+                onChange={(e) => setPoForm({ ...poForm, supplierId: e.target.value })}
+                style={{ width: '100%', height: 'var(--admin-control-height-md)', margin: 0 }}
+              >
+                <option value="">{tx("— اختر مورداً نشطاً —")}</option>
+                {suppliers.map((s) => (
+                  <option
+                    key={s.id}
+                    value={s.id}
+                    disabled={s.status !== 'ACTIVE'}
+                    style={{ color: s.status !== 'ACTIVE' ? '#9CA3AF' : undefined }}
+                  >
+                    {isAr ? (s.nameAr || s.name) : s.name} {s.status === 'ACTIVE' ? `(${tx('نشط')})` : `[${tx('معطل - غير متاح للطلب')}]`}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
               <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.75rem' }}>
                 {tx("بنود أمر الشراء:")}
@@ -1600,6 +1821,400 @@ export default function EquipmentManager({
               {tx("طباعة المحضر")}
             </AdminButton>
           </div>
+        </AdminModal>
+      )}
+
+      {/* ==============================================================
+          MODAL: CATEGORY MANAGEMENT & CREATION
+          ============================================================== */}
+      {showCategoryModal && (
+        <AdminModal
+          isOpen={showCategoryModal}
+          onClose={() => {
+            setShowCategoryModal(false);
+            setEditingCategory(null);
+          }}
+          title={editingCategory ? tx("تعديل تصنيف المعدات: {0}", editingCategory.nameAr) : tx("إدارة تصنيفات المعدات وتجهيزات السلامة")}
+          maxWidth="700px"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Form Section */}
+            <form onSubmit={handleSaveCategory} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--facss-gold-400)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>{editingCategory ? tx("تعديل بيانات التصنيف") : tx("إضافة تصنيف جديد للسجل")}</span>
+                {editingCategory && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingCategory(null);
+                      setCategoryForm({
+                        code: `CAT-${Math.floor(100 + Math.random() * 900)}`,
+                        nameAr: '',
+                        nameEn: '',
+                        description: '',
+                        icon: 'Package',
+                        order: categories.length + 1,
+                        isActive: true,
+                      });
+                    }}
+                    style={{ background: 'none', border: 'none', color: '#9CA3AF', fontSize: '0.78rem', cursor: 'pointer' }}
+                  >
+                    {tx("إلغاء التعديل والبدء بتصنيف جديد")}
+                  </button>
+                )}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <AdminInput
+                  label={tx("رمز التصنيف (Code)")}
+                  required
+                  value={categoryForm.code}
+                  onChange={(e) => setCategoryForm({ ...categoryForm, code: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
+                  placeholder="FIRE_SAFETY"
+                />
+                <AdminInput
+                  label={tx("أيقونة التصنيف")}
+                  value={categoryForm.icon}
+                  onChange={(e) => setCategoryForm({ ...categoryForm, icon: e.target.value })}
+                  placeholder="Shield / Fire / Package"
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <AdminInput
+                  label={tx("اسم التصنيف بالعربية")}
+                  required
+                  value={categoryForm.nameAr}
+                  onChange={(e) => setCategoryForm({ ...categoryForm, nameAr: e.target.value })}
+                  placeholder="معدات مكافحة الحريق والسلامة"
+                />
+                <AdminInput
+                  label={tx("اسم التصنيف بالإنجليزية")}
+                  value={categoryForm.nameEn}
+                  onChange={(e) => setCategoryForm({ ...categoryForm, nameEn: e.target.value })}
+                  placeholder="Fire Fighting & Safety Equipment"
+                />
+              </div>
+
+              <AdminTextarea
+                label={tx("الوصف المؤسسي للتصنيف")}
+                value={categoryForm.description}
+                onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
+                placeholder="بيان نطاق التجهيزات والمواصفات المعتمدة التابعة لهذا التصنيف..."
+              />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <AdminCheckbox
+                  label={tx("التصنيف نشط ومعتمد في قوائم الاختيار")}
+                  checked={categoryForm.isActive}
+                  onChange={(checked) => setCategoryForm({ ...categoryForm, isActive: checked })}
+                />
+                <AdminButton variant="primary" size="sm" type="submit">
+                  {editingCategory ? tx("حفظ التعديلات") : tx("إضافة التصنيف")}
+                </AdminButton>
+              </div>
+            </form>
+
+            {/* Existing Categories Table */}
+            <div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E2E8F0', marginBottom: '0.5rem' }}>
+                {tx("التصنيفات المعتمدة الحالية ({0})", categories.length)}
+              </div>
+              <div style={{ maxHeight: '240px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: isAr ? 'right' : 'left' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.08)', color: '#9CA3AF' }}>
+                      <th style={{ padding: '0.5rem' }}>{tx("الرمز")}</th>
+                      <th style={{ padding: '0.5rem' }}>{tx("اسم التصنيف")}</th>
+                      <th style={{ padding: '0.5rem' }}>{tx("الأصناف")}</th>
+                      <th style={{ padding: '0.5rem' }}>{tx("الحالة")}</th>
+                      <th style={{ padding: '0.5rem', textAlign: 'center' }}>{tx("إجراء")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categories.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} style={{ textAlign: 'center', padding: '1rem', color: '#6B7280' }}>
+                          {tx("لا توجد تصنيفات معرفة بعد")}
+                        </td>
+                      </tr>
+                    ) : (
+                      categories.map((c) => (
+                        <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                          <td style={{ padding: '0.5rem', fontWeight: 700, fontFamily: 'monospace', color: 'var(--facss-gold-400)' }}>
+                            {c.code}
+                          </td>
+                          <td style={{ padding: '0.5rem', color: '#FFFFFF' }}>
+                            {isAr ? c.nameAr : (c.nameEn || c.nameAr)}
+                          </td>
+                          <td style={{ padding: '0.5rem', color: '#CBD5E1' }}>
+                            {c.productsCount ?? c._count?.products ?? 0} {tx("صنف")}
+                          </td>
+                          <td style={{ padding: '0.5rem' }}>
+                            <span style={{
+                              fontSize: '0.72rem',
+                              padding: '0.12rem 0.45rem',
+                              borderRadius: '4px',
+                              background: c.isActive ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                              color: c.isActive ? '#4ADE80' : '#F87171',
+                              fontWeight: 700,
+                            }}>
+                              {c.isActive ? tx("نشط") : tx("معطل")}
+                            </span>
+                          </td>
+                          <td style={{ padding: '0.5rem', textAlign: 'center' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleEditCategory(c)}
+                              style={{
+                                background: 'none',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                color: '#93C5FD',
+                                padding: '0.2rem 0.5rem',
+                                borderRadius: '4px',
+                                fontSize: '0.75rem',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {tx("تعديل")}
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+              <AdminButton variant="outline" onClick={() => setShowCategoryModal(false)}>
+                {tx("إغلاق")}
+              </AdminButton>
+            </div>
+          </div>
+        </AdminModal>
+      )}
+
+      {/* ==============================================================
+          MODAL: DIRECT DELIVERY HANDOVER OUTSIDE PRE-EXISTING REQUEST
+          ============================================================== */}
+      {showDirectDeliveryModal && (
+        <AdminModal
+          isOpen={showDirectDeliveryModal}
+          onClose={() => setShowDirectDeliveryModal(false)}
+          title={tx("إنشاء محضر تسليم مباشر للعميل (Direct Handover)")}
+          maxWidth="750px"
+        >
+          <form onSubmit={handleSaveDirectDelivery} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ background: 'rgba(212, 175, 55, 0.08)', padding: '0.75rem 1rem', borderRadius: '6px', border: '1px solid rgba(212, 175, 55, 0.25)', fontSize: '0.82rem', color: '#F3F4F6' }}>
+              <strong>{tx("التسليم المباشر:")}</strong> {tx("يتيح تسليم المعدات وتجهيزات السلامة فورياً للعميل دون الحاجة لطلب خدمة مسبق، ويقوم النظام آلياً بتوثيق طلب التوريد، خصم الكميات من المخزون، وإصدار محضر تسليم رسمي.")}
+            </div>
+
+            {/* Client & Receiver details */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <AdminInput
+                label={tx("اسم العميل / المؤسسة الطالبة")}
+                required
+                value={directDeliveryForm.clientName}
+                onChange={(e) => setDirectDeliveryForm({ ...directDeliveryForm, clientName: e.target.value })}
+                placeholder="شركة الموانئ / بنك الكريمي / ..."
+              />
+              <AdminInput
+                label={tx("اسم المستلم المعتمد (ممثل العميل)")}
+                required
+                value={directDeliveryForm.receivedByName}
+                onChange={(e) => setDirectDeliveryForm({ ...directDeliveryForm, receivedByName: e.target.value })}
+                placeholder="المهندس / أحمد السقاف"
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <AdminInput
+                label={tx("رقم هاتف المستلم")}
+                value={directDeliveryForm.receivedByPhone}
+                onChange={(e) => setDirectDeliveryForm({ ...directDeliveryForm, receivedByPhone: e.target.value })}
+                placeholder="+967 77..."
+              />
+              <AdminInput
+                label={tx("الصفة / المنصب الوظيفي")}
+                value={directDeliveryForm.receivedByRole}
+                onChange={(e) => setDirectDeliveryForm({ ...directDeliveryForm, receivedByRole: e.target.value })}
+                placeholder="مدير السلامة والأمن الميداني"
+              />
+            </div>
+
+            <AdminInput
+              label={tx("موقع التسليم المعتمد")}
+              value={directDeliveryForm.deliveryLocation}
+              onChange={(e) => setDirectDeliveryForm({ ...directDeliveryForm, deliveryLocation: e.target.value })}
+              placeholder="المقر الرئيسي للعميل - صنعاء"
+            />
+
+            {/* Items selection */}
+            <div style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--facss-gold-400)' }}>
+                  {tx("المعدات المسلمة والكميات:")}
+                </span>
+                <AdminButton
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  icon={<Plus size={12} />}
+                  onClick={() => {
+                    setDirectDeliveryForm({
+                      ...directDeliveryForm,
+                      items: [
+                        ...directDeliveryForm.items,
+                        { productId: products[0]?.id || '', quantityDelivered: 1, serialNumbers: '', condition: 'NEW', notes: '' },
+                      ],
+                    });
+                  }}
+                >
+                  {tx("إضافة بند آخر")}
+                </AdminButton>
+              </div>
+
+              {directDeliveryForm.items.map((it, idx) => {
+                const prod = products.find((p) => p.id === it.productId);
+                const avail = prod ? prod.quantityAvailable ?? Math.max(0, prod.quantityOnHand - prod.quantityReserved) : 0;
+                const isOverStock = it.quantityDelivered > avail;
+
+                return (
+                  <div key={idx} style={{ padding: '0.75rem', background: 'rgba(0,0,0,0.2)', borderRadius: '6px', marginBottom: '0.6rem', border: isOverStock ? '1px solid #EF4444' : '1px solid rgba(255,255,255,0.04)' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', color: '#9CA3AF', display: 'block', marginBottom: '0.2rem' }}>
+                          {tx("الصنف والمخزون المتاح")}
+                        </label>
+                        <select
+                          className="admin-select"
+                          value={it.productId}
+                          onChange={(e) => {
+                            const newItems = [...directDeliveryForm.items];
+                            newItems[idx].productId = e.target.value;
+                            setDirectDeliveryForm({ ...directDeliveryForm, items: newItems });
+                          }}
+                          style={{ width: '100%', height: 'var(--admin-control-height-md)', margin: 0 }}
+                        >
+                          <option value="">{tx("— اختر الصنف —")}</option>
+                          {products.map((p) => {
+                            const pAvail = p.quantityAvailable ?? Math.max(0, p.quantityOnHand - p.quantityReserved);
+                            return (
+                              <option key={p.id} value={p.id}>
+                                {p.sku} - {isAr ? p.nameAr : (p.nameEn || p.nameAr)} ({tx("متاح:")} {pAvail})
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '0.78rem', color: '#9CA3AF', display: 'block', marginBottom: '0.2rem' }}>
+                          {tx("الكمية المسلمة")}
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          max={avail || 1}
+                          className="admin-input"
+                          value={it.quantityDelivered}
+                          onChange={(e) => {
+                            const newItems = [...directDeliveryForm.items];
+                            newItems[idx].quantityDelivered = Math.max(1, Number(e.target.value));
+                            setDirectDeliveryForm({ ...directDeliveryForm, items: newItems });
+                          }}
+                          style={{ width: '100%', height: 'var(--admin-control-height-md)' }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '0.78rem', color: '#9CA3AF', display: 'block', marginBottom: '0.2rem' }}>
+                          {tx("الحالة الفنية")}
+                        </label>
+                        <select
+                          className="admin-select"
+                          value={it.condition}
+                          onChange={(e) => {
+                            const newItems = [...directDeliveryForm.items];
+                            newItems[idx].condition = e.target.value;
+                            setDirectDeliveryForm({ ...directDeliveryForm, items: newItems });
+                          }}
+                          style={{ width: '100%', height: 'var(--admin-control-height-md)', margin: 0 }}
+                        >
+                          <option value="NEW">{tx("جديد ومعتمد (NEW)")}</option>
+                          <option value="MAINTAINED">{tx("تمت معايرته (MAINTAINED)")}</option>
+                          <option value="USED_GOOD">{tx("مستعمل بحالة ممتازة")}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr auto', gap: '0.5rem', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        placeholder={tx("الأرقام التسلسلية (اختياري، مفصولة بفواصل)")}
+                        className="admin-input"
+                        value={it.serialNumbers}
+                        onChange={(e) => {
+                          const newItems = [...directDeliveryForm.items];
+                          newItems[idx].serialNumbers = e.target.value;
+                          setDirectDeliveryForm({ ...directDeliveryForm, items: newItems });
+                        }}
+                        style={{ height: 'var(--admin-control-height-md)', fontSize: '0.8rem' }}
+                      />
+                      <input
+                        type="text"
+                        placeholder={tx("ملاحظات البند")}
+                        className="admin-input"
+                        value={it.notes}
+                        onChange={(e) => {
+                          const newItems = [...directDeliveryForm.items];
+                          newItems[idx].notes = e.target.value;
+                          setDirectDeliveryForm({ ...directDeliveryForm, items: newItems });
+                        }}
+                        style={{ height: 'var(--admin-control-height-md)', fontSize: '0.8rem' }}
+                      />
+                      {directDeliveryForm.items.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newItems = directDeliveryForm.items.filter((_, i) => i !== idx);
+                            setDirectDeliveryForm({ ...directDeliveryForm, items: newItems });
+                          }}
+                          style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '0.4rem' }}
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+
+                    {isOverStock && (
+                      <div style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.35rem', fontWeight: 600 }}>
+                        {tx("تنبيه: الكمية المطلوبة ({0}) تتجاوز المخزون المتاح حالياً ({1})", it.quantityDelivered, avail)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <AdminTextarea
+              label={tx("ملاحظات إضافية على محضر التسليم")}
+              value={directDeliveryForm.notes}
+              onChange={(e) => setDirectDeliveryForm({ ...directDeliveryForm, notes: e.target.value })}
+              placeholder="شروط الضمان أو بنود الاستخدام المعتمدة..."
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
+              <AdminButton variant="outline" onClick={() => setShowDirectDeliveryModal(false)}>
+                {tx("إلغاء")}
+              </AdminButton>
+              <AdminButton variant="primary" type="submit">
+                {tx("إصدار محضر التسليم وخصم المخزون")}
+              </AdminButton>
+            </div>
+          </form>
         </AdminModal>
       )}
     </div>

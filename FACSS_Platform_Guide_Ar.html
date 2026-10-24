@@ -2,21 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>الدليل المؤسسي الشامل لمنصة مركز الحلول المتكاملة للأمن والسلامة (FACSS)</title>
+<title>الدليل الإرشادي والتشغيلي الشامل لمنصة مركز الحلول المتكاملة للأمن والسلامة (FACSS)</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
     
     @page {
         size: A4 portrait;
-        margin: 14mm 14mm 14mm 14mm;
+        margin: 12mm 14mm 12mm 14mm;
         @bottom-right {
-            content: "مركز الحلول المتكاملة للأمن والسلامة (FACSS)";
+            content: "مركز الحلول المتكاملة للأمن والسلامة (FACSS) — دليل الاستخدام والتشغيل المؤسسي";
             font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
             font-size: 8pt;
             color: #718096;
         }
         @bottom-left {
-            content: counter(page);
+            content: "صفحة " counter(page);
             font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
             font-size: 8pt;
             color: #B59254;
@@ -44,8 +44,8 @@
         background-color: #FFFFFF;
         margin: 0;
         padding: 0;
-        font-size: 10pt;
-        line-height: 1.6;
+        font-size: 9pt;
+        line-height: 1.55;
     }
     
     /* Cover Page */
@@ -55,7 +55,7 @@
         min-height: 297mm;
         background: linear-gradient(145deg, #071910 0%, #0B2518 50%, #133E2B 100%);
         color: #FFFFFF;
-        padding: 40mm 20mm 25mm 20mm;
+        padding: 35mm 20mm 20mm 20mm;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -93,9 +93,9 @@
     }
     
     .cover-logo {
-        width: 130px;
+        width: 120px;
         height: auto;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
         filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
     }
     
@@ -109,7 +109,7 @@
     }
     
     .cover-entity-en {
-        font-size: 11pt;
+        font-size: 10.5pt;
         font-weight: 600;
         color: #B59254;
         margin-top: 5px;
@@ -121,7 +121,7 @@
         width: 90px;
         height: 4px;
         background: linear-gradient(90deg, #B59254, #D4B26F);
-        margin: 25px auto;
+        margin: 20px auto;
         border-radius: 2px;
     }
     
@@ -129,12 +129,12 @@
         text-align: center;
         position: relative;
         z-index: 2;
-        background: rgba(11, 37, 24, 0.6);
-        border: 1px solid rgba(197, 155, 39, 0.3);
+        background: rgba(11, 37, 24, 0.65);
+        border: 1px solid rgba(197, 155, 39, 0.35);
         border-radius: 12px;
-        padding: 30px 20px;
+        padding: 26px 20px;
         backdrop-filter: blur(5px);
-        margin: 20px 0;
+        margin: 15px 0;
     }
     
     .doc-badge {
@@ -142,7 +142,7 @@
         background: rgba(197, 155, 39, 0.2);
         border: 1px solid #B59254;
         color: #DFB743;
-        font-size: 9.5pt;
+        font-size: 9pt;
         font-weight: 700;
         padding: 4px 18px;
         border-radius: 30px;
@@ -150,7 +150,7 @@
     }
     
     .cover-title {
-        font-size: 24pt;
+        font-size: 22pt;
         font-weight: 900;
         color: #FFFFFF;
         margin: 5px 0 10px 0;
@@ -158,18 +158,19 @@
     }
     
     .cover-subtitle {
-        font-size: 12pt;
+        font-size: 11pt;
         color: #E2E8F0;
         font-weight: 400;
         margin: 0;
+        line-height: 1.5;
     }
     
     .cover-slogans {
         display: flex;
         justify-content: center;
-        gap: 20px;
+        gap: 18px;
         margin-top: 15px;
-        font-size: 9.5pt;
+        font-size: 9pt;
         color: #B59254;
         font-weight: 700;
     }
@@ -177,9 +178,9 @@
     .cover-bottom {
         position: relative;
         z-index: 2;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.35);
         border-radius: 10px;
-        padding: 16px 22px;
+        padding: 14px 20px;
         border-right: 4px solid #B59254;
         display: flex;
         justify-content: space-between;
@@ -188,13 +189,13 @@
     
     .author-box h4 {
         margin: 0 0 3px 0;
-        font-size: 9pt;
+        font-size: 8.5pt;
         color: #A0AEC0;
         font-weight: 400;
     }
     
     .author-name {
-        font-size: 13pt;
+        font-size: 12pt;
         font-weight: 800;
         color: #B59254;
         margin: 0;
@@ -216,13 +217,17 @@
     /* Content Pages Layout */
     .page {
         page-break-after: always;
-        padding-top: 5mm;
+        padding-top: 2mm;
+    }
+    
+    .page:last-child {
+        page-break-after: avoid;
     }
     
     .page-header {
         border-bottom: 2px solid #0B2518;
-        padding-bottom: 8px;
-        margin-bottom: 18px;
+        padding-bottom: 6px;
+        margin-bottom: 14px;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
@@ -231,67 +236,67 @@
     .header-title-group {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
     }
     
     .header-icon-box {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         background: #0B2518;
         color: #B59254;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14pt;
+        font-size: 12pt;
         font-weight: bold;
     }
     
     .header-title {
-        font-size: 14pt;
+        font-size: 13pt;
         font-weight: 800;
         color: #0B2518;
         margin: 0;
     }
     
     .header-subtitle {
-        font-size: 8.5pt;
+        font-size: 8pt;
         color: #718096;
         margin: 0;
     }
     
     .header-tag {
-        font-size: 8pt;
+        font-size: 7.5pt;
         font-weight: 700;
         background: #F7FAFC;
         border: 1px solid #E2E8F0;
         color: #B59254;
-        padding: 3px 10px;
+        padding: 2px 8px;
         border-radius: 20px;
     }
     
     /* Typography & Sections */
     h2 {
-        font-size: 12pt;
+        font-size: 10.5pt;
         font-weight: 800;
         color: #0B2518;
-        margin: 15px 0 8px 0;
+        margin: 12px 0 6px 0;
         border-right: 3px solid #B59254;
         padding-right: 8px;
     }
     
     h3 {
-        font-size: 10.5pt;
+        font-size: 9.5pt;
         font-weight: 700;
         color: #133E2B;
-        margin: 10px 0 5px 0;
+        margin: 8px 0 4px 0;
     }
     
     p {
-        margin: 0 0 8px 0;
+        margin: 0 0 6px 0;
         color: #2D3748;
-        font-size: 9pt;
-        line-height: 1.6;
+        font-size: 8.5pt;
+        line-height: 1.55;
         text-align: justify;
     }
     
@@ -299,22 +304,22 @@
     .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
+        gap: 10px;
+        margin-bottom: 10px;
     }
     
     .grid-3 {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 12px;
+        gap: 8px;
+        margin-bottom: 10px;
     }
     
     .card {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 10px 12px;
+        border-radius: 6px;
+        padding: 8px 10px;
         position: relative;
     }
     
@@ -325,41 +330,41 @@
     }
     
     .card-title {
-        font-size: 9.5pt;
+        font-size: 8.8pt;
         font-weight: 700;
         color: #0B2518;
-        margin: 0 0 4px 0;
+        margin: 0 0 3px 0;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
     }
     
     .card-desc {
-        font-size: 8.5pt;
+        font-size: 8pt;
         color: #4A5568;
         margin: 0;
-        line-height: 1.4;
+        line-height: 1.45;
     }
     
     /* Feature Highlight Box */
     .highlight-box {
         background: linear-gradient(145deg, #0B2518 0%, #133E2B 100%);
         color: #FFFFFF;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin: 12px 0;
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin: 10px 0;
         border-right: 4px solid #B59254;
     }
     
     .highlight-box h3 {
         color: #B59254;
-        font-size: 11pt;
-        margin: 0 0 6px 0;
+        font-size: 9.8pt;
+        margin: 0 0 4px 0;
     }
     
     .highlight-box p {
         color: #E2E8F0;
-        font-size: 8.5pt;
+        font-size: 8.2pt;
         margin: 0;
         line-height: 1.5;
     }
@@ -368,23 +373,24 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        margin: 10px 0;
-        font-size: 8.5pt;
+        margin: 8px 0;
+        font-size: 8pt;
     }
     
     th {
         background: #0B2518;
         color: #FFFFFF;
         text-align: right;
-        padding: 7px 10px;
+        padding: 6px 8px;
         font-weight: 700;
         border: 1px solid #0B2518;
     }
     
     td {
-        padding: 7px 10px;
+        padding: 5px 8px;
         border: 1px solid #E2E8F0;
         color: #2D3748;
+        line-height: 1.4;
     }
     
     tr:nth-child(even) {
@@ -393,9 +399,9 @@
     
     .badge {
         display: inline-block;
-        padding: 2px 7px;
+        padding: 2px 6px;
         border-radius: 4px;
-        font-size: 7.5pt;
+        font-size: 7.2pt;
         font-weight: 700;
     }
     
@@ -411,17 +417,11 @@
         border: 1px solid #84E1BC;
     }
     
-    .badge-blue {
-        background: #E1EFFE;
-        color: #1E429F;
-        border: 1px solid #A4CAFE;
-    }
-    
     /* Step Workflow */
     .workflow-container {
         display: flex;
-        gap: 8px;
-        margin: 12px 0;
+        gap: 6px;
+        margin: 10px 0;
     }
     
     .workflow-step {
@@ -430,43 +430,43 @@
         border: 1px solid #CBD5E0;
         border-top: 3px solid #0B2518;
         border-radius: 6px;
-        padding: 8px 10px;
+        padding: 7px 8px;
         text-align: center;
     }
     
     .step-number {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
         background: #B59254;
         color: #FFFFFF;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 8.5pt;
+        font-size: 8pt;
         font-weight: bold;
-        margin-bottom: 4px;
+        margin-bottom: 3px;
     }
     
     .step-title {
-        font-size: 8.5pt;
+        font-size: 8pt;
         font-weight: 700;
         color: #0B2518;
         margin: 2px 0;
     }
     
     .step-desc {
-        font-size: 7.5pt;
+        font-size: 7.2pt;
         color: #4A5568;
         margin: 0;
         line-height: 1.3;
     }
     
     .footer-note {
-        margin-top: 15px;
-        padding-top: 10px;
+        margin-top: 12px;
+        padding-top: 8px;
         border-top: 1px dashed #CBD5E0;
-        font-size: 8pt;
+        font-size: 7.5pt;
         color: #718096;
         text-align: center;
     }
@@ -477,35 +477,34 @@
     <!-- ==================== COVER PAGE ==================== -->
     <div class="cover-page">
         <div class="cover-top">
-            <img src="data:image/png;base64,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" alt="FACSS Official Seal" class="cover-logo">
             <h1 class="cover-entity-ar">مركز الحلول المتكاملة للأمن والسلامة</h1>
             <div class="cover-entity-en">Integrated Solutions Center for Safety and Security (FACSS)</div>
             <div class="cover-divider"></div>
         </div>
         
         <div class="cover-middle">
-            <div class="doc-badge">وثيقة العرض والتشغيل المؤسسي المعتمدة — 2026</div>
-            <div class="cover-title">الدليل المؤسسي والتشغيلي الشامل للمنصة الرقمية</div>
-            <p class="cover-subtitle">دليل شامل لمكونات الموقع الرسمي، منظومة الحلول الأمنية، بوابات الخدمة الذاتية، ونظام الإدارة</p>
+            <div class="doc-badge">وثيقة التشغيل والاستخدام المؤسسي المعتمدة — 2026م</div>
+            <div class="cover-title">الدليل الإرشادي والتشغيلي الشامل لمنصة الخدمات والعمليات</div>
+            <p class="cover-subtitle">دليل متكامل ومفصل يوضح كافة واجهات المنصة، قطاعات النشاط الميداني، بوابات الخدمة الذاتية للعملاء والمتدربين، وآليات الإدارة والتحكم المؤسسي الذاتي</p>
             <div class="cover-slogans">
-                <span>🛡️ «حلول متكاملة.. أمانٌ مستدام»</span>
+                <span>🛡️ «السلامة أولاً»</span>
                 <span>•</span>
                 <span>⚖️ «الوقاية قبل الاستجابة»</span>
                 <span>•</span>
-                <span>🌐 Excellence in Security, Leadership in Trust</span>
+                <span>🌐 حلول ميدانية.. استشارات استراتيجية.. وتأهيل احترافي</span>
             </div>
         </div>
         
         <div class="cover-bottom">
             <div class="author-box">
-                <h4>إعداد وإشراف هندسي:</h4>
-                <div class="author-name">م / زكريا الماوري</div>
-                <div class="author-title">كبير مهندسي النظم وتطوير المنصات الرقمية</div>
+                <h4>إشراف وإعداد التوثيق المؤسسي:</h4>
+                <div class="author-name">مركز الحلول المتكاملة للأمن والسلامة (FACSS)</div>
+                <div class="author-title">إدارة التطوير والعمليات المؤسسية — العاصمة عدن</div>
             </div>
             <div class="meta-box">
-                <div><strong>الإصدار:</strong> Ver 1.0 — الإنتاج السحابي</div>
-                <div><strong>التاريخ:</strong> سبتمبر 2026م</div>
-                <div><strong>الحالة:</strong> جاهز للمراجعة والاعتماد المؤسسي</div>
+                <div><strong>الإصدار:</strong> الدليل التشغيلي المعتمد (Ver 2.0)</div>
+                <div><strong>تاريخ الاعتماد:</strong> أكتوبر 2026م</div>
+                <div><strong>التصنيف:</strong> دليل إرشادي شامل موجه للعملاء والشركاء</div>
             </div>
         </div>
     </div>
@@ -516,431 +515,524 @@
             <div class="header-title-group">
                 <div class="header-icon-box">01</div>
                 <div>
-                    <h1 class="header-title">المقدمة التنفيذية والرؤية الاستراتيجية</h1>
-                    <p class="header-subtitle">المنطلق المؤسسي، الرؤية والرسالة، وميثاق العمل الأمني المعتمد</p>
+                    <h1 class="header-title">المقدمة التنفيذية والميثاق المؤسسي للمركز</h1>
+                    <p class="header-subtitle">الرسالة الاستراتيجية، القيم المهنية الحاكمة، ومنهجية «الوقاية أولاً»</p>
                 </div>
             </div>
             <div class="header-tag">نظرة عامة</div>
         </div>
 
         <div class="highlight-box">
-            <h3>منظومة أمنية متكاملة تُرسي مفهوم «الوقاية قبل الاستجابة»</h3>
-            <p>تعتبر المنصة الرقمية لمركز الحلول المتكاملة للأمن والسلامة (FACSS) واجهة سيادية وتقنية متطورة، صُممت لتجسيد الميثاق المؤسسي للمركز وتوفير منصة موحدة تجمع بين الخدمات الأمنية الميدانية المتقدمة، الاستشارات الاستراتيجية، برامج التأهيل الأكاديمي، والبحوث الأمنية المحكمة، لتخدم القطاعات الحيوية في الجمهورية اليمنية والإقليم وفق أعلى المعايير العالمية.</p>
+            <h3>صرح مؤسسي وتشغيلي واستشاري يرسي مفهوم «الوقاية قبل الاستجابة»</h3>
+            <p>تمثل المنصة الرقمية لمركز الحلول المتكاملة للأمن والسلامة (FACSS) بيئة مؤسسية تفاعلية موحدة تجمع بين الخدمات الأمنية الميدانية المعتمدة، الرصد والتنبيه المبكر، الاستشارات الاستراتيجية وتحليل مخاطر الوصول، برامج بناء القدرات والتدريب الميداني التخصصي، والدراسات والتقارير الموثقة، لخدمة المنظمات الدولية، البعثات الإنسانية، المنشآت الحيوية، والشركات الوطنية وفق أرقى المعايير الدولية.</p>
         </div>
 
-        <h2>الركائز المؤسسية الثلاث لميثاق المركز:</h2>
+        <h2>الركائز الاستراتيجية الثلاث لميثاق المركز:</h2>
         <div class="grid-3">
             <div class="card card-accent">
-                <div class="card-title">🎯 1. الرؤية المستقبلية</div>
-                <p class="card-desc">أن نكون المركز الرائد محلياً وإقليمياً في تقديم الخدمات الأمنية الاستراتيجية المتكاملة، ومرجعاً بحثياً وتنموياً في تطوير قطاع الأمن والسلامة وتأهيل الكوادر الوطنية.</p>
+                <div class="card-title">🎯 1. الرؤية المؤسسية</div>
+                <p class="card-desc">أن يكون المركز المرجع الرائد محلياً وإقليمياً في حلول الأمن والسلامة الوقائية، والرصد والتحليل الميداني، والتأهيل التخصصي لحماية الكوادر والمنشآت وتيسير الوصول الآمن.</p>
             </div>
             <div class="card card-accent">
                 <div class="card-title">📜 2. الرسالة الاستراتيجية</div>
-                <p class="card-desc">تقديم خدمات أمنية واستشارية وبحثية بمعايير عالمية لحماية الأرواح والمنشآت، والمساهمة في تمكين الشباب وتطوير المجتمع عبر برامج التدريب والتأهيل الاحترافي المعتمد.</p>
+                <p class="card-desc">توفير بيئات عمل آمنة ومستقرة للمستفيدين عبر منظومة خدمات استباقية مانعة، وحراسات وقائية، وتقييمات دقيقة للمخاطر، وبناء القدرات الوطنية وفق ضوابط القانون والحياد والسرية.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">💎 3. منظومة القيم الأساسية</div>
-                <p class="card-desc"><strong>النزاهة، الاحترافية، الانضباط، السرية التامة، الكفاءة، والتطوير المستمر.</strong> قيم حاكمة تضمن سرية بيانات العملاء ودقة التنفيذ العملياتي.</p>
+                <div class="card-title">💎 3. المبادئ الحاكمة</div>
+                <p class="card-desc"><strong>الوقاية أولاً، المهنية والحياد، السرية التامة وأمن المعلومات، احترام القانون والكرامة الإنسانية، القابلية للتنفيذ، والشراكة المسؤولة.</strong></p>
             </div>
         </div>
 
-        <h2>فلسفة العمل: ركائز الوقاية الستة (الوقاية قبل الاستجابة)</h2>
-        <p>لا يعتمد المركز على ردة الفعل بعد وقوع الحوادث، بل يرتكز على هندسة أمنية استباقية مانعة من ستة محاور:</p>
+        <h2>المبادئ الستة الحاكمة لنشاط وعمليات المركز:</h2>
+        <p>لا يتعامل المركز مع الأمن والسلامة كرد فعل بعد وقوع الحوادث، بل يعتمد منهجية استباقية ترتكز على ستة مبادئ تشغيلية صارمة:</p>
         
         <div class="grid-2">
             <div class="card">
-                <div class="card-title">1. التحديد المبكر للمخاطر</div>
-                <p class="card-desc">رصد مسبق لكافة التهديدات ونقاط الضعف الفيزيائية والتقنية قبل تحولها إلى حوادث ملموسة.</p>
+                <div class="card-title">1. الوقاية أولاً (Prevention First)</div>
+                <p class="card-desc">التركيز على الرصد المسبق للمخاطر ومعالجة أسبابها قبل وقوعها، وتطبيق معايير التحصين الاستباقي للكوادر والمقرات.</p>
             </div>
             <div class="card">
-                <div class="card-title">2. تقييم الثغرات والأصول</div>
-                <p class="card-desc">تصنيف دقيق للأصول الحيوية وفق الأهمية التشغيلية ووضع مصفوفات تقييم المخاطر المعتمدة.</p>
+                <div class="card-title">2. المهنية والحياد (Professionalism & Neutrality)</div>
+                <p class="card-desc">تقديم تقارير واستشارات مبنية على معايير فنية موضوعية، والتمييز الدقيق بين الوقائع المثبتة والتقديرات الشخصية.</p>
             </div>
             <div class="card">
-                <div class="card-title">3. تعزيز الدفاعات والتحصين</div>
-                <p class="card-desc">معالجة نقاط الضعف عبر ضوابط تشغيلية ملموسة، وصيانة دورية للأنظمة والتحصينات المادية.</p>
+                <div class="card-title">3. السرية التامة وأمن المعلومات (Confidentiality)</div>
+                <p class="card-desc">حماية بيانات المستفيدين ومخرجات التقييمات الميدانية عبر ضوابط أمنية مشددة تضمن عدم إفشاء أي تفاصيل تشغيلية حساسة.</p>
             </div>
             <div class="card">
-                <div class="card-title">4. إجراءات التشغيل القياسية (SOPs)</div>
-                <p class="card-desc">صياغة وتطبيق بروتوكولات وإجراءات قياسية موحدة وخطط طوارئ وإخلاء قابلة للتطبيق الفوري.</p>
+                <div class="card-title">4. الالتزام بالقانون وحقوق الإنسان (Legal Compliance)</div>
+                <p class="card-desc">العمل التام ضمن التشريعات الوطنية النافذة واحترام المعايير الإنسانية الدولية وصون الكرامة البشرية في كافة المهام.</p>
             </div>
             <div class="card">
-                <div class="card-title">5. التدريب والتأهيل المستمر</div>
-                <p class="card-desc">تدريب الأفراد على الاستجابة السريعة المنضبطة وسرعة البلاغ وتطبيق بروتوكولات الأمان.</p>
+                <div class="card-title">5. القابلية للتنفيذ الميداني (Operational Feasibility)</div>
+                <p class="card-desc">صياغة توصيات وخطط سلامة وإخلاء عملية وواقعية قابلة للتطبيق والقياس والمتابعة في البيئة الميدانية الفعلية.</p>
             </div>
             <div class="card">
-                <div class="card-title">6. المراجعة والتحسين المتواصل</div>
-                <p class="card-desc">تحديث دوري مستمر لتقييمات الموقف للتكيف السريع مع تطور أشكال التهديدات الحديثة.</p>
+                <div class="card-title">6. الشراكة المسؤولة (Responsible Partnership)</div>
+                <p class="card-desc">تحديد الأدوار والمسؤوليات بوضوح وبناء علاقات تكاملية مبنية على الشفافية والثقة المتبادلة مع الشركاء الميدانيين.</p>
             </div>
         </div>
     </div>
 
-    <!-- ==================== PAGE 2: TECHNICAL HIGHLIGHTS & ARCHITECTURE ==================== -->
+    <!-- ==================== PAGE 2: OPERATIONAL USER EXPERIENCE ==================== -->
     <div class="page">
         <div class="page-header">
             <div class="header-title-group">
                 <div class="header-icon-box">02</div>
                 <div>
-                    <h1 class="header-title">المعايير الفنية ومعمارية المنصة الرقمية</h1>
-                    <p class="header-subtitle">البنية السحابية، أمان البيانات، وتجربة المستخدم الحديثة</p>
+                    <h1 class="header-title">المعايير التشغيلية وتجربة الاستخدام المؤسسية</h1>
+                    <p class="header-subtitle">الشمول اللغوي، التوافق التشغيلي الذكي، وسرية المعلومات السيادية</p>
                 </div>
             </div>
-            <div class="header-tag">المعايير التقنية</div>
+            <div class="header-tag">المعايير التشغيلية</div>
         </div>
 
-        <h2>المواصفات التقنية الفائقة للمنصة:</h2>
+        <h2>المزايا التشغيلية المتقدمة لبيئة المنصة:</h2>
         <div class="grid-3">
             <div class="card card-accent">
-                <div class="card-title">🌐 ثنائية اللغة الفورية</div>
-                <p class="card-desc">محرك ترجمة ثنائي الاتجاه يتيح التبديل الفوري بنقرة واحدة بين العربية بنسق (RTL) والإنجليزية بنسق (LTR) مع حفظ التفضيل تلقائياً.</p>
+                <div class="card-title">🌐 ثنائية اللغة الفورية (العربية والإنجليزية)</div>
+                <p class="card-desc">توفر المنصة بيئة ثنائية اللغة متكاملة تدعم التبديل الفوري بنقرة زر واحدة بين العربية والإنجليزية، مع مطابقة النصوص وعناوين الأقسام والتقارير بدقة لخدمة الشركاء الدوليين والمحليين.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">📱 توافق ذكي شامل</div>
-                <p class="card-desc">تصميم متجاوب بنسبة 100% يعمل بسلاسة استثنائية على الهواتف الذكية (iOS & Android)، الأجهزة اللوحية، وشاشات الحواسيب.</p>
+                <div class="card-title">📱 توافق تشغيلي مع كافة الشاشات والأجهزة</div>
+                <p class="card-desc">تصميم تفاعلي مرن يتوافق بنسبة 100% مع الهواتف الذكية للفرق الميدانية، الأجهزة اللوحية لمشرفي العمليات، والحواسيب المكتبية وشاشات غرف التحكم، لضمان استمرارية المتابعة من أي مكان.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">🔒 أمان وسرية سيادية</div>
-                <p class="card-desc">تشفير كامل لكافة الاتصالات عبر بروتوكولات HTTPS/SSL، وجلسات دخول محمية بتقنية JWT وHttpOnly لمنع الاختراق.</p>
+                <div class="card-title">🔒 حماية وتشفير البيانات والخصوصية السيادية</div>
+                <p class="card-desc">تطبيق بروتوكولات حماية مشفرة تضمن سرية المراسلات، وتأمين وثائق التقييم الأمني وسجلات المتدربين، ومنع أي وصول غير مصرح به للمعلومات والتقارير الميدانية الحساسة.</p>
             </div>
         </div>
 
-        <h2>معمارية السحابة وقواعد البيانات (Cloud Architecture):</h2>
+        <h2>مصفوفة الأمان والموثوقية للمستفيدين:</h2>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 25%;">المكون البرمجي</th>
-                    <th style="width: 35%;">التقنية المستخدمة</th>
-                    <th style="width: 40%;">الفائدة المؤسسية للعميل</th>
+                    <th style="width: 28%;">المجال التشغيلي</th>
+                    <th style="width: 36%;">المعيار المعتمد بالمنصة</th>
+                    <th style="width: 36%;">الفائدة المباشرة للعميل والمستفيد</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>واجهة المنصة والمحرك</strong></td>
-                    <td>Next.js 14+ (React 18 / TypeScript)</td>
-                    <td>سرعة تحميل فائقة، أداء ممتاز، وأفضل توافق مع محركات البحث (SEO).</td>
+                    <td><strong>بوابة طلب الخدمات</strong></td>
+                    <td>توليد كود تتبع رسمي موحد فوري لكل طلب خدمة</td>
+                    <td>متابعة دقيقة وشفافة لمسار الطلب ومراحله دون أي تأخير أو تداخل.</td>
                 </tr>
                 <tr>
-                    <td><strong>قاعدة البيانات السحابية</strong></td>
-                    <td>PostgreSQL 16 (Neon Serverless)</td>
-                    <td>قاعدة بيانات علائقية سحابية تضمن استمرارية الخدمة 24/7 دون توقف ونسخ احتياطي فوري.</td>
+                    <td><strong>التحقق من الشهادات والوثائق</strong></td>
+                    <td>بوابة تحقق مركزية برقم تسلسلي موثق</td>
+                    <td>إثبات صحة وسريان الشهادات والتقارير الميدانية ومنع أي تلاعب أو تزوير.</td>
                 </tr>
                 <tr>
-                    <td><strong>نظام إدارة النماذج (ORM)</strong></td>
-                    <td>Prisma ORM (16 كياناً بياناتياً)</td>
-                    <td>سلامة وترابط البيانات، منع التكرار، ودقة إدارة العلاقات الحساسة.</td>
+                    <td><strong>تعدد بوابات الخدمة الذاتية</strong></td>
+                    <td>فصل بوابات العملاء عن بوابات المتدربين عن الإدارة</td>
+                    <td>توفير بيئة عمل مخصصة لكل فئة تضمن السرية وسهولة إنجاز المعاملات.</td>
                 </tr>
                 <tr>
-                    <td><strong>التوزيع السحابي العالمي</strong></td>
-                    <td>Vercel Global Edge Network</td>
-                    <td>توزيع استضافة المنصة عبر شبكات سريعة تضمن سرعة الفتح من داخل اليمن وأي مكان بالعالم.</td>
+                    <td><strong>التحديث اللحظي للمحتوى</strong></td>
+                    <td>إدارة ذاتية كاملة للمحتوى والإعلانات والبيانات</td>
+                    <td>تحديث فوري لبيانات التواصل ومجالات النشاط واللافتات بمرونة تامة.</td>
                 </tr>
             </tbody>
         </table>
 
-        <h2>الهوية البصرية والجمالية الفاخرة (Visual Brand Identity):</h2>
+        <h2>الهوية البصرية والدلالات المؤسسية للمركز:</h2>
         <div class="grid-2">
             <div class="card">
                 <div class="card-title"><span style="display:inline-block;width:12px;height:12px;background:#0B2518;border-radius:2px;"></span> الأخضر الاستراتيجي الداكن (#0B2518)</div>
-                <p class="card-desc">يعكس العمق الأمني، الرصانة المؤسسية، والاستقرار، مستوحى من الهوية الرسمية لدرع المركز.</p>
+                <p class="card-desc">يعكس الرصانة المؤسسية، الاستقرار، والعمق الأمني الوقائي، مستوحى من درع المركز والالتزام بحماية الأرواح والمنشآت.</p>
             </div>
             <div class="card">
                 <div class="card-title"><span style="display:inline-block;width:12px;height:12px;background:#B59254;border-radius:2px;"></span> الذهبي الإمبراطوري المعتم (#B59254)</div>
-                <p class="card-desc">يرمز للريادة، القيمة العالية، والجودة المعتمدة في الخدمات والاستشارات المقدمة لكبار العملاء.</p>
+                <p class="card-desc">يرمز إلى معايير التميز والجودة الرفيعة والموثوقية المعتمدة في تقديم الاستشارات والخدمات لكبار العملاء والشركاء.</p>
             </div>
         </div>
 
         <div class="highlight-box" style="background:#F8FAFC;border:1px solid #CBD5E0;color:#2D3748;border-right:4px solid #B59254;">
-            <h3 style="color:#0B2518;">استقلالية المنصة التامة (Zero Vendor Lock-in):</h3>
-            <p style="color:#4A5568;">تم بناء الكود البرمجي بالكامل ليكون ملكاً حصرياً للمركز؛ لا يعتمد على أي اشتراكات مدفوعة أو منصات مقيدة، ويمكن نقله مستقبلاً إلى خوادم خاصة داخل مقر المركز بكل سهولة.</p>
+            <h3 style="color:#0B2518;">الاستقلالية والسيادة المؤسسية الكاملة للمنصة:</h3>
+            <p style="color:#4A5568;">تعد المنصة الرقمية ملكاً مؤسسياً حصرياً لمركز الحلول المتكاملة للأمن والسلامة (FACSS)؛ وتدار بسلطة تشغيلية كاملة ومستقلة تتيح للمركز التحكم في كافة الحسابات والبيانات والخدمات دون أي قيود.</p>
         </div>
     </div>
 
-    <!-- ==================== PAGE 3: PUBLIC SECTIONS & ELECTRONIC SYSTEMS ==================== -->
+    <!-- ==================== PAGE 3: ACTIVITY SECTORS & SOLUTIONS ==================== -->
     <div class="page">
         <div class="page-header">
             <div class="header-title-group">
                 <div class="header-icon-box">03</div>
                 <div>
-                    <h1 class="header-title">أقسام الموقع العام ومنظومة الـ 14 نظاماً إلكترونياً</h1>
-                    <p class="header-subtitle">استعراض الخدمات الميدانية والتجهيزات التقنية الأمنية المتخصصة</p>
+                    <h1 class="header-title">قطاعات النشاط الخمسة وحلول السلامة والتجهيزات</h1>
+                    <p class="header-subtitle">الخدمات الميدانية المعتمدة، منظومة التجهيزات، والجهات المستفيدة</p>
                 </div>
             </div>
-            <div class="header-tag">المحتوى المؤسسي</div>
+            <div class="header-tag">مجالات النشاط</div>
         </div>
 
-        <h2>الخدمات الأمنية الرئيسية المتاحة على المنصة:</h2>
+        <h2>القطاعات الخمسة المعتمدة للنشاط والخدمات الميدانية:</h2>
         <div class="grid-2">
             <div class="card card-accent">
-                <div class="card-title">💂 1. خدمات الحراسات الأمنية الميدانية</div>
-                <p class="card-desc">تأمين المنشآت الحيوية (المصارف، الموانئ، الشركات النفطية)، حماية كبار الشخصيات والوفود (VIP Protection)، تأمين الفعاليات، وتأمين نقل الأموال والمقتنيات الثمينة.</p>
+                <div class="card-title">🛡️ 1. قطاع الحراسات وخدمات الأمن والسلامة</div>
+                <p class="card-desc">حراسة وتأمين المنشآت الحيوية والمقرات والمستودعات، تأمين الوفود والزيارات الميدانية للشخصيات، تدقيق بروتوكولات الأمن والسلامة، وإدارة غرف المراقبة والعمليات الميدانية.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">🔍 2. تقييم الأمن المادي والفحص الشامل</div>
-                <p class="card-desc">تدقيق شامل للأسوار والتحصينات، إضاءة الأمان، بوابات التحكم، منظومات المراقبة، وقياس مناعة المباني ضد الاختراق والتسلل مع تقديم تقارير تفصيلية لسد الثغرات.</p>
+                <div class="card-title">📡 2. قطاع الرصد الميداني والتنبيه المبكر</div>
+                <p class="card-desc">استقبال وتدقيق البلاغات الميدانية الحية، تحديث سجل ومصفوفات المخاطر التشغيلية، إصدار التنبيهات الأمنية المبكرة لسلامة الفرق، ورسم خرائط مؤشرات الاستقرار الميداني.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">📋 3. الاستشارات والخطط الأمنية</div>
-                <p class="card-desc">تصميم البنى التحتية الأمنية، إعداد أدلة التشغيل القياسية (SOPs)، صياغة خطط الطوارئ والإخلاء والتعامل مع الأزمات، وضمان الامتثال للوائح والمعايير الدولية.</p>
+                <div class="card-title">🔍 3. قطاع الدراسات الميدانية والتحليل والمراقبة</div>
+                <p class="card-desc">تقييم مخاطر الوصول الإنساني والحركة، دراسات السياق وأصحاب المصلحة، تقييم الأمن والسلامة المادية للمقرات، وخدمات المراقبة والتقييم المستقل من طرف ثالث (TPM).</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">🎓 4. برامج التدريب والتأهيل التخصصي</div>
-                <p class="card-desc">دورات تأسيسية ومتقدمة عبر "أكاديمية عدن للتدريب" لتأهيل الحراس، تدريب السلامة المهنية والإسعافات، ومكافحة الحرائق، مع منح شهادات رقمية مؤمنة.</p>
+                <div class="card-title">🎓 4. قطاع التدريب والتأهيل والتنسيق المجتمعي</div>
+                <p class="card-desc">برامج بناء القدرات الميدانية في السلامة الشخصية، الإسعافات في البيئات الحرجة، إدارة أزمات الحركة، وبناء القبول المجتمعي والتفاوض لتسهيل الوصول الميداني.</p>
             </div>
         </div>
 
-        <h2>كتالوج الأنظمة والحلول الأمنية الإلكترونية الـ 14:</h2>
-        <p>تم تضمين كافة الأنظمة الـ 14 المنصوص عليها حرفياً في وثيقة ميثاق المركز داخل واجهات المنصة:</p>
-        
+        <div class="card card-accent" style="margin-bottom:10px;">
+            <div class="card-title">⚙️ 5. قطاع أنظمة وتجهيزات السلامة والحلول المتكاملة</div>
+            <p class="card-desc">توريد وتركيب وتدقيق حلول المراقبة والتحكم بالدخول، أنظمة الإنذار المبكر ومكافحة الحرائق، تجهيزات السلامة الشخصية والمهنية (PPE)، ومعدات الإنقاذ والطوارئ الميدانية.</p>
+        </div>
+
+        <h2>كتالوج الحلول والأنظمة الأمنية الميدانية المعتمدة:</h2>
         <table>
             <thead>
                 <tr>
                     <th style="width: 5%;">#</th>
-                    <th style="width: 30%;">النظام الأمني</th>
-                    <th style="width: 65%;">الوصف الفني والتطبيقي</th>
+                    <th style="width: 32%;">المنظومة أو التجهيز الأمني</th>
+                    <th style="width: 63%;">الوصف التشغيلي والتطبيقي في الميدان</th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td><strong>كاميرات المراقبة (CCTV)</strong></td><td>منظومات مراقبة متطورة (IP / PTZ / كاميرات ليلية وحرارية) مع تخزين سحابي وتحليل فيديو ذكي.</td></tr>
-                <tr><td>2</td><td><strong>التحكم في الدخول (Access Control)</strong></td><td>أجهزة تحكم ذكية للأبواب والبوابات باستخدام البطاقات المشفرة والرموز الرقمية المتقدمة.</td></tr>
-                <tr><td>3</td><td><strong>أنظمة الحضور والانصراف</strong></td><td>إدارة ومتابعة دوام الموظفين والكوادر بدقة عالية للشركات والمصانع والمؤسسات الكبرى.</td></tr>
-                <tr><td>4</td><td><strong>أنظمة إدارة المفاتيح</strong></td><td>خزائن ذكية إلكترونية لإدارة وتتبع صلاحيات استلام وتسليم مفاتيح المرافق الحساسة.</td></tr>
-                <tr><td>5</td><td><strong>إدارة المباني الذكية (BMS)</strong></td><td>منظومة تحكم مركزي لمراقبة الطاقة، التكييف، الإنارة، ومؤشرات الأمان في المباني الضخمة.</td></tr>
-                <tr><td>6</td><td><strong>العتاد الشبكي وتمديدات الأمان</strong></td><td>تصميم وتركيب بنية شبكية فائقة الأمان وسيرفرات مخصصة لغرف المراقبة والتحكم.</td></tr>
-                <tr><td>7</td><td><strong>التعرف على الوجوه (Face Recognition)</strong></td><td>كاميرات وحلول تعتمد الذكاء الاصطناعي للتحقق اللحظي من الهويات ورصد القوائم المصرح لها.</td></tr>
-                <tr><td>8</td><td><strong>التتبع عبر التردد اللاسلكي (RFID)</strong></td><td>تتبع حركة الأصول والمعدات الثمينة والأفراد بدقة داخل المنشآت لمنع الفقد والسرقة.</td></tr>
-                <tr><td>9</td><td><strong>الحواجز الأمنية والمصدات</strong></td><td>بوابات هيدروليكية وحواجز صد آلية لتأمين المداخل والمقرات الاستراتيجية من الاقتحام.</td></tr>
-                <tr><td>10</td><td><strong>أجهزة التفتيش اليدوية والبوابات</strong></td><td>بوابات كشف المعادن وأجهزة الفحص بالأشعة السينية (X-Ray) والكواشف اليدوية للأفراد والطرود.</td></tr>
-                <tr><td>11</td><td><strong>تجهيز غرف العمليات والمراقبة</strong></td><td>شاشات جدارية متكاملة (Video Walls)، كبائن تحكم، وأنظمة اتصال طوارئ متواصلة 24/7.</td></tr>
-                <tr><td>12</td><td><strong>معدات الإطفاء ومضخات الحريق</strong></td><td>تركيب وتوزيع طفايات الحريق، شبكات الرش الآلي، ومضخات مكافحة الحريق المعتمدة.</td></tr>
-                <tr><td>13</td><td><strong>أنظمة الإنذار المبكر ومستشعرات الدخان</strong></td><td>حساسات دقيقة لرصد الدخان والحرارة والغازات وإطلاق التنبيهات الفورية لغرف التحكم.</td></tr>
-                <tr><td>14</td><td><strong>معدات السلامة الشخصية (PPE)</strong></td><td>خوذ، ستر واقية، أحذية أمان، ونظارات حماية وفق اشتراطات الأوشا (OSHA) العالمية.</td></tr>
+                <tr><td>1</td><td><strong>كاميرات المراقبة الميدانية الذكية</strong></td><td>أنظمة مراقبة نهارية وليلية وحرارية تغطي محيط المنشآت مع التحليل التلقائي للحركة والتنبيه اللحظي.</td></tr>
+                <tr><td>2</td><td><strong>التحكم في الدخول والممرات الآمنة</strong></td><td>بوابات ذكية وأجهزة تنظيم الدخول للمنشآت الحيوية باستخدام البطاقات المشفرة والرموز الرقمية.</td></tr>
+                <tr><td>3</td><td><strong>أنظمة إدارة المفاتيح الذكية</strong></td><td>خزائن إلكترونية مؤمنة لإدارة وتتبع صلاحيات استلام وتسليم مفاتيح المرافق والمستودعات الحساسة.</td></tr>
+                <tr><td>4</td><td><strong>أنظمة الإنذار المبكر ومستشعرات الدخان</strong></td><td>مستشعرات دقيقة ترصد الدخان والحرارة وتسريب الغازات وتطلق إشارات تحذير فورية لغرف العمليات.</td></tr>
+                <tr><td>5</td><td><strong>معدات وشبكات مكافحة الحرائق</strong></td><td>مضخات إطفاء وشبكات الرش الآلي وطفايات حريق موزعة ومختبرة وفق اشتراطات السلامة المهنية.</td></tr>
+                <tr><td>6</td><td><strong>معدات السلامة والوقاية الشخصية (PPE)</strong></td><td>خوذ، ستر واقية، أحذية حماية، ونظارات واقية معتمدة وفق متطلبات العمل في البيئات الحرجة.</td></tr>
+                <tr><td>7</td><td><strong>أجهزة التفتيش وبوابات كشف المعادن</strong></td><td>بوابات فحص الأفراد وأجهزة الكشف اليدوية وأجهزة الفحص الإشعاعي للطرود والسيارات بالمداخل.</td></tr>
             </tbody>
         </table>
+
+        <h2>الجهات والشركاء المستفيدون من أنشطة المركز:</h2>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">🏢 المنظمات الدولية والإنسانية والبعثات الميدانية</div>
+                <p class="card-desc">تزويد فرق الإغاثة بتقييمات دقيقة لمخاطر الطرق ومسارات الحركة الآمنة، وتأمين مقرات المنظمات وتسهيل الوصول المجتمعي.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">🏦 المصارف والشركات والمؤسسات الوطنية</div>
+                <p class="card-desc">حراسات أمنية للمقرات والفروع، تأمين نقل الأموال والمقتنيات الثمينة، وتدقيق خطط الطوارئ واستمرارية الأعمال.</p>
+            </div>
+        </div>
     </div>
 
-    <!-- ==================== PAGE 4: PORTALS & WORKFLOWS ==================== -->
+    <!-- ==================== PAGE 4: PUBLIC PORTALS & WORKFLOWS ==================== -->
     <div class="page">
         <div class="page-header">
             <div class="header-title-group">
                 <div class="header-icon-box">04</div>
                 <div>
-                    <h1 class="header-title">نظام طلب الخدمات وبوابات الخدمة الذاتية</h1>
-                    <p class="header-subtitle">كود التتبع الفوري، بوابة العميل، وبوابة المتدربين والشهادات</p>
+                    <h1 class="header-title">أقسام الموقع العام وبوابات التفاعل الرقمي</h1>
+                    <p class="header-subtitle">واجهات الاستعراض، طلب الخدمات والاستشارات، وبوابة التحقق من الوثائق</p>
                 </div>
             </div>
-            <div class="header-tag">البوابات الذكية</div>
+            <div class="header-tag">الموقع العام</div>
         </div>
 
-        <h2>دورة حياة طلب الخدمة الأمنية (Service Lifecycle):</h2>
-        <p>تتميز المنصة بنظام رقمي متكامل يتيح لأي جهة أو عميل تقديم طلب عبر الموقع والحصول على كود تتبع رسمي ومتابعة كافة المراحل:</p>
+        <h2>خريطة أقسام الواجهة العامة للمنصة:</h2>
+        <p>تضم المنصة مجموعة من الأقسام المترابطة التي تتيح للزائر والعميل التعرف السريع على أنشطة المركز والتواصل معه:</p>
 
+        <div class="grid-3">
+            <div class="card card-accent">
+                <div class="card-title">🏠 1. الصفحة الرئيسية (Home)</div>
+                <p class="card-desc">الواجهة الاستراتيجية التي تضم شريط المؤشرات الحيوية، شارات الثقة، استعراض قطاعات النشاط، ملخص برامج التدريب والأبحاث، وبوابة التحقق الفوري.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📖 2. صفحة عن المركز (About)</div>
+                <p class="card-desc">استعراض النشأة، الرؤية والرسالة، ميثاق المبادئ الستة، الأهداف الاستراتيجية، دورة العمل التشغيلية الميدانية، والهيكل التنظيمي المؤسسي للمركز.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">🛡️ 3. مجالات النشاط (Services)</div>
+                <p class="card-desc">دليل مفصل لكافة الخدمات الميدانية المعتمدة مع إمكانية الاطلاع على تفاصيل كل خدمة، نطاق العمليات، والجهات المستفيدة، وطلب الخدمة بنقرة زر.</p>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="card card-accent">
+                <div class="card-title">🎓 4. التدريب الميداني (Training)</div>
+                <p class="card-desc">كتالوج متكامل لبرامج بناء القدرات الميدانية المفتوحة للتسجيل، متطلبات الالتحاق، ساعات التدريب النظري والتطبيقي، والقاعات المجهزة للتدريب التكتيكي.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📚 5. الدراسات والتقارير (Research)</div>
+                <p class="card-desc">مستودع معرفي ينشر أوراق الموقف الدورية، تقارير تقييم بيئة وسياق الوصول، وخرائط المخاطر لدعم متخذي القرار والشركاء الإنسانيين.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📞 6. اتصل بنا والتنسيق (Contact)</div>
+                <p class="card-desc">نافذة التواصل المؤسسي المباشر، العناوين الجغرافية للمقرات، أرقام غرف التنسيق والمراسلة عبر البريد الرسمي، ونموذج الاستفسارات السريع.</p>
+            </div>
+        </div>
+
+        <h2>منظومة طلب خدمة أو استشارة ميدانية (/request-service):</h2>
         <div class="workflow-container">
             <div class="workflow-step">
                 <div class="step-number">1</div>
-                <div class="step-title">تقديم الطلب</div>
-                <div class="step-desc">يقوم العميل بتعبئة النموذج وتحديد نوع الخدمة والقطاع وتاريخ التنفيذ.</div>
+                <div class="step-title">تحديد الخدمة</div>
+                <div class="step-desc">اختيار القطاع والخدمة المطلوبة وتحديد النطاق الجغرافي.</div>
             </div>
             <div class="workflow-step">
                 <div class="step-number">2</div>
-                <div class="step-title">توليد الكود الموحد</div>
-                <div class="step-desc">يُصدر النظام كوداً رسمياً فورياً مثل: <code>FACSS-SR-2026-359204</code></div>
+                <div class="step-title">إدخال البيانات</div>
+                <div class="step-desc">تعبئة بيانات جهة الاتصال والمواعيد وإرفاق المتطلبات.</div>
             </div>
             <div class="workflow-step">
                 <div class="step-number">3</div>
-                <div class="step-title">مراجعة العمليات</div>
-                <div class="step-desc">يصل الطلب لمدير العمليات في لوحة الإدارة لتحليله وتعيين فريق التنفيذ.</div>
+                <div class="step-title">إصدار الكود الرسمي</div>
+                <div class="step-desc">يمنح النظام العميل كود تتبع رسمي فوري للطلب.</div>
             </div>
             <div class="workflow-step">
                 <div class="step-number">4</div>
-                <div class="step-title">التنفيذ والمتابعة</div>
-                <div class="step-desc">تحديث الحالة إلى (قيد التنفيذ) وإرسال ملاحظات دورية للعميل.</div>
+                <div class="step-title">مراجعة العمليات</div>
+                <div class="step-desc">دراسة الطلب وإعداد الخطة الميدانية والتسعير وتكليف الفريق.</div>
             </div>
             <div class="workflow-step">
                 <div class="step-number">5</div>
-                <div class="step-title">التسليم النهائي</div>
-                <div class="step-desc">رفع التقرير الأمني النهائي المشفر على حساب العميل وإغلاق الطلب.</div>
+                <div class="step-title">التنفيذ والتسليم</div>
+                <div class="step-desc">تنفيذ المهمة ورفع التقارير المعتمدة في حساب العميل.</div>
             </div>
         </div>
 
-        <h2>ميزات بوابات الخدمة الذاتية (Portals):</h2>
-        <div class="grid-2">
-            <div class="card card-accent">
-                <div class="card-title">🏢 1. بوابة العملاء المؤسسية (/portal/client)</div>
-                <ul style="font-size:8.5pt;color:#4A5568;padding-right:16px;margin:5px 0;">
-                    <li><strong>المتابعة اللحظية:</strong> تتبع تقدم خطط الحراسة والاستشارات ومراحل الإنجاز.</li>
-                    <li><strong>غرفة الملاحظات:</strong> تواصل كتابي مباشر ومحمي بين العميل وغرفة عمليات المركز.</li>
-                    <li><strong>التقارير السرية:</strong> استعراض وتحميل تقارير تقييم الأمن المادي ومحاضر التفتيش بصيغة PDF.</li>
-                    <li><strong>إدارة الحساب المؤسسي:</strong> تعديل بيانات مسؤولي الاتصال بالمنشأة.</li>
-                </ul>
-            </div>
-            <div class="card card-accent">
-                <div class="card-title">👨‍🎓 2. بوابة المتدربين (/portal/trainee)</div>
-                <ul style="font-size:8.5pt;color:#4A5568;padding-right:16px;margin:5px 0;">
-                    <li><strong>سجل الدورات النشطة:</strong> متابعة المقررات المسجل بها المتدرب، قاعات التدريب، والمدربين.</li>
-                    <li><strong>سجل الحضور والتقدم:</strong> متابعة الساعات المنجزة ونسب الحضور المطلوبة للتخرج.</li>
-                    <li><strong>الشهادات الرقمية المؤمنة:</strong> تحميل الشهادة برقم تسلسلي وكود فحص رقمي.</li>
-                    <li><strong>التحقق الفوري من الشهادة:</strong> إمكانية قيام جهات التوظيف بالتحقق من صحة الشهادة عبر الرابط.</li>
-                </ul>
-            </div>
-        </div>
-
-        <h2>أكاديمية التدريب ومركز الدراسات والبحوث:</h2>
-        <div class="grid-2">
-            <div class="card">
-                <div class="card-title">🎯 أكاديمية التدريب الأمني والسلامة المهنية</div>
-                <p class="card-desc">تتيح للشباب والكوادر استعراض دبلومات الحراسات، دورات الرماية والدفاع المدني، والسلامة المهنية (OSHA)، مع نموذج تسجيل إلكتروني فوري وسداد الرسوم.</p>
-            </div>
-            <div class="card">
-                <div class="card-title">📊 مركز البحوث والدراسات الاستراتيجية</div>
-                <p class="card-desc">منصة لنشر أوراق تقدير الموقف، قراءات المشهد الجيوسياسي والأمني في اليمن والمنطقة، ودراسات المخاطر الموجهة لصناع القرار والمستثمرين.</p>
-            </div>
+        <h2>بوابة التحقق الفوري من الوثائق والشهادات المعتمدة (/verify):</h2>
+        <div class="highlight-box" style="background:#FFFFFF;border:1px solid #B59254;color:#0B2518;">
+            <h3 style="color:#0B2518;">منظومة التحقق الرقمي الموثقة لمنع التزوير:</h3>
+            <p style="color:#4A5568;">تتيح بوابة التحقق للشركاء والجهات المعنية وأرباب العمل إدخال الرقم التسلسلي المدون على أي شهادة تدريبية أو وثيقة تقييم أمني صادرة عن المركز، حيث يظهر النظام فوراً بيانات الوثيقة، اسم المستفيد، تاريخ الإصدار، وحالتها المعتمدة رسمياً.</p>
         </div>
     </div>
 
-    <!-- ==================== PAGE 5: ADMIN CMS & CONTROL ==================== -->
+    <!-- ==================== PAGE 5: CLIENT & TRAINEE PORTALS ==================== -->
     <div class="page">
         <div class="page-header">
             <div class="header-title-group">
                 <div class="header-icon-box">05</div>
                 <div>
-                    <h1 class="header-title">لوحة التحكم المركزية ونظام الإدارة (Admin CMS)</h1>
-                    <p class="header-subtitle">إدارة العمليات، المحتوى، المستخدمين، والإعدادات بدون كتابة كود</p>
+                    <h1 class="header-title">بوابات الخدمة الذاتية للعملاء والمتدربين</h1>
+                    <p class="header-subtitle">إدارة الحسابات المؤسسية، متابعة الطلبات، وسجل التدريب والشهادات</p>
                 </div>
             </div>
-            <div class="header-tag">لوحة القيادة والتحكم</div>
+            <div class="header-tag">بوابات الخدمة الذاتية</div>
         </div>
 
-        <h2>القدرات الإدارية المتاحة لمسؤولي المركز (/admin):</h2>
-        <p>صُممت لوحة التحكم لتكون سهلة وسريعة الاستخدام، وتتيح للإدارة الإشراف الكامل على كافة مفاصل المنصة:</p>
+        <h2>1. بوابة العملاء والشركاء المؤسسيين (/portal/client):</h2>
+        <p>صُممت بوابة العملاء لتكون قناة تنسيق رقمية آمنة ومباشرة بين إدارة المنشأة أو المنظمة وغرفة عمليات المركز:</p>
 
-        <div class="grid-3">
+        <div class="grid-2">
             <div class="card card-accent">
-                <div class="card-title">📈 لوحة الإحصائيات (Dashboard)</div>
-                <p class="card-desc">مؤشرات أداء حية تعرض عدد طلبات الخدمة النشطة، الدورات التدريبية، البحوث المنشورة، ورسائل الاتصال الجديدة بنقرة واحدة.</p>
+                <div class="card-title">📊 متابعة مسار طلبات الخدمات لحظياً</div>
+                <p class="card-desc">استعراض كافة طلبات الحراسة والاستشارات الجارية والسابقة، ومعرفة المرحلة الحالية (جديد، قيد الدراسة، قيد التنفيذ الميداني، مكتمل).</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">📝 إدارة طلبات الخدمة (Requests)</div>
-                <p class="card-desc">استعراض تفاصيل طلبات العملاء، تحديث الحالات (جديد، قيد الدراسة، قيد التنفيذ، مكتمل)، وإضافة ملاحظات تشغيلية موجهة للعميل.</p>
+                <div class="card-title">💬 قناة الملاحظات والتواصل العملياتي</div>
+                <p class="card-desc">تبادل الاستفسارات والملاحظات التشغيلية المباشرة بين مسؤول الاتصال بالمنظمة ومسؤول ملف الخدمة بمركز FACSS مع توثيق التواريخ.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">📬 صندوق رسائل الجمهور (Inquiries)</div>
-                <p class="card-desc">صندوق وارد مشفر يستقبل رسائل صفحة "اتصل بنا" مع بيانات المرسل وأرقام هواتفه، وحفظ تاريخ الإرسال وحالة المتابعة.</p>
-            </div>
-        </div>
-
-        <div class="grid-3">
-            <div class="card card-accent">
-                <div class="card-title">🎓 إدارة الدورات والتدريب (Courses)</div>
-                <p class="card-desc">إضافة وتعديل الدورات والبرامج التدريبية، تحديد الأسعار، فترات التدريب، والشروط، واستعراض قوائم المسجلين.</p>
+                <div class="card-title">📁 مستودع التقارير الأمنية الحصرية</div>
+                <p class="card-desc">تحميل تقارير تقييم المخاطر، محاضر تدقيق المنشآت، وخطط السلامة والإخلاء الخاصة بالجهة بصيغة وثائق رسمية مشفرة.</p>
             </div>
             <div class="card card-accent">
-                <div class="card-title">📚 النشر والبحوث (Publications)</div>
-                <p class="card-desc">نشر أوراق السياسات، الدراسات الأمنية، وتقارير تقييم الموقف مع دعم رفع الملفات وتنسيق المقالات باللغتين.</p>
-            </div>
-            <div class="card card-accent">
-                <div class="card-title">👥 المستخدمين والصلاحيات (RBAC)</div>
-                <p class="card-desc">التحكم في أدوار النظام (المدير العام، مدراء العمليات، مدراء التدريب، مشرفي البحوث، حسابات العملاء والمتدربين).</p>
+                <div class="card-title">⚙️ إدارة الحساب وتفويض مسؤولي الاتصال</div>
+                <p class="card-desc">تحديث بيانات المنشأة ومسؤولي التنسيق والأرقام المعتمدة لاستلام التنبيهات والبلاغات الأمنية الطارئة.</p>
             </div>
         </div>
 
-        <h2>التحكم الكامل في الإعدادات ومعلومات التواصل بدون مبرمج:</h2>
+        <h2>2. بوابة المتدربين والشهادات التخصصية (/portal/trainee):</h2>
+        <p>تمنح المتدربين والكوادر الملتحقين ببرامج المركز نافذة متكاملة لمتابعة مسارهم التدريبي العملي والنظري:</p>
+
+        <div class="grid-2">
+            <div class="card card-accent">
+                <div class="card-title">📚 سجل البرامج والدورات النشطة</div>
+                <p class="card-desc">معرفة البرامج المسجل بها المتدرب، أسماء المدربين المعتمدين، مواعيد المحاضرات النظرية، ومواعيد وأماكن التدريب التكتيكي الميداني.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">⏱️ سجل الحضور وساعات الجاهزية</div>
+                <p class="card-desc">متابعة الساعات التدريبية المنجزة ونسب الحضور المطلوبة للاستحقاق واجتياز التقييمات المعيارية المعتمدة بالمركز.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📜 استلام الشهادات الرقمية المعتمدة</div>
+                <p class="card-desc">تحميل شهادات إتمام البرامج التدريبية الموثقة برقم تسلسلي معتمد يتيح لأي جهة توظيف التحقق اللحظي من صحتها عبر الموقع.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📝 تقييمات الأداء والملاحظات التدريبية</div>
+                <p class="card-desc">الاطلاع على تقارير المدربين حول مستوى استيعاب المتدرب لمهارات السلامة، إدارة المخاطر، والإسعافات الأولية في البيئات الحرجة.</p>
+            </div>
+        </div>
+
+        <h2>إجراءات تسجيل الدخول والخصوصية:</h2>
         <div class="highlight-box">
-            <h3>شاشة إعدادات المنصة الموحدة (/admin/settings)</h3>
-            <p>يمكن لمدير المركز في أي لحظة تعديل أرقام الهواتف الرسمية، أرقام الواتساب، البريد الإلكتروني الرسمي، العنوان الجغرافي، وروابط منصات التواصل الاجتماعي (تويتر/X، لينكدإن، فيسبوك) مباشرة من شاشة الإعدادات، وتنعكس التغييرات فوراً في ترويسة وتذييل وصفحات الموقع بالكامل دون الحاجة لأي تعديل برمجي.</p>
+            <h3>تسجيل دخول مؤمن بالكامل (/login):</h3>
+            <p>يتم الدخول للبوابات عبر بريد إلكتروني معتمد وكلمة مرور شخصية مؤمنة؛ مع تطبيق إجراءات حماية صارمة لمنع التسلل وفصل صلاحيات كل مستخدم عن الآخر لضمان أقصى درجات السرية والخصوصية لمعلومات الشركاء.</p>
         </div>
-
-        <h2>نظام سجل الرقابة والتدقيق الأمني (Audit Trail):</h2>
-        <p>يسجل النظام تلقائياً كافة العمليات الحساسة (تسجيل الدخول، تعديل طلب خدمة، إضافة مستخدم، نشر بحث) مرفقة بالتاريخ والوقت وعنوان الـ IP واسم المستخدم المسؤول، لضمان أعلى مستويات الحوكمة والامتثال الأمني الداخلي.</p>
     </div>
 
-    <!-- ==================== PAGE 6: CREDENTIALS & HANDOVER ==================== -->
+    <!-- ==================== PAGE 6: ADMIN CONTROL PANEL ==================== -->
     <div class="page">
         <div class="page-header">
             <div class="header-title-group">
                 <div class="header-icon-box">06</div>
                 <div>
-                    <h1 class="header-title">دليل التجربة الفورية والتسليم المعتمد</h1>
-                    <p class="header-subtitle">روابط المنصة، بيانات الحسابات التجريبية، وخارطة الطريق المستقبلية</p>
+                    <h1 class="header-title">لوحة القيادة والتحكم الإداري الشامل للمركز</h1>
+                    <p class="header-subtitle">إدارة العمليات الميدانية، إدارة البرامج، والتحكم الذاتي الكامل بالمحتوى</p>
+                </div>
+            </div>
+            <div class="header-tag">لوحة القيادة والتحكم</div>
+        </div>
+
+        <h2>القدرات القيادية المتاحة لمسؤولي المركز (/admin):</h2>
+        <p>تمنح لوحة الإدارة فريق القيادة والعمليات بالمركز إشرافاً دقيقاً على كافة مسارات الأنشطة والتفاعل:</p>
+
+        <div class="grid-3">
+            <div class="card card-accent">
+                <div class="card-title">📈 مؤشرات الأداء الحية (Dashboard)</div>
+                <p class="card-desc">لوحة بيانات فورية تلخص أعداد طلبات الخدمات النشطة، الدورات المفتوحة، البحوث المنشورة، ورسائل واستفسارات الشركاء الجديدة.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📝 إدارة طلبات الخدمات الميدانية</div>
+                <p class="card-desc">استعراض تفاصيل طلبات العملاء، تحديث مراحل التنفيذ، تكليف مسؤولي العمليات، وإرسال الملاحظات والتقارير المباشرة للعميل.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📬 إدارة الرسائل واستفسارات الجمهور</div>
+                <p class="card-desc">صندوق وارد منظم يستقبل رسائل صفحة "اتصل بنا" مع بيانات التواصل وأرقام الهواتف، مع إمكانية تصنيفها ومتابعة الردود.</p>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="card card-accent">
+                <div class="card-title">🎓 إدارة برامج الأكاديمية والتدريب</div>
+                <p class="card-desc">إضافة وتحديث البرامج التدريبية، تحديد الفترات والساعات والقاعات، مراجعة قوائم المسجلين، واعتماد المتخرجين وإصدار شهاداتهم.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">📚 مستودع الدراسات والنشر المعرفي</div>
+                <p class="card-desc">نشر الدراسات والتقارير الميدانية مع التحكم في مستوى الظهور (عام لكافة الزوار، أو مقتصر على العملاء والشركاء المصرح لهم).</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">👥 إدارة الصلاحيات وتعدد المستويات</div>
+                <p class="card-desc">تحديد الأدوار الإدارية والتشغيلية (المدير العام، مدراء العمليات، مدراء التدريب، مشرفو الدراسات، والعملاء والمتدربون).</p>
+            </div>
+        </div>
+
+        <h2>التحكم الكامل في محتوى ونصوص الموقع بنسبة 100% بدون مبرمج (/admin/content):</h2>
+        <div class="highlight-box">
+            <h3>نظام التخصيص والتحكم الذاتي المباشر:</h3>
+            <p>يستطيع مدير المركز في أي وقت تعديل نصوص وشارات وصفحات الموقع بنقرة زر وبسهولة مطلقة عبر تبويبات مخصصة:</p>
+            <ul style="margin: 6px 0 0 0; padding-right: 18px; font-size: 8pt; color: #E2E8F0;">
+                <li><strong>شارات الهيرو الثلاث:</strong> تعديل مسميات وأيقونات شارات الواجهة الرئيسية (الحراسات، الرصد، الدراسات).</li>
+                <li><strong>ترويسات وعناوين الأقسام:</strong> تغيير العناوين والشارات والوصف لأقسام المبادئ والخدمات والشركاء.</li>
+                <li><strong>لافتات الصفحات (Page Banners):</strong> تعديل نصوص لافتات صفحات الخدمات والتدريب والأبحاث بالعربية والإنجليزية.</li>
+                <li><strong>بيانات الهوية والترويسة والفوتر:</strong> تعديل اسم المركز، شعار الفوتر، نص حقوق الملكية، وإشعار الخصوصية المؤسسي.</li>
+                <li><strong>إعدادات التواصل الرسمية (/admin/system):</strong> تحديث أرقام الهواتف، البريد الرسمي، والعناوين الجغرافية فوراً.</li>
+            </ul>
+        </div>
+
+        <h2>سجل الرقابة والمتابعة الداخلية (Audit Trail):</h2>
+        <p>توثق المنصة تلقائياً كافة الإجراءات والعمليات الحساسة بتواريخها الدقيقة وأسماء المستخدمين المنفذين لضمان أعلى درجات الحوكمة والانضباط الإداري والنزاهة المؤسسية.</p>
+    </div>
+
+    <!-- ==================== PAGE 7: CREDENTIALS & HANDOVER ==================== -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-title-group">
+                <div class="header-icon-box">07</div>
+                <div>
+                    <h1 class="header-title">دليل الحسابات التشغيلية والتسليم المعتمد</h1>
+                    <p class="header-subtitle">بيانات الحسابات النموذجية، إرشادات الأمان، وخارطة التطوير المستمر</p>
                 </div>
             </div>
             <div class="header-tag">دليل الاعتماد</div>
         </div>
 
-        <h2>روابط الوصول المباشر للمنصة السحابية:</h2>
-        <div class="highlight-box" style="background:#FFFFFF;border:1px solid #B59254;color:#0B2518;">
-            <div style="font-size:11pt;font-weight:bold;color:#0B2518;margin-bottom:6px;">🌐 رابط الموقع المباشر (Vercel Global Edge):</div>
-            <div style="font-size:12pt;font-weight:bold;color:#B59254;direction:ltr;text-align:right;">https://facss-platform.vercel.app</div>
-            <p style="color:#718096;font-size:8.5pt;margin-top:4px;">(يعمل 24/7 عبر السحابة العالمية برابط مشفر HTTPS مع قاعدة بيانات PostgreSQL سحابية فورية).</p>
-        </div>
+        <h2>بيانات الحسابات التشغيلية والنموذجية المعتمدة للاختبار والمعاينة:</h2>
+        <p>يتضمن الجدول التالي الحسابات النموذجية المفعلة لمعاينة كافة واجهات وصلاحيات المنصة:</p>
 
-        <h2>جدول بيانات الدخول التجريبية الجاهزة للفحص والاختبار:</h2>
         <table>
             <thead>
                 <tr>
-                    <th>الدور الوظيفي</th>
-                    <th>البريد الإلكتروني التجريبي</th>
-                    <th>كلمة المرور</th>
-                    <th>بوابة الدخول المخصصة</th>
+                    <th style="width: 25%;">الدور الوظيفي والمسؤولية</th>
+                    <th style="width: 32%;">البريد الإلكتروني المعتمد</th>
+                    <th style="width: 20%;">كلمة المرور</th>
+                    <th style="width: 23%;">بوابة الدخول المخصصة</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><strong>المدير العام (Super Admin)</strong></td>
-                    <td><code>admin@facss-aden.com</code></td>
+                    <td><code>admin@facss.org</code></td>
                     <td><code>Admin@FACSS2026</code></td>
-                    <td>لوحة التحكم الكاملة (/admin)</td>
+                    <td>لوحة التحكم الشاملة (/admin)</td>
                 </tr>
                 <tr>
-                    <td><strong>مدير العمليات والخدمات</strong></td>
+                    <td><strong>مدير العمليات والخدمات الميدانية</strong></td>
                     <td><code>services@facss-aden.com</code></td>
                     <td><code>Service@FACSS2026</code></td>
                     <td>إدارة طلبات الخدمات (/admin/requests)</td>
                 </tr>
                 <tr>
-                    <td><strong>مدير الأكاديمية والتدريب</strong></td>
+                    <td><strong>مدير التدريب وبناء القدرات</strong></td>
                     <td><code>training@facss-aden.com</code></td>
                     <td><code>Train@FACSS2026</code></td>
-                    <td>إدارة الدورات والتسجيلات (/admin/training)</td>
+                    <td>إدارة البرامج والشهادات (/admin/training)</td>
                 </tr>
                 <tr>
-                    <td><strong>مدير الدراسات والبحوث</strong></td>
+                    <td><strong>مدير الدراسات والبحوث الميدانية</strong></td>
                     <td><code>research@facss-aden.com</code></td>
                     <td><code>Research@FACSS2026</code></td>
-                    <td>إدارة ونشر أوراق الموقف (/admin/research)</td>
+                    <td>مستودع نشر الدراسات (/admin/research)</td>
                 </tr>
                 <tr>
-                    <td><strong>حساب عميل مؤسسي (بنك تجاري)</strong></td>
+                    <td><strong>حساب عميل مؤسسي (منظمة / بنك)</strong></td>
                     <td><code>client@yemen-bank.com</code></td>
                     <td><code>Client@FACSS2026</code></td>
-                    <td>بوابة متابعة العملاء (/portal/client)</td>
+                    <td>بوابة العملاء (/portal/client)</td>
                 </tr>
                 <tr>
-                    <td><strong>حساب متدرب أمني</strong></td>
+                    <td><strong>حساب متدرب أمني ميداني</strong></td>
                     <td><code>trainee@facss-aden.com</code></td>
                     <td><code>Trainee@FACSS2026</code></td>
-                    <td>بوابة المتدربين والشهادات (/portal/trainee)</td>
+                    <td>بوابة المتدربين (/portal/trainee)</td>
                 </tr>
             </tbody>
         </table>
 
-        <h2>الخطوات التنفيذية التالية المقترحة للمركز (Future Roadmap):</h2>
+        <h2>إرشادات الأمان الرقمي وحماية الحسابات:</h2>
         <div class="grid-3">
             <div class="card">
-                <div class="card-title">1. ربط النطاق الرسمي</div>
-                <p class="card-desc">ربط الدومين الرسمي المعتمد للمركز (مثل: <code>facss-aden.com</code>) بحساب Vercel بضغطة زر واحدة لتفعيل العنوان التجاري.</p>
+                <div class="card-title">🔐 سرية بيانات الدخول</div>
+                <p class="card-desc">الحفاظ التام على سرية كلمات المرور وعدم مشاركتها مع غير المعنيين، وتحديثها دورياً وفق إجراءات الأمان.</p>
             </div>
             <div class="card">
-                <div class="card-title">2. بوابات الرسائل الآلية</div>
-                <p class="card-desc">تفعيل إرسال إشعارات الرسائل النصية (SMS) وتنبيهات WhatsApp التلقائية للعملاء والمتدربين عند تحديث حالات الطلبات.</p>
+                <div class="card-title">🚪 تسجيل الخروج الآمن</div>
+                <p class="card-desc">تسجيل الخروج دائماً فور الانتهاء من مراجعة البوابات ولوحة الإدارة خاصة عند استخدام أجهزة مشتركة.</p>
             </div>
             <div class="card">
-                <div class="card-title">3. بوابات السداد الرقمي</div>
-                <p class="card-desc">ربط بوابات الدفع الإلكتروني (فيزا/ماستركارد وشبكات التحويل المحلية) لسداد رسوم الدورات والاستشارات مباشرة.</p>
+                <div class="card-title">🔍 تدقيق البيانات المرفوعة</div>
+                <p class="card-desc">التأكد من مراجعة دقة التقارير والشهادات والبيانات قبل نشرها على المنصة لضمان صون المصداقية المؤسسية.</p>
+            </div>
+        </div>
+
+        <h2>الخطوات التطويرية التالية المقترحة للمركز:</h2>
+        <div class="grid-3">
+            <div class="card card-accent">
+                <div class="card-title">1. ربط النطاق المؤسسي الدائم</div>
+                <p class="card-desc">تفعيل النطاق الرسمي التجاري المعتمد للمركز (مثل <code>facss-aden.com</code>) لتكريس الحضور المهني الموحد.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">2. التنبيهات المباشرة عبر الهواتف</div>
+                <p class="card-desc">ربط بوابات الرسائل النصية القصيرة وتنبيهات الواتساب الآلية لإخطار العملاء والفرق الميدانية لحظياً بمستجدات المهام.</p>
+            </div>
+            <div class="card card-accent">
+                <div class="card-title">3. قنوات السداد الإلكتروني</div>
+                <p class="card-desc">إتاحة خيارات السداد الرقمي عبر شبكات التحويل والبطاقات البنكية لتسهيل تسجيل المتدربين وسداد الرسوم بيسر.</p>
             </div>
         </div>
 
         <div class="footer-note">
-            تم إعداد وتطوير هذه المنصة الرقمية بكافة معاييرها الفنية والأمنية بواسطة: <strong>م / زكريا الماوري</strong> لصالح <strong>مركز الحلول المتكاملة للأمن والسلامة (FACSS)</strong> — سبتمبر 2026م.
+            تم إعداد وتجهيز هذه الوثيقة الإرشادية المعتمدة لصالح: <strong>مركز الحلول المتكاملة للأمن والسلامة (FACSS)</strong> — العاصمة عدن، الجمهورية اليمنية — أكتوبر 2026م.
         </div>
     </div>
 

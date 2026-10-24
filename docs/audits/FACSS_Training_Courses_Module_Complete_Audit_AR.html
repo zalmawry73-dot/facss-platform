@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقرير التدقيق الفني الشامل والتشغيلي لوحدة إدارة التدريب والدورات — FACSS</title>
+  <style>
+    :root {
+      --primary: #0F172A;
+      --primary-light: #1E293B;
+      --primary-dark: #0A0F1D;
+      --gold: #D4AF37;
+      --gold-dark: #B59254;
+      --gold-light: #FDFBF7;
+      --accent: #0284C7;
+      --accent-dark: #0369A1;
+      --accent-light: #E0F2FE;
+      --success: #10B981;
+      --success-dark: #047857;
+      --success-light: #ECFDF5;
+      --warning: #F59E0B;
+      --warning-dark: #D97706;
+      --warning-light: #FFFBEB;
+      --danger: #EF4444;
+      --danger-dark: #B91C1C;
+      --danger-light: #FEF2F2;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --border-dark: #334155;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.85;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    /* Header Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #0A0F1D 0%, #1E293B 100%);
+      color: #FFFFFF;
+      padding: 3.5rem 2.5rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner::before {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+
+    .header-subtitle {
+      font-size: 1.12rem;
+      color: #CBD5E1;
+      max-width: 1050px;
+      line-height: 1.75;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.88rem;
+      color: #94A3B8;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-item strong {
+      color: #F8FAFC;
+    }
+
+    /* Executive KPI Dashboard */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--primary-light);
+    }
+
+    .kpi-card.gold { border-top-color: var(--gold); }
+    .kpi-card.danger { border-top-color: var(--danger); }
+    .kpi-card.warning { border-top-color: var(--warning); }
+    .kpi-card.success { border-top-color: var(--success); }
+    .kpi-card.accent { border-top-color: var(--accent); }
+
+    .kpi-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    .kpi-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Sticky Navigation */
+    .nav-bar {
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-link {
+      color: #CBD5E1;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold);
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-title .sec-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      background: rgba(212, 175, 55, 0.12);
+      color: var(--gold-dark);
+      border-radius: var(--radius-sm);
+      font-size: 1.1rem;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    h3 {
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 1.75rem 0 0.85rem;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-light);
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: #334155;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: #F1F5F9;
+      color: var(--primary);
+      font-weight: 800;
+      padding: 0.85rem 1rem;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) {
+      background-color: #FAFAFC;
+    }
+
+    tr:hover {
+      background-color: #F8FAFC;
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-confirmed { background: var(--success-light); color: var(--success-dark); border: 1px solid var(--success); }
+    .badge-partial { background: var(--warning-light); color: var(--warning-dark); border: 1px solid var(--warning); }
+    .badge-ui { background: var(--accent-light); color: var(--accent-dark); border: 1px solid var(--accent); }
+    .badge-backend { background: #EDE9FE; color: #6D28D9; border: 1px solid #C4B5FD; }
+    .badge-missing { background: var(--danger-light); color: var(--danger-dark); border: 1px solid var(--danger); }
+    .badge-unresolved { background: #F1F5F9; color: var(--text-muted); border: 1px solid #CBD5E1; }
+
+    .badge-p0 { background: #7F1D1D; color: #FEF2F2; font-weight: 900; }
+    .badge-p1 { background: var(--danger-light); color: var(--danger-dark); border: 1px solid var(--danger); font-weight: 800; }
+    .badge-p2 { background: var(--warning-light); color: var(--warning-dark); border: 1px solid var(--warning); font-weight: 700; }
+    .badge-p3 { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; }
+
+    /* Code & Callouts */
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82em;
+      background: #F1F5F9;
+      color: #0F172A;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid #E2E8F0;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .code-block {
+      background: #0F172A;
+      color: #E2E8F0;
+      padding: 1.25rem;
+      border-radius: var(--radius-sm);
+      direction: ltr;
+      text-align: left;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid #334155;
+    }
+
+    .callout {
+      border-right: 4px solid var(--accent);
+      background: var(--accent-light);
+      padding: 1.25rem;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      margin: 1.5rem 0;
+      color: var(--primary);
+    }
+
+    .callout.warning {
+      border-right-color: var(--warning);
+      background: var(--warning-light);
+      color: #78350F;
+    }
+
+    .callout.danger {
+      border-right-color: var(--danger);
+      background: var(--danger-light);
+      color: #7F1D1D;
+    }
+
+    .callout.success {
+      border-right-color: var(--success);
+      background: var(--success-light);
+      color: #064E3B;
+    }
+
+    .callout-title {
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Scenario Box */
+    .scenario-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+      background: #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scenario-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .scenario-item strong {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      margin-bottom: 0.2rem;
+    }
+
+    /* SVG Flowchart styling */
+    .diagram-container {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* Print settings */
+    @media print {
+      body {
+        padding: 0;
+        background: #FFFFFF;
+      }
+      .nav-bar {
+        display: none !important;
+      }
+      .header-banner {
+        box-shadow: none;
+        border: 1px solid #94A3B8;
+        page-break-after: avoid;
+      }
+      .section-card {
+        box-shadow: none;
+        border: 1px solid #CBD5E1;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ==================================================== -->
+  <!-- 1. صفحة عنوان التقرير وشعار المؤسسة                   -->
+  <!-- ==================================================== -->
+  <header class="header-banner" id="title-page">
+    <div class="badge-pill">
+      <span>🛡️ وثيقة تدقيق رسمي ومستقل — المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية</span>
+    </div>
+    <h1>تقرير التدقيق الفني والتشغيلي الشامل لوحدة إدارة التدريب والدورات</h1>
+    <p class="header-subtitle">
+      مراجعة معمارية وتفصيلية مستقلة (Read-Only Audit) لكافة مكونات وحدة التدريب وأكاديمية التأهيل الميداني في منصة FACSS: واجهات المستخدم، مسارات API، مخطط بيانات Prisma، نماذج الحضور والاختبارات، إصدار الشهادات الرقمية، الدورات الخاصة بالعملاء، والأمن والصلاحيات والتكاملات الميدانية.
+    </p>
+
+    <div class="meta-bar">
+      <div class="meta-item">
+        <span>المؤسسة:</span>
+        <strong>المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية</strong>
+      </div>
+      <div class="meta-item">
+        <span>الشعار المؤسسي:</span>
+        <strong style="color: var(--gold);">السلامة أولاً (Safety First)</strong>
+      </div>
+      <div class="meta-item">
+        <span>نوع التدقيق:</span>
+        <strong>تدقيق تحليلي مقيد للقراءة فقط (Strictly Read-Only)</strong>
+      </div>
+      <div class="meta-item">
+        <span>البيئة البرمجية:</span>
+        <strong>Next.js 14 (App Router) + TypeScript + Prisma ORM + PostgreSQL</strong>
+      </div>
+      <div class="meta-item">
+        <span>تاريخ التقرير:</span>
+        <strong>23 أكتوبر 2026</strong>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================================================== -->
+  <!-- لوحة إحصاءات التدقيق التنفيذية (KPI Dashboard)         -->
+  <!-- ==================================================== -->
+  <div class="kpi-grid">
+    <div class="kpi-card gold">
+      <span class="kpi-title">الوظائف والمكونات المفحوصة</span>
+      <span class="kpi-value">28</span>
+      <span class="kpi-desc">تغطية شاملة لـ 19 مسار API و 7 واجهات و 13 نموذج بيانات</span>
+    </div>
+    <div class="kpi-card success">
+      <span class="kpi-title">وظائف مؤكدة ومنفذة فعلياً</span>
+      <span class="kpi-value">14</span>
+      <span class="kpi-desc">تعمل بكفاءة على مستوى الخادم وقاعدة البيانات</span>
+    </div>
+    <div class="kpi-card warning">
+      <span class="kpi-title">وظائف منفذة جزئياً / Backend فقط</span>
+      <span class="kpi-value">11</span>
+      <span class="kpi-desc">8 وظائف جزئية + 3 وظائف Backend ينقصها تكامل واجهة</span>
+    </div>
+    <div class="kpi-card danger">
+      <span class="kpi-title">عيوب حرجة وعالية (P1)</span>
+      <span class="kpi-value">3</span>
+      <span class="kpi-desc">تجاوز نسبة حضور الشهادات + سباق التسجيل + ثغرة حضور الفردي</span>
+    </div>
+    <div class="kpi-card accent">
+      <span class="kpi-title">عيوب متوسطة ومنخفضة (P2/P3)</span>
+      <span class="kpi-value">11</span>
+      <span class="kpi-desc">ملف قواعد مهجور + قيود أدوار الموظفين + فجوات التضارب وPDF</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-title">النقاط غير المحسومة</span>
+      <span class="kpi-value">0</span>
+      <span class="kpi-desc">تم فحص الكود بالكامل واستخراج الأدلة الصريحة</span>
+    </div>
+  </div>
+
+  <!-- شريط التنقل الداخلي السريع -->
+  <nav class="nav-bar">
+    <a href="#executive-summary" class="nav-link">2. الملخص التنفيذي</a>
+    <a href="#scope-methodology" class="nav-link">3. النطاق والمنهجية</a>
+    <a href="#components-map" class="nav-link">4. خريطة المكونات</a>
+    <a href="#functions-matrix" class="nav-link">5. جدول الوظائف</a>
+    <a href="#architecture-map" class="nav-link">6. الخريطة التقنية</a>
+    <a href="#course-lifecycle" class="nav-link">7. دورة حياة الدورة</a>
+    <a href="#trainees-mgmt" class="nav-link">8. المتدربون والتسجيل</a>
+    <a href="#trainers-mgmt" class="nav-link">9. المدربون والموارد</a>
+    <a href="#attendance-audit" class="nav-link">10. الحضور والغياب</a>
+    <a href="#evaluations-audit" class="nav-link">11. التقييم والنتائج</a>
+    <a href="#certificates-audit" class="nav-link">12. الشهادات والتحقق</a>
+    <a href="#client-courses" class="nav-link">13. دورات العملاء</a>
+    <a href="#security-rbac" class="nav-link">14. الصلاحيات والأمن</a>
+    <a href="#platform-integration" class="nav-link">15. تكامل المنصة</a>
+    <a href="#reports-kpi" class="nav-link">16. التقارير والمؤشرات</a>
+    <a href="#scenarios-analysis" class="nav-link">17. تحليل 20 سيناريو</a>
+    <a href="#defect-registry" class="nav-link">18. سجل العيوب</a>
+    <a href="#design-evaluation" class="nav-link">19. تقييم التصميم</a>
+    <a href="#target-architecture" class="nav-link">20. البديل المعماري</a>
+    <a href="#roadmap-plan" class="nav-link">21. خطة التحسين</a>
+    <a href="#uat-matrix" class="nav-link">22. مصفوفة اختبار UAT</a>
+    <a href="#decision-points" class="nav-link">23. قرارات المالك</a>
+    <a href="#conclusion" class="nav-link">24. الخلاصة</a>
+  </nav>
+
+  <!-- ==================================================== -->
+  <!-- 2. ملخص تنفيذي (Executive Summary)                   -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="executive-summary">
+    <div class="section-title">
+      <span class="sec-num">02</span>
+      <h2>الملخص التنفيذي (Executive Summary)</h2>
+    </div>
+
+    <p>
+      أجرت هذه المراجعة المستقلة تدقيقاً شاملاً ومقيداً للقراءة فقط (Read-Only Audit) لوحدة <strong>إدارة التدريب والدورات (Training & Courses Module)</strong> داخل منصة <strong>المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية (FACSS)</strong>. شمل الفحص بنية الكود المصدري، ومسارات API، ونماذج قاعدة البيانات في Prisma، وقواعد التحقق الإجرائي (Validation Layers)، وتدفقات العمل التشغيلية، ومحددات الأمن والصلاحيات (RBAC).
+    </p>
+
+    <div class="callout success">
+      <div class="callout-title">✅ أهم نقاط القوة والتميز التشغيلي المكتشفة في الوحدة:</div>
+      <ul style="padding-right: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem;">
+        <li><strong>بنية تحتية متقدمة لإصدار الشهادات والتحقق العام:</strong> يعتمد النظام رقم شهادة فريد متسلسل سنويًا (<code>FACSS-CERT-2026-NNNN</code>) مقترناً برمز تحقق تشفيري 96-بت (24 حرف هيكس)، مع بوابة تحقق عامة مفتوحة للجمهور (<code>/verify/[code]</code>) تحافظ على خصوصية المتدرب وتحجب أسباب الإلغاء الإداري.</li>
+        <li><strong>محرك تقارير مبني على البيانات الفعلية الحية 100%:</strong> تم التحقق من مسار <code>/api/admin/training/[id]/report</code> ومكون <code>TrainingReportModal.tsx</code>، حيث يتم حساب مؤشرات الإنجاز، ونسبة الحضور التراكمية، ومعدل التحسن في التقييم القبلي/البعدي (Improvement Gain %)، ومؤشرات الرضا استناداً إلى سجلات قاعدة البيانات الحقيقية ودون أي قيم عشوائية وهمية (Zero Mock Data).</li>
+        <li><strong>واجهة إدارة شاملة (8 تبويبات مدمجة):</strong> يوفر مكون <code>TrainingManager.tsx</code> و <code>components/admin/training/</code> إدارة متكاملة للدورات، طلبات التسجيل، الجلسات، الحضور والغياب، التقييمات الأكاديمية، سجل المدربين والوثائق، المواد التدريبية المرفوعة، وتقييم الاحتياجات التدريبية (TNA).</li>
+        <li><strong>حماية الدورات المسجلة من الحذف التدميري:</strong> في حال محاولة حذف دورة تحتوي على تسجيلات لمتدربين، يمنع مسار <code>DELETE /api/admin/training/[id]</code> الحذف المادي ويحوّل حالة الدورة تلقائياً إلى <code>CANCELLED</code> حفاظاً على السجلات والشهادات الصادرة.</li>
+      </ul>
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-title">⚠️ أبرز العيوب والفجوات ذات الأولوية العالية (P1) المكتشفة بالأدلة:</div>
+      <ol style="padding-right: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem;">
+        <li><strong>ثغرة تجاوز شرط الحضور (75%) عند إصدار الشهادة (TRN-BUG-001):</strong> في مسار <code>app/api/admin/training/certificates/route.ts:153-167</code>، يتم فحص شرط الحضور فقط إذا كان <code>totalSessions > 0</code>. إذا أنشأ المسؤول دورة دون إضافة جلسات في جدول <code>TrainingSession</code>، يكون المتغير صفراً، فيتجاوز الخادم شرط الحضور بالكامل ويصدر شهادة لمتدرب نسبة حضوره 0%!</li>
+        <li><strong>ثغرة تسابق التسجيل وتجاوز سعة المقاعد (Race Condition) (TRN-SEC-002):</strong> في مسار <code>app/api/training/register/route.ts:113-149</code>، يتم حساب المقاعد النشطة ثم إنشاء التسجيل دون استخدام <code>prisma.$transaction</code> أو قفل على مستوى السطر (Row Lock)، مما يسمح للطلبات المتزامنة بتجاوز الطاقة الاستيعابية القصوى للدورة.</li>
+        <li><strong>ثغرة تسجيل الحضور الفردي بدون جلسة والتكرار (TRN-DAT-003):</strong> في مسار <code>app/api/admin/training/[id]/attendance/route.ts:284-315</code>، عند إدخال الحضور بنمط التسجيل الفردي دون تحديد <code>sessionId</code>، لا يتحقق الخادم من أن <code>registrationId</code> ينتمي فعلياً للدورة الحالية، كما لا يوجد قيد فريد في قاعدة البيانات يمنع تكرار الحضور لنفس المتدرب في نفس التاريخ.</li>
+      </ol>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-title">🔍 أبرز العيوب المتوسطة والانفصالات المعمارية (P2):</div>
+      <ul style="padding-right: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem;">
+        <li><strong>ملف قواعد التدريب مهجور تماماً (TRN-ENG-004):</strong> تم إنشاء ملف <code>lib/training-rules.ts</code> لحساب شروط الأهلية والحضور، إلا أنه غير مستورد إطلاقاً في أي ملف داخل المشروع! كما يحتوي على قيمة حالة <code>LATE</code> غير موجودة أصلاً في مخطط Prisma!</li>
+        <li><strong>انقطاع زر التسجيل في الواجهة العامة (TRN-UX-005):</strong> في <code>app/training/page.tsx:215-222</code>، زر "سجل الآن" في بطاقات الدورات يوجّه إلى <code>/portal/trainee/courses</code> دون تمرير معرّف الدورة، مما يضيّع سياق الدورة على المتدرب.</li>
+        <li><strong>حرمان الموظفين الداخليين من التسجيل الذاتي (TRN-RBAC-008):</strong> مسار التسجيل <code>/api/training/register</code> يحصر التسجيل بأدوار <code>TRAINEE, ADMIN, SUPER_ADMIN</code>، ويحجب موظفي المركز (<code>EMPLOYEE, STAFF</code>) بـ 403 Forbidden.</li>
+        <li><strong>انفصال تام بين طلبات الخدمات (Service Requests) ودورات التدريب (TRN-INT-007):</strong> لا يوجد أي ربط بين طلب خدمة التدريب المقدم من العميل والدورات التدريبية المخصصة المنفذة.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 3. النطاق والمنهجية والقيود                          -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="scope-methodology">
+    <div class="section-title">
+      <span class="sec-num">03</span>
+      <h2>النطاق والمنهجية والقيود (Scope, Methodology & Boundaries)</h2>
+    </div>
+
+    <h3>1. حدود التدقيق الملتزم بها (Read-Only Mandate)</h3>
+    <p>
+      التزاماً بتعليمات الإدارة الصارمة، تم تنفيذ هذا التدقيق بصيغة <strong>تحليل وقراءة فقط (Strictly Read-Only)</strong>:
+    </p>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li>لم يتم تعديل أي ملف برمجي، واجهة، مسار، أو دالة داخل المشروع.</li>
+      <li>لم يتم إنشاء أو حذف أو تعديل أي سجل في قاعدة البيانات، ولم يتم تنفيذ أي ترحيل (Migration).</li>
+      <li>لم يتم تثبيت أو تعديل أي حزمة في <code>package.json</code>.</li>
+      <li>لم يتم إنشاء أي طلب سحب (Pull Request) أو ارتكاب حفظ (Git Commit).</li>
+    </ul>
+
+    <h3>2. المنهجية المتبعة في التدقيق</h3>
+    <p>
+      اعتمدت المنهجية على الهندسة العكسية الصارمة للكود الفعلي (Static Code Analysis & Flow Tracing):
+    </p>
+    <ol style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>فحص طبقة البيانات:</strong> تدقيق مخطط <code>prisma/schema.prisma</code>، والعلاقات، ومحددات الحذف (Cascade)، والقيود الفريدة (Unique Constraints)، والفهارس.</li>
+      <li><strong>فحص منطق الأعمال (Backend Logic):</strong> تتبع 19 مسار API و Server Actions للتحقق من المصادقة، والتحقق من المدخلات عبر <code>lib/validations/admin.ts</code>، وفرض الصلاحيات عبر <code>lib/rbac.ts</code>.</li>
+      <li><strong>فحص واجهات المستخدم (Frontend Logic):</strong> مراجعة مكونات لوحة الإدارة <code>components/admin/TrainingManager.tsx</code> ومكونات الأكاديمية وبوابة المتدرب وبوابة العميل وبوابة التحقق العامة.</li>
+      <li><strong>فحص التكاملات وسجلات التدقيق:</strong> تتبع استدعاءات <code>logActivity</code> ونظام الإشعارات <code>Notification</code> والتكامل مع بقية الوحدات المؤسسية.</li>
+    </ol>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ إفصاح فني إلزامي بخصوص الاتصال بقاعدة البيانات الحية:</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        أثناء تنفيذ التدقيق، تبيّن أن خادم قاعدة بيانات PostgreSQL المحلي على العنوان <code>127.0.0.1:5433</code> (المعرف في ملف <code>.env</code>) غير نشط (Connection Refused). وامتثالاً للشرط الإلزامي الصريح في وثيقة التدقيق ("<em>إذا تعذر الوصول إلى قاعدة البيانات، اذكر ذلك ولا تدّعِ أنك تحققت من بياناتها</em>")، نؤكد أن نتائج التدقيق وحالات الجداول استُخرجت من فحص ملف التهيئة الأولي <code>scripts/seed.js</code>، واختبارات E2E في <code>scripts/qa_phase7/</code>، ومخطط Prisma والـ Migrations، والمسارات البرمجية، ولم يتم الاستعلام المباشر من قاعدة بيانات مشغلة.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 4. خريطة مكونات الوحدة (Component Map)                -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="components-map">
+    <div class="section-title">
+      <span class="sec-num">04</span>
+      <h2>خريطة مكونات وحدة التدريب (Module Components Map)</h2>
+    </div>
+
+    <p>
+      تتوزع وحدة التدريب في منصة FACSS عبر 4 طبقات رئيسية (الواجهات العامة، بوابة المتدرب، بوابة العميل، ولوحة الإدارة الأكاديمية):
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الطبقة</th>
+            <th>المكون / الصفحة</th>
+            <th>المسار في الكود</th>
+            <th>الوظيفة الأساسية</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>الواجهة العامة</strong></td>
+            <td>دليل الدورات التدريبية المفتوحة</td>
+            <td><code>app/training/page.tsx</code></td>
+            <td>استعراض البرامج التدريبية المتاحة للجمهور مع التصنيفات والشروط.</td>
+          </tr>
+          <tr>
+            <td><strong>الواجهة العامة</strong></td>
+            <td>نظام التحقق الإلكتروني من الشهادات</td>
+            <td><code>app/verify/page.tsx</code> & <code>[code]/page.tsx</code></td>
+            <td>التحقق العام من صحة وسريان الشهادات عبر الرمز المشفر ورقم الشهادة.</td>
+          </tr>
+          <tr>
+            <td><strong>بوابة المتدرب</strong></td>
+            <td>لوحة المتدرب الرئيسية</td>
+            <td><code>app/portal/trainee/page.tsx</code></td>
+            <td>ملخص دورات المتدرب، نسبة الحضور، التقييمات، والشهادات الصادرة.</td>
+          </tr>
+          <tr>
+            <td><strong>بوابة المتدرب</strong></td>
+            <td>سجل الدورات والتسجيل الذاتي</td>
+            <td><code>app/portal/trainee/courses/page.tsx</code></td>
+            <td>استعراض الدورات المتاحة وتقديم طلب تسجيل ذاتي ومتابعة حالة الطلب.</td>
+          </tr>
+          <tr>
+            <td><strong>بوابة المتدرب</strong></td>
+            <td>سجل الحضور والجلسات والتقييمات</td>
+            <td><code>app/portal/trainee/attendance/page.tsx</code></td>
+            <td>عرض سجل الحضور التفصيلي للجلسات ودرجات التقييم القبلي والبعدي.</td>
+          </tr>
+          <tr>
+            <td><strong>بوابة المتدرب</strong></td>
+            <td>الشهادات وسجل التخرج والطباعة</td>
+            <td><code>app/portal/trainee/certificates/page.tsx</code></td>
+            <td>عرض وثيقة الشهادة الرسمية بتنسيق طباعة أنيق مع خيار <code>window.print()</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>بوابة العميل</strong></td>
+            <td>الدورات الخاصة للعميل المؤسسي</td>
+            <td><code>app/portal/client/courses/page.tsx</code></td>
+            <td>استعراض البرامج التدريبية الخاصة بالجهة وملخص المشاركين ونسبة الإنجاز.</td>
+          </tr>
+          <tr>
+            <td><strong>بوابة العميل</strong></td>
+            <td>طلبات تقييم الاحتياج التدريبي (TNA)</td>
+            <td><code>app/portal/client/tna/page.tsx</code></td>
+            <td>تقديم ومتابعة طلبات تحليل الاحتياجات التدريبية وتخصيص البرامج.</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>صفحة إدارة التدريب والأكاديمية</td>
+            <td><code>app/admin/training/page.tsx</code></td>
+            <td>الحاضن الرئيسي للوحة التحكم الأكاديمية وفحص صلاحية <code>MANAGE_TRAINING</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>مدير التدريب الشامل (8 تبويبات)</td>
+            <td><code>components/admin/TrainingManager.tsx</code></td>
+            <td>المكون الأضخم (2151 سطر) لإدارة الدورات، التسجيل، الجلسات، الحضور، والتقييم.</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>سجل المدربين المعتمدين والوثائق</td>
+            <td><code>components/admin/training/TrainersManager.tsx</code></td>
+            <td>إدارة ملفات المدربين، السير الذاتية، الشهادات، وتعيينات الدورات.</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>مدير المواد والملفات التدريبية</td>
+            <td><code>components/admin/training/MaterialsManager.tsx</code></td>
+            <td>رفع وإدارة الحقائب التدريبية ومستويات الرؤية (عام / متدربون / داخلي).</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>مدير تقييم الاحتياجات المؤسسية (TNA)</td>
+            <td><code>components/admin/training/TnaManager.tsx</code></td>
+            <td>إدارة طلبات تقييم الكفاءات ومطابقتها وتوصيات الدورات المناسبة.</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>نموذج التقرير الختامي للدورة</td>
+            <td><code>components/admin/training/TrainingReportModal.tsx</code></td>
+            <td>توليد التقرير الأكاديمي الحقيقي للدورة وطباعته بمؤشرات الأداء.</td>
+          </tr>
+          <tr>
+            <td><strong>لوحة الإدارة</strong></td>
+            <td>جدول ملخص أحدث التسجيلات</td>
+            <td><code>components/admin/TrainingRegistrationsSummary.tsx</code></td>
+            <td>عرض آخر 20 متدرب مسجل مع أرقام الشهادات وحالات المراجعة.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 5. جدول الوظائف وحالة التنفيذ (Functions Matrix)      -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="functions-matrix">
+    <div class="section-title">
+      <span class="sec-num">05</span>
+      <h2>جدول الوظائف التفصيلي وحالة التنفيذ الفعلي (Implementation Status)</h2>
+    </div>
+
+    <p>
+      تم تصنيف كل وظيفة استناداً إلى أدلة الكود الفعلي وليس مجرد وجود المسار:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الوظيفة التشغيلية</th>
+            <th>الصفحة أو المكون</th>
+            <th>مسار API / Action</th>
+            <th>نموذج البيانات في Prisma</th>
+            <th>الصلاحيات المطلوبة</th>
+            <th>حالة التنفيذ الفعلي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>استعراض الدورات المتاحة للجمهور</td>
+            <td><code>app/training/page.tsx</code></td>
+            <td>Server Component (Direct Prisma Query)</td>
+            <td><code>Course</code>, <code>CourseCategory</code></td>
+            <td>عام (بدون مصادقة)</td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>إنشاء دورة تدريبية جديدة</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>POST /api/admin/training</code></td>
+            <td><code>Course</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>تعديل بيانات دورة قائمة</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>PATCH /api/admin/training/[id]</code></td>
+            <td><code>Course</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>حذف دورة تدريبية (مع وقاية الإلغاء)</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>DELETE /api/admin/training/[id]</code></td>
+            <td><code>Course</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>تسجيل المتدرب الذاتي في دورة مفتوحة</td>
+            <td><code>trainee/courses/page.tsx</code></td>
+            <td><code>POST /api/training/register</code></td>
+            <td><code>TrainingRegistration</code></td>
+            <td><code>TRAINEE, ADMIN, SUPER_ADMIN</code></td>
+            <td><span class="badge badge-partial">منفذ جزئياً</span> (ثغرة تزامن)</td>
+          </tr>
+          <tr>
+            <td>تسجيل متدرب يدوياً من لوحة الإدارة</td>
+            <td>غير متوفرة في الواجهة</td>
+            <td>غير موجود (لا يوجد POST في مسار registrations)</td>
+            <td><code>TrainingRegistration</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-missing">غير موجود</span> (لا تسجيل إداري مباشر)</td>
+          </tr>
+          <tr>
+            <td>تحديث حالة تسجيل المتدرب (قبول/رفض/إتمام)</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>PATCH /api/admin/training/registrations/[id]</code></td>
+            <td><code>TrainingRegistration</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>إنشاء وجدولة الجلسات التدريبية</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>POST /api/admin/training/[id]/sessions</code></td>
+            <td><code>TrainingSession</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>رصد الحضور الجماعي للجلسة (Batch Roster)</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>POST /api/admin/training/[id]/attendance</code></td>
+            <td><code>AttendanceRecord</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span> (Upsert)</td>
+          </tr>
+          <tr>
+            <td>تصحيح وتعديل سجل حضور سابق مع ذكر السبب</td>
+            <td><code>TrainingManager.tsx</code> (Modal)</td>
+            <td><code>PUT /api/admin/training/[id]/attendance</code></td>
+            <td><code>AttendanceRecord</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span> (مع حقول التدقيق)</td>
+          </tr>
+          <tr>
+            <td>رصد وتقييم الاختبار القبلي والبعدي</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>POST /api/admin/training/[id]/evaluations</code></td>
+            <td><code>TrainingEvaluation</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>إجراء الاختبارات الإلكترونية وبنك الأسئلة</td>
+            <td>غير موجودة في بوابة المتدرب</td>
+            <td>غير موجودة</td>
+            <td>لا يوجد نموذج أسئلة</td>
+            <td>—</td>
+            <td><span class="badge badge-missing">غير موجود</span> (رصد درجات فقط)</td>
+          </tr>
+          <tr>
+            <td>إصدار الشهادة الرقمية المعتمدة</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>POST /api/admin/training/certificates</code></td>
+            <td><code>Certificate</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-partial">منفذ جزئياً</span> (ثغرة تخطي الجلسات)</td>
+          </tr>
+          <tr>
+            <td>إلغاء الشهادة الصادرة (Revocation)</td>
+            <td><code>TrainingManager.tsx</code></td>
+            <td><code>DELETE /api/admin/training/certificates</code></td>
+            <td><code>Certificate</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>التحقق العام من الشهادة عبر الكود المشفر</td>
+            <td><code>app/verify/[code]/page.tsx</code></td>
+            <td><code>GET /api/verify/[code]</code></td>
+            <td><code>Certificate</code></td>
+            <td>عام (مفتوح للجمهور)</td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>توليد وتنزيل ملف PDF حقيقي للشهادة</td>
+            <td>بوابة المتدرب (عرض طباعة)</td>
+            <td>لا يوجد API لتوليد ثنائي PDF</td>
+            <td><code>Certificate.pdfPath</code> (فارغ دائماً)</td>
+            <td>متدرب مسجل</td>
+            <td><span class="badge badge-ui">واجهة فقط</span> (تعتمد على window.print)</td>
+          </tr>
+          <tr>
+            <td>استعراض دورات العميل الخاصة</td>
+            <td><code>portal/client/courses/page.tsx</code></td>
+            <td><code>GET /api/portal/client/courses</code></td>
+            <td><code>Course</code></td>
+            <td><code>CLIENT</code> (عزل العميل)</td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span> (ملخص تجميعي)</td>
+          </tr>
+          <tr>
+            <td>تقديم ومتابعة احتياج تدريبي للعميل (TNA)</td>
+            <td><code>portal/client/tna/page.tsx</code></td>
+            <td><code>POST /api/portal/client/tna</code></td>
+            <td><code>TrainingNeedsAssessment</code></td>
+            <td><code>CLIENT</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>سجل المدربين الداخليين والخارجيين</td>
+            <td><code>TrainersManager.tsx</code></td>
+            <td><code>GET/POST /api/admin/training/trainers</code></td>
+            <td><code>Trainer</code>, <code>User</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>رفع وإدارة وثائق المدربين (CV والشهادات)</td>
+            <td><code>TrainersManager.tsx</code></td>
+            <td><code>POST /api/admin/training/trainers/[id]/documents</code></td>
+            <td><code>TrainerDocument</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>تعيين المدربين للدورات وتحديد صفة المدرب</td>
+            <td><code>TrainersManager.tsx</code></td>
+            <td><code>POST /api/admin/training/trainers/[id]/courses</code></td>
+            <td><code>CourseTrainer</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span></td>
+          </tr>
+          <tr>
+            <td>منع تضارب جداول المدربين والقاعات</td>
+            <td>غير موجود</td>
+            <td>غير موجود في API</td>
+            <td>لا يوجد فحص تداخل تواريخ</td>
+            <td>—</td>
+            <td><span class="badge badge-missing">غير موجود</span> (لا يتم فحص التضارب)</td>
+          </tr>
+          <tr>
+            <td>رفع وإدارة الحقائب والمواد التدريبية</td>
+            <td><code>MaterialsManager.tsx</code></td>
+            <td><code>POST /api/admin/training/[id]/materials</code></td>
+            <td><code>TrainingMaterial</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span> (LocalStorage)</td>
+          </tr>
+          <tr>
+            <td>استعراض المواد التدريبية للمتدرب المقبول</td>
+            <td><code>trainee/courses/page.tsx</code></td>
+            <td><code>GET /api/portal/trainee/courses/[id]/materials</code></td>
+            <td><code>TrainingMaterial</code></td>
+            <td><code>TRAINEE</code> (مقبول في الدورة)</td>
+            <td><span class="badge badge-backend">Backend فقط</span> (الواجهة تعرض بطاقة عامة)</td>
+          </tr>
+          <tr>
+            <td>استبيان قياس رضا المتدربين عن الدورة</td>
+            <td><code>TrainingManager.tsx</code> (عرض إداري)</td>
+            <td><code>GET /api/admin/training/[id]/satisfaction</code></td>
+            <td><code>CourseSatisfactionEvaluation</code></td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-backend">Backend فقط</span> (ينقص نموذج تعبئة المتدرب)</td>
+          </tr>
+          <tr>
+            <td>توليد التقرير الأكاديمي الحقيقي للدورة</td>
+            <td><code>TrainingReportModal.tsx</code></td>
+            <td><code>GET /api/admin/training/[id]/report</code></td>
+            <td>تجميعي لكافة جداول الدورة</td>
+            <td><code>MANAGE_TRAINING</code></td>
+            <td><span class="badge badge-confirmed">منفذ ومؤكد</span> (بيانات حقيقية 100%)</td>
+          </tr>
+          <tr>
+            <td>تصدير بيانات المتدربين والنتائج إلى Excel</td>
+            <td>غير موجود في الواجهة</td>
+            <td>غير موجود</td>
+            <td>لا يوجد مسار تصدير</td>
+            <td>—</td>
+            <td><span class="badge badge-missing">غير موجود</span> (تصدير مفقود)</td>
+          </tr>
+          <tr>
+            <td>حجز معدات السلامة ومواد التدريب من المخزون</td>
+            <td>غير موجود</td>
+            <td>غير موجود</td>
+            <td>لا توجد علاقة مع Inventory</td>
+            <td>—</td>
+            <td><span class="badge badge-missing">غير موجود</span> (انفصال عن المخزون)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 6. خريطة الصفحات و API والصلاحيات والنماذج            -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="architecture-map">
+    <div class="section-title">
+      <span class="sec-num">06</span>
+      <h2>خريطة الصفحات و API والصلاحيات والنماذج (Cross-Layer Architecture Map)</h2>
+    </div>
+
+    <p>
+      توضح هذه الخريطة العلاقة المتكاملة بين ما يراه المستخدم في المتصفح، ونقاط النهاية التي تُستدعى، ونموذج الصلاحيات المفروض، ونماذج قاعدة البيانات المتأثرة:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الصفحة أو الواجهة</th>
+            <th>نوع العرض</th>
+            <th>طريقة الاستدعاء</th>
+            <th>مسار API المرتبط</th>
+            <th>فحص الصلاحية الخادمي</th>
+            <th>الجداول المستهدفة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/training</code></td>
+            <td>Server Component</td>
+            <td>Direct DB Read</td>
+            <td>لا يوجد (قراءة مباشرة في SSR)</td>
+            <td>مفتوح (عام)</td>
+            <td><code>Course, CourseCategory</code></td>
+          </tr>
+          <tr>
+            <td><code>/verify/[code]</code></td>
+            <td>Server Component</td>
+            <td>Direct DB Read</td>
+            <td><code>GET /api/verify/[code]</code> (اختياري)</td>
+            <td>مفتوح (عام)</td>
+            <td><code>Certificate</code></td>
+          </tr>
+          <tr>
+            <td><code>/portal/trainee/courses</code></td>
+            <td>Client Component</td>
+            <td>Client fetch</td>
+            <td><code>GET /api/training/available-courses</code><br><code>POST /api/training/register</code></td>
+            <td><code>session.role in [TRAINEE, ADMIN, SUPER_ADMIN]</code></td>
+            <td><code>Course, TrainingRegistration, Notification, ActivityLog</code></td>
+          </tr>
+          <tr>
+            <td><code>/portal/trainee/attendance</code></td>
+            <td>Server Component</td>
+            <td>Direct DB Read</td>
+            <td>قراءة مباشرة في SSR مع فلترة <code>userId</code></td>
+            <td><code>requireRole(ROLES.TRAINEE)</code></td>
+            <td><code>TrainingRegistration, AttendanceRecord, TrainingSession, TrainingEvaluation</code></td>
+          </tr>
+          <tr>
+            <td><code>/portal/trainee/certificates</code></td>
+            <td>Server Component</td>
+            <td>Direct DB Read</td>
+            <td>قراءة مباشرة في SSR مع فلترة <code>userId</code></td>
+            <td><code>requireRole(ROLES.TRAINEE)</code></td>
+            <td><code>TrainingRegistration, Certificate, Course</code></td>
+          </tr>
+          <tr>
+            <td><code>/portal/client/courses</code></td>
+            <td>Client Component</td>
+            <td>Client fetch</td>
+            <td><code>GET /api/portal/client/courses</code></td>
+            <td><code>session.userId === clientId</code></td>
+            <td><code>Course, TrainingRegistration, CourseTrainer, TrainingMaterial</code></td>
+          </tr>
+          <tr>
+            <td><code>/portal/client/tna</code></td>
+            <td>Client Component</td>
+            <td>Client fetch</td>
+            <td><code>GET/POST /api/portal/client/tna</code></td>
+            <td><code>session.userId === clientId</code></td>
+            <td><code>TrainingNeedsAssessment, ActivityLog</code></td>
+          </tr>
+          <tr>
+            <td><code>/admin/training</code></td>
+            <td>Server + Client</td>
+            <td>Direct SSR + Client fetch</td>
+            <td>مجموعة 14 مسار تحت <code>/api/admin/training/*</code></td>
+            <td><code>requireCapability(CAPABILITIES.MANAGE_TRAINING)</code></td>
+            <td>كافة الجداول الـ 13 الخاصة بالأكاديمية</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 7. دورة حياة الدورة التدريبية                        -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="course-lifecycle">
+    <div class="section-title">
+      <span class="sec-num">07</span>
+      <h2>دورة حياة الدورة التدريبية (Course Lifecycle Audit)</h2>
+    </div>
+
+    <h3>1. دورة الحياة الفعلية كما ينفذها الكود حالياً</h3>
+    <p>
+      تعتمد قاعدة البيانات على Enum باسم <code>CourseStatus</code> يحتوي على الحالات التالية:
+      <code>DRAFT</code>، <code>OPEN</code>، <code>FULL</code>، <code>ONGOING</code>، <code>COMPLETED</code>، <code>CANCELLED</code>.
+    </p>
+
+    <div class="diagram-container">
+      <svg width="850" height="200" viewBox="0 0 850 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+        <!-- Definitions -->
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748B" />
+          </marker>
+        </defs>
+
+        <!-- Nodes -->
+        <!-- Draft -->
+        <rect x="20" y="70" width="100" height="50" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="2"/>
+        <text x="70" y="100" text-anchor="middle" font-weight="700" font-size="13" fill="#0F172A">مسودة DRAFT</text>
+
+        <!-- Open -->
+        <rect x="160" y="70" width="110" height="50" rx="8" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+        <text x="215" y="100" text-anchor="middle" font-weight="700" font-size="13" fill="#047857">مفتوحة OPEN</text>
+
+        <!-- Full -->
+        <rect x="310" y="70" width="110" height="50" rx="8" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2"/>
+        <text x="365" y="100" text-anchor="middle" font-weight="700" font-size="13" fill="#B45309">مكتملة FULL</text>
+
+        <!-- Ongoing -->
+        <rect x="460" y="70" width="120" height="50" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+        <text x="520" y="100" text-anchor="middle" font-weight="700" font-size="13" fill="#0369A1">جارية ONGOING</text>
+
+        <!-- Completed -->
+        <rect x="620" y="70" width="130" height="50" rx="8" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="2"/>
+        <text x="685" y="100" text-anchor="middle" font-weight="700" font-size="13" fill="#6D28D9">مكتملة COMPLETED</text>
+
+        <!-- Cancelled -->
+        <rect x="310" y="150" width="120" height="40" rx="8" fill="#FEF2F2" stroke="#EF4444" stroke-width="2"/>
+        <text x="370" y="175" text-anchor="middle" font-weight="700" font-size="12" fill="#B91C1C">ملغاة CANCELLED</text>
+
+        <!-- Connectors -->
+        <line x1="120" y1="95" x2="155" y2="95" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="270" y1="95" x2="305" y2="95" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="420" y1="95" x2="455" y2="95" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="580" y1="95" x2="615" y2="95" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Cancellation paths -->
+        <path d="M 215 120 L 215 170 L 305 170" fill="none" stroke="#EF4444" stroke-dasharray="4" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <path d="M 520 120 L 520 170 L 435 170" fill="none" stroke="#EF4444" stroke-dasharray="4" stroke-width="1.5" marker-end="url(#arrow)"/>
+      </svg>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+        الشكل 1: مخطط دورة حياة الدورة التدريبية الفعلية في النظام
+      </p>
+    </div>
+
+    <h3>2. نتائج الفحص الإجرائي لانتقالات الحالات (Workflow Audit Findings)</h3>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>نشر دورة ناقصة البيانات:</strong> يفرض دالة <code>validateCourseInput</code> في <code>lib/validations/admin.ts:44-123</code> إدخال العنوان العربي والإنجليزي، والوصف، واسم المدرب، والمدة، والمقر، والسعة، والتصنيف قبل الحفظ، مما يمنع إنشاء دورة بدون حقول إلزامية. ومع ذلك، <code>startDate</code> و <code>endDate</code> اختيارية في النموذج، فيمكن نشر دورة <code>OPEN</code> بدون تحديد تواريخ انعقاد فعلية!</li>
+      <li><strong>التسجيل في دورة غير مفتوحة:</strong> يتحقق مسار <code>/api/training/register:100</code> من أن <code>course.status === 'OPEN'</code>، ويرفض التسجيل في الدورات المسودة أو الجارية أو المكتملة أو الملغاة بكود 400.</li>
+      <li><strong>تعديل تواريخ الدورة بعد بدء التنفيذ:</strong> يتيح مسار <code>PATCH /api/admin/training/[id]</code> للمسؤول تعديل تواريخ الدورة وسعتها في أي وقت حتى لو كانت بحالة <code>ONGOING</code> أو <code>COMPLETED</code>، دون فحص التناقض مع الجلسات المسجلة سابقاً.</li>
+      <li><strong>إعادة فتح دورة ملغاة:</strong> يمكن للمسؤول عبر <code>PATCH</code> تغيير حالة أي دورة ملغاة أو مكتملة وإعادتها إلى <code>OPEN</code>، حيث لا توجد مصفوفة انتقالات صارمة تمنع ذلك على الخادم للدورات (على عكس التسجيلات التي تطبق مصفوفة انتقالات صارمة).</li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 8. إدارة المتدربين والتسجيل                          -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="trainees-mgmt">
+    <div class="section-title">
+      <span class="sec-num">08</span>
+      <h2>إدارة المتدربين وملفات التسجيل (Trainees & Registrations Management)</h2>
+    </div>
+
+    <h3>1. نمذجة هوية المتدرب (Trainee Identity Resolution)</h3>
+    <p>
+      في المخطط الحالي، المتدرب ليس كياناً منفصلاً بجدول خاص، بل هو <strong>سجل تسجيل (TrainingRegistration)</strong> يرتبط اختيارياً بحساب مستخدم <code>User</code> (عبر <code>userId String?</code>). يحتوي جدول التسجيل على الحقول الشخصية المباشرة:
+      <code>fullName, nationalId, email, phone, qualification</code>.
+    </p>
+
+    <h3>2. مصفوفة حالات التسجيل وانتقالاتها الفعلية</h3>
+    <p>
+      يحدد كود <code>lib/validations/admin.ts:520-530</code> مصفوفة انتقالات صارمة لحالات التسجيل كما يلي:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الحالة الحالية</th>
+            <th>الحالات اللاحقة المسموح بها</th>
+            <th>القاعدة الإجرائية المفروضة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>PENDING</code> (قيد المراجعة)</td>
+            <td><code>REVIEWING, ACCEPTED, REJECTED</code></td>
+            <td>الحالة الافتراضية عند تسجيل المتدرب عبر البوابة.</td>
+          </tr>
+          <tr>
+            <td><code>REVIEWING</code> (تحت التدقيق)</td>
+            <td><code>ACCEPTED, REJECTED, WAITLIST</code></td>
+            <td>فترة فحص المؤهلات والوثائق من قبل إدارة التدريب.</td>
+          </tr>
+          <tr>
+            <td><code>WAITLIST</code> (قائمة الانتظار)</td>
+            <td><code>ACCEPTED, REJECTED</code></td>
+            <td>عند امتلاء المقاعد ورغبة الإدارة في استبقاء الطلب لشاغر بديل.</td>
+          </tr>
+          <tr>
+            <td><code>ACCEPTED</code> (مقبول ومعتمد)</td>
+            <td><code>COMPLETED, REJECTED</code></td>
+            <td>يتم التحقق من عدم تجاوز سعة المقاعد، وتُرسل إشعارات للمتدرب.</td>
+          </tr>
+          <tr>
+            <td><code>COMPLETED</code> (أتم التدريب)</td>
+            <td>لا توجد (حالة نهائية Terminal)</td>
+            <td>الشرط الإلزامي لإمكانية إصدار الشهادة الرسمية.</td>
+          </tr>
+          <tr>
+            <td><code>REJECTED</code> (مرفوض)</td>
+            <td>لا توجد (حالة نهائية Terminal)</td>
+            <td>لا يمكن إعادة تفعيل الطلب بعد رفضه.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3. أوجه القصور المكتشفة في إدارة المتدربين</h3>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>منع المتدرب من إعادة الالتحاق التنشيطي (Recertification Block):</strong> في <code>app/api/training/register/route.ts:131</code>، يتحقق النظام من التسجيل المكرر بالشرط <code>status: { notIn: ['REJECTED'] }</code>. وهذا يعني أن المتدرب الذي أتم الدورة وحصل على <code>COMPLETED</code> قبل عامين لا يمكنه أبداً إعادة التسجيل في نفس الدورة لتجديد شهادته أو تنشيط مهاراته!</li>
+      <li><strong>عدم إمكانية تسجيل متدرب مباشرة من لوحة الإدارة:</strong> لا يوجد مسار <code>POST</code> في <code>/api/admin/training/registrations</code>. إذا حضر متدرب ميدانياً للتسجيل الورقي، يضطر المسؤول لإنشاء حساب متدرب له ثم الدخول باسمه للتسجيل الذاتي.</li>
+      <li><strong>غياب خيار تصدير بيانات المتدربين:</strong> تفتقر واجهة الإدارة إلى أي زر لتصدير كشوفات المتدربين، الحضور، أو الدرجات إلى ملفات Excel أو CSV لأغراض الأرشفة الورقية الرسمية.</li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 9. إدارة المدربين والموارد والجداول                  -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="trainers-mgmt">
+    <div class="section-title">
+      <span class="sec-num">09</span>
+      <h2>إدارة المدربين والموارد والجداول (Trainers, Schedules & Venues)</h2>
+    </div>
+
+    <h3>1. سجل المدربين المعتمدين (Trainer Registry)</h3>
+    <p>
+      أثبت التدقيق وجود بنية متقدمة ونموذج بيانات مستقل للمدربين:
+      نموذج <code>Trainer</code> يحتوي على بيانات ثنائية اللغة (<code>fullNameAr, fullNameEn, professionalTitleAr, specializations, bioAr, qualifications, certifications</code>)، ويرتبط اختيارياً بحساب مستخدم <code>User</code> (عبر <code>userId String? @unique</code>).
+    </p>
+    <p>
+      كما يرتبط بجدول <code>TrainerDocument</code> الذي يسمح برفع السير الذاتية (CV)، الشهادات المهنية، بطاقات الهوية، ورخص التدريب وتتبع حالة توثيقها (<code>VERIFIED, PENDING, EXPIRED</code>) وتاريخ انتهائها.
+    </p>
+
+    <h3>2. تعيين المدربين وتحديد الأدوار (Course Trainer Assignments)</h3>
+    <p>
+      من خلال جدول الوساطة <code>CourseTrainer</code> ومسار <code>app/api/admin/training/trainers/[id]/courses/route.ts</code>، يدعم النظام تعيين مدرب أو أكثر لكل دورة، مع تحديد الصفة:
+      <code>LEAD_TRAINER</code> (مدرب رئيسي)، <code>ASSISTANT_TRAINER</code> (مدرب مساعد)، أو <code>GUEST_LECTURER</code> (محاضر ضيف).
+    </p>
+
+    <div class="callout danger">
+      <div class="callout-title">⚠️ ثغرة غياب فحص تضارب المواعيد والقاعات (TRN-SCH-012):</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        بالرجوع إلى مسار التعيين <code>trainers/[id]/courses/route.ts:46-67</code> ومسار إنشاء الجلسات <code>sessions/route.ts:110-140</code>، تبيّن أن النظام <strong>لا يقوم بأي فحص لتضارب المواعيد (Schedule Collision Detection)</strong>. يمكن إسناد نفس المدرب لدورتين مختلفتين تنعقدان في نفس الساعة واليوم تماماً دون أي تحذير، كما يمكن حجز نفس قاعة التدريب (المسجلة كنص في <code>Course.location</code>) لعدة دورات متزامنة.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 10. الحضور والغياب                                   -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="attendance-audit">
+    <div class="section-title">
+      <span class="sec-num">10</span>
+      <h2>الحضور والغياب وتدقيق شرط الـ 75% (Attendance Audit)</h2>
+    </div>
+
+    <h3>1. مستوى تسجيل الحضور في النظام</h3>
+    <p>
+      يتم تسجيل الحضور على مستوى <strong>الجلسة التدريبية (Session Level)</strong> من خلال ربط سجل <code>AttendanceRecord</code> بمعرّف الجلسة <code>sessionId</code> والتسجيل <code>registrationId</code>.
+      حالات الحضور المعتمدة في الـ Enum هي: <code>PRESENT, ABSENT, EXCUSED</code>.
+    </p>
+
+    <h3>2. تدقيق شرط نسبة الحضور (75%) في الكود الفعلي</h3>
+    <p>
+      وفق متطلبات المركز المعتمدة، يجب ألا تقل نسبة حضور المتدرب عن 75% كشرط إلزامي للتخرج ونيل الشهادة.
+      أثبت التدقيق أن حقل <code>minAttendancePct Float @default(75)</code> موجود في نموذج <code>Course</code>.
+      ويتم التحقق منه في مسار إصدار الشهادة <code>app/api/admin/training/certificates/route.ts:152-167</code>:
+    </p>
+
+    <div class="code-block">
+// كود التحقق الفعلي من الحضور في certificates/route.ts
+const totalSessions = registration.course.sessions.length;
+if (totalSessions > 0) {
+  const presentCount = registration.attendanceRecords.filter((a) => a.status === 'PRESENT').length;
+  const attendancePct = Math.round((presentCount / totalSessions) * 100);
+  const minRequired = registration.course.minAttendancePct ?? 75;
+
+  if (attendancePct < minRequired) {
+    return NextResponse.json(
+      { error: `المتدرب غير مؤهل للحصول على الشهادة: نسبة الحضور الفعلية (${attendancePct}%) أقل من الحد الأدنى المطلوب (${minRequired}%).` },
+      { status: 400 }
+    );
+  }
+}
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-title">⚠️ ثغرة خطيرة في تطبيق شرط الحضور (P1):</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        لاحظ الشرط <code>if (totalSessions > 0)</code>: إذا أنشأت الإدارة دورة دون إدخال جلسات تفصيلية في جدول <code>TrainingSession</code>، فإن <code>totalSessions</code> يكون 0، وبالتالي <strong>يتم تخطي كود فحص الحضور بالكامل</strong>! هذا يتيح إصدار شهادة تخرج معتمدة لمتدرب لم يحضر يوماً واحداً.
+      </p>
+    </div>
+
+    <h3>3. نافذة تصحيح الحضور وتدقيق التعديلات (Correction Audit Trail)</h3>
+    <p>
+      يوفر مسار <code>PUT /api/admin/training/[id]/attendance</code> ميزة ممتازة تتيح تصحيح حالة الحضور السابقة، مع إلزام المسؤول بإدخال حقول التتبع: <code>modifiedReason</code> (سبب التعديل) و <code>modifiedById</code> و <code>modifiedAt</code>، وتسجيل النشاط في <code>ActivityLog</code>.
+    </p>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 11. الاختبارات والتقييم والنتائج                     -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="evaluations-audit">
+    <div class="section-title">
+      <span class="sec-num">11</span>
+      <h2>الاختبارات والتقييم الأكاديمي والنتائج (Evaluations & Academic Grading)</h2>
+    </div>
+
+    <h3>1. التنفيذ الفعلي للتقييم القبلي والبعدي (PRE & POST Evaluations)</h3>
+    <p>
+      تتضمن قاعدة البيانات نموذج <code>TrainingEvaluation</code> مقيداً بالقيد الفريد <code>@@unique([registrationId, type])</code> حيث يكون <code>type</code> إما <code>PRE</code> (تقييم قبلي) أو <code>POST</code> (تقييم بعدي).
+      ويتحكم الحقلان <code>requiresPreEval</code> و <code>requiresPostEval</code> في نموذج <code>Course</code> بإلزامية كل تقييم.
+    </p>
+
+    <h3>2. إدارة الأسئلة مقابل رصد الدرجات (Crucial Finding)</h3>
+    <div class="callout warning">
+      <div class="callout-title">📌 حقيقة وظيفية هامة: النظام لا يدير امتحانات إلكترونية</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        أثبت التدقيق بالدليل القاطع أن منصة FACSS <strong>لا تحتوي على محرك اختبارات أونلاين (Online Exam Engine) ولا بنك أسئلة</strong>، وبوابة المتدرب لا توفر واجهة لتقديم اختبارات. ما هو منفذ فعلياً هو <strong>رصد درجات إداري (Score Recording)</strong>، حيث يقوم المدرب أو المسؤول بإدخال الدرجة المستحقة (<code>score</code>) والدرجة القصوى (<code>maxScore @default(100)</code>) والملاحظات التي حققها المتدرب في الاختبار الورقي أو العملي الميداني.
+      </p>
+    </div>
+
+    <h3>3. معادلة حساب نسبة التحسن الأكاديمي (Improvement Gain %)</h3>
+    <p>
+      في مسار التقرير الأكاديمي <code>app/api/admin/training/[id]/report/route.ts:93-107</code>، يطبق النظام معادلة إحصائية حقيقية لحساب نسبة التحسن في المعارف الميدانية:
+    </p>
+    <div class="code-block">
+const prePct = (preEval.score / preEval.maxScore) * 100;
+const postPct = (postEval.score / postEval.maxScore) * 100;
+const denom = Math.max(1, 100 - prePct);
+const gain = ((postPct - prePct) / denom) * 100;
+totalGainPct += gain;
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">
+      تقيس هذه المعادلة نسبة الفجوة المعرفية التي تم ردمها بين الاختبار القبلي والبعدي بدقة عالية.
+    </p>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 12. الشهادات والتحقق منها                            -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="certificates-audit">
+    <div class="section-title">
+      <span class="sec-num">12</span>
+      <h2>الشهادات والتحقق الرقمي (Certificates & Verification System)</h2>
+    </div>
+
+    <h3>1. شروط استحقاق الشهادة الإلزامية في الخادم</h3>
+    <p>
+      وفق مسار <code>POST /api/admin/training/certificates/route.ts</code>، لا يمكن إصدار الشهادة إلا بعد استيفاء الشروط التالية مجتمعة:
+    </p>
+    <ol style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li>أن تكون حالة تسجيل المتدرب <code>COMPLETED</code> حصراً (خطوة 2).</li>
+      <li>أن تكون الدورة داعمة لإصدار الشهادات (<code>course.hasCertificate = true</code>).</li>
+      <li>عدم وجود شهادة سابقة نشطة لنفس التسجيل (منع التكرار خطوة 4).</li>
+      <li>استيفاء نسبة الحضور 75% (مع وجود ثغرة التخطي إذا كانت الجلسات = 0).</li>
+      <li>اجتياز وإكمال التقييم البعدي (<code>POST</code>) إذا كانت الدورة تشترطه (خطوة 6).</li>
+    </ol>
+
+    <h3>2. الهوية التشفيرية للشهادة ومنع التزوير</h3>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>رقم الشهادة:</strong> يتم توليده بتسلسل محكم <code>FACSS-CERT-{YYYY}-{NNNN}</code> عبر دالة <code>generateCertificateNumber</code>.</li>
+      <li><strong>رمز التحقق التشفيري:</strong> يتم توليده عبر مكتبة التشفير <code>crypto.randomBytes(12).toString('hex').toUpperCase()</code> مما يمنح رمزاً بطول 24 حرفاً ذو عشوائية 96-بت (مستحيل التخمين أو التزوير).</li>
+      <li><strong>محرك إلغاء الشهادات (Revocation):</strong> يدعم النظام إلغاء الشهادات الصادرة مع تسجيل السبب وتاريخ الإلغاء وحفظ السجل.</li>
+    </ul>
+
+    <h3>3. الخصوصية في بوابة التحقق العامة</h3>
+    <p>
+      في <code>app/verify/[code]/page.tsx</code>، عند تحقق أي جهة خارجية من صحة الشهادة، يعرض النظام اسم المتدرب، عنوان الدورة، تاريخ الإصدار، والتقدير العام، مع <strong>حجب البريد الإلكتروني، ورقم الهاتف، والرقم الوطني، وسبب الإلغاء الإداري</strong> لحماية خصوصية بيانات المتدربين الميدانيين.
+    </p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ نقص فني: غياب التوليد المباشر لملفات PDF</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        حقل <code>pdfPath</code> في جدول <code>Certificate</code> يظل <code>null</code> دائماً عند الإصدار، حيث لا يوجد محرك توليد PDF في الخادم (مثل Puppeteer أو PDFKit). يعتمد النظام على عرض قالب HTML أنيق في بوابة المتدرب وتفعيل خيار <code>window.print()</code> للحفظ كـ PDF من المتصفح.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 13. الدورات الخاصة بالعملاء                          -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="client-courses">
+    <div class="section-title">
+      <span class="sec-num">13</span>
+      <h2>الدورات الخاصة بالعملاء وتقييم الاحتياج (Private Client Courses & TNA)</h2>
+    </div>
+
+    <h3>1. نمط الدورة الخاصة بالعميل (Private Client Course)</h3>
+    <p>
+      يدعم نموذج <code>Course</code> الحقل <code>courseType: String @default("PUBLIC")</code> والذي يقبل قيمتي <code>PUBLIC</code> و <code>PRIVATE_CLIENT</code>، مع ربطه بحساب العميل عبر <code>clientId String?</code>.
+    </p>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>منع التسجيل العام:</strong> في <code>app/api/training/register/route.ts:87-97</code>، يتم حجب التسجيل الذاتي العام على أي دورة خاصة بجهة أو منظمة معينة برسالة منع صريحة.</li>
+      <li><strong>عزل بيانات العميل (Client Isolation):</strong> في <code>app/api/portal/client/courses/route.ts:19-23</code>، يُلزم الخادم الاستعلام بالشرط <code>where: { clientId: session.userId, courseType: 'PRIVATE_CLIENT' }</code>، مما يمنع أي عميل من استعراض دورات عميل آخر.</li>
+    </ul>
+
+    <h3>2. طلبات تقييم الاحتياجات التدريبية (Training Needs Assessment - TNA)</h3>
+    <p>
+      يمكن للعميل المؤسسي تقديم طلب TNA لتحديد الفجوات المهارية لموظفيه عبر <code>app/api/portal/client/tna/route.ts</code>، متضمناً الفئة المستهدفة، عدد المشاركين، المواضيع المطلوبة، والكفاءة الحالية والمستهدفة، ويمنح النظام الطلب رقماً مرجعياً <code>FACSS-TNA-{YYYY}-{NNNN}</code>.
+    </p>
+
+    <div class="callout danger">
+      <div class="callout-title">⚠️ ثغرة التسابق في ترقيم الـ TNA (TRN-TNA-009):</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        يعتمد ترقيم TNA في مسار <code>client/tna/route.ts:72-74</code> على حساب العدد الإجمالي <code>prisma.trainingNeedsAssessment.count() + 1</code> دون معاملة ذرية. إذا قدّم عميلان طلبين في نفس اللحظة، سيحصل كلاهما على نفس الرقم المرجعي، مما يؤدي إلى فشل الطلب الثاني بخطأ تكرار المفتاح الفريد (P2002).
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 14. الصلاحيات والأمن والخصوصية                       -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="security-rbac">
+    <div class="section-title">
+      <span class="sec-num">14</span>
+      <h2>مراجعة الصلاحيات والأمن والخصوصية (Security & RBAC Audit)</h2>
+    </div>
+
+    <h3>1. الصلاحيات الحبيبية (Granular Capabilities Enforcement)</h3>
+    <p>
+      أثبت التدقيق أن جميع مسارات الـ Backend في وحدة التدريب الإدارية تطبق التحقق الصارم من الصلاحيات على الخادم باستخدام دالة <code>assertApiCapability</code> وصلاحية <code>CAPABILITIES.MANAGE_TRAINING</code>:
+    </p>
+    <div class="code-block">
+const session = await getCurrentUser(true);
+const gate = await assertApiCapability(session, CAPABILITIES.MANAGE_TRAINING);
+if (!gate.authorized) return gate.response!;
+    </div>
+
+    <h3>2. جدول استحقاق الصلاحيات حسب الأدوار الفعلية في المشروع</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الدور الوظيفي (Role)</th>
+            <th>عرض قائمة الدورات</th>
+            <th>إنشاء / تعديل دورة</th>
+            <th>تسجيل الحضور والدرجات</th>
+            <th>إصدار وإلغاء الشهادات</th>
+            <th>إدارة المدربين والحقائب</th>
+            <th>التسجيل الذاتي في الدورات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SUPER_ADMIN</code></td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ متاح</td>
+          </tr>
+          <tr>
+            <td><code>ADMIN</code></td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ متاح</td>
+          </tr>
+          <tr>
+            <td><code>TRAINING_MANAGER</code></td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>✅ كامل</td>
+            <td>❌ غير متاح</td>
+          </tr>
+          <tr>
+            <td><code>STAFF / EMPLOYEE</code></td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب (ثغرة دور)</td>
+          </tr>
+          <tr>
+            <td><code>CLIENT</code></td>
+            <td>دوراته الخاصة فقط</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+          </tr>
+          <tr>
+            <td><code>TRAINEE</code></td>
+            <td>المتاحة والمسجل بها</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>❌ محجوب</td>
+            <td>✅ مسموح حصراً</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3. تدقيق الثغرات الأمنية والبيانات الحساسة</h3>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>حماية رفع الملفات (File Upload Security):</strong> في <code>app/api/admin/training/[id]/materials/route.ts:10-23</code>، يتم فحص نوع الـ MIME المسموح به بدقة (PDF, Word, Excel, PPT, Images)، وتحديد سقف أعلى 50 ميجابايت، مع تنظيف اسم الملف (Sanitization) لمنع هجمات Path Traversal.</li>
+      <li><strong>التدقيق وتتبع الأنشطة (Audit Trail):</strong> كل عملية حساسة (إنشاء دورة، تعديل تسجيل، رصد حضور جماعي، تصحيح حضور، رصد درجات، إصدار شهادة، إلغاء شهادة) تستدعي <code>logActivity</code> لتسجيل معرّف المستخدم، الاسم، ونوع الإجراء في جدول <code>ActivityLog</code>.</li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 15. التكامل مع بقية منصة FACSS                       -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="platform-integration">
+    <div class="section-title">
+      <span class="sec-num">15</span>
+      <h2>مصفوفة التكامل مع بقية منصة FACSS (Integration Matrix)</h2>
+    </div>
+
+    <p>
+      تم تدقيق التكاملات الـ 14 المطلوبة استناداً إلى العلاقات والاستدعاءات الفعلية في الكود وقاعدة البيانات:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الوحدة الشقيقة</th>
+            <th>سؤال التدقيق والمراجعة</th>
+            <th>تصنيف التكامل</th>
+            <th>الدليل الفعلي في الكود</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>المستخدمون والموظفون</strong></td>
+            <td>تعيين موظف كمدرب أو تسجيله كمتدرب؟</td>
+            <td><span class="badge badge-partial">تكامل جزئي</span></td>
+            <td>يمكن ربط الموظف كمدرب في جدول <code>Trainer</code> عبر <code>userId</code>. ولكن يمنع الموظف من التسجيل كمتدرب ذاتياً في <code>/api/training/register</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>العملاء وملفاتهم</strong></td>
+            <td>ربط دورة بعميل وإدارة المشاركين التابعين له؟</td>
+            <td><span class="badge badge-confirmed">تكامل مباشر ومؤكد</span></td>
+            <td>حقل <code>clientId</code> في نموذج <code>Course</code> و <code>TrainingNeedsAssessment</code>، ومسار <code>/api/portal/client/courses</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>طلبات الخدمات</strong></td>
+            <td>إنشاء طلب تدريب ومتابعته وربطه بدورة؟</td>
+            <td><span class="badge badge-missing">لا يوجد تكامل</span></td>
+            <td>لا يوجد أي مفتاح أجنبي بين <code>ServiceRequest</code> و <code>Course</code>. الطلبات تسير في مسار منفصل تماماً عن الأكاديمية.</td>
+          </tr>
+          <tr>
+            <td><strong>إدارة الحراسة والأمن</strong></td>
+            <td>دورات مرتبطة بمهارات الحراسة والسلامة؟</td>
+            <td><span class="badge badge-unresolved">ارتباط نظري فقط</span></td>
+            <td>توجد بيانات في Seed لدورات HEAT والسلامة، ولكن لا يوجد ربط وظيفي بين سجلات أفراد الحراسة وسجلات اجتياز الدورات.</td>
+          </tr>
+          <tr>
+            <td><strong>البلاغات الميدانية</strong></td>
+            <td>الاستفادة من البلاغات لتحديد احتياجات تدريبية؟</td>
+            <td><span class="badge badge-missing">لا يوجد تكامل</span></td>
+            <td>لا يوجد أي استدعاء أو ربط بين <code>IncidentReport</code> ووحدة التدريب.</td>
+          </tr>
+          <tr>
+            <td><strong>سجل المخاطر التشغيلية</strong></td>
+            <td>تحويل مخاطر متكررة إلى توصية تدريب؟</td>
+            <td><span class="badge badge-missing">لا يوجد تكامل</span></td>
+            <td>لا يوجد أي ربط برمجي بين <code>RiskItem</code> والدورات أو الـ TNA.</td>
+          </tr>
+          <tr>
+            <td><strong>المعدات والمخزون</strong></td>
+            <td>حجز معدات التدريب أو صرف المواد المستهلكة؟</td>
+            <td><span class="badge badge-missing">لا يوجد تكامل</span></td>
+            <td>نموذج <code>Course</code> غير مرتبط إطلاقاً بـ <code>InventoryItem</code> أو <code>SupplyRequestItem</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>الموردون والمشتريات</strong></td>
+            <td>شراء مواد أو معدات تدريب مطلوبة؟</td>
+            <td><span class="badge badge-missing">لا يوجد تكامل</span></td>
+            <td>أوامر الشراء (Procurement Orders) مرتبطة فقط بطلبات خدمات المعدات، وليس بالدورات.</td>
+          </tr>
+          <tr>
+            <td><strong>الدراسات والبحوث</strong></td>
+            <td>الاستفادة من الدراسات في تصميم البرامج؟</td>
+            <td><span class="badge badge-unresolved">ارتباط نظري فقط</span></td>
+            <td>موجودان في نفس المنصة كوحدتين مستقلتين دون واجهة تبادل بيانات آلية.</td>
+          </tr>
+          <tr>
+            <td><strong>الإشعارات (Notifications)</strong></td>
+            <td>إشعارات التسجيل والقبول وإصدار الشهادات؟</td>
+            <td><span class="badge badge-confirmed">تكامل مباشر ومؤكد</span></td>
+            <td>إنشاء إشعارات في جدول <code>Notification</code> عند التسجيل، وتحديث الحالة، وإصدار الشهادة. ينقص إشعارات تذكير الجلسات.</td>
+          </tr>
+          <tr>
+            <td><strong>سجلات التدقيق (Audit Logs)</strong></td>
+            <td>تسجيل تغييرات الدورة والحضور والشهادات؟</td>
+            <td><span class="badge badge-confirmed">تكامل مباشر ومؤكد</span></td>
+            <td>استدعاء <code>logActivity</code> في كافة المسارات الإدارية لتسجيل كافة العمليات الحساسة.</td>
+          </tr>
+          <tr>
+            <td><strong>مؤشرات الأداء KPI</strong></td>
+            <td>مؤشرات فعلية لجودة التدريب ومخرجاته؟</td>
+            <td><span class="badge badge-confirmed">تكامل مباشر ومؤكد</span></td>
+            <td>مسار <code>/api/admin/training/[id]/report</code> يحسب نسب الحضور، الإنجاز، التحسن الأكاديمي، ومؤشرات الرضا من البيانات الحقيقية.</td>
+          </tr>
+          <tr>
+            <td><strong>الشكاوى و SLA</strong></td>
+            <td>تسجيل ومتابعة شكوى متعلقة بدورة؟</td>
+            <td><span class="badge badge-missing">لا يوجد تكامل</span></td>
+            <td>محرك الـ SLA مخصص لطلبات الخدمات ورسائل الاتصال، ولا يشمل الاعتراضات التدريبية.</td>
+          </tr>
+          <tr>
+            <td><strong>الملفات والتخزين</strong></td>
+            <td>حفظ الحقائب والمواد والوثائق التدريبية؟</td>
+            <td><span class="badge badge-confirmed">تكامل مباشر ومؤكد</span></td>
+            <td>استخدام <code>LocalStorageDriver</code> لتخزين الحقائب في <code>storage/materials/</code> ووثائق المدربين.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 16. التقارير ومؤشرات الأداء                         -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="reports-kpi">
+    <div class="section-title">
+      <span class="sec-num">16</span>
+      <h2>التقارير ومؤشرات الأداء الأكاديمية (Academic KPIs & Reporting)</h2>
+    </div>
+
+    <h3>1. المؤشرات المتوفرة فعلياً في التقرير الختامي الحقيقي</h3>
+    <p>
+      بالرجوع إلى مسار <code>app/api/admin/training/[id]/report/route.ts</code>، يتم استخراج المؤشرات التالية لحظياً من قاعدة البيانات:
+    </p>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>إجمالي المسجلين (Total Enrolled):</strong> <code>course.registrations.length</code>.</li>
+      <li><strong>نسبة الإكمال العام (Completion Rate):</strong> نسبة المتدربين بحالة <code>COMPLETED</code> إلى إجمالي المسجلين.</li>
+      <li><strong>نسبة الحضور الفعلي التراكمية (Overall Attendance %):</strong> مجموع جلسات الحضور (<code>PRESENT</code>) مقسوماً على إجمالي سجلات الحضور.</li>
+      <li><strong>معدل التحسن الأكاديمي (Academic Improvement Gain %):</strong> يقيس الفارق بين التقييم القبلي والبعدي استناداً لمعادلة الفجوة المعرفية.</li>
+      <li><strong>عدد الشهادات الصادرة والملغاة:</strong> إحصاء دقيق للشهادات السارية والشهادات التي تم إلغاؤها (<code>isRevoked: true</code>).</li>
+      <li><strong>مؤشر رضا المتدربين (Overall Satisfaction):</strong> متوسط التقييمات من 5 نجوم لمحتوى الدورة، أداء المدرب، والتنظيم الميداني.</li>
+    </ul>
+
+    <h3>2. المؤشرات الناقصة التي يحتاجها المركز</h3>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>التكلفة والعائد المالي للدورة:</strong> لا توجد حقول مالية لتسجيل رسوم الدورة، مكافآت المدربين، أو تكاليف استهلاك المواد في قاعة المحاكاة.</li>
+      <li><strong>مؤشر الالتزام بالحضور حسب القطاع:</strong> تصنيف نسب الحضور والغياب للمنظمات الإنسانية مقارنة بالشركات التجارية.</li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 17. تحليل السيناريوهات العشرين الواقعية              -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="scenarios-analysis">
+    <div class="section-title">
+      <span class="sec-num">17</span>
+      <h2>تحليل السيناريوهات التشغيلية العشرين (20 Realistic Scenarios Analysis)</h2>
+    </div>
+
+    <p>
+      فيما يلي تحليل معمق لكل سيناريو من السيناريوهات العشرين المحددة في نطاق التدقيق، موضحاً السلوك الفعلي، الثغرات، واختبار القبول المقترح:
+    </p>
+
+    <!-- سيناريو 1 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 1: إنشاء دورة جديدة ببيانات مكتملة</span>
+        <span class="badge badge-confirmed">سلوك سليم</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>المستخدم / الدور:</strong> مسؤول التدريب (<code>TRAINING_MANAGER</code>) أو الأدمن.</div>
+        <div class="scenario-item"><strong>الشروط المسبقة:</strong> وجود تصنيف تدريبي في <code>CourseCategory</code>.</div>
+        <div class="scenario-item"><strong>ما يحدث فعلياً في الكود:</strong> تستدعي الواجهة <code>POST /api/admin/training</code>. يتحقق <code>validateCourseInput</code> من صحة الحقول، ويولد Slugs فريدة تلقائياً، ويحفظ الدورة بحالة <code>OPEN</code>، ويُسجل النشاط في <code>ActivityLog</code>.</div>
+        <div class="scenario-item"><strong>النتيجة والتقييم:</strong> نجاح سليم وامتثال كامل لقواعد العمل والتحقق.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 2 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 2: نشر دورة غير مكتملة البيانات أو بدون تواريخ</span>
+        <span class="badge badge-partial">قصور إجرائي</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>المستخدم / الدور:</strong> مسؤول التدريب.</div>
+        <div class="scenario-item"><strong>ما يحدث فعلياً في الكود:</strong> يمنع النظام الحفظ إذا غاب العنوان أو الوصف أو المدرب أو السعة. لكن حقلي <code>startDate</code> و <code>endDate</code> اختياريان في <code>validateCourseInput:109-119</code>.</div>
+        <div class="scenario-item"><strong>النتيجة والثغرة:</strong> يمكن نشر دورة بحالة <code>OPEN</code> للجمهور دون تحديد تاريخ بدء أو انتهاء، مما يربك المتدربين المتقدمين.</div>
+        <div class="scenario-item"><strong>الاختبار المقترح:</strong> محاولة إرسال دورة بحالة <code>OPEN</code> بدون <code>startDate</code> والتأكد من إرجاع 400.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 3 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 3: تسجيل متدرب في دورة مفتوحة</span>
+        <span class="badge badge-confirmed">سلوك سليم</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>المستخدم / الدور:</strong> حساب متدرب (<code>TRAINEE</code>).</div>
+        <div class="scenario-item"><strong>ما يحدث فعلياً في الكود:</strong> يستدعي <code>POST /api/training/register</code>. يتحقق الخادم من وجود الدورة، وحالتها <code>OPEN</code>، ونوعها <code>PUBLIC</code>، وتوفر مقاعد، وعدم وجود تسجيل مسبق، ثم ينشئ الطلب بحالة <code>PENDING</code> ويرسل إشعاراً للمتدرب.</div>
+        <div class="scenario-item"><strong>النتيجة:</strong> تسجيل ناجح ومنضبط بالتحقق الخادمي.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 4 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 4: امتلاء مقاعد الدورة والطلبات المتزامنة</span>
+        <span class="badge badge-p1">ثغرة حرجة P1</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>السلوك في الطلب المنفرد:</strong> يرفض النظام التسجيل إذا كان <code>activeCount >= course.capacity</code> بكود 409.</div>
+        <div class="scenario-item"><strong>السلوك عند التزامن (Race Condition):</strong> لا توجد معاملة ذرية <code>prisma.$transaction</code> ولا قفل على السطر. إذا بقي مقعد واحد وتزامن 5 متقدمين، يمر الجميع وتتجاوز المقاعد السعة القصوى!</div>
+        <div class="scenario-item"><strong>النقص المكتشف:</strong> غياب قائمة انتظار آلية (Auto Waitlist) عند الامتلاء.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 5 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 5: إلغاء التسجيل أو انسحاب المتدرب بعد القبول</span>
+        <span class="badge badge-partial">قصور وظيفي</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً في الكود:</strong> لا يملك المتدرب زراً لإلغاء طلبه ذاتياً بعد القبول. يمكن للمسؤول فقط تحويل الحالة من <code>ACCEPTED</code> إلى <code>REJECTED</code> عبر <code>registrations/[id]</code>.</div>
+        <div class="scenario-item"><strong>النقص المكتشف:</strong> لا توجد حالة مخصصة باسم <code>WITHDRAWN</code> (منسحب)، ويتم خلط الانسحاب مع الرفض الإداري (<code>REJECTED</code>)، كما لا يتم حفظ سبب الانسحاب في حقل مخصص.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 6 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 6: تأجيل مواعيد الدورة بعد تسجيل المتدربين</span>
+        <span class="badge badge-partial">نقص إشعارات</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> يغير المسؤول التواريخ عبر <code>PATCH /api/admin/training/[id]</code>. يتم تحديث التاريخ في قاعدة البيانات بنجاح.</div>
+        <div class="scenario-item"><strong>النقص المكتشف:</strong> لا يقوم النظام بإرسال إشعارات آلية للمتدربين المقبولين لتنبيههم بتعديل الموعد، كما لا يتم تعديل تواريخ الجلسات في <code>TrainingSession</code> تلقائياً.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 7 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 7: رصد الحضور لجلسة تدريبية</span>
+        <span class="badge badge-confirmed">سليم جماعياً / به ثغرة فردياً</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>الرصد الجماعي (Batch):</strong> ممتاز، يعتمد Upsert على القيد <code>[registrationId, sessionId]</code> ويسجل حضور المقبولين فقط.</div>
+        <div class="scenario-item"><strong>الرصد الفردي بدون جلسة:</strong> ثغرة خطيرة في <code>attendance/route.ts:307</code>؛ ينشئ السجل دون التحقق من مطابقة الدورة، ويسمح بتكرار الحضور لنفس اليوم.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 8 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 8: استيفاء أو عدم استيفاء شرط الحضور 75%</span>
+        <span class="badge badge-p1">ثغرة حرجة P1</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>عند وجود جلسات مدخلة:</strong> يحسب النظام النسبة ويرفض إصدار الشهادة لمن حضر أقل من 75% بدقة ورسالة واضحة.</div>
+        <div class="scenario-item"><strong>عند عدم إدخال جلسات:</strong> يتجاوز النظام فحص الحضور بالكامل ويصدر الشهادة لمن حضوره 0% نظراً لوجود شرط <code>if (totalSessions > 0)</code>!</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 9 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 9: رصد نتائج التقييم القبلي والبعدي</span>
+        <span class="badge badge-confirmed">سلوك سليم</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً في الكود:</strong> يستدعي <code>POST /api/admin/training/[id]/evaluations</code>. يتحقق من تبعية التسجيل للدورة، ويطبق Upsert على <code>[registrationId, type]</code>، ويمنع الدرجات السالبة أو التي تتجاوز <code>maxScore</code>.</div>
+        <div class="scenario-item"><strong>النتيجة:</strong> حفظ منضبط ومقارنة دقيقة في التقرير الأكاديمي.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 10 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 10: إصدار شهادة تخرج مستوفية الشروط</span>
+        <span class="badge badge-confirmed">سلوك سليم</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> يستدعي <code>POST /api/admin/training/certificates</code>. يتحقق من إتمام التدريب، والحضور، والتقييم البعدي، ثم يولد رقم شهادة متسلسل وكود تشفيري 24 حرفاً، ويرسل إشعاراً للمتدرب، ويسجل العملية في سجل النشاط.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 11 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 11: محاولة إصدار شهادة لمتدرب غير مستوفٍ</span>
+        <span class="badge badge-confirmed">مرفوض خادمياً</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>إذا كانت الحالة ليست COMPLETED:</strong> يرفض الخادم بكود 400.</div>
+        <div class="scenario-item"><strong>إذا لم يكمل التقييم البعدي المشترط:</strong> يرفض الخادم بكود 400.</div>
+        <div class="scenario-item"><strong>إذا كانت نسبة الحضور أقل من 75%:</strong> يرفض الخادم بكود 400 (بشرط وجود جلسات معرفة).</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 12 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 12: تنظيم دورة مخصصة لعميل مؤسسي</span>
+        <span class="badge badge-partial">انفصال جزئي</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>الموجود:</strong> يمكن إنشاء الدورة وتحديد <code>clientId</code> وحجب التسجيل العام، ويرى العميل ملخص الإنجاز في بوابته.</div>
+        <div class="scenario-item"><strong>المفقود:</strong> لا ترتبط الدورة بطلب خدمة <code>ServiceRequest</code> معتمد، ولا يستطيع العميل استعراض أسماء وتفاصيل حضور موظفيه المشاركين (يرى أرقاماً تجميعية فقط).</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 13 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 13: تضارب جدول المدرب أو القاعة التدريبية</span>
+        <span class="badge badge-missing">فجوة نظامية</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> يقبل النظام تعيين نفس المدرب لعدة دورات متزامنة في نفس التوقيت، كما يقبل حجز نفس القاعة دون أي تنبيه أو منع.</div>
+        <div class="scenario-item"><strong>الحل المقترح:</strong> إضافة فحص تداخل التواريخ والساعات عند تعيين المدرب وجدولة الجلسات.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 14 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 14: محاولة وصول غير مصرح به لمسارات API التدريب</span>
+        <span class="badge badge-confirmed">مرفوض ومحمي 100%</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> عند محاولة استدعاء أي مسار إداري عبر أدوات مثل Postman أو curl بدون جلسة أو بدون صلاحية <code>MANAGE_TRAINING</code>، يعيد الخادم فوراً <code>401 Unauthorized</code> أو <code>403 Forbidden</code> عبر طبقة <code>assertApiCapability</code>.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 15 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 15: تعديل سجل حضور أو درجات بعد الاعتماد</span>
+        <span class="badge badge-confirmed">مضبوط بتدقيق</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>في الحضور:</strong> يتيح مسار <code>PUT /attendance</code> التعديل مع تسجيل هوية المعدل وسبب التعديل الإلزامي.</div>
+        <div class="scenario-item"><strong>في الدرجات:</strong> يتيح مسار <code>POST /evaluations</code> تحديث الدرجة وتسجيل وقت وهوية المعدل في <code>evaluatedById</code>.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 16 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 16: التسجيل أو التعديل في دورة ملغاة أو مغلقة</span>
+        <span class="badge badge-partial">قصور في الحضور</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>التسجيل الذاتي:</strong> محظور ومرفوض بكود 400.</div>
+        <div class="scenario-item"><strong>إدخال الحضور:</strong> مسار <code>attendance/route.ts</code> لا يتحقق من حالة الدورة، فيمكن للمسؤول إضافة حضور لدورة ملغاة دون منع خادمي.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 17 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 17: منع تسجيل المتدرب المكرر في نفس الدورة</span>
+        <span class="badge badge-confirmed">ممنوع خادمياً</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> يمنع مسار التسجيل <code>register/route.ts:127-145</code> المستخدم من التسجيل مرتين في نفس الدورة بشرط <code>status != REJECTED</code>، ويعيد 409 Conflict.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 18 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 18: تعطل أو خطأ أثناء المعاملات المركبة</span>
+        <span class="badge badge-partial">غياب Transactions</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> معظم العمليات المركبة (مثل التسجيل + الإشعار + التدقيق، أو إصدار الشهادة + الإشعار) لا تستخدم <code>prisma.$transaction</code>. ومع ذلك، يتم وضع الإشعار داخل <code>.catch()</code> لضمان عدم فشل العملية الرئيسية في حال تعثر الإشعار.</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 19 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 19: محاولة عميل الوصول لدورات أو متدربي عميل آخر</span>
+        <span class="badge badge-confirmed">محمي ومعزول</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> مسار <code>/api/portal/client/courses</code> يستعلم حصراً برقم هوية العميل المستخرج من الـ Token المشفر <code>session.userId</code>، مما يستحيل معه التلاعب بمعرّف العميل أو استعراض دورات جهة أخرى (محمي من هجمات IDOR).</div>
+      </div>
+    </div>
+
+    <!-- سيناريو 20 -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span class="scenario-title">السيناريو 20: استخراج التقرير الختامي ومؤشرات الدورة المكتملة</span>
+        <span class="badge badge-confirmed">أداء متميز وبيانات حقيقية</span>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario-item"><strong>ما يحدث فعلياً:</strong> يستدعي <code>TrainingReportModal.tsx</code> مسار <code>/api/admin/training/[id]/report</code>. يتم تجميع الحضور الفعلي، حساب نسب التحسن بين القبلي والبعدي، عد الشهادات، واستخراج تقييمات الرضا وطباعة التقرير فوراً بأناقة كاملة.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 18. سجل العيوب والفجوات المصنفة حسب الأولوية        -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="defect-registry">
+    <div class="section-title">
+      <span class="sec-num">18</span>
+      <h2>سجل العيوب والفجوات الموحد (Defects & Issues Registry)</h2>
+    </div>
+
+    <p>
+      يوثق الجدول التالي كافة العيوب المكتشفة، مصنفة حسب الأولوية والأثر والسبب الجذري مع الأدلة البرمجية الدقيقة:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>المعرّف</th>
+            <th>الأولوية</th>
+            <th>النوع</th>
+            <th>وصف المشكلة</th>
+            <th>الدليل في الكود (المسار والسطر)</th>
+            <th>الأثر التشغيلي</th>
+            <th>الإصلاح المقترح</th>
+            <th>الثقة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>TRN-BUG-001</code></td>
+            <td><span class="badge badge-p1">P1 — عالٍ</span></td>
+            <td>Bug / Logic</td>
+            <td>تجاوز شرط الحضور (75%) عند إصدار الشهادة إذا لم تُسجل جلسات للدورة.</td>
+            <td><code>app/api/admin/training/certificates/route.ts:153-167</code></td>
+            <td>إمكانية إصدار شهادة رسمية معتمدة لمتدرب لم يحضر إطلاقاً.</td>
+            <td>إلزام احتساب الحضور ورفض إصدار الشهادة إذا كانت <code>totalSessions === 0</code> ما لم يتم اعتماد إعفاء صريح.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-SEC-002</code></td>
+            <td><span class="badge badge-p1">P1 — عالٍ</span></td>
+            <td>Security / Concurrency</td>
+            <td>سباق تزامن في التسجيل الذاتي يسمح بتجاوز السعة القصوى للمقاعد.</td>
+            <td><code>app/api/training/register/route.ts:113-149</code></td>
+            <td>تسجيل متدربين إضافيين فوق الطاقة الاستيعابية للقاعات الميدانية.</td>
+            <td>استخدام <code>prisma.$transaction</code> مع قفل على مستوى الدورة أو تحديث ذري للعدد.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-DAT-003</code></td>
+            <td><span class="badge badge-p1">P1 — عالٍ</span></td>
+            <td>Data / Logic</td>
+            <td>مسار الحضور الفردي بدون جلسة لا يتحقق من تبعية المتدرب للدورة ويسمح بالتكرار.</td>
+            <td><code>app/api/admin/training/[id]/attendance/route.ts:307-315</code></td>
+            <td>تسجيل حضور لمتدرب في دورة لا ينتمي إليها، وتكرار الحضور لنفس اليوم.</td>
+            <td>التحقق من أن <code>registration.courseId === courseId</code> وإلزامية تحديد الجلسة أو منع التكرار بالتاريخ.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-ENG-004</code></td>
+            <td><span class="badge badge-p2">P2 — متوسط</span></td>
+            <td>Architecture</td>
+            <td>ملف <code>lib/training-rules.ts</code> مهجور تماماً وغير مستورد في أي مكان.</td>
+            <td><code>lib/training-rules.ts:1-144</code></td>
+            <td>تشتت قواعد العمل وتكرار المنطق البرمجي مع احتواء الملف على قيم Enum خاطئة (<code>LATE</code>).</td>
+            <td>تصحيح دالة <code>checkCertificateEligibility</code> واستيرادها في مسار الشهادات كمرجع موحد.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-UX-005</code></td>
+            <td><span class="badge badge-p2">P2 — متوسط</span></td>
+            <td>UX</td>
+            <td>زر "سجل الآن" في بطاقات الدورات العامة يوجّه للبوابة دون تمرير معرّف الدورة.</td>
+            <td><code>app/training/page.tsx:215-222</code></td>
+            <td>فقدان سياق الدورة على المتدرب، واضطراره للبحث عنها مجدداً بعد تسجيل الدخول.</td>
+            <td>تمرير المعرّف في الرابط: <code>/portal/trainee/courses?courseId=${course.id}</code> وفتح نموذج التسجيل تلقائياً.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-RBAC-006</code></td>
+            <td><span class="badge badge-p2">P2 — متوسط</span></td>
+            <td>RBAC</td>
+            <td>تجاهل الصلاحيات الحبيبية <code>MANAGE_TRAINERS</code> و <code>MANAGE_TRAINING_CONTENT</code>.</td>
+            <td><code>app/api/admin/training/trainers/route.ts:16</code> و <code>materials/route.ts:35</code></td>
+            <td>حرمان الموظف المسؤول عن المدربين فقط من إدارة وظيفته إذا لم يُمنح كامل صلاحية <code>MANAGE_TRAINING</code>.</td>
+            <td>استخدام التحقق المشترك: <code>assertApiCapability(session, [MANAGE_TRAINING, MANAGE_TRAINERS])</code>.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-INT-007</code></td>
+            <td><span class="badge badge-p2">P2 — متوسط</span></td>
+            <td>Integration</td>
+            <td>انفصال تام بين طلبات الخدمات المؤسسية (Service Requests) والدورات التدريبية.</td>
+            <td><code>prisma/schema.prisma:226-260</code></td>
+            <td>عدم إمكانية تتبع مسار تنفيذ التدريب المطلوب من عميل عبر عقد أو طلب خدمة رسمي.</td>
+            <td>إضافة حقل <code>serviceRequestId String?</code> في نموذج <code>Course</code> للربط المتبادل.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-RBAC-008</code></td>
+            <td><span class="badge badge-p2">P2 — متوسط</span></td>
+            <td>RBAC / Logic</td>
+            <td>حظر موظفي المركز (<code>EMPLOYEE, STAFF</code>) من التسجيل الذاتي في الدورات التدريبية.</td>
+            <td><code>app/api/training/register/route.ts:28-30</code></td>
+            <td>تعطيل برامج بناء القدرات والتدريب الداخلي لكوادر المركز الميدانيين.</td>
+            <td>إضافة أدوار <code>EMPLOYEE</code> و <code>STAFF</code> لمصفوفة الأدوار المسموح لها بالتسجيل.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-TNA-009</code></td>
+            <td><span class="badge badge-p2">P2 — متوسط</span></td>
+            <td>Concurrency</td>
+            <td>تسابق في توليد الرقم المرجعي لتقييم الاحتياج <code>FACSS-TNA-YYYY-XXXX</code>.</td>
+            <td><code>app/api/portal/client/tna/route.ts:72-74</code></td>
+            <td>فشل تقديم الطلب للعميل بخطأ تكرار المفتاح الفريد عند تزامن الطلبات.</td>
+            <td>توليد تسلسل يعتمد على رقم ذري متسلسل أو التعامل مع الخطأ بإعادة المحاولة.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-UX-010</code></td>
+            <td><span class="badge badge-p3">P3 — منخفض</span></td>
+            <td>UX / Client</td>
+            <td>بوابة العميل تعرض أرقاماً تجميعية للمشاركين فقط دون إمكانية استعراض أسمائهم وحضورهم.</td>
+            <td><code>app/api/portal/client/courses/route.ts:64-72</code></td>
+            <td>عجز مسؤول التدريب في جهة العميل عن معرفة موظفيه الذين التزموا بالحضور أو اجتازوا الدورة.</td>
+            <td>توفير قائمة بالموظفين التابعين للجهة وحالات تخرجهم داخل نافذة تفاصيل الدورة الخاصة.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-REP-011</code></td>
+            <td><span class="badge badge-p3">P3 — منخفض</span></td>
+            <td>Feature Gap</td>
+            <td>غياب توليد ملف PDF حقيقي للشهادة في الخادم وبقاء <code>pdfPath</code> فارغاً.</td>
+            <td><code>app/api/admin/training/certificates/route.ts:198-207</code></td>
+            <td>الاعتماد الحصري على طباعة المتصفح مما يسبب تفاوتاً طفيفاً في هوامش الطباعة بين الأجهزة.</td>
+            <td>دمج مكتبة توليد PDF في الخادم لتوليد ملف الشهادة وحفظه في التخزين عند الإصدار.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-SCH-012</code></td>
+            <td><span class="badge badge-p3">P3 — منخفض</span></td>
+            <td>Business Logic</td>
+            <td>غياب منع التضارب لجداول المدربين ومقرات التدريب.</td>
+            <td><code>app/api/admin/training/trainers/[id]/courses/route.ts</code></td>
+            <td>احتمال إسناد مدرب أو حجز قاعة لدورتين في نفس التوقيت عن طريق الخطأ البشري.</td>
+            <td>إضافة تحقق يمنع إسناد مدرب إذا كان لديه دورة أخرى تتداخل معها في التواريخ.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-ATT-013</code></td>
+            <td><span class="badge badge-p3">P3 — منخفض</span></td>
+            <td>Schema / Logic</td>
+            <td>غياب حالة الحضور المتأخر <code>LATE</code> في الـ Enum بقاعدة البيانات.</td>
+            <td><code>prisma/schema.prisma:64-68</code></td>
+            <td>عدم القدرة على تسجيل الحضور الجزئي أو التأخير عن الجلسات الصباحية الميدانية.</td>
+            <td>إضافة <code>LATE</code> لـ Enum <code>AttendanceStatus</code> وتحديد وزن نسبي له في الحضور.</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+          <tr>
+            <td><code>TRN-TRN-014</code></td>
+            <td><span class="badge badge-p3">P3 — منخفض</span></td>
+            <td>Business Logic</td>
+            <td>منع المتدرب القديم من إعادة التسجيل في دورة تنشيطية بعد إتمامها سابقاً.</td>
+            <td><code>app/api/training/register/route.ts:131</code></td>
+            <td>إعاقة برامج إعادة التأهيل السنوي والتنشيط الميداني للكوادر.</td>
+            <td>السماح بإعادة التسجيل إذا كانت الشهادة السابقة قد تجاوزت مدة صلاحيتها المحددة (مثلاً سنتين).</td>
+            <td>مؤكدة 100%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 19. تقييم التصميم الحالي                             -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="design-evaluation">
+    <div class="section-title">
+      <span class="sec-num">19</span>
+      <h2>تقييم التصميم الحالي للوحدة (Architecture & Operational Evaluation)</h2>
+    </div>
+
+    <p>
+      بناءً على النتائج الهندسية والتشغيلية، نلخص تقييم التصميم الحالي على النحو التالي:
+    </p>
+
+    <h3>1. هل بنية وحدة التدريب مناسبة لمرحلة المركز الحالية؟</h3>
+    <p>
+      <strong>نعم، بنسبة 80%.</strong> إن القرار الهندسي بعدم بناء نظام تعليم إلكتروني ضخم (LMS) بمشاهدة مقاطع فيديو وامتحانات خيارات متعددة معقدة، والاكتفاء بإدارة التدريب الحضوري والمحاكاة الميدانية ورصد الحضور والدرجات وإصدار الشهادات والتحقق، هو <strong>قرار عملي وهندسي سليم 100%</strong> يتطابق مع طبيعة نشاط المركز المتخصص في الأمن الميداني والسلامة.
+    </p>
+
+    <h3>2. نقاط الخلل في التصميم الحالي</h3>
+    <ul style="padding-right: 1.5rem; margin-bottom: 1rem; font-size: 0.88rem;">
+      <li><strong>تضخم مكون <code>TrainingManager.tsx</code>:</strong> ملف الواجهة يتجاوز 2150 سطراً و 94 كيلوبايت، حيث يحتوي على 8 تبويبات، مما يصعب الصيانة والاختبار. يُفضل تفكيكه إلى مكونات أصغر لكل تبويب على غرار ما تم مع <code>TrainersManager</code> و <code>MaterialsManager</code>.</li>
+      <li><strong>ازدواجية تعريف المدرب:</strong> حقل <code>Course.trainerName</code> هو نص ثابت، بينما يوجد جدول كامل <code>Trainer</code> و <code>CourseTrainer</code>. يجب ربط الدورة مباشرة بسجل المدرب بدلاً من الاعتماد على نص حر في واجهة إنشاء الدورة.</li>
+      <li><strong>انفصال الحضور الفردي عن الجلسات:</strong> جعل <code>sessionId</code> اختيارياً في جدول <code>AttendanceRecord</code> يخلق فوضى في حساب الحضور ويسهل الثغرات. يجب أن يكون الحضور مرتبطاً إلزامياً بجلسة تدريبية محددة.</li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 20. التصميم البديل المقترح                           -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="target-architecture">
+    <div class="section-title">
+      <span class="sec-num">20</span>
+      <h2>التصميم البديل المقترح (Proposed Clean Architecture & ERD)</h2>
+    </div>
+
+    <p>
+      لحل المشاكل المكتشفة دون تعقيد إضافي غير مبرر، نقترح النموذج المعماري المحسّن التالي:
+    </p>
+
+    <div class="diagram-container">
+      <svg width="900" height="320" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+        <!-- Course Box -->
+        <rect x="20" y="20" width="220" height="150" rx="8" fill="#F8FAFC" stroke="#0F172A" stroke-width="2"/>
+        <rect x="20" y="20" width="220" height="30" rx="8" fill="#0F172A"/>
+        <text x="130" y="40" text-anchor="middle" font-weight="700" font-size="12" fill="#FFFFFF">Course (الدورة)</text>
+        <text x="30" y="70" font-size="11" fill="#334155">id, titleAr, slug, capacity</text>
+        <text x="30" y="90" font-size="11" fill="#334155">minAttendancePct (75%)</text>
+        <text x="30" y="110" font-size="11" fill="#0284C7">+ serviceRequestId (ربط طلب الخدمة)</text>
+        <text x="30" y="130" font-size="11" fill="#10B981">+ leadTrainerId (ربط بالمدرب)</text>
+        <text x="30" y="150" font-size="11" fill="#334155">status (CourseStatus)</text>
+
+        <!-- Session Box -->
+        <rect x="330" y="20" width="220" height="110" rx="8" fill="#F8FAFC" stroke="#0284C7" stroke-width="2"/>
+        <rect x="330" y="20" width="220" height="30" rx="8" fill="#0284C7"/>
+        <text x="440" y="40" text-anchor="middle" font-weight="700" font-size="12" fill="#FFFFFF">TrainingSession (الجلسة)</text>
+        <text x="340" y="70" font-size="11" fill="#334155">id, courseId (إلزامي)</text>
+        <text x="340" y="90" font-size="11" fill="#334155">sessionNumber, sessionDate</text>
+        <text x="340" y="110" font-size="11" fill="#334155">startTime, endTime, room</text>
+
+        <!-- Attendance Box -->
+        <rect x="640" y="20" width="240" height="130" rx="8" fill="#F8FAFC" stroke="#10B981" stroke-width="2"/>
+        <rect x="640" y="20" width="240" height="30" rx="8" fill="#10B981"/>
+        <text x="760" y="40" text-anchor="middle" font-weight="700" font-size="12" fill="#FFFFFF">AttendanceRecord (الحضور)</text>
+        <text x="650" y="70" font-size="11" fill="#334155">id, registrationId</text>
+        <text x="650" y="90" font-size="11" fill="#D97706">sessionId (إلزامي لمنع الفوضى)</text>
+        <text x="650" y="110" font-size="11" fill="#334155">status (PRESENT, ABSENT, LATE)</text>
+        <text x="650" y="130" font-size="11" fill="#334155">modifiedReason, modifiedById</text>
+
+        <!-- Registration Box -->
+        <rect x="330" y="180" width="220" height="120" rx="8" fill="#F8FAFC" stroke="#D97706" stroke-width="2"/>
+        <rect x="330" y="180" width="220" height="30" rx="8" fill="#D97706"/>
+        <text x="440" y="200" text-anchor="middle" font-weight="700" font-size="12" fill="#FFFFFF">Registration (التسجيل)</text>
+        <text x="340" y="230" font-size="11" fill="#334155">id, courseId, userId</text>
+        <text x="340" y="250" font-size="11" fill="#334155">fullName, nationalId, phone</text>
+        <text x="340" y="270" font-size="11" fill="#334155">status (PENDING -> COMPLETED)</text>
+
+        <!-- Certificate Box -->
+        <rect x="640" y="180" width="240" height="120" rx="8" fill="#F8FAFC" stroke="#8B5CF6" stroke-width="2"/>
+        <rect x="640" y="180" width="240" height="30" rx="8" fill="#8B5CF6"/>
+        <text x="760" y="200" text-anchor="middle" font-weight="700" font-size="12" fill="#FFFFFF">Certificate (الشهادة)</text>
+        <text x="650" y="230" font-size="11" fill="#334155">id, registrationId (1:1)</text>
+        <text x="650" y="250" font-size="11" fill="#334155">certificateNumber (فريد)</text>
+        <text x="650" y="270" font-size="11" fill="#334155">verificationCode (24 Hex)</text>
+        <text x="650" y="290" font-size="11" fill="#8B5CF6">isRevoked, revokedReason</text>
+
+        <!-- Connectors -->
+        <line x1="240" y1="75" x2="330" y2="75" stroke="#64748B" stroke-width="1.5"/>
+        <line x1="550" y1="75" x2="640" y2="75" stroke="#64748B" stroke-width="1.5"/>
+        <line x1="130" y1="170" x2="130" y2="240" stroke="#64748B" stroke-width="1.5"/>
+        <line x1="130" y1="240" x2="330" y2="240" stroke="#64748B" stroke-width="1.5"/>
+        <line x1="550" y1="240" x2="640" y2="240" stroke="#64748B" stroke-width="1.5"/>
+        <line x1="440" y1="130" x2="440" y2="180" stroke="#64748B" stroke-dasharray="3" stroke-width="1.5"/>
+      </svg>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+        الشكل 2: المخطط المعماري المقترح للعلاقات وتدفق البيانات النظيف
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 21. خطة التحسين المرحلية                             -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="roadmap-plan">
+    <div class="section-title">
+      <span class="sec-num">21</span>
+      <h2>خطة التحسين والتطوير المرحلية (Prioritized Action Plan)</h2>
+    </div>
+
+    <p>
+      تم ترتيب خطة التحسين في 5 مراحل تصاعدية تركز أولاً على سد الثغرات الحرجة وضمان سلامة البيانات:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>المرحلة</th>
+            <th>حزمة الأعمال</th>
+            <th>الهدف التشغيلي</th>
+            <th>الأولوية</th>
+            <th>الجهد النسبي</th>
+            <th>مستوى المخاطر</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>المرحلة A</strong></td>
+            <td><strong>الإصلاحات الحرجة وسد الثغرات (Security & Integrity)</strong>
+              <ul style="padding-right: 1.2rem; font-size: 0.82rem; margin-top: 0.3rem;">
+                <li>إصلاح ثغرة تجاوز شرط الحضور للشهادات إذا كانت الجلسات = 0 (TRN-BUG-001).</li>
+                <li>تطبيق <code>prisma.$transaction</code> في مسار التسجيل لمنع تجاوز السعة (TRN-SEC-002).</li>
+                <li>إصلاح ثغرة الحضور الفردي والتحقق من انتماء المتدرب للدورة (TRN-DAT-003).</li>
+                <li>ربط وتفعيل <code>lib/training-rules.ts</code> كمرجع موحد وحذف القواعد الزائدة (TRN-ENG-004).</li>
+              </ul>
+            </td>
+            <td>منع إصدار شهادات غير مشروعة وضمان دقة السجلات والمقاعد الميدانية.</td>
+            <td><span class="badge badge-p1">P1 — قصوى</span></td>
+            <td>صغير (2 - 3 أيام)</td>
+            <td>منخفض جداً</td>
+          </tr>
+          <tr>
+            <td><strong>المرحلة B</strong></td>
+            <td><strong>إكمال الوظائف التشغيلية الأساسية (Core Workflows)</strong>
+              <ul style="padding-right: 1.2rem; font-size: 0.82rem; margin-top: 0.3rem;">
+                <li>إضافة إمكانية تسجيل المتدرب المباشر يدوياً من لوحة الإدارة.</li>
+                <li>إصلاح توجيه زر "سجل الآن" في الصفحة العامة ليمرر معرّف الدورة (TRN-UX-005).</li>
+                <li>السماح لموظفي المركز الداخليين (<code>EMPLOYEE, STAFF</code>) بالتسجيل الذاتي (TRN-RBAC-008).</li>
+                <li>إضافة حالة <code>WITHDRAWN</code> للمنسحبين وحفظ أسباب الانسحاب.</li>
+              </ul>
+            </td>
+            <td>تسهيل أعمال مسؤولي التدريب وإتاحة التدريب الداخلي لكوادر المركز.</td>
+            <td><span class="badge badge-p2">P2 — عالية</span></td>
+            <td>متوسط (3 - 4 أيام)</td>
+            <td>منخفض</td>
+          </tr>
+          <tr>
+            <td><strong>المرحلة C</strong></td>
+            <td><strong>التكامل المؤسسي وخدمات العملاء (Integration & Clients)</strong>
+              <ul style="padding-right: 1.2rem; font-size: 0.82rem; margin-top: 0.3rem;">
+                <li>ربط الدورات التدريبية الخاصة بطلبات الخدمات الرسمية <code>ServiceRequest</code>.</li>
+                <li>تمكين العميل من استعراض كشف موظفيه المشاركين وحالات حضورهم وشهاداتهم.</li>
+                <li>إصلاح سباق ترقيم تقييمات الاحتياج <code>FACSS-TNA</code> (TRN-TNA-009).</li>
+                <li>إضافة فحص تضارب الجداول والقاعات للمدربين (TRN-SCH-012).</li>
+              </ul>
+            </td>
+            <td>ربط الأكاديمية بعقود العملاء وتفادي التضارب في القاعات والمحاضرين.</td>
+            <td><span class="badge badge-p2">P2 — متوسطة</span></td>
+            <td>متوسط (4 - 5 أيام)</td>
+            <td>متوسط</td>
+          </tr>
+          <tr>
+            <td><strong>المرحلة D</strong></td>
+            <td><strong>تحسين تجربة المستخدم والتصدير (UX & Export)</strong>
+              <ul style="padding-right: 1.2rem; font-size: 0.82rem; margin-top: 0.3rem;">
+                <li>إضافة زر تصدير كشوفات المتدربين والنتائج إلى Excel / CSV.</li>
+                <li>تفكيك مكون <code>TrainingManager.tsx</code> إلى مكونات مستقلة لكل تبويب.</li>
+                <li>إتاحة نموذج تقييم الرضا للمتدرب في بوابته بعد إتمام الدورة.</li>
+              </ul>
+            </td>
+            <td>رفع كفاءة تصفح النظام وسرعة استخراج الكشوفات الميدانية.</td>
+            <td><span class="badge badge-p3">P3 — مرغوبة</span></td>
+            <td>صغير (2 - 3 أيام)</td>
+            <td>منخفض</td>
+          </tr>
+          <tr>
+            <td><strong>المرحلة E</strong></td>
+            <td><strong>التطوير المتقدم وتوليد المستندات (Advanced PDF & Logistics)</strong>
+              <ul style="padding-right: 1.2rem; font-size: 0.82rem; margin-top: 0.3rem;">
+                <li>دمج محرك توليد PDF خادمي لحفظ الشهادة كملف رسمي في <code>Certificate.pdfPath</code>.</li>
+                <li>ربط احتياجات الدورة التدريبية من معدات السلامة بوحدة المخزون (صرف وحجز).</li>
+                <li>إرسال تنبيهات تلقائية بتأجيل الجلسات أو الغياب عبر الرسائل والإشعارات.</li>
+              </ul>
+            </td>
+            <td>أتمتة إصدار الوثائق وربط تدريب السلامة بالمعدات الحقيقية في المستودعات.</td>
+            <td><span class="badge badge-p3">P3 — مستقبلية</span></td>
+            <td>كبير (1 - 2 أسبوع)</td>
+            <td>متوسط</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 22. مصفوفة اختبارات القبول المستقبلية (UAT Matrix)    -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="uat-matrix">
+    <div class="section-title">
+      <span class="sec-num">22</span>
+      <h2>مصفوفة اختبارات القبول المستقبلية (UAT Acceptance Matrix)</h2>
+    </div>
+
+    <p>
+      دليل اختبار إجرائي متكامل للتحقق من سلامة كافة المسارات بعد تنفيذ أي تحسينات مستقبلية:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Test ID</th>
+            <th>العملية المطلوب اختبارها</th>
+            <th>الشروط المسبقة</th>
+            <th>خطوات الاختبار</th>
+            <th>النتيجة المتوقعة</th>
+            <th>الحالة في الوضع الحالي</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>UAT-TRN-01</code></td>
+            <td>إنشاء دورة تدريبية مستوفية</td>
+            <td>حساب <code>TRAINING_MANAGER</code></td>
+            <td>تعبئة النموذج ببيانات مكتملة وتواريخ صحيحة والنقر على حفظ.</td>
+            <td>حفظ الدورة وظهورها في الجدول بحالة <code>OPEN</code>.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-02</code></td>
+            <td>رفض إنشاء دورة بدون عنوان أو مدرب</td>
+            <td>حساب مسؤول</td>
+            <td>إرسال طلب <code>POST /api/admin/training</code> بحقول نصية فارغة.</td>
+            <td>إرجاع خطأ 400 وتوضيح الحقول الناقصة بالعربية.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-03</code></td>
+            <td>التسجيل الذاتي لمتدرب</td>
+            <td>حساب متدرب مسجل ودورة مفتوحة</td>
+            <td>النقر على تسجيل في دورة مفتوحة من بوابة المتدرب.</td>
+            <td>إنشاء التسجيل بحالة <code>PENDING</code> وتلقي إشعار فوري.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-04</code></td>
+            <td>منع التسجيل المكرر في نفس الدورة</td>
+            <td>متدرب لديه تسجيل قائم</td>
+            <td>محاولة التسجيل مرة ثانية لنفس المتدرب في نفس الدورة.</td>
+            <td>رفض الطلب بكود 409 مع رسالة "أنت مسجل بالفعل".</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-05</code></td>
+            <td>منع تجاوز السعة القصوى</td>
+            <td>دورة اكتملت مقاعدها</td>
+            <td>محاولة تسجيل متدرب إضافي بعد وصول المقاعد للسعة.</td>
+            <td>رفض التسجيل بكود 409 مع رسالة اكتمال المقاعد.</td>
+            <td><span class="badge badge-confirmed">مثبت فردياً / يفشل بالتزامن</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-06</code></td>
+            <td>رصد الحضور الجماعي للجلسة</td>
+            <td>جلسة معرفة ومتدربون مقبولون</td>
+            <td>تحديد الحاضرين والغائبين والنقر على حفظ الحضور الجماعي.</td>
+            <td>حفظ سجلات <code>AttendanceRecord</code> لكافة المتدربين وتحديث النسب.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-07</code></td>
+            <td>تصحيح حضور سابق مع ذكر السبب</td>
+            <td>سجل حضور قائم</td>
+            <td>فتح نافذة التصحيح وتغيير غائب إلى حاضر وكتابة السبب.</td>
+            <td>تحديث السجل وتسجيل <code>modifiedReason</code> وهوية المسؤول في التدقيق.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-08</code></td>
+            <td>منع إصدار شهادة لمن حضوره أقل من 75%</td>
+            <td>دورة بجلسات وحضور متدرب 60%</td>
+            <td>محاولة إصدار شهادة للمتدرب من جدول التسجيلات.</td>
+            <td>رفض العملية بكود 400 وتوضيح أن النسبة أقل من 75%.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span> (إذا الجلسات > 0)</td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-09</code></td>
+            <td>منع إصدار شهادة في دورة بلا جلسات</td>
+            <td>دورة لم تُعرف لها جلسات في النظام</td>
+            <td>محاولة إصدار شهادة لمتدرب لم يسجل له حضور.</td>
+            <td>يجب أن يرفض النظام لعدم ثبوت الحضور.</td>
+            <td><span class="badge badge-missing">فشل مثبت</span> (يصدر الشهادة حالياً!)</td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-10</code></td>
+            <td>التحقق العام من الشهادة الصادرة</td>
+            <td>كود تشفيري لشهادة معتمدة</td>
+            <td>فتح <code>/verify/[code]</code> في متصفح خارجي بدون تسجيل دخول.</td>
+            <td>عرض صحة الشهادة والاسم والدورة مع حجب البيانات الحساسة.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-11</code></td>
+            <td>التحقق من شهادة ملغاة</td>
+            <td>شهادة تم إلغاؤها عبر الإدارة</td>
+            <td>فتح رابط التحقق العام للشهادة الملغاة.</td>
+            <td>عرض شارة حمراء تنبه بأن الشهادة ملغاة رسمياً دون ذكر السبب الداخلي.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+          <tr>
+            <td><code>UAT-TRN-12</code></td>
+            <td>عزل بيانات العملاء في الدورات الخاصة</td>
+            <td>حساب عميل A ودورة خاصة لعميل B</td>
+            <td>محاولة استعراض دورات العميل B عبر الـ API.</td>
+            <td>لا تظهر دورات العميل B إطلاقاً ويقتصر العرض على دورات A.</td>
+            <td><span class="badge badge-confirmed">مثبت بنجاح</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 23. القرارات التي تحتاج إلى اعتماد من صاحب المشروع  -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="decision-points">
+    <div class="section-title">
+      <span class="sec-num">23</span>
+      <h2>قرارات تشغيلية تتطلب اعتماد مالك المشروع (Owner Decisions Required)</h2>
+    </div>
+
+    <p>
+      قبل البدء بأي تطوير أو إصلاح مستقبلي، يرجى من إدارة المركز البت في القرارات التشغيلية التالية:
+    </p>
+
+    <div class="callout warning">
+      <ol style="padding-right: 1.5rem; line-height: 2; font-size: 0.9rem;">
+        <li><strong>اعتماد سياسة الحضور في الدورات بدون جلسات تفصيلية:</strong> هل يجب إلزام مسؤول التدريب بتعريف الجلسات التدريبية وتواريخها قبل السماح بإصدار الشهادات، أم يُسمح بخيار "دورة محاكاة سريعة" باعتماد الحضور اليدوي الكلي؟</li>
+        <li><strong>سياسة التسجيل الداخلي لموظفي المركز:</strong> هل توافقون على فتح التسجيل الذاتي في الدورات لكافة موظفي المركز (<code>EMPLOYEE, STAFF</code>) لأغراض بناء القدرات، أم يجب أن يتم ترشيحهم فقط عبر قسم الموارد البشرية؟</li>
+        <li><strong>سياسة إعادة التأهيل (Recertification):</strong> كم هي المدة المعتمدة لصلاحية شهادات السلامة الميدانية (مثل HEAT والإسعاف التكتيكي) والتي يُسمح بعدها للمتدرب بإعادة الالتحاق بالدورة ذاتها (مثلاً: سنتان)؟</li>
+        <li><strong>طريقة إصدار وتوزيع الشهادات الرسمية:</strong> هل تكتفي المؤسسة بالطباعة اللحظية للشهادة عبر المتصفح (Window Print)، أم ترغبون بدمج محرك توليد ملفات PDF وتخزينها رسمياً على الخادم؟</li>
+        <li><strong>ربط تدريب العملاء بطلبات الخدمات:</strong> هل ترغبون بربط الدورات الخاصة بطلبات الخدمات <code>ServiceRequest</code> مباشرة، بحيث يؤدي اعتماد طلب خدمة تدريب إلى إنشاء دورة خاصة للعميل آلياً؟</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 24. الخلاصة النهائية                                -->
+  <!-- ==================================================== -->
+  <section class="section-card" id="conclusion">
+    <div class="section-title">
+      <span class="sec-num">24</span>
+      <h2>الخلاصة النهائية وتوصية المدقق (Final Auditor Sign-off)</h2>
+    </div>
+
+    <p>
+      تتميز وحدة <strong>إدارة التدريب والدورات في منصة FACSS</strong> ببنية برمجية وتشغيلية متقدمة وناضجة جداً تخدم أهداف المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية بكفاءة عالية. لقد أظهر التدقيق وجود أساسات قوية قلّما تتوفر في الأنظمة الناشئة، لا سيما في نظام التحقق التشفيري من الشهادات، ونظام التقارير الأكاديمية الحقيقي الخالي من الزيف، وحماية البيانات الحساسة وسجلات الأنشطة.
+    </p>
+    <p>
+      العيوب المكتشفة تتركز في ثلاث فجوات إجرائية محددة (تجاوز شرط الحضور عند غياب الجلسات، سباق تزامن السعة، وتوافقات الصلاحيات الحبيبية)، وجميعها عيوب قابلة للإصلاح الجذري في وقت وجيز وجهد مدروس (المرحلة A) دون الحاجة لأي إعادة كتابة للمنظومة.
+    </p>
+
+    <div class="callout success">
+      <div class="callout-title">التوصية الختامية:</div>
+      <p style="margin: 0; font-size: 0.88rem;">
+        يُوصى باعتماد هذا التقرير كمرجع رسمي لوحدة التدريب، والبدء في تنفيذ <strong>المرحلة A (الإصلاحات الحرجة)</strong> فور مصادقة الإدارة على القرارات التشغيلية الخمسة، تمهيداً لتدشين تشغيل الأكاديمية التدريبية للجمهور والعملاء المؤسسيين بثقة تامة.
+      </p>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

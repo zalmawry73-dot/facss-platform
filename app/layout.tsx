@@ -77,16 +77,76 @@ export default async function RootLayout({
   const dir = initialLocale === 'ar' ? 'rtl' : 'ltr';
 
   let contactSettings: { contactAddressAr?: string; contactAddressEn?: string; contactEmail?: string } = {};
+  let brandData: { primaryAr?: string; primaryEn?: string; secondaryAr?: string; secondaryEn?: string } = {};
+  let footerData: {
+    aboutAr?: string;
+    aboutEn?: string;
+    rightsAr?: string;
+    rightsEn?: string;
+    noticeAr?: string;
+    noticeEn?: string;
+    sloganAr?: string;
+    sloganEn?: string;
+  } = {};
+  let activityFields: Array<{ id: string; key: string; titleAr: string | null; titleEn: string | null; link: string | null }> = [];
+
   try {
-    const settings = await prisma.systemSetting.findMany({
-      where: {
-        key: { in: ['contact_address_ar', 'contact_address_en', 'contact_email'] }
-      }
-    });
+    const [settings, brandBlock, footerBlock, sloganBlock, dbActivityBlocks] = await Promise.all([
+      prisma.systemSetting.findMany({
+        where: {
+          key: { in: ['contact_address_ar', 'contact_address_en', 'contact_email', 'slogan_ar', 'slogan_en'] }
+        }
+      }),
+      (prisma as any).contentBlock ? (prisma as any).contentBlock.findUnique({
+        where: { section_key: { section: 'navigation_brand', key: 'brand_names' } }
+      }) : null,
+      (prisma as any).contentBlock ? (prisma as any).contentBlock.findUnique({
+        where: { section_key: { section: 'navigation_brand', key: 'footer_content' } }
+      }) : null,
+      (prisma as any).contentBlock ? (prisma as any).contentBlock.findUnique({
+        where: { section_key: { section: 'identity', key: 'slogan' } }
+      }) : null,
+      (prisma as any).contentBlock ? (prisma as any).contentBlock.findMany({
+        where: { section: 'activity_fields', isVisible: true },
+        orderBy: { order: 'asc' },
+        select: { id: true, key: true, titleAr: true, titleEn: true, link: true },
+      }) : [],
+    ]);
+
+    if (dbActivityBlocks && Array.isArray(dbActivityBlocks)) {
+      activityFields = dbActivityBlocks;
+    }
+
     contactSettings = {
       contactAddressAr: settings.find(s => s.key === 'contact_address_ar')?.value,
       contactAddressEn: settings.find(s => s.key === 'contact_address_en')?.value,
       contactEmail: settings.find(s => s.key === 'contact_email')?.value,
+    };
+
+    if (brandBlock) {
+      brandData = {
+        primaryAr: brandBlock.titleAr || undefined,
+        primaryEn: brandBlock.titleEn || undefined,
+        secondaryAr: brandBlock.descriptionAr || undefined,
+        secondaryEn: brandBlock.descriptionEn || undefined,
+      };
+    }
+
+    let footerMeta: any = {};
+    try { footerMeta = footerBlock?.metadata ? JSON.parse(footerBlock.metadata) : {}; } catch {}
+
+    const sloganSettingAr = settings.find(s => s.key === 'slogan_ar')?.value;
+    const sloganSettingEn = settings.find(s => s.key === 'slogan_en')?.value;
+
+    footerData = {
+      aboutAr: footerBlock?.descriptionAr || undefined,
+      aboutEn: footerBlock?.descriptionEn || undefined,
+      rightsAr: footerBlock?.titleAr || undefined,
+      rightsEn: footerBlock?.titleEn || undefined,
+      noticeAr: footerMeta.noticeAr || undefined,
+      noticeEn: footerMeta.noticeEn || undefined,
+      sloganAr: sloganBlock?.descriptionAr || sloganBlock?.titleAr || sloganSettingAr,
+      sloganEn: sloganBlock?.descriptionEn || sloganBlock?.titleEn || sloganSettingEn,
     };
   } catch (err) {
     // Graceful fallback
@@ -112,7 +172,7 @@ export default async function RootLayout({
       <body suppressHydrationWarning>
         <LanguageProvider initialLocale={initialLocale}>
           <AuthProvider>
-            <PublicSiteLayout contactSettings={contactSettings}>
+            <PublicSiteLayout contactSettings={contactSettings} brandData={brandData} footerData={footerData} activityFields={activityFields}>
               {children}
             </PublicSiteLayout>
           </AuthProvider>

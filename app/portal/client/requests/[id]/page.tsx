@@ -65,7 +65,18 @@ export default async function ClientRequestDetailPage({ params }: PageProps) {
 
   // Security authorization: STRICT ALLOWLIST
   const isStaff = STAFF_ROLES.includes(user.role as any);
-  const isOwner = Boolean(req.userId && req.userId === user.userId);
+  const isOwner = Boolean(
+    (req.userId && req.userId === user.userId) ||
+    (req.contactEmail && req.contactEmail.trim().toLowerCase() === user.email.trim().toLowerCase())
+  );
+
+  // If request had no userId but belongs to this user by email, link it permanently
+  if (isOwner && !req.userId && user.userId) {
+    await prisma.serviceRequest.update({
+      where: { id: req.id },
+      data: { userId: user.userId },
+    }).catch(() => {});
+  }
 
   if (!isOwner && !isStaff) {
     return (

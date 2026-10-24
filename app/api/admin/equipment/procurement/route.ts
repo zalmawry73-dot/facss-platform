@@ -85,12 +85,21 @@ export async function POST(request: Request) {
 
     const input = validation.data;
 
-    // Verify supplier exists
+    // Verify supplier exists and is active
     const supplier = await prisma.supplier.findUnique({
       where: { id: input.supplierId },
     });
     if (!supplier) {
       return NextResponse.json({ error: 'المورد المحدد غير موجود' }, { status: 400 });
+    }
+
+    if (supplier.status !== 'ACTIVE') {
+      return NextResponse.json(
+        {
+          error: `لا يمكن إصدار أمر شراء للمورد (${supplier.nameAr || supplier.name}) لأن حالته الحالية (${supplier.status}) غير نشطة. يتطلب الشراء مورداً بحالة نشطة (ACTIVE).`,
+        },
+        { status: 400 }
+      );
     }
 
     // Verify products exist

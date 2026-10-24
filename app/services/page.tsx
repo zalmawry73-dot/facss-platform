@@ -14,7 +14,7 @@ import {
   ArrowRight,
   CheckCircle2
 } from 'lucide-react';
-import { getContentSection } from '@/lib/content';
+import { getContentSection, getContentBlock } from '@/lib/content';
 
 export const revalidate = 0;
 
@@ -26,18 +26,40 @@ export default async function ServicesPage() {
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
-  const categories = await prisma.serviceCategory.findMany({
-    where: { isActive: true },
-    orderBy: { order: 'asc' },
-    include: {
-      services: {
-        where: { isActive: true },
-        orderBy: { order: 'asc' },
+  const [categories, dbBeneficiaries, bannerBlock, beneficiariesHeaderBlock, activityBlocks] = await Promise.all([
+    prisma.serviceCategory.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+      include: {
+        services: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' },
+        }
       }
-    }
-  });
+    }),
+    getContentSection('beneficiaries'),
+    getContentBlock('page_banners', 'banner_services'),
+    getContentBlock('homepage', 'section_beneficiaries_header'),
+    getContentSection('activity_fields'),
+  ]);
 
-  const dbBeneficiaries = await getContentSection('beneficiaries');
+  const activityMap = new Map((activityBlocks || []).map(b => [b.key, b]));
+
+  let bannerMeta: any = {};
+  try { bannerMeta = bannerBlock?.metadata ? JSON.parse(bannerBlock.metadata) : {}; } catch {}
+
+  const bannerTag = (isAr ? bannerMeta.tagAr : bannerMeta.tagEn) || t.servicesSectionTitle;
+  const bannerTitle = (isAr ? (bannerBlock?.titleAr || bannerBlock?.titleEn) : (bannerBlock?.titleEn || bannerBlock?.titleAr)) || t.siteTitle;
+  const bannerDesc = (isAr ? (bannerBlock?.descriptionAr || bannerBlock?.descriptionEn) : (bannerBlock?.descriptionEn || bannerBlock?.descriptionAr)) || t.tagline;
+
+  let benHeaderMeta: any = {};
+  try { benHeaderMeta = beneficiariesHeaderBlock?.metadata ? JSON.parse(beneficiariesHeaderBlock.metadata) : {}; } catch {}
+
+  const benHeaderTag = (isAr ? benHeaderMeta.tagAr : benHeaderMeta.tagEn) || t.targetSectors;
+  const benHeaderTitle = (isAr ? (beneficiariesHeaderBlock?.titleAr || beneficiariesHeaderBlock?.titleEn) : (beneficiariesHeaderBlock?.titleEn || beneficiariesHeaderBlock?.titleAr)) || (isAr ? 'الجهات والقطاعات المستفيدة من خدمات المركز' : 'Beneficiary Sectors & Partners We Support');
+  const benHeaderSubtitle = (isAr ? (beneficiariesHeaderBlock?.descriptionAr || beneficiariesHeaderBlock?.descriptionEn) : (beneficiariesHeaderBlock?.descriptionEn || beneficiariesHeaderBlock?.descriptionAr)) || (isAr
+    ? 'تقييمات ميدانية واستشارات متخصصة مصممة لتيسير العمل الآمن وحماية الكوادر والمنشآت في الميدان'
+    : 'Field assessments and specialized advisory tailored to facilitate safe operations and protect cadres and facilities in the field.');
 
   const fallbackBeneficiaries = [
     {
@@ -94,13 +116,13 @@ export default async function ServicesPage() {
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="hero-badge-pill" style={{ marginBottom: '1.25rem' }}>
             <Shield size={15} style={{ color: 'var(--color-gold-400)' }} />
-            <span>{t.servicesSectionTitle}</span>
+            <span>{bannerTag}</span>
           </div>
           <h1 style={{ fontSize: 'clamp(1.8rem, 3.8vw, 2.75rem)', fontWeight: 900, color: '#FFFFFF', marginBottom: '1rem', letterSpacing: '-0.01em' }}>
-            {t.siteTitle}
+            {bannerTitle}
           </h1>
           <p style={{ color: 'var(--text-on-dark-muted)', fontSize: '1.05rem', maxWidth: '800px', marginInline: 'auto', lineHeight: 1.75 }}>
-            {t.tagline}
+            {bannerDesc}
           </p>
         </div>
       </section>
@@ -122,34 +144,43 @@ export default async function ServicesPage() {
             categories.map((cat) => {
               const catTitle = isAr ? cat.titleAr : (cat.titleEn || cat.titleAr);
               const catSub = isAr ? cat.titleEn : null;
+              const block = activityMap.get(cat.slug);
+              const catDesc = isAr ? (block?.descriptionAr || '') : (block?.descriptionEn || block?.descriptionAr || '');
 
               return (
-                <div key={cat.id} style={{ marginBottom: '4.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '2rem', paddingBottom: '0.85rem', borderBottom: '2px solid var(--border-subtle)' }}>
-                    <div
-                      style={{
-                        width: '38px',
-                        height: '38px',
-                        borderRadius: 'var(--radius-md)',
-                        background: 'rgba(181, 146, 84, 0.14)',
-                        color: 'var(--color-gold-700)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Shield size={20} />
+                <div key={cat.id} id={cat.slug} style={{ marginBottom: '4.5rem', scrollMarginTop: '100px' }}>
+                  <div style={{ marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '2px solid var(--border-subtle)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                      <div
+                        style={{
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(181, 146, 84, 0.14)',
+                          color: 'var(--color-gold-700)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Shield size={20} />
+                      </div>
+                      <div>
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+                          {catTitle}
+                        </h2>
+                      </div>
+                      {catSub && (
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginInlineStart: 'auto', fontWeight: 600 }}>
+                          {catSub}
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                        {catTitle}
-                      </h2>
-                    </div>
-                    {catSub && (
-                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginInlineStart: 'auto', fontWeight: 600 }}>
-                        {catSub}
-                      </span>
+                    {catDesc && (
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7, margin: '0.65rem 0 0 3.25rem' }}>
+                        {catDesc}
+                      </p>
                     )}
                   </div>
 
@@ -240,14 +271,12 @@ export default async function ServicesPage() {
       <section className="section" style={{ background: 'var(--surface-bg)', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div className="section-title-wrap">
-            <span className="section-tag">{t.targetSectors}</span>
+            <span className="section-tag">{benHeaderTag}</span>
             <h2 className="section-title">
-              {isAr ? 'الجهات والقطاعات المستفيدة من خدمات المركز' : 'Beneficiary Sectors & Partners We Support'}
+              {benHeaderTitle}
             </h2>
             <p className="section-subtitle">
-              {isAr
-                ? 'تقييمات ميدانية واستشارات متخصصة مصممة لتيسير العمل الآمن وحماية الكوادر والمنشآت في الميدان'
-                : 'Field assessments and specialized advisory tailored to facilitate safe operations and protect cadres and facilities in the field.'}
+              {benHeaderSubtitle}
             </p>
           </div>
 

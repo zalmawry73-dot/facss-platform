@@ -77,6 +77,17 @@ export async function POST(request: Request) {
       }
     });
 
+    // Automatically link any previous guest service requests submitted with this email
+    await prisma.serviceRequest.updateMany({
+      where: {
+        contactEmail: sanitizedEmail,
+        userId: null,
+      },
+      data: {
+        userId: newUser.id,
+      },
+    });
+
     const token = await signToken({
       userId: newUser.id,
       email: newUser.email,
@@ -89,12 +100,12 @@ export async function POST(request: Request) {
     const isHttps = process.env.APP_URL?.startsWith('https://') ?? false;
     const isProduction = process.env.NODE_ENV === 'production';
 
+    // Set secure HTTP-only Session Cookie (Strict Banking-Grade: expires when browser closes)
     cookies().set(TOKEN_COOKIE_NAME, token, {
       httpOnly: true,
       secure: isProduction || isHttps,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7,
     });
 
     await prisma.activityLog.create({

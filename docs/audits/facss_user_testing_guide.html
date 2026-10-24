@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل اختبار المستخدم الشامل والتفصيلي (UAT Guide) — منصة FACSS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0f18;
+      --bg-card: #111827;
+      --bg-subtle: #1a2234;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(212, 175, 55, 0.3);
+      --gold: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-dark: #aa820a;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --info: #38bdf8;
+      --info-bg: rgba(56, 189, 248, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.7;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, rgba(26, 34, 52, 0.95), rgba(17, 24, 39, 0.98));
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+    }
+
+    .badge-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-light);
+      border: 1px solid var(--border-accent);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.8;
+    }
+
+    .scenario-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .scenario-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scenario-meta {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-role { background: rgba(212, 175, 55, 0.15); color: var(--gold-light); border: 1px solid var(--border-accent); }
+    .badge-success { background: var(--success-bg); color: var(--success); }
+    .badge-info { background: var(--info-bg); color: var(--info); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning); }
+    .badge-danger { background: var(--danger-bg); color: var(--danger); }
+
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1.25rem 0;
+    }
+
+    .step-item {
+      position: relative;
+      padding-right: 2.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-item::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 2rem;
+      height: 2rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .step-title {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .result-box {
+      background: var(--bg-subtle);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+    }
+
+    .result-box.gold {
+      border-color: var(--border-accent);
+    }
+
+    .result-title {
+      font-weight: 800;
+      color: var(--success);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-title.gold {
+      color: var(--gold);
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: var(--gold-light);
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .nav-guide {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      color: #bae6fd;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border-color);
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge-header">
+        <span>🧪</span>
+        <span>دليل التحقق الميداني والقبول التشغيلي (User Acceptance Testing)</span>
+      </div>
+      <h1>دليل اختبار المستخدم التفصيلي لمنصة FACSS</h1>
+      <p class="subtitle">
+        دليل عملي خطوة بخطوة موجه لمسؤولي النظام وضباط العمليات الميدانية والمدققين لاختبار كافة الوظائف المستحدثة، والتحقق من إصلاح الأخطاء، وإدارة الحقول الديناميكية، والتأكد من تكامل دورة حياة البلاغات والتنبيهات وسجل المخاطر.
+      </p>
+    </header>
+
+    <!-- Scenario 1: Dynamic Field Options Management -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div>
+          <h2 class="scenario-title">
+            <span>⚙️</span>
+            <span>السيناريو الأول: إدارة الحقول والتصنيفات الميدانية الديناميكية</span>
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+            اختبار قدرة الإدارة على إضافة تصنيف جديد، وتعديل المسميات، وحجب أو إظهار خيارات البلاغات والمصادر والمخاطر دون تعديل الكود.
+          </p>
+        </div>
+        <div class="scenario-meta">
+          <span class="badge badge-role">صلاحية: SUPER_ADMIN / MANAGE_SETTINGS</span>
+          <span class="badge badge-success">الهدف: التحول الديناميكي</span>
+        </div>
+      </div>
+
+      <div class="nav-guide">
+        <span>📍</span>
+        <span><strong>المسار في المتصفح:</strong> لوحة التحكم الإدارية ← <code>/admin/settings</code> ← التمرير للقسم السادس "إدارة الحقول والتصنيفات الميدانية الديناميكية".</span>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">الدخول إلى قسم الحقول الديناميكية</div>
+          <div class="step-desc">سجل الدخول بحساب مسؤول ثم توجه إلى صفحة الإعدادات. لاحظ وجود القسم السادس بأسفل الصفحة مع 4 تبويبات (تصنيفات البلاغات، مصادر البلاغات، تصنيفات المخاطر، المحافظات).</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">إضافة تصنيف بلاغ جديد</div>
+          <div class="step-desc">انقر على زر <strong>«إضافة تصنيف جديد»</strong>. في النافذة المنبثقة اكتب:
+            <br>• الاسم بالعربية: <code>تسرب مواد بترولية أو كيميائية</code>
+            <br>• المعرّف الفريد: <code>HAZMAT_SPILL</code>
+            <br>• الوصف الإرشادي: <code>تسرب وقود أو مواد خطرة في المنشأة</code>
+            <br>ثم اضغط «إضافة إلى القائمة».
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">تعديل الترتيب وحجب خيار قديم</div>
+          <div class="step-desc">استخدم أسهم التحريك <code>⬆️ / ⬇️</code> لتغيير موقع التصنيف الجديد، ثم اضغط على أيقونة العين <code>👁️</code> بجانب أحد التصنيفات القديمة لتعطيله (حجبه من النموذج الميداني).</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">حفظ الخيارات في قاعدة البيانات</div>
+          <div class="step-desc">اضغط زر <strong>«حفظ خيارات القائمة»</strong> الأزرق في أعلى القسم.</div>
+        </li>
+      </ol>
+
+      <div class="result-box">
+        <div class="result-title">
+          <span>✅</span>
+          <span>النتيجة المتوقعة للسيناريو الأول:</span>
+        </div>
+        <p>يظهر شريط أخضر: <em>«تم حفظ وتحديث خيارات الحقل التشغيلي بنجاح في قاعدة البيانات»</em>. تتوجه فوراً إلى <code>/portal/field/intake</code> وتفتح قائمة "تصنيف البلاغ"، ستجد التصنيف الجديد موجوداً فوراً والتصنيف المعطل محجوباً تماماً.</p>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Incident Intake & File Picker Fix -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div>
+          <h2 class="scenario-title">
+            <span>📝</span>
+            <span>السيناريو الثاني: تقديم بلاغ ميداني والتحقق من إصلاح نافذة الملفات (UI-01)</span>
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+            اختبار تدفق التقديم المشفر والتأكد التام من اختفاء الخطأ العشوائي لظهور نافذة اختيار ملفات الويندوز بعد النقر على تأكيد الإرسال.
+          </p>
+        </div>
+        <div class="scenario-meta">
+          <span class="badge badge-role">صلاحية: FIELD_FOCAL_POINT أو SUPER_ADMIN</span>
+          <span class="badge badge-success">إصلاح: UI-01</span>
+        </div>
+      </div>
+
+      <div class="nav-guide">
+        <span>📍</span>
+        <span><strong>المسار في المتصفح:</strong> البوابة الميدانية ← <code>/portal/field/intake</code></span>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">تعبئة بيانات البلاغ الأساسية</div>
+          <div class="step-desc">اختر التصنيف الميداني (لاحظ تحميل التصنيفات الديناميكية تلقائياً)، وحدد الأولوية "عالية"، والمحافظة "عدن"، والمديرية "خور مكسر".</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">التقاط الموقع أو إدخال إحداثيات وسرد الوقائع</div>
+          <div class="step-desc">اكتب وصفاً مفصلاً في حقل السرد الميداني (أكثر من 10 أحرف)، ثم املأ بيانات المصدر في جيب التشفير المحمي.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">النقر على "تشفير وإرسال تقرير البلاغ"</div>
+          <div class="step-desc">اضغط على الزر الرئيسي بأسفل الصفحة، ستظهر النافذة المنبثقة: <strong>«تأكيد الإرسال المشفر للبلاغ»</strong>.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">اختبار لحظة النقر على "تأكيد الإرسال الآن"</div>
+          <div class="step-desc">انقر على الزر الأزرق لتأكيد الإرسال. راقب سلوك الواجهة بعناية فائقة.</div>
+        </li>
+      </ol>
+
+      <div class="result-box">
+        <div class="result-title">
+          <span>✅</span>
+          <span>النتيجة المتوقعة للسيناريو الثاني:</span>
+        </div>
+        <p>1. يتحول الزر فوراً إلى مؤشر دوران ويكتب: <em>«جاري التشفير والإرسال المشفر...»</em> مع بقاء النافذة مانعة لأي نقرات خلفها.<br>
+           2. <strong>لا تظهر إطلاقاً أي نافذة اختيار ملفات من الويندوز (تم حل تسرب الحدث نهائياً).</strong><br>
+           3. تُغلق النافذة وتظهر بطاقة الإيصال الرسمية برقم التتبع: <code>FACSS-INC-2026-XXXXXX</code> وحالة <code>RECEIVED</code> وتوقيت الخادم المشفر.</p>
+      </div>
+    </div>
+
+    <!-- Scenario 3: Task Assignment Revocation Fix (BUG-01) -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div>
+          <h2 class="scenario-title">
+            <span>👥</span>
+            <span>السيناريو الثالث: سحب تكليف موظف والتحقق من إصلاح خطأ 405 (BUG-01)</span>
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+            التحقق من قدرة الإدارة العليا على سحب وإلغاء ترخيص النفاذ لبلاغ من موظف فورياً دون أن يفشل الطلب.
+          </p>
+        </div>
+        <div class="scenario-meta">
+          <span class="badge badge-role">صلاحية: SUPER_ADMIN</span>
+          <span class="badge badge-danger">إصلاح: BUG-01</span>
+        </div>
+      </div>
+
+      <div class="nav-guide">
+        <span>📍</span>
+        <span><strong>المسار في المتصفح:</strong> إدارة البلاغات ← <code>/admin/incidents/[id]</code> ← تبويب "إسناد المهام والمكلفين".</span>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">فتح بلاغ ميداني مستلم</div>
+          <div class="step-desc">توجه إلى قائمة البلاغات <code>/admin/incidents</code> وافتح أي بلاغ مسجل.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">إسناد مهمة لموظف</div>
+          <div class="step-desc">انتقل لتبويب "إسناد المهام والمكلفين"، اختر موظفاً من القائمة، وحدد نطاق المهمة (متحقق ميداني VERIFIER)، واضغط "تأكيد إسناد المهمة".</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">سحب التكليف (اختبار الإصلاح)</div>
+          <div class="step-desc">في جدول المكلفين النشطين، اضغط على زر <strong>«سحب التكليف»</strong> الأحمر، ثم أكد رسالة التأكيد المنبثقة من المتصفح.</div>
+        </li>
+      </ol>
+
+      <div class="result-box">
+        <div class="result-title">
+          <span>✅</span>
+          <span>النتيجة المتوقعة للسيناريو الثالث:</span>
+        </div>
+        <p>1. ينجح الطلب فورياً برمز <code>200 OK</code> بدلاً من خطأ <code>405 Method Not Allowed</code> السابق.<br>
+           2. يظهر إشعار أخضر: <em>«تم سحب التكليف وإلغاء ترخيص النفاذ بنجاح»</em>.<br>
+           3. يتم حجب النسخة المنقحة عن الموظف المسحوب منه التكليف فورياً تطبيقاً لمبدأ الاستحقاق الثلاثي (Triple-Gate RBAC).</p>
+      </div>
+    </div>
+
+    <!-- Scenario 4: Operational Risk Derivation Fix (BUG-02) -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div>
+          <h2 class="scenario-title">
+            <span>⚡</span>
+            <span>السيناريو الرابع: اشتقاق خطر تشغيلي والملء التلقائي للبيانات (BUG-02)</span>
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+            التحقق من نجاح الملء التلقائي لعنوان ووصف وتصنيف الخطر المشتق من البلاغ المحقق.
+          </p>
+        </div>
+        <div class="scenario-meta">
+          <span class="badge badge-role">صلاحية: MANAGE_RISK_REGISTER / SUPER_ADMIN</span>
+          <span class="badge badge-danger">إصلاح: BUG-02</span>
+        </div>
+      </div>
+
+      <div class="nav-guide">
+        <span>📍</span>
+        <span><strong>المسار في المتصفح:</strong> سجل المخاطر التشغيلية ← <code>/admin/risks</code> ← زر "اشتقاق خطر من بلاغ ميداني".</span>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">اعتماد نسخة منقحة لبلاغ وتوثيقه</div>
+          <div class="step-desc">تأكد أن البلاغ في حالة <code>VERIFIED</code> ولديه نسخة منقحة معتمدة.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">فتح نافذة اشتقاق خطر من بلاغ</div>
+          <div class="step-desc">توجه إلى <code>/admin/risks</code> واضغط زر <strong>«اشتقاق خطر من بلاغ ميداني»</strong>.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">اختيار البلاغ المعتمد من القائمة المنسدلة</div>
+          <div class="step-desc">اختر البلاغ من القائمة المنسدلة وراقب تعبئة الحقول تلقائياً.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">حفظ قيد الخطر</div>
+          <div class="step-desc">اضغط "حفظ وتسجيل الخطر المشتق".</div>
+        </li>
+      </ol>
+
+      <div class="result-box">
+        <div class="result-title">
+          <span>✅</span>
+          <span>النتيجة المتوقعة للسيناريو الرابع:</span>
+        </div>
+        <p>1. بمجرد اختيار البلاغ، <strong>تمتلئ حقول العنوان والوصف والتصنيف والموقع تلقائياً بالبيانات المنقحة الآمنة (تم حل مشكلة الفراغ نهائياً)</strong>.<br>
+           2. يُسجل الخطر برقم فريد: <code>AICSFA-RSK-2026-XXXXXX</code> وتظهر مصفوفة الخطورة 5×5 مع الرابط المباشر للبلاغ المصدر.</p>
+      </div>
+    </div>
+
+    <!-- Scenario 5: Targeted Alert Drafting (GAP-01) -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div>
+          <h2 class="scenario-title">
+            <span>📢</span>
+            <span>السيناريو الخامس: صياغة واعتماد مسودة تنبيه ميداني (GAP-01)</span>
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+            التحقق من الواجهة المستحدثة لصياغة التنبيهات من صفحة البلاغ مباشرة ومن لوحة التنبيهات مع مستويي الإحاطة (Tier 1 & Tier 2).
+          </p>
+        </div>
+        <div class="scenario-meta">
+          <span class="badge badge-role">صلاحية: DRAFT_INCIDENT_ALERT / SUPER_ADMIN</span>
+          <span class="badge badge-warning">سد فجوة: GAP-01</span>
+        </div>
+      </div>
+
+      <div class="nav-guide">
+        <span>📍</span>
+        <span><strong>المسار في المتصفح:</strong> تفاصيل البلاغ <code>/admin/incidents/[id]</code> أو لوحة التنبيهات <code>/admin/alerts</code>.</span>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">صياغة التنبيه من صفحة البلاغ المعتمد</div>
+          <div class="step-desc">في تفاصيل بلاغ محقق <code>VERIFIED</code>، اضغط الزر الذهبي العلوي: <strong>«صياغة مسودة تنبيه ميداني»</strong>.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">مراجعة بيانات المستويين (Tier 1 & Tier 2)</div>
+          <div class="step-desc">تفتح نافذة <code>AdminModal</code> متكاملة تحتوي تلقائياً على:<br>
+            • مستوى الخطورة: خاطف عاجل أو تحذير عالي.<br>
+            • عنوان ونصه للإحاطة التشغيلية (Tier 1).<br>
+            • عنوان ونصه للملخص التنسيقي التنفيذي (Tier 2).<br>
+            • إرشادات السلامة والتحرك الميداني.<br>
+            • النطاق الجغرافي المستهدف.
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">حفظ مسودة التنبيه</div>
+          <div class="step-desc">اضغط "اعتماد وحفظ مسودة التنبيه".</div>
+        </li>
+      </ol>
+
+      <div class="result-box">
+        <div class="result-title">
+          <span>✅</span>
+          <span>النتيجة المتوقعة للسيناريو الخامس:</span>
+        </div>
+        <p>1. تُنشأ مسودة التنبيه فورياً برقم <code>FACSS-ALT-2026-XXXX</code> بحالة <code>DRAFT</code>.<br>
+           2. تتحدث حالة البلاغ الأصلي تلقائياً إلى <code>ALERT_DRAFTED</code>، ويظهر التنبيه الجديد في بطاقة "الكيانات التشغيلية المرتبطة".<br>
+           3. بالدخول لصفحة <code>/admin/alerts</code>، يظهر التنبيه في الجدول مع إمكانية مراجعته وتجميده في لقطة <code>Snapshot</code> واعتماده وتوزيعه داخلياً.</p>
+      </div>
+    </div>
+
+    <!-- Scenario 6: End-to-End Governance & Audit Trail -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div>
+          <h2 class="scenario-title">
+            <span>🛡️</span>
+            <span>السيناريو السادس: التحقق من سجل الأنشطة والتدقيق (Activity Log)</span>
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">
+            التحقق من التوثيق الآلي لكافة العمليات الإدارية والميدانية المشفرة في سجل التدقيق المركزي.
+          </p>
+        </div>
+        <div class="scenario-meta">
+          <span class="badge badge-role">صلاحية: VIEW_AUDIT_LOGS / SUPER_ADMIN</span>
+          <span class="badge badge-info">الحوكمة والأمان</span>
+        </div>
+      </div>
+
+      <div class="nav-guide">
+        <span>📍</span>
+        <span><strong>المسار في المتصفح:</strong> لوحة التحكم الإدارية ← <code>/admin/logs</code></span>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">فتح سجل الأنشطة المركزي</div>
+          <div class="step-desc">انتقل إلى صفحة سجلات التدقيق <code>/admin/logs</code>.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">مراجعة العمليات المسجلة</div>
+          <div class="step-desc">تحقق من وجود القيود الآلية التالية مع تاريخ ووقت وهوية المستخدم منفذ الإجراء:<br>
+            • <code>UPDATE_DYNAMIC_FIELD_OPTIONS</code>: عند تعديل أي تصنيف أو خيار ميداني.<br>
+            • <code>ALERT_DRAFT_CREATED</code>: عند إنشاء مسودة التنبيه.<br>
+            • <code>REVOKE_INCIDENT_TASK</code>: عند سحب تكليف الموظف.<br>
+            • <code>VERIFY_INCIDENT_ADMIRALTY</code>: عند توثيق معيار أدميرالتي.
+          </div>
+        </li>
+      </ol>
+
+      <div class="result-box">
+        <div class="result-title">
+          <span>✅</span>
+          <span>النتيجة المتوقعة للسيناريو السادس:</span>
+        </div>
+        <p>تسجيل كامل ودقيق للعمليات دون أي تسريب لأرقام هواتف المصادر أو نصوص البلاغات الأصلية غير المنقحة، مع اكتمال معايير الحوكمة والامتثال المؤسسي.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>دليل اختبار القبول والمستخدم (UAT Guide) — مركز الحلول المتكاملة للأمن والسلامة والدراسات الاستراتيجية (FACSS)</p>
+      <p style="margin-top: 4px; font-family: monospace;">Comprehensive Functional Verification • Complete Edge-Case Coverage</p>
+    </footer>
+  </div>
+</body>
+</html>

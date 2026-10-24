@@ -1,15 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import { requireStaff, getUserCapabilities, CAPABILITIES } from '@/lib/rbac';
+import { requireStaff, getUserCapabilities, CAPABILITIES, ROLES } from '@/lib/rbac';
 import { 
   Settings, 
   Mail, 
   Users, 
   History, 
   ArrowLeft, 
-  ArrowRight,
+  ArrowRight, 
   Lock,
 } from 'lucide-react';
 import {
@@ -25,16 +26,21 @@ export default async function AdminSystemPage() {
   const session = await requireStaff('/admin/system');
   const userCaps = await getUserCapabilities(session.userId, session.role);
 
+  const canMessages = userCaps.includes(CAPABILITIES.MANAGE_MESSAGES) || session.role === 'SUPER_ADMIN';
+  const canUsers = userCaps.includes(CAPABILITIES.MANAGE_USERS) || session.role === 'SUPER_ADMIN';
+  const canSettings = userCaps.includes(CAPABILITIES.MANAGE_SETTINGS) || session.role === 'SUPER_ADMIN';
+  const canLogs = userCaps.includes(CAPABILITIES.VIEW_AUDIT_LOGS) || session.role === 'SUPER_ADMIN';
+
+  const hasSystemAccess = canMessages || canUsers || canSettings || canLogs || session.role === ROLES.ADMIN || session.role === ROLES.SUPER_ADMIN;
+  if (!hasSystemAccess) {
+    redirect('/admin?error=forbidden');
+  }
+
   const cookieStore = cookies();
   const rawLocale = cookieStore.get('facss_locale')?.value;
   const locale = rawLocale === 'en' ? 'en' : 'ar';
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
-
-  const canMessages = userCaps.includes(CAPABILITIES.MANAGE_MESSAGES) || session.role === 'SUPER_ADMIN';
-  const canUsers = userCaps.includes(CAPABILITIES.MANAGE_USERS) || session.role === 'SUPER_ADMIN';
-  const canSettings = userCaps.includes(CAPABILITIES.MANAGE_SETTINGS) || session.role === 'SUPER_ADMIN';
-  const canLogs = userCaps.includes(CAPABILITIES.VIEW_AUDIT_LOGS) || session.role === 'SUPER_ADMIN';
 
   const [unreadMessages, totalUsers, activeUsers, totalLogs] = await Promise.all([
     prisma.contactMessage.count({ where: { status: 'UNREAD' } }),

@@ -1,13 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { TokenPayload } from '@/lib/auth';
+import type { TokenPayload } from '@/lib/auth';
 import IdleTimeoutModal from '@/components/auth/IdleTimeoutModal';
 
 // 15 Minutes Inactivity Timeout & 60 Seconds Pre-logout Warning
 export const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes (900,000 ms)
 export const IDLE_WARNING_MS = 60 * 1000;     // 60 seconds warning (60,000 ms)
 export const LAST_ACTIVITY_KEY = 'facss_last_activity';
+export const ACTIVE_TAB_SESSION_KEY = 'facss_active_tab_session';
 
 interface AuthContextType {
   user: TokenPayload | null;
@@ -54,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem(LAST_ACTIVITY_KEY);
+          sessionStorage.removeItem(ACTIVE_TAB_SESSION_KEY);
         } catch {}
       }
       setShowIdleWarning(false);
@@ -71,8 +73,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      // 1. Verify if previous session exceeded the 15-minute inactivity limit
+      // 1. Strict Banking-Grade Session Enforcement:
+      // If the browser tab or window was closed, sessionStorage is destroyed by the browser engine.
+      // Opening a new tab without an active session in that tab requires fresh login!
       if (typeof window !== 'undefined') {
+        const hasActiveTabSession = sessionStorage.getItem(ACTIVE_TAB_SESSION_KEY) === 'active';
+        if (!hasActiveTabSession) {
+          // Tab was closed or brand new tab opened! Clear session cookies and state immediately
+          try {
+            localStorage.removeItem(LAST_ACTIVITY_KEY);
+          } catch {}
+          await fetch('/api/auth/logout', { method: 'POST' });
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
         const storedLastActivity = localStorage.getItem(LAST_ACTIVITY_KEY);
         if (storedLastActivity) {
           const elapsed = Date.now() - Number(storedLastActivity);
@@ -80,6 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Inactivity threshold exceeded while browser was closed or platform was offline
             try {
               localStorage.removeItem(LAST_ACTIVITY_KEY);
+              sessionStorage.removeItem(ACTIVE_TAB_SESSION_KEY);
             } catch {}
             await fetch('/api/auth/logout', { method: 'POST' });
             setUser(null);
@@ -111,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (typeof window !== 'undefined') {
             try {
               localStorage.removeItem(LAST_ACTIVITY_KEY);
+              sessionStorage.removeItem(ACTIVE_TAB_SESSION_KEY);
             } catch {}
           }
         }
@@ -119,6 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== 'undefined') {
           try {
             localStorage.removeItem(LAST_ACTIVITY_KEY);
+            sessionStorage.removeItem(ACTIVE_TAB_SESSION_KEY);
           } catch {}
         }
       }
@@ -127,6 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem(LAST_ACTIVITY_KEY);
+          sessionStorage.removeItem(ACTIVE_TAB_SESSION_KEY);
         } catch {}
       }
     } finally {
@@ -153,6 +173,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const now = Date.now();
       lastActivityThrottledRef.current = now;
       updateLastActivityStorage(now);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem(ACTIVE_TAB_SESSION_KEY, 'active');
+      }
       return { success: true };
     } catch {
       return { success: false, error: 'Network error occurred' };

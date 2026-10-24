@@ -179,6 +179,11 @@ export default function FieldIntakePage() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
+  // Dynamic Field Options State (with static defaults fallback)
+  const [categoriesList, setCategoriesList] = useState(CATEGORIES);
+  const [sourceTypesList, setSourceTypesList] = useState(SOURCE_TYPES);
+  const [governoratesList, setGovernoratesList] = useState(YEMEN_GOVERNORATES);
+
   // Form State
   const [category, setCategory] = useState(CATEGORIES[0].id);
   const [priority, setPriority] = useState('MEDIUM');
@@ -269,7 +274,28 @@ export default function FieldIntakePage() {
       }
     }
 
+    async function loadDynamicOptions() {
+      try {
+        const res = await fetch('/api/public/field-options');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.incidentCategories) && data.incidentCategories.length > 0) {
+            setCategoriesList(data.incidentCategories);
+          }
+          if (Array.isArray(data.sourceTypes) && data.sourceTypes.length > 0) {
+            setSourceTypesList(data.sourceTypes);
+          }
+          if (Array.isArray(data.governorates) && data.governorates.length > 0) {
+            setGovernoratesList(data.governorates);
+          }
+        }
+      } catch (err) {
+        console.warn('Using default field options due to network/API fallback:', err);
+      }
+    }
+
     checkSession();
+    loadDynamicOptions();
   }, [router, isAr]);
 
   // Handle Geolocation
@@ -505,7 +531,6 @@ export default function FieldIntakePage() {
   };
 
   const handleConfirmedSubmit = async () => {
-    setShowConfirmModal(false);
     setIsSubmitting(true);
     setApiError(null);
 
@@ -556,6 +581,7 @@ export default function FieldIntakePage() {
         );
       }
 
+      setShowConfirmModal(false);
       setSuccessReceipt({
         incidentNumber: data.incidentNumber,
         status: data.status,
@@ -578,6 +604,7 @@ export default function FieldIntakePage() {
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
+      setShowConfirmModal(false);
       setApiError(
         err.message ||
           (isAr
@@ -766,7 +793,7 @@ export default function FieldIntakePage() {
   // ----------------------------------------------------
   // RENDER: INTAKE FORM WORKSPACE
   // ----------------------------------------------------
-  const selectedCategoryObj = CATEGORIES.find((c) => c.id === category);
+  const selectedCategoryObj = categoriesList.find((c) => c.id === category) || categoriesList[0];
   const selectedPriorityObj = PRIORITIES.find((p) => p.id === priority);
 
   return (
@@ -878,7 +905,7 @@ export default function FieldIntakePage() {
                 onChange={(e) => setCategory(e.target.value)}
                 required
               >
-                {CATEGORIES.map((c) => (
+                {categoriesList.map((c) => (
                   <option key={c.id} value={c.id}>
                     {isAr ? c.labelAr : c.labelEn}
                   </option>
@@ -995,7 +1022,7 @@ export default function FieldIntakePage() {
                   onChange={(e) => setGovernorate(e.target.value)}
                   required
                 >
-                  {YEMEN_GOVERNORATES.map((g) => (
+                  {governoratesList.map((g) => (
                     <option key={g.ar} value={g.ar}>
                       {isAr ? g.ar : g.en}
                     </option>
@@ -1341,7 +1368,7 @@ export default function FieldIntakePage() {
                     value={sourceType}
                     onChange={(e) => setSourceType(e.target.value)}
                   >
-                    {SOURCE_TYPES.map((st) => (
+                    {sourceTypesList.map((st) => (
                       <option key={st.id} value={st.id}>
                         {isAr ? st.labelAr : st.labelEn}
                       </option>
@@ -1447,10 +1474,16 @@ export default function FieldIntakePage() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
+              onClick={(e) => {
+                e.preventDefault();
+                if (isSubmitting) return;
+                fileInputRef.current?.click();
+              }}
               role="button"
-              tabIndex={0}
+              tabIndex={isSubmitting ? -1 : 0}
+              style={{ pointerEvents: isSubmitting ? 'none' : 'auto' }}
               onKeyDown={(e) => {
+                if (isSubmitting) return;
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   fileInputRef.current?.click();
@@ -1738,7 +1771,12 @@ export default function FieldIntakePage() {
               <button
                 type="button"
                 className="btn btn-outline btn-sm"
-                onClick={() => setShowConfirmModal(false)}
+                disabled={isSubmitting}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowConfirmModal(false);
+                }}
                 style={{ padding: '0.6rem 1.25rem', borderColor: '#475569', color: '#cbd5e1' }}
               >
                 {isAr ? 'تراجع وتعديل' : 'Cancel & Edit'}
@@ -1746,11 +1784,25 @@ export default function FieldIntakePage() {
               <button
                 type="button"
                 className="field-submit-btn"
-                onClick={handleConfirmedSubmit}
+                disabled={isSubmitting}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleConfirmedSubmit();
+                }}
                 style={{ minHeight: 'auto', padding: '0.65rem 1.5rem', flex: 'none' }}
               >
-                <Send size={16} />
-                <span>{isAr ? 'تأكيد الإرسال الآن' : 'Confirm Submission'}</span>
+                {isSubmitting ? (
+                  <>
+                    <Lock className="animate-spin" size={16} />
+                    <span>{isAr ? 'جاري التشفير والإرسال المشفر...' : 'Encrypting & Transmitting...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>{isAr ? 'تأكيد الإرسال الآن' : 'Confirm Submission'}</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

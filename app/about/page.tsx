@@ -18,6 +18,7 @@ export default async function AboutPage() {
     'lifecycle',
     'org_structure',
     'beneficiaries',
+    'homepage',
   ]);
 
   return <AboutClientPage initialContent={content} initialLocale={locale} />;
