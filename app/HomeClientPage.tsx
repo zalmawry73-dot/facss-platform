@@ -230,18 +230,10 @@ export default function HomeClientPage({ initialContent }: Props) {
         desc: pickDesc(b),
         icon: getIcon(b.icon, Shield),
       }))
-    : fallbackPrinciples;
+    : [];
 
   // 3. Activity Fields
   const dbActivityFields = initialContent['activity_fields'] || [];
-  const fallbackActivityFields = [
-    { id: 'guarding-protective-security', title: t.field1Title, desc: t.field1Desc, icon: ShieldCheck, link: '/services#guarding-protective-security' },
-    { id: 'field-monitoring-early-warning', title: t.field2Title, desc: t.field2Desc, icon: Activity, link: '/services#field-monitoring-early-warning' },
-    { id: 'field-studies-analysis-monitoring', title: t.field3Title, desc: t.field3Desc, icon: FileText, link: '/services#field-studies-analysis-monitoring' },
-    { id: 'training-capacity-coordination', title: t.field4Title, desc: t.field4Desc, icon: GraduationCap, link: '/services#training-capacity-coordination' },
-    { id: 'safety-systems-equipment', title: t.field5Title, desc: t.field5Desc, icon: Cpu, link: '/services#safety-systems-equipment' },
-  ];
-
   const activityFieldsList = dbActivityFields.length > 0
     ? dbActivityFields.map((b) => ({
         id: b.key,
@@ -250,7 +242,7 @@ export default function HomeClientPage({ initialContent }: Props) {
         icon: getIcon(b.icon, Compass),
         link: b.link || `/services#${b.key}`,
       }))
-    : fallbackActivityFields;
+    : [];
 
   // 4. Beneficiaries
   const dbBeneficiaries = initialContent['beneficiaries'] || [];
@@ -291,7 +283,7 @@ export default function HomeClientPage({ initialContent }: Props) {
         desc: pickDesc(b),
         icon: getIcon(b.icon, Building),
       }))
-    : fallbackBeneficiaries;
+    : [];
 
   return (
     <div>
@@ -439,59 +431,61 @@ export default function HomeClientPage({ initialContent }: Props) {
       </section>
 
       {/* ----------------------------------------------------
-         SECTION 2: 6 INSTITUTIONAL PRINCIPLES
+         SECTION 2: INSTITUTIONAL PRINCIPLES
          ---------------------------------------------------- */}
-      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{principlesTag}</span>
-            <h2 className="section-title">
-              {principlesTitle}
-            </h2>
-            <p className="section-subtitle">
-              {principlesSubtitle}
-            </p>
-          </div>
+      {principlesList.length > 0 && (
+        <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{principlesTag}</span>
+              <h2 className="section-title">
+                {principlesTitle}
+              </h2>
+              <p className="section-subtitle">
+                {principlesSubtitle}
+              </p>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
-            {principlesList.map((p, idx) => {
-              const Icon = p.icon;
-              return (
-                <div key={idx} className="principle-card">
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem' }}>
-                      <span className="principle-num">{p.num}</span>
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: 'var(--radius-md)',
-                          backgroundColor: 'rgba(181, 146, 84, 0.12)',
-                          color: 'var(--color-gold-700)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Icon size={20} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+              {principlesList.map((p, idx) => {
+                const Icon = p.icon;
+                return (
+                  <div key={idx} className="principle-card">
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem' }}>
+                        <span className="principle-num">{p.num}</span>
+                        <div
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: 'var(--radius-md)',
+                            backgroundColor: 'rgba(181, 146, 84, 0.12)',
+                            color: 'var(--color-gold-700)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Icon size={20} />
+                        </div>
                       </div>
+                      <h3 style={{ fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                        {p.title}
+                      </h3>
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+                        {p.desc}
+                      </p>
                     </div>
-                    <h3 style={{ fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem', lineHeight: 1.4 }}>
-                      {p.title}
-                    </h3>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
-                      {p.desc}
-                    </p>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ----------------------------------------------------
-         SECTION 3: 6 APPROVED ACTIVITY FIELDS
+         SECTION 3: APPROVED ACTIVITY FIELDS
          ---------------------------------------------------- */}
       <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
@@ -505,115 +499,132 @@ export default function HomeClientPage({ initialContent }: Props) {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
-            {activityFieldsList.map((field, idx) => {
-              const Icon = field.icon;
-              return (
-                <div key={idx} className="service-card">
-                  <div>
-                    <div
-                      style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: 'var(--radius-md)',
-                        backgroundColor: 'var(--color-primary-50)',
-                        border: '1px solid var(--color-primary-200)',
-                        color: 'var(--color-primary-900)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: '1.25rem',
-                      }}
-                    >
-                      <Icon size={24} />
+          {activityFieldsList.length > 0 ? (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+                {activityFieldsList.map((field, idx) => {
+                  const Icon = field.icon;
+                  return (
+                    <div key={idx} className="service-card">
+                      <div>
+                        <div
+                          style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: 'var(--radius-md)',
+                            backgroundColor: 'var(--color-primary-50)',
+                            border: '1px solid var(--color-primary-200)',
+                            color: 'var(--color-primary-900)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: '1.25rem',
+                          }}
+                        >
+                          <Icon size={24} />
+                        </div>
+                        <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.65rem', lineHeight: 1.4 }}>
+                          {field.title}
+                        </h3>
+                        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                          {field.desc}
+                        </p>
+                      </div>
+
+                      <Link
+                        href={field.link}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
+                          color: 'var(--color-primary-800)',
+                          paddingTop: '0.85rem',
+                          borderTop: '1px solid var(--border-subtle)',
+                          textDecoration: 'none',
+                          transition: 'var(--transition)',
+                        }}
+                      >
+                        <span>{isAr ? 'تفاصيل المجال' : 'Learn More'}</span>
+                        <ArrowIcon size={15} />
+                      </Link>
                     </div>
-                    <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.65rem', lineHeight: 1.4 }}>
-                      {field.title}
-                    </h3>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
-                      {field.desc}
-                    </p>
-                  </div>
+                  );
+                })}
+              </div>
 
-                  <Link
-                    href={field.link}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.45rem',
-                      fontSize: '0.88rem',
-                      fontWeight: 700,
-                      color: 'var(--color-primary-800)',
-                      paddingTop: '0.85rem',
-                      borderTop: '1px solid var(--border-subtle)',
-                      textDecoration: 'none',
-                      transition: 'var(--transition)',
-                    }}
-                  >
-                    <span>{isAr ? 'تفاصيل المجال' : 'Learn More'}</span>
-                    <ArrowIcon size={15} />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '2.75rem' }}>
-            <Link href="/services" className="btn btn-secondary btn-lg">
-              <span>{t.allServices}</span>
-              <ArrowIcon size={16} />
-            </Link>
-          </div>
+              <div style={{ textAlign: 'center', marginTop: '2.75rem' }}>
+                <Link href="/services" className="btn btn-secondary btn-lg">
+                  <span>{t.allServices}</span>
+                  <ArrowIcon size={16} />
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="card-institutional" style={{ padding: '3rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
+              <Shield size={40} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                {isAr ? 'مجالات النشاط قيد التحديث المؤسسي' : 'Activity fields currently under institutional update'}
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
+                {isAr ? 'سيتم إدراج مجالات النشاط المعتمدة قريباً عبر لوحة الإدارة.' : 'Official activity fields will be published soon via admin.'}
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
       {/* ----------------------------------------------------
          SECTION 4: BENEFICIARY SECTORS & PARTNERS
          ---------------------------------------------------- */}
-      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{beneficiariesTag}</span>
-            <h2 className="section-title">
-              {beneficiariesTitle}
-            </h2>
-            <p className="section-subtitle">
-              {beneficiariesSubtitle}
-            </p>
-          </div>
+      {beneficiariesList.length > 0 && (
+        <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{beneficiariesTag}</span>
+              <h2 className="section-title">
+                {beneficiariesTitle}
+              </h2>
+              <p className="section-subtitle">
+                {beneficiariesSubtitle}
+              </p>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem' }}>
-            {beneficiariesList.map((b, idx) => {
-              const Icon = b.icon;
-              return (
-                <div key={idx} className="card-institutional">
-                  <div
-                    style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: 'var(--radius-md)',
-                      background: 'rgba(181, 146, 84, 0.14)',
-                      color: 'var(--color-gold-700)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginBottom: '1.1rem',
-                    }}
-                  >
-                    <Icon size={22} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem' }}>
+              {beneficiariesList.map((b, idx) => {
+                const Icon = b.icon;
+                return (
+                  <div key={idx} className="card-institutional">
+                    <div
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: 'var(--radius-md)',
+                        background: 'rgba(181, 146, 84, 0.14)',
+                        color: 'var(--color-gold-700)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '1.1rem',
+                      }}
+                    >
+                      <Icon size={22} />
+                    </div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.55rem', lineHeight: 1.4, color: 'var(--text-primary)' }}>
+                      {b.title}
+                    </h3>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+                      {b.desc}
+                    </p>
                   </div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.55rem', lineHeight: 1.4, color: 'var(--text-primary)' }}>
-                    {b.title}
-                  </h3>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
-                    {b.desc}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
 
       {/* ----------------------------------------------------
          SECTION 5: TRAINING & RESEARCH SHOWCASE

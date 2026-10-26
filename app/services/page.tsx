@@ -107,7 +107,7 @@ export default async function ServicesPage() {
         descAr: b.descriptionAr || b.descriptionEn || '',
         descEn: b.descriptionEn || b.descriptionAr || '',
       }))
-    : fallbackBeneficiaries;
+    : [];
 
   return (
     <div>
@@ -268,60 +268,62 @@ export default async function ServicesPage() {
       </section>
 
       {/* Humanitarian & Field Beneficiary Sectors */}
-      <section className="section" style={{ background: 'var(--surface-bg)', borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{benHeaderTag}</span>
-            <h2 className="section-title">
-              {benHeaderTitle}
-            </h2>
-            <p className="section-subtitle">
-              {benHeaderSubtitle}
-            </p>
-          </div>
+      {beneficiariesList.length > 0 && (
+        <section className="section" style={{ background: 'var(--surface-bg)', borderTop: '1px solid var(--border-subtle)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{benHeaderTag}</span>
+              <h2 className="section-title">
+                {benHeaderTitle}
+              </h2>
+              <p className="section-subtitle">
+                {benHeaderSubtitle}
+              </p>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
-            {beneficiariesList.map((sec, idx) => (
-              <div key={idx} className="card-institutional" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <span className="badge badge-gold">
-                      {isAr ? 'قطاع شريك' : 'Partner Sector'}
-                    </span>
-                    <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.85rem', color: 'var(--color-gold-700)', fontWeight: 800 }}>
-                      0{idx + 1}
-                    </span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+              {beneficiariesList.map((sec, idx) => (
+                <div key={idx} className="card-institutional" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <span className="badge badge-gold">
+                        {isAr ? 'قطاع شريك' : 'Partner Sector'}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.85rem', color: 'var(--color-gold-700)', fontWeight: 800 }}>
+                        0{idx + 1}
+                      </span>
+                    </div>
+
+                    <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem', lineHeight: 1.4 }}>
+                      {isAr ? sec.titleAr : sec.titleEn}
+                    </h3>
+                    {isAr && sec.titleEn && (
+                      <h4 style={{ fontSize: '0.82rem', color: 'var(--color-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
+                        {sec.titleEn}
+                      </h4>
+                    )}
+
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
+                      {isAr ? sec.descAr : sec.descEn}
+                    </p>
                   </div>
 
-                  <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem', lineHeight: 1.4 }}>
-                    {isAr ? sec.titleAr : sec.titleEn}
-                  </h3>
-                  {isAr && sec.titleEn && (
-                    <h4 style={{ fontSize: '0.82rem', color: 'var(--color-gold-700)', fontWeight: 600, marginBottom: '0.85rem' }}>
-                      {sec.titleEn}
-                    </h4>
-                  )}
-
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
-                    {isAr ? sec.descAr : sec.descEn}
-                  </p>
+                  <div style={{ paddingTop: '1.25rem', marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+                    <Link
+                      href="/request-service"
+                      className="btn btn-secondary btn-sm"
+                      style={{ width: '100%', justifyContent: 'center' }}
+                    >
+                      <span>{isAr ? 'طلب استشارة أو تقييم ميداني' : 'Request Consultation or Assessment'}</span>
+                      <ArrowIcon size={14} />
+                    </Link>
+                  </div>
                 </div>
-
-                <div style={{ paddingTop: '1.25rem', marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
-                  <Link
-                    href="/request-service"
-                    className="btn btn-secondary btn-sm"
-                    style={{ width: '100%', justifyContent: 'center' }}
-                  >
-                    <span>{isAr ? 'طلب استشارة أو تقييم ميداني' : 'Request Consultation or Assessment'}</span>
-                    <ArrowIcon size={14} />
-                  </Link>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

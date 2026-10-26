@@ -71,20 +71,12 @@ export default function Footer({
   const footerRightsText = (locale === 'ar' ? footerData?.rightsAr : footerData?.rightsEn) || t.footerRights;
   const footerNoticeText = (locale === 'ar' ? footerData?.noticeAr : footerData?.noticeEn) || t.institutionalNotice;
 
-  const fallbackActivityFields = [
-    { title: t.field1Title, href: '/services#guarding-protective-security' },
-    { title: t.field2Title, href: '/services#field-monitoring-early-warning' },
-    { title: t.field3Title, href: '/services#field-studies-analysis-monitoring' },
-    { title: t.field4Title, href: '/services#training-capacity-coordination' },
-    { title: t.field5Title, href: '/services#safety-systems-equipment' },
-  ];
-
   const renderedActivityFields = (activityFields && activityFields.length > 0)
     ? activityFields.map((f) => ({
         title: isAr ? (f.titleAr || f.titleEn || '') : (f.titleEn || f.titleAr || ''),
         href: f.link || (f.key ? `/services#${f.key}` : '/services'),
       }))
-    : fallbackActivityFields;
+    : [];
 
   return (
     <footer className="site-footer" style={{ backgroundColor: 'var(--facss-green-950)', color: 'var(--text-on-dark)', borderTop: '1px solid var(--border-dark)' }}>
@@ -136,15 +128,21 @@ export default function Footer({
           {/* Col 3: Approved Humanitarian Activity Fields */}
           <div>
             <h4 className="footer-heading">{t.servicesSectionTitle}</h4>
-            <ul className="footer-links">
-              {renderedActivityFields.map((field, idx) => (
-                <li key={idx}>
-                  <Link href={field.href}>
-                    {field.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {renderedActivityFields.length > 0 ? (
+              <ul className="footer-links">
+                {renderedActivityFields.map((field, idx) => (
+                  <li key={idx}>
+                    <Link href={field.href}>
+                      {field.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-on-dark-muted)', lineHeight: 1.6, margin: 0 }}>
+                {isAr ? 'سيتم إدراج مجالات النشاط المعتمدة قريباً عبر لوحة الإدارة.' : 'Activity fields will be published soon via admin.'}
+              </p>
+            )}
           </div>
 
           {/* Col 4: Institutional Coordination */}

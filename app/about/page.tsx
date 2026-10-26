@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { getContentSections } from '@/lib/content';
 import AboutClientPage from './AboutClientPage';
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 0; // Dynamic SSR
 
 export default async function AboutPage() {
   const cookieStore = cookies();
