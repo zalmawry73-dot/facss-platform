@@ -101,14 +101,11 @@ export default function HomeClientPage({ initialContent }: Props) {
   const heroBadge2Block = homepageBlocks.find(b => b.key === 'hero_badge_2');
   const heroBadge3Block = homepageBlocks.find(b => b.key === 'hero_badge_3');
 
-  const badge1Text = heroBadge1Block ? (pickTitle(heroBadge1Block) || pickDesc(heroBadge1Block)) : t.heroBadge1;
-  const Badge1Icon = getIcon(heroBadge1Block?.icon, ShieldAlert);
-
-  const badge2Text = heroBadge2Block ? (pickTitle(heroBadge2Block) || pickDesc(heroBadge2Block)) : t.heroBadge2;
-  const Badge2Icon = getIcon(heroBadge2Block?.icon, Compass);
-
-  const badge3Text = heroBadge3Block ? (pickTitle(heroBadge3Block) || pickDesc(heroBadge3Block)) : t.heroBadge3;
-  const Badge3Icon = getIcon(heroBadge3Block?.icon, GraduationCap);
+  const heroBadges = [
+    heroBadge1Block ? { text: pickTitle(heroBadge1Block) || pickDesc(heroBadge1Block), icon: getIcon(heroBadge1Block.icon, ShieldAlert) } : null,
+    heroBadge2Block ? { text: pickTitle(heroBadge2Block) || pickDesc(heroBadge2Block), icon: getIcon(heroBadge2Block.icon, Compass) } : null,
+    heroBadge3Block ? { text: pickTitle(heroBadge3Block) || pickDesc(heroBadge3Block), icon: getIcon(heroBadge3Block.icon, GraduationCap) } : null,
+  ].filter((b): b is { text: string; icon: React.ComponentType<any> } => !!(b && b.text));
 
   // Dynamic Section Headers
   const principlesHeaderBlock = homepageBlocks.find(b => b.key === 'section_principles_header');
@@ -339,94 +336,45 @@ export default function HomeClientPage({ initialContent }: Props) {
           </div>
 
           {/* Institutional Highlights / Trust Anchor Strip */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
-              gap: '1.25rem',
-              marginTop: '3.75rem',
-              paddingTop: '2.25rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.12)',
-            }}
-          >
-            {/* Institutional Highlights / Trust Anchor Strip */}
+          {heroBadges.length > 0 && (
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+                gridTemplateColumns: `repeat(${heroBadges.length}, minmax(min(100%, 200px), 1fr))`,
                 gap: '1.25rem',
                 marginTop: '3.75rem',
                 paddingTop: '2.25rem',
                 borderTop: '1px solid rgba(255, 255, 255, 0.12)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                <div
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '50%',
-                    background: 'rgba(181, 146, 84, 0.16)',
-                    border: '1px solid rgba(181, 146, 84, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-gold-400)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Badge1Icon size={17} />
-                </div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
-                  {badge1Text}
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                <div
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '50%',
-                    background: 'rgba(181, 146, 84, 0.16)',
-                    border: '1px solid rgba(181, 146, 84, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-gold-400)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Badge2Icon size={17} />
-                </div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
-                  {badge2Text}
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
-                <div
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '50%',
-                    background: 'rgba(181, 146, 84, 0.16)',
-                    border: '1px solid rgba(181, 146, 84, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-gold-400)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Badge3Icon size={17} />
-                </div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
-                  {badge3Text}
-                </span>
-              </div>
+              {heroBadges.map((badge, idx) => {
+                const Icon = badge.icon;
+                return (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}>
+                    <div
+                      style={{
+                        width: '34px',
+                        height: '34px',
+                        borderRadius: '50%',
+                        background: 'rgba(181, 146, 84, 0.16)',
+                        border: '1px solid rgba(181, 146, 84, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--color-gold-400)',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={17} />
+                    </div>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>
+                      {badge.text}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          )}
         </div>
       </section>
 

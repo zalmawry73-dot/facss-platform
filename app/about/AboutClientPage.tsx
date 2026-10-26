@@ -40,7 +40,7 @@ export default function AboutClientPage({ initialContent }: Props) {
     return isAr ? (block.descriptionAr || block.descriptionEn || '') : (block.descriptionEn || block.descriptionAr || '');
   }
 
-  // Read from DB blocks; fallback to i18n if empty
+  // Read from DB blocks
   const principlesBlocks = initialContent['principles'] || [];
   const goalsBlocks = (initialContent['identity'] || []).filter(b => b.key.startsWith('goal_'));
   const activityBlocks = initialContent['activity_fields'] || [];
@@ -79,8 +79,15 @@ export default function AboutClientPage({ initialContent }: Props) {
   const overviewTitle = aboutIdentityTagBlock ? pickTitle(aboutIdentityTagBlock) : (isAr ? 'التعريف والنشأة المؤسسية' : 'Institutional Genesis & Mandate');
   const goalsSubtitle = aboutGoalsSubtitleBlock ? pickTitle(aboutGoalsSubtitleBlock) : (isAr ? 'أهداف استراتيجية محددة تقود كافة المبادرات والتطوير التشغيلي للمركز' : 'Strategic objectives guiding all center initiatives and operational development');
 
-  // Fallback arrays from i18n if DB empty
-  const fallbackGoals = [t.goal1, t.goal2, t.goal3, t.goal4, t.goal5, t.goal6, t.goal7, t.goal8];
+  const hasOverview = !!(aboutP1 || aboutP2 || whyUsBlock);
+  const hasVisionMission = !!(visionBlock || missionBlock);
+  const hasPrinciples = principlesBlocks.length > 0;
+  const hasGoals = goalsBlocks.length > 0;
+  const hasActivities = activityBlocks.length > 0;
+  const hasLifecycle = lifecycleBlocks.length > 0;
+  const hasOrg = orgBlocks.length > 0;
+
+  const hasAnyContent = hasOverview || hasVisionMission || hasPrinciples || hasGoals || hasActivities || hasLifecycle || hasOrg;
 
   return (
     <div>
@@ -118,250 +125,149 @@ export default function AboutClientPage({ initialContent }: Props) {
         </div>
       </section>
 
-      {/* ── OVERVIEW ── */}
-      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: '2.5rem', alignItems: 'start' }}>
-            <div>
-              <span className="section-tag">{overviewTag}</span>
-              <h2 className="section-title" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.1rem)', marginBottom: '1.25rem' }}>
-                {overviewTitle}
-              </h2>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.85, marginBottom: '1.25rem', fontSize: '1.02rem' }}>
-                {aboutP1 ? pickDesc(aboutP1) : t.aboutParagraph1}
-              </p>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.85, fontSize: '1.02rem', margin: 0 }}>
-                {aboutP2 ? pickDesc(aboutP2) : t.aboutParagraph2}
-              </p>
-            </div>
-
-            {/* Why Us Card */}
-            <div className="card-institutional-dark" style={{ borderTop: '4px solid var(--color-gold-500)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                <div
-                  style={{
-                    width: '46px',
-                    height: '46px',
-                    background: 'rgba(181, 146, 84, 0.18)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid rgba(181, 146, 84, 0.35)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-gold-400)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Shield size={24} />
-                </div>
-                <h3 style={{ fontWeight: 800, fontSize: '1.2rem', color: '#FFFFFF', margin: 0 }}>
-                  {whyUsBlock ? pickTitle(whyUsBlock) : t.whyFacssTitle}
-                </h3>
-              </div>
-              <p style={{ color: 'var(--text-on-dark-muted)', lineHeight: 1.8, fontSize: '0.98rem', margin: 0 }}>
-                {whyUsBlock ? pickDesc(whyUsBlock) : t.whyFacssText}
+      {/* ── EMPTY STATE WHEN DB CONTENT IS WIPED ── */}
+      {!hasAnyContent && (
+        <section className="section" style={{ backgroundColor: '#FFFFFF' }}>
+          <div className="container">
+            <div className="card-institutional" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
+              <Shield size={44} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                {isAr ? 'بيانات التعريف بالمركز قيد التحديث المؤسسي' : 'Institutional profile currently under update'}
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7, margin: 0 }}>
+                {isAr ? 'سيتم إدراج الرؤية، الرسالة، المبادئ، ومجالات النشاط المعتمدة قريباً عبر لوحة الإدارة.' : 'Vision, mission, principles, and approved activity fields will be published soon via admin.'}
               </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ── VISION & MISSION ── */}
-      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem' }}>
-            {[
-              { block: visionBlock, titleFallback: t.visionTitle, descFallback: t.visionText, icon: Target, color: 'var(--color-primary-900)' },
-              { block: missionBlock, titleFallback: t.missionTitle, descFallback: t.missionText, icon: Compass, color: 'var(--color-gold-700)' },
-            ].map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <div key={idx} className="card-institutional" style={{ borderTop: `4px solid ${item.color}` }}>
+      {/* ── OVERVIEW ── */}
+      {hasOverview && (
+        <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+          <div className="container">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: '2.5rem', alignItems: 'start' }}>
+              <div>
+                <span className="section-tag">{overviewTag}</span>
+                <h2 className="section-title" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.1rem)', marginBottom: '1.25rem' }}>
+                  {overviewTitle}
+                </h2>
+                {aboutP1 && (
+                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.85, marginBottom: '1.25rem', fontSize: '1.02rem' }}>
+                    {pickDesc(aboutP1)}
+                  </p>
+                )}
+                {aboutP2 && (
+                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.85, fontSize: '1.02rem', margin: 0 }}>
+                    {pickDesc(aboutP2)}
+                  </p>
+                )}
+              </div>
+
+              {/* Why Us Card */}
+              {whyUsBlock && (
+                <div className="card-institutional-dark" style={{ borderTop: '4px solid var(--color-gold-500)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
                     <div
                       style={{
-                        width: '44px',
-                        height: '44px',
-                        background: 'rgba(181, 146, 84, 0.12)',
+                        width: '46px',
+                        height: '46px',
+                        background: 'rgba(181, 146, 84, 0.18)',
                         borderRadius: 'var(--radius-md)',
+                        border: '1px solid rgba(181, 146, 84, 0.35)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        color: 'var(--color-gold-400)',
+                        flexShrink: 0,
                       }}
                     >
-                      <Icon size={22} style={{ color: item.color }} />
+                      <Shield size={24} />
                     </div>
-                    <h2 style={{ fontWeight: 900, fontSize: '1.25rem', color: 'var(--text-primary)', margin: 0 }}>
-                      {item.block ? pickTitle(item.block) : item.titleFallback}
-                    </h2>
+                    <h3 style={{ fontWeight: 800, fontSize: '1.2rem', color: '#FFFFFF', margin: 0 }}>
+                      {pickTitle(whyUsBlock)}
+                    </h3>
                   </div>
-                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '0.96rem', margin: 0 }}>
-                    {item.block ? pickDesc(item.block) : item.descFallback}
+                  <p style={{ color: 'var(--text-on-dark-muted)', lineHeight: 1.8, fontSize: '0.98rem', margin: 0 }}>
+                    {pickDesc(whyUsBlock)}
                   </p>
                 </div>
-              );
-            })}
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ── PRINCIPLES ── */}
-      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{principlesSectionTag}</span>
-            <h2 className="section-title">
-              {principlesSectionTitle}
-            </h2>
-            <p className="section-subtitle">
-              {principlesSectionSubtitle}
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.5rem' }}>
-            {principlesBlocks.length > 0 ? principlesBlocks.map((block, idx) => {
-              const Icon = getIcon(block.icon);
-              return (
-                <div key={block.id} className="principle-card">
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                      <span className="principle-num">{String(idx + 1).padStart(2, '0')}</span>
+      {/* ── VISION & MISSION ── */}
+      {hasVisionMission && (
+        <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+          <div className="container">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem' }}>
+              {[
+                visionBlock ? { block: visionBlock, icon: Target, color: 'var(--color-primary-900)' } : null,
+                missionBlock ? { block: missionBlock, icon: Compass, color: 'var(--color-gold-700)' } : null,
+              ].filter(Boolean).map((item: any, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div key={idx} className="card-institutional" style={{ borderTop: `4px solid ${item.color}` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
                       <div
                         style={{
-                          width: '40px',
-                          height: '40px',
+                          width: '44px',
+                          height: '44px',
+                          background: 'rgba(181, 146, 84, 0.12)',
                           borderRadius: 'var(--radius-md)',
-                          backgroundColor: 'rgba(181, 146, 84, 0.12)',
-                          color: 'var(--color-gold-700)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                         }}
                       >
-                        <Icon size={20} />
+                        <Icon size={22} style={{ color: item.color }} />
                       </div>
+                      <h2 style={{ fontWeight: 900, fontSize: '1.25rem', color: 'var(--text-primary)', margin: 0 }}>
+                        {pickTitle(item.block)}
+                      </h2>
                     </div>
-                    <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.45rem', lineHeight: 1.4 }}>
-                      {pickTitle(block)}
-                    </h3>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.7, margin: 0 }}>
-                      {pickDesc(block)}
+                    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '0.96rem', margin: 0 }}>
+                      {pickDesc(item.block)}
                     </p>
                   </div>
-                </div>
-              );
-            }) : (
-              [t.pillar1, t.pillar2, t.pillar3, t.pillar4, t.pillar5, t.pillar6].map((val, i) => (
-                <div key={i} className="principle-card">
-                  <span className="principle-num">{String(i + 1).padStart(2, '0')}</span>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7, margin: 0 }}>{val}</p>
-                </div>
-              ))
-            )}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ── STRATEGIC GOALS ── */}
-      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.goalsTitle}</span>
-            <h2 className="section-title">
-              {t.goalsTitle}
-            </h2>
-            <p className="section-subtitle">
-              {goalsSubtitle}
-            </p>
-          </div>
+      {/* ── PRINCIPLES ── */}
+      {hasPrinciples && (
+        <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{principlesSectionTag}</span>
+              <h2 className="section-title">
+                {principlesSectionTitle}
+              </h2>
+              <p className="section-subtitle">
+                {principlesSectionSubtitle}
+              </p>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem' }}>
-            {(goalsBlocks.length > 0 ? goalsBlocks : []).map((block, idx) => (
-              <div
-                key={block.id}
-                className="card-institutional"
-                style={{
-                  display: 'flex',
-                  gap: '1rem',
-                  padding: '1.25rem 1.5rem',
-                  alignItems: 'flex-start',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-en)',
-                    fontSize: '1.15rem',
-                    fontWeight: 900,
-                    color: 'var(--color-gold-700)',
-                    flexShrink: 0,
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {String(idx + 1).padStart(2, '0')}.
-                </span>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.75, margin: 0 }}>
-                  {pickDesc(block)}
-                </p>
-              </div>
-            ))}
-            {goalsBlocks.length === 0 && fallbackGoals.map((goal, idx) => (
-              <div
-                key={idx}
-                className="card-institutional"
-                style={{
-                  display: 'flex',
-                  gap: '1rem',
-                  padding: '1.25rem 1.5rem',
-                  alignItems: 'flex-start',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-en)',
-                    fontSize: '1.15rem',
-                    fontWeight: 900,
-                    color: 'var(--color-gold-700)',
-                    flexShrink: 0,
-                  }}
-                >
-                  {String(idx + 1).padStart(2, '0')}.
-                </span>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.75, margin: 0 }}>{goal}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── ACTIVITY FIELDS ── */}
-      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.servicesSectionTitle}</span>
-            <h2 className="section-title">
-              {t.servicesSectionTitle}
-            </h2>
-            <p className="section-subtitle">{t.servicesSectionSubtitle}</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.5rem' }}>
-            {activityBlocks.map((block, idx) => {
-              const Icon = getIcon(block.icon);
-              return (
-                <Link key={block.id} href={block.link || '/services'} style={{ textDecoration: 'none' }}>
-                  <div className="service-card">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.5rem' }}>
+              {principlesBlocks.map((block, idx) => {
+                const Icon = getIcon(block.icon);
+                return (
+                  <div key={block.id} className="principle-card">
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem' }}>
-                        <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-700)' }}>
-                          {String(idx + 1).padStart(2, '0')}
-                        </span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span className="principle-num">{String(idx + 1).padStart(2, '0')}</span>
                         <div
                           style={{
                             width: '40px',
                             height: '40px',
                             borderRadius: 'var(--radius-md)',
-                            backgroundColor: 'var(--color-primary-50)',
-                            color: 'var(--color-primary-900)',
+                            backgroundColor: 'rgba(181, 146, 84, 0.12)',
+                            color: 'var(--color-gold-700)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -370,116 +276,207 @@ export default function AboutClientPage({ initialContent }: Props) {
                           <Icon size={20} />
                         </div>
                       </div>
-                      <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.65rem', lineHeight: 1.4 }}>
+                      <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.45rem', lineHeight: 1.4 }}>
                         {pickTitle(block)}
                       </h3>
-                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.65, margin: 0 }}>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.7, margin: 0 }}>
                         {pickDesc(block)}
                       </p>
                     </div>
-
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                        fontSize: '0.85rem',
-                        fontWeight: 700,
-                        color: 'var(--color-primary-800)',
-                        paddingTop: '0.85rem',
-                        marginTop: '1.25rem',
-                        borderTop: '1px solid var(--border-subtle)',
-                      }}
-                    >
-                      <span>{isAr ? 'عرض التفاصيل' : 'View Details'}</span>
-                      <ArrowIcon size={14} />
-                    </div>
                   </div>
-                </Link>
-              );
-            })}
-            {activityBlocks.length === 0 && [
-              { title: t.field1Title, desc: t.field1Desc, href: '/services#guarding-protective-security' },
-              { title: t.field2Title, desc: t.field2Desc, href: '/services#field-monitoring-early-warning' },
-              { title: t.field3Title, desc: t.field3Desc, href: '/services#field-studies-analysis-monitoring' },
-              { title: t.field4Title, desc: t.field4Desc, href: '/services#training-capacity-coordination' },
-              { title: t.field5Title, desc: t.field5Desc, href: '/services#safety-systems-equipment' },
-            ].map((f, i) => (
-              <Link key={i} href={f.href} style={{ textDecoration: 'none' }}>
-                <div className="service-card">
-                  <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-700)', display: 'block', marginBottom: '0.75rem' }}>{String(i + 1).padStart(2, '0')}</span>
-                  <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.65rem' }}>{f.title}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
-                </div>
-              </Link>
-            ))}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ── OPERATIONAL LIFECYCLE ── */}
-      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.lifecycleTitle}</span>
-            <h2 className="section-title">{t.lifecycleTitle}</h2>
-            <p className="section-subtitle">{t.lifecycleSubtitle}</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem' }}>
-            {lifecycleBlocks.map((block, idx) => (
-              <div key={block.id} className="card-institutional" style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start', padding: '1.25rem' }}>
-                <span
+      {/* ── STRATEGIC GOALS ── */}
+      {hasGoals && (
+        <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{t.goalsTitle}</span>
+              <h2 className="section-title">
+                {t.goalsTitle}
+              </h2>
+              <p className="section-subtitle">
+                {goalsSubtitle}
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem' }}>
+              {goalsBlocks.map((block, idx) => (
+                <div
+                  key={block.id}
+                  className="card-institutional"
                   style={{
-                    width: '34px',
-                    height: '34px',
-                    background: 'var(--color-primary-900)',
-                    color: '#fff',
-                    borderRadius: '50%',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.85rem',
-                    fontWeight: 800,
-                    flexShrink: 0,
-                    fontFamily: 'var(--font-en)',
+                    gap: '1rem',
+                    padding: '1.25rem 1.5rem',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  {idx + 1}
-                </span>
-                <div>
-                  <h4 style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)', margin: '0 0 0.35rem' }}>{pickTitle(block)}</h4>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.65, margin: 0 }}>{pickDesc(block)}</p>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-en)',
+                      fontSize: '1.15rem',
+                      fontWeight: 900,
+                      color: 'var(--color-gold-700)',
+                      flexShrink: 0,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {String(idx + 1).padStart(2, '0')}.
+                  </span>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.75, margin: 0 }}>
+                    {pickDesc(block)}
+                  </p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ── ACTIVITY FIELDS ── */}
+      {hasActivities && (
+        <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{t.servicesSectionTitle}</span>
+              <h2 className="section-title">
+                {t.servicesSectionTitle}
+              </h2>
+              <p className="section-subtitle">{t.servicesSectionSubtitle}</p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.5rem' }}>
+              {activityBlocks.map((block, idx) => {
+                const Icon = getIcon(block.icon);
+                return (
+                  <Link key={block.id} href={block.link || '/services'} style={{ textDecoration: 'none' }}>
+                    <div className="service-card">
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem' }}>
+                          <span style={{ fontFamily: 'var(--font-en)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--color-gold-700)' }}>
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <div
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: 'var(--radius-md)',
+                              backgroundColor: 'var(--color-primary-50)',
+                              color: 'var(--color-primary-900)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <Icon size={20} />
+                          </div>
+                        </div>
+                        <h3 style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.65rem', lineHeight: 1.4 }}>
+                          {pickTitle(block)}
+                        </h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', lineHeight: 1.65, margin: 0 }}>
+                          {pickDesc(block)}
+                        </p>
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 700,
+                          color: 'var(--color-primary-800)',
+                          paddingTop: '0.85rem',
+                          marginTop: '1.25rem',
+                          borderTop: '1px solid var(--border-subtle)',
+                        }}
+                      >
+                        <span>{isAr ? 'عرض التفاصيل' : 'View Details'}</span>
+                        <ArrowIcon size={14} />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── OPERATIONAL LIFECYCLE ── */}
+      {hasLifecycle && (
+        <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{t.lifecycleTitle}</span>
+              <h2 className="section-title">{t.lifecycleTitle}</h2>
+              <p className="section-subtitle">{t.lifecycleSubtitle}</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem' }}>
+              {lifecycleBlocks.map((block, idx) => (
+                <div key={block.id} className="card-institutional" style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start', padding: '1.25rem' }}>
+                  <span
+                    style={{
+                      width: '34px',
+                      height: '34px',
+                      background: 'var(--color-primary-900)',
+                      color: '#fff',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.85rem',
+                      fontWeight: 800,
+                      flexShrink: 0,
+                      fontFamily: 'var(--font-en)',
+                    }}
+                  >
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <h4 style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)', margin: '0 0 0.35rem' }}>{pickTitle(block)}</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.65, margin: 0 }}>{pickDesc(block)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── ORGANIZATIONAL STRUCTURE ── */}
-      <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
-        <div className="container">
-          <div className="section-title-wrap">
-            <span className="section-tag">{t.orgStructureTitle}</span>
-            <h2 className="section-title">{t.orgStructureTitle}</h2>
-            <p className="section-subtitle">{t.orgStructureSubtitle}</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
-            {orgBlocks.map((block) => (
-              <div key={block.id} className="card-institutional" style={{ padding: '1.4rem', borderInlineStart: '4px solid var(--color-gold-500)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.65rem' }}>
-                  <Layers size={18} style={{ color: 'var(--color-primary-900)', flexShrink: 0 }} />
-                  <h4 style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--text-primary)', margin: 0 }}>{pickTitle(block)}</h4>
+      {hasOrg && (
+        <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
+          <div className="container">
+            <div className="section-title-wrap">
+              <span className="section-tag">{t.orgStructureTitle}</span>
+              <h2 className="section-title">{t.orgStructureTitle}</h2>
+              <p className="section-subtitle">{t.orgStructureSubtitle}</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
+              {orgBlocks.map((block) => (
+                <div key={block.id} className="card-institutional" style={{ padding: '1.4rem', borderInlineStart: '4px solid var(--color-gold-500)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.65rem' }}>
+                    <Layers size={18} style={{ color: 'var(--color-primary-900)', flexShrink: 0 }} />
+                    <h4 style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--text-primary)', margin: 0 }}>{pickTitle(block)}</h4>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.65, margin: 0 }}>{pickDesc(block)}</p>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.65, margin: 0 }}>{pickDesc(block)}</p>
-              </div>
-            ))}
+              ))}
+            </div>
+            <p style={{ marginTop: '2rem', color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', fontStyle: 'italic' }}>
+              {t.orgStructureNote}
+            </p>
           </div>
-          <p style={{ marginTop: '2rem', color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', fontStyle: 'italic' }}>
-            {t.orgStructureNote}
-          </p>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── CTA ── */}
       <section
