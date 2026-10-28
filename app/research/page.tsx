@@ -96,7 +96,7 @@ export default async function ResearchPage() {
       <section className="section" style={{ backgroundColor: 'var(--surface-bg)' }}>
         <div className="container">
           {publications.length === 0 ? (
-            <div className="card-institutional" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
+            <div className="card-institutional" style={{ padding: '2.5rem 2rem', textAlign: 'center', maxWidth: '640px', marginInline: 'auto' }}>
               <FileText size={44} style={{ color: 'var(--text-muted)', marginInline: 'auto', marginBottom: '1rem' }} />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
                 {locale === 'ar' ? 'لا توجد دراسات أو تقارير منشورة حالياً' : 'No publications currently available'}

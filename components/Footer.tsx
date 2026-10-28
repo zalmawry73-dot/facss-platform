@@ -64,8 +64,8 @@ export default function Footer({
   const address = isAr ? (contactAddressAr || 'العاصمة عدن، الجمهورية اليمنية') : (contactAddressEn || 'Aden Capital, Republic of Yemen');
   const email = contactEmail || 'info@facss.org';
 
-  const brandPrimary = (locale === 'ar' ? brandData?.primaryAr : brandData?.primaryEn) || (locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center');
-  const brandSecondary = (locale === 'ar' ? brandData?.secondaryAr : brandData?.secondaryEn) || (locale === 'ar' ? 'للأمن والسلامة' : 'for Safety and Security');
+  const brandPrimary = (locale === 'ar' ? brandData?.primaryAr : brandData?.primaryEn) || (locale === 'ar' ? 'المركز المتكامل لخدمات الأمن والسلامة' : 'Integrated Center for Security, Safety');
+  const brandSecondary = (locale === 'ar' ? brandData?.secondaryAr : brandData?.secondaryEn) || (locale === 'ar' ? 'والدراسات الميدانية' : '& Field Studies');
   const sloganText = (locale === 'ar' ? footerData?.sloganAr : footerData?.sloganEn) || t.slogan;
   const footerAboutText = (locale === 'ar' ? footerData?.aboutAr : footerData?.aboutEn) || t.footerAbout;
   const footerRightsText = (locale === 'ar' ? footerData?.rightsAr : footerData?.rightsEn) || t.footerRights;

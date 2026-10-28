@@ -33,7 +33,7 @@ async function main() {
   const settings = [
     { key: 'site_name_ar', value: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية', category: 'GENERAL' },
     { key: 'site_name_en', value: 'Integrated Center for Security, Safety & Field Studies', category: 'GENERAL' },
-    { key: 'site_acronym', value: 'ICSSS', category: 'GENERAL' },
+    { key: 'site_acronym', value: 'FACSS', category: 'GENERAL' },
     { key: 'slogan_ar', value: '«السلامة أولاً»', category: 'BRANDING' },
     { key: 'slogan_en', value: '“Safety First”', category: 'BRANDING' },
     { key: 'subtitle_ar', value: 'منظومة مهنية متكاملة لخدمات الحراسات الأمنية، الرصد الميداني والتنبيه المبكر، الدراسات والتحليلات، التدريب والتأهيل، وأنظمة وتجهيزات السلامة.', category: 'BRANDING' },

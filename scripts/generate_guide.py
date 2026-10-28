@@ -1,0 +1,1525 @@
+# -*- coding: utf-8 -*-
+"""
+Script to generate the updated, completely accurate FACSS Admin Operational Guide.
+Reflects the actual Sidebar + Topbar layout, the 7 navigation groups, and all real active features across all 11 chapters.
+"""
+
+import os
+import sys
+
+html_content = """<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدليل التشغيلي الشامل لإدارة منصة FACSS — النسخة المعتمدة المحدثة</title>
+  <style>
+    :root {
+      --primary: #0A192F;
+      --primary-dark: #020C1B;
+      --primary-light: #172A45;
+      --gold: #C5A880;
+      --gold-dark: #9E7D47;
+      --gold-light: #F4EBD9;
+      --accent-green: #10B981;
+      --accent-blue: #2563EB;
+      --accent-red: #EF4444;
+      --accent-amber: #F59E0B;
+      --surface-bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(10,25,47,0.06);
+      --shadow-lg: 0 10px 25px rgba(10,25,47,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      background-color: var(--surface-bg);
+      color: var(--text-main);
+      line-height: 1.8;
+      padding-bottom: 5rem;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    .guide-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #FFFFFF;
+      padding: 3.5rem 0 3rem;
+      border-bottom: 4px solid var(--gold);
+      position: relative;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(197, 168, 128, 0.2);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      padding: 0.35rem 1rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .guide-header h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1.35;
+      margin-bottom: 0.75rem;
+      color: #FFFFFF;
+    }
+
+    .guide-header .subtitle {
+      font-size: 1.1rem;
+      color: #94A3B8;
+      max-width: 900px;
+      line-height: 1.7;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.9rem;
+      color: #CBD5E1;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-item strong {
+      color: var(--gold);
+    }
+
+    /* Layout with Sidebar Navigation */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 992px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .toc-sidebar {
+      position: sticky;
+      top: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toc-sidebar h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--gold-light);
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-left: 0.25rem;
+    }
+
+    .toc-list a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      display: block;
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+      line-height: 1.4;
+    }
+
+    .toc-list a:hover {
+      background: var(--surface-bg);
+      color: var(--primary);
+      font-weight: 700;
+      padding-right: 0.85rem;
+    }
+
+    /* Content Cards and Sections */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .chapter-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chapter-tag {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chapter-title {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      line-height: 1.35;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter-intro {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* Subsections */
+    .section-block {
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .section-block:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Steps List */
+    .steps-list {
+      list-style: none;
+      counter-reset: step-counter;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      margin: 1.25rem 0;
+    }
+
+    .steps-list li {
+      counter-increment: step-counter;
+      position: relative;
+      padding-right: 3.25rem;
+      font-size: 0.96rem;
+    }
+
+    .steps-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 2.25rem;
+      height: 2.25rem;
+      background: var(--gold-light);
+      color: var(--gold-dark);
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      border: 1px solid var(--gold);
+    }
+
+    .steps-list strong {
+      color: var(--primary);
+    }
+
+    /* Alert Boxes */
+    .alert-box {
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin: 1.25rem 0;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .alert-info {
+      background: #EFF6FF;
+      border-right: 4px solid var(--accent-blue);
+      color: #1E40AF;
+    }
+
+    .alert-warning {
+      background: #FFFBEB;
+      border-right: 4px solid var(--accent-amber);
+      color: #92400E;
+    }
+
+    .alert-success {
+      background: #ECFDF5;
+      border-right: 4px solid var(--accent-green);
+      color: #065F46;
+    }
+
+    .alert-title {
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Tables */
+    .data-table-wrap {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    .data-table th {
+      background: var(--surface-bg);
+      color: var(--primary);
+      font-weight: 800;
+      padding: 0.85rem 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+      background-color: #F8FAFC;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-published {
+      background: #DEF7EC;
+      color: #03543F;
+    }
+
+    .badge-draft {
+      background: #F3F4F6;
+      color: #374151;
+    }
+
+    .badge-protected {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    /* Field Matrix Cards */
+    .field-card {
+      background: var(--surface-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .field-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .field-card-name {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .field-card-req {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .req-required {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .req-optional {
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    .field-card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: var(--surface-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+    }
+
+    .checklist-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--gold);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      background: #FFFFFF;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .feature-card {
+      background: var(--surface-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+    }
+
+    .feature-card-title {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 0.98rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .feature-card-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: Consolas, 'Courier New', monospace;
+      background: #EEF2F6;
+      color: #0F172A;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.88em;
+      border: 1px solid #E2E8F0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="guide-header">
+    <div class="container">
+      <div class="header-badge">الوثيقة التشغيلية المعتمدة v2.5 — الإصدار الإنتاجي الحقيقي</div>
+      <h1>الدليل التشغيلي الشامل لإدارة منصة FACSS</h1>
+      <p class="subtitle">
+        المرجع الإداري والتقني الشامل لقيادة المركز والمدير العام والمشرفين: توثيق دقيق ومطابق للشاشات الحية للوحة الإدارة، القائمة الجانبية (Sidebar)، والشريط العلوي (Topbar)، وكافة الوحدات التشغيلية.
+      </p>
+      <div class="meta-bar">
+        <div class="meta-item">
+          <strong>الجهة المالكة:</strong> المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية (FACSS)
+        </div>
+        <div class="meta-item">
+          <strong>المستهدفون:</strong> المدير العام (SUPER_ADMIN)، مديرو الأقسام، والمشرفون الميدانيون
+        </div>
+        <div class="meta-item">
+          <strong>المعمارية المعتمدة:</strong> القائمة الجانبية الرأسية الموحدة (AdminShell + Sidebar + Topbar)
+        </div>
+        <div class="meta-item">
+          <strong>حالة المنظومة:</strong> جاهزة للتشغيل المؤسسي
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY -->
+  <div class="container">
+    <div class="main-layout">
+
+      <!-- STICKY TABLE OF CONTENTS -->
+      <aside class="toc-sidebar">
+        <h3>فهرس فصول الدليل</h3>
+        <ul class="toc-list">
+          <li><a href="#ch1">الفصل 1: البدء، تسجيل الدخول وهيكل اللوحة</a></li>
+          <li><a href="#ch2">الفصل 2: إدارة الصفحة الرئيسية والمحتوى</a></li>
+          <li><a href="#ch3">الفصل 3: إدارة صفحة «عن المركز» والهوية</a></li>
+          <li><a href="#ch4">الفصل 4: مجالات النشاط والخدمات والطلبات</a></li>
+          <li><a href="#ch5">الفصل 5: أكاديمية التدريب وبناء القدرات</a></li>
+          <li><a href="#ch6">الفصل 6: إدارة الدراسات والأبحاث الميدانية</a></li>
+          <li><a href="#ch7">الفصل 7: إدارة المستخدمين والصلاحيات (RBAC)</a></li>
+          <li><a href="#ch8">الفصل 8: العمليات والمعدات والمخاطر والرقابة</a></li>
+          <li><a href="#ch9">الفصل 9: ضوابط رفع وإدارة الملفات</a></li>
+          <li><a href="#ch10">الفصل 10: دليل تشخيص وحل المشكلات</a></li>
+          <li><a href="#ch11">الفصل 11: قائمة التحقق قبل التدشين</a></li>
+        </ul>
+      </aside>
+
+      <!-- CONTENT PANELS -->
+      <main class="content-area">
+
+        <!-- CHAPTER 1 -->
+        <article id="ch1" class="chapter-card">
+          <span class="chapter-tag">الفصل الأول</span>
+          <h2 class="chapter-title">البدء باستخدام المنصة، تسجيل الدخول، وهيكل لوحة الإدارة الحقيقي</h2>
+          <p class="chapter-intro">
+            يرشدك هذا الفصل إلى كيفية الوصول الآمن إلى لوحة التحكم الإدارية، والتعرف بدقة على الهيكل الحقيقي الفعلي للواجهة: الشريط العلوي (Topbar)، القائمة الجانبية الرأسية (Sidebar)، وبطاقات لوحة المؤشرات (Dashboard Overview).
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">1.1 طريقة فتح المنصة وتسجيل الدخول بحساب المدير العام</h3>
+            <ol class="steps-list">
+              <li>
+                <strong>فتح المتصفح والانتقال للرابط:</strong>
+                افتح متصفح الويب المعتمد (مثل Google Chrome أو Microsoft Edge) وتوجه إلى الرابط الرئيسي للمنصة <code>http://localhost:3000</code> أو الرابط المعتمد لخادمكم.
+              </li>
+              <li>
+                <strong>الانتقال لصفحة تسجيل الدخول:</strong>
+                اضغط على زر <strong>«تسجيل الدخول»</strong> في أعلى يسار شريط الموقع العام، أو توجه مباشرة إلى الرابط <code>/login</code>.
+              </li>
+              <li>
+                <strong>إدخال البريد الإلكتروني للمدير:</strong>
+                في حقل البريد الإلكتروني، أدخل البريد المعتمد حصراً: <code>admin@facss-aden.com</code>.
+              </li>
+              <li>
+                <strong>إدخال كلمة المرور السرية:</strong>
+                أدخل كلمة المرور الخاصة بحساب المدير العام التي تم تسليمها لك ضمن بطاقة الاعتماد الآمنة، ثم اضغط <strong>«تسجيل الدخول»</strong>.
+              </li>
+              <li>
+                <strong>التحقق من الدخول والواجهة الحقيقية:</strong>
+                بمجرد نجاح المصادقة، سيتم تحويلك تلقائياً إلى لوحة التحكم الإدارية على الرابط <code>/admin</code>.
+              </li>
+            </ol>
+
+            <div class="alert-box alert-warning">
+              <div class="alert-title">تنبيه أمني هام</div>
+              حساب المدير العام يملك صلاحيات شاملة ومطلقة (Universal Privileges). يتميز بتجاوز قيود الصلاحيات المحدودة لكافة الأقسام، ولذلك يجب حماية كلمة المرور وعدم مشاركتها مع أي جهة، وقفل شاشة الجهاز عند مغادرة مكتب العمل.
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">1.2 الهيكل الفعلي للوحة الإدارة: شريط الأدوات العلوي (Admin Topbar)</h3>
+            <p>
+              على عكس الأنظمة التقليدية، لا يحتوي الجزء العلوي على شريط أزرار تنقل عريضة، بل هو <strong>شريط أدوات ورقابة علوي ذكي (Admin Topbar)</strong> يتضمن العناصر التالية (كما هو ظاهر في أعلى شاشتك):
+            </p>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <div class="feature-card-title">زر طي / توسيع القائمة (Sidebar Toggle)</div>
+                <div class="feature-card-desc">أيقونة في يمين الشريط العلوي تتيح لك طي القائمة الجانبية لتوفير مساحة عمل واسعة عند استعراض الجداول الكبيرة، أو إعادة توسيعها.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">مسار الصفحة التفاعلي (Dynamic Breadcrumbs)</div>
+                <div class="feature-card-desc">يعرض لك تلقائياً موقعك الحالي بدقة داخل المنظومة (مثل: لوحة الإدارة > الخدمات والاستشارات > دليل الخدمات) مع روابط سريعة للرجوع.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">معاينة الموقع العام (View Site)</div>
+                <div class="feature-card-desc">زر يفتح واجهة الموقع العامة في تبويب جديد لتفقد أثر التعديلات والبيانات المنشورة فوراً كما يراها زوار وعملاء المركز.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">جرس الإشعارات والتنبيهات اللحظية</div>
+                <div class="feature-card-desc">يقوم بتنبيهك لحظياً بأي بلاغات ميدانية طارئة واردة، أو طلبات خدمات جديدة تحتاج اعتماداً.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">محول لغة الواجهة (EN / العربية)</div>
+                <div class="feature-card-desc">زر التبديل السريع بين الواجهة العربية (RTL) والواجهة الإنجليزية (LTR) للوحة الإدارة بالكامل.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">شارة وبيانات المدير العام</div>
+                <div class="feature-card-desc">شارة ترحيبية تحمل اسم: «المدير العام — المركز المتكامل لخدمات الأمن والسلامة» وبجانبها وسم الرتبة باللون الذهبي المميز: <code>SUPER ADMIN</code>.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">تغيير كلمة المرور وتأمين الحساب</div>
+                <div class="feature-card-desc">زر <strong>«كلمة المرور»</strong> ينقلك مباشرة للرابط <code>/admin/change-password</code> لتحديث بيانات المرور دورياً.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">تسجيل الخروج الآمن (Log Out)</div>
+                <div class="feature-card-desc">زر <strong>«خروج»</strong> ذو اللون الأحمر في أقصى يسار الشريط لإبطال الجلسة المشفرة فوراً وحذف كوكيز المصادقة بأمان.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">1.3 الهيكل الفعلي للتنقل: القائمة الجانبية الرأسية (Admin Sidebar)</h3>
+            <p>
+              يتم التنقل بين كافة قطاعات المنظومة حصراً عبر <strong>القائمة الجانبية الرأسية الخضراء الداكنة (Sidebar)</strong> الثابتة على يمين الشاشة. تنقسم هذه القائمة بدقة واحترافية إلى <strong>7 مجموعات تشغيلية كبرى</strong>:
+            </p>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 25%;">المجموعة التشغيلية</th>
+                    <th style="width: 30%;">العناصر والروابط الداخلية</th>
+                    <th style="width: 25%;">مسار الرابط (URL)</th>
+                    <th style="width: 20%;">الصلاحية المطلوبة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1. المؤشرات الرئيسية</strong></td>
+                    <td>لوحة المؤشرات (نظرة شاملة ولحظية على KPIs)</td>
+                    <td><code>/admin</code></td>
+                    <td>متاحة لكافة الكادر الإداري</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3"><strong>2. العمليات الميدانية والإنذار</strong></td>
+                    <td>البلاغات الميدانية</td>
+                    <td><code>/admin/incidents</code></td>
+                    <td>التحقق وتحليل البلاغات</td>
+                  </tr>
+                  <tr>
+                    <td>التنبيهات الميدانية</td>
+                    <td><code>/admin/alerts</code></td>
+                    <td>صياغة واعتماد التنبيهات</td>
+                  </tr>
+                  <tr>
+                    <td>سجل المخاطر التشغيلية</td>
+                    <td><code>/admin/risks</code></td>
+                    <td>إدارة سجل المخاطر</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3"><strong>3. الخدمات والاستشارات</strong></td>
+                    <td>دليل الخدمات المؤسسية</td>
+                    <td><code>/admin/services</code></td>
+                    <td>إدارة الخدمات والمحتوى</td>
+                  </tr>
+                  <tr>
+                    <td>طلبات الخدمات</td>
+                    <td><code>/admin/requests</code></td>
+                    <td>إدارة طلبات العملاء</td>
+                  </tr>
+                  <tr>
+                    <td>المعدات والمخزون</td>
+                    <td><code>/admin/equipment</code></td>
+                    <td>إدارة المعدات والمخازن</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4. أكاديمية التدريب وبناء القدرات</strong></td>
+                    <td>إدارة التدريب والدورات (8 تبويبات تخصصية)</td>
+                    <td><code>/admin/training</code></td>
+                    <td>إدارة شؤون التدريب</td>
+                  </tr>
+                  <tr>
+                    <td><strong>5. الدراسات والأبحاث الميدانية</strong></td>
+                    <td>الدراسات والأبحاث (النشر وأذونات الوصول)</td>
+                    <td><code>/admin/research</code></td>
+                    <td>إدارة الدراسات والبحوث</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="6"><strong>6. إدارة وتشغيل المنظومة</strong></td>
+                    <td>مركز تشغيل المنظومة</td>
+                    <td><code>/admin/system</code></td>
+                    <td>إدارة النظام والرقابة</td>
+                  </tr>
+                  <tr>
+                    <td>رسائل واستفسارات التواصل</td>
+                    <td><code>/admin/messages</code></td>
+                    <td>إدارة الرسائل والاستفسارات</td>
+                  </tr>
+                  <tr>
+                    <td>المستخدمون والصلاحيات</td>
+                    <td><code>/admin/users</code></td>
+                    <td>إدارة المستخدمين و RBAC</td>
+                  </tr>
+                  <tr>
+                    <td>إدارة المحتوى المؤسسي</td>
+                    <td><code>/admin/content</code></td>
+                    <td>إدارة محتوى CMS</td>
+                  </tr>
+                  <tr>
+                    <td>إعدادات النظام والتواصل</td>
+                    <td><code>/admin/settings</code></td>
+                    <td>إدارة الإعدادات والـ SLA</td>
+                  </tr>
+                  <tr>
+                    <td>سجل الرقابة والتدقيق</td>
+                    <td><code>/admin/logs</code></td>
+                    <td>الاطلاع على سجلات التدقيق</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert-box alert-info">
+              <div class="alert-title">ميزة الفلترة التلقائية للصلاحيات (RBAC Auto-Gating)</div>
+              بصفتك مديراً عاماً (SUPER ADMIN)، تظهر لك كافة المجموعات السبع والروابط كاملة. أما إذا دخل مستخدم برتبة أقل (مثل مدير تدريب أو مسؤول اتصالات)، فإن القائمة الجانبية تُخفي تلقائياً أي أقسام لا يملك صلاحية الوصول إليها لتجنب التشتت ومنع الوصول غير المصرح.
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">1.4 مكونات لوحة المؤشرات الرئيسية (Dashboard Overview)</h3>
+            <p>عند فتح اللوحة على الرابط <code>/admin</code>، تظهر لك واجهة المؤشرات المتكاملة المنظمة كالتالي:</p>
+            <ul style="margin: 0.75rem 1.5rem 1.25rem; font-size: 0.95rem;">
+              <li><strong>محدد النطاق الزمني:</strong> أزرار للفلترة اللحظية: [اليوم]، [آخر 7 أيام]، [آخر 30 يوماً]، أو [نطاق مخصص...].</li>
+              <li><strong>العمليات والطلبات التي تتطلب إجراءً:</strong> بطاقات تنبيهية عاجلة توضح: الطلبات الجديدة بحاجة لمراجعة، الطلبات النشطة قيد المتابعة، تسجيلات المتدربين المعلقة، والرسائل غير المقروءة.</li>
+              <li><strong>مؤشرات اتفاقيات مستوى الخدمة (SLA):</strong> رصد فوري لنسبة الامتثال للمهلة، حالات خرق المهلة (Breached SLA)، والبلاغات الطارئة والحرجة.</li>
+              <li><strong>سجل العمليات والرقابة اللحظي:</strong> جدول يعرض أحدث حركات الدخول والتعديلات المنفذة في المنظومة مع اسم المستخدم، الرتبة، وتوقيت الإجراء.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- CHAPTER 2 -->
+        <article id="ch2" class="chapter-card">
+          <span class="chapter-tag">الفصل الثاني</span>
+          <h2 class="chapter-title">إدارة الصفحة الرئيسية وتنسيق واجهتها المؤسسية</h2>
+          <p class="chapter-intro">
+            تمت تهيئة الصفحة الرئيسية لتبدأ بهيكل نظيف ومؤسسي خالٍ من أي بيانات تجريبية مشوهة. يشرح هذا الفصل كيفية إضافة وتخصيص عناصرها عبر واجهة إدارة المحتوى المؤسسي CMS.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">2.1 الوصول لإدارة محتوى الصفحة الرئيسية</h3>
+            <ol class="steps-list">
+              <li>من القائمة الجانبية (Sidebar) على اليمين، انزل إلى مجموعة <strong>«إدارة وتشغيل المنظومة»</strong>.</li>
+              <li>اضغط على رابط <strong>«إدارة المحتوى المؤسسي»</strong> (أو ادخل مباشرة للرابط <code>/admin/content</code>).</li>
+              <li>في شريط التبويبات العلوي لإدارة المحتوى، اختر تبويب <strong>«الصفحة الرئيسية (homepage)»</strong>.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">2.2 تخصيص العنوان الرئيسي والعنوان الفرعي (Hero Section)</h3>
+            <p>تجد في تبويب الصفحة الرئيسية عنصرين رئيسيين يتم التحكم فيهما بكل سهولة:</p>
+            
+            <div class="field-card">
+              <div class="field-card-header">
+                <span class="field-card-name">1. العنوان الرئيسي لصدر الصفحة (hero_headline)</span>
+                <span class="field-card-req req-required">أساسي وإلزامي</span>
+              </div>
+              <p class="field-card-desc">
+                اضغط على زر <strong>«تعديل»</strong> ذو أيقونة القلم. في حقل «الوصف بالعربية»، اكتب العنوان البارز الذي يظهر في صدر الصفحة الرئيسية (مثال: «الريادة الميدانية في خدمات الأمن والسلامة والحلول الاستشارية المتكاملة»). وفي حقل «الوصف بالإنجليزية»، أدخل الترجمة الرسمية المعتمدة. ثم اضغط <strong>«حفظ التغييرات»</strong>.
+              </p>
+            </div>
+
+            <div class="field-card">
+              <div class="field-card-header">
+                <span class="field-card-name">2. العنوان الفرعي والفقرة التوضيحية (hero_subtitle)</span>
+                <span class="field-card-req req-required">أساسي وإلزامي</span>
+              </div>
+              <p class="field-card-desc">
+                اضغط على زر <strong>«تعديل»</strong>. في حقل «الوصف بالعربية»، أدخل الفقرة التوضيحية لنشاط المركز ومنهجية عمله القائمة على الوقاية أولاً والرصد الاستباقي. اضغط <strong>«حفظ التغييرات»</strong> لتنعكس التعديلات فوراً على الواجهة العامة.
+              </p>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">2.3 إضافة شارات الثقة والمحاور المؤسسية (Hero Badges)</h3>
+            <p>
+              لإظهار شريط الشارات المصغر أسفل أزرار الصفحة الرئيسية (مثل: الحراسات الوقائية، الرصد والإنذار المبكر، بناء القدرات الميدانية)، اتبع الخطوات التالية:
+            </p>
+            <ol class="steps-list">
+              <li>اضغط زر <strong>«إضافة عنصر جديد»</strong> في تبويب الصفحة الرئيسية.</li>
+              <li>في حقل المفتاح (Key)، اكتب بالتسلسل: <code>hero_badge_1</code> أو <code>hero_badge_2</code> أو <code>hero_badge_3</code>.</li>
+              <li>في حقل «العنوان بالعربية»، اكتب عنوان الشارة (مثال: «الحماية الوقائية للمنشآت»).</li>
+              <li>في حقل «الوصف»، اكتب توضيحاً موجزاً، وفي حقل «الأيقونة (Icon)»، اختر اسماً معتمداً مثل <code>ShieldAlert</code> أو <code>Compass</code> أو <code>GraduationCap</code>.</li>
+              <li>اضغط <strong>«إضافة العنصر»</strong>. تظهر الشارة فوراً في واجهة الموقع العام.</li>
+            </ol>
+            <div class="alert-box alert-info">
+              <div class="alert-title">قاعدة النظافة البرمجية للموقع</div>
+              في حال عدم وجود أي شارة مضافة في قاعدة البيانات، لا يظهر شريط فارغ مشوه في الصفحة الرئيسية، بل يتم إخفاء الشريط بالكامل تلقائياً للحفاظ على هيبة ومظهر الواجهة.
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">2.4 نظرة عامة على الأقسام التسعة لإدارة المحتوى (CMS Sections)</h3>
+            <p>تحتوي صفحة <code>/admin/content</code> على 9 تبويبات منظمة تغطي كافة أرجاء الموقع:</p>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <div class="feature-card-title">1. الهوية المؤسسية (identity)</div>
+                <div class="feature-card-desc">الرؤية، الرسالة، الأهداف الاستراتيجية، ونبذة التأسيس.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">2. المبادئ والقيم (principles)</div>
+                <div class="feature-card-desc">المبادئ الستة الحاكمة ومصفوفة القيم المؤسسية.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">3. مجالات النشاط (activity_fields)</div>
+                <div class="feature-card-desc">المحاور والقطاعات العامة لعمليات واستشارات المركز.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">4. دورة حياة الخدمة (lifecycle)</div>
+                <div class="feature-card-desc">مراحل وخطوات تنفيذ العمليات من التقييم إلى التسليم.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">5. الهيكل التنظيمي (org_structure)</div>
+                <div class="feature-card-desc">مخطط الإدارات والوحدات التشغيلية والقيادة.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">6. الجهات المستفيدة (beneficiaries)</div>
+                <div class="feature-card-desc">قوائم القطاعات، المنظمات، والشركاء المستهدفين.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">7. الصفحة الرئيسية (homepage)</div>
+                <div class="feature-card-desc">العنوان الرئيسي، الفقرة التمهيدية، وشارات الثقة.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">8. ترويسات الصفحات (page_banners)</div>
+                <div class="feature-card-desc">عناوين وخلفيات الصفحات الفرعية والداخلية.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">9. العلامة والتذييل (navigation_brand)</div>
+                <div class="feature-card-desc">نصوص الفوتر وهوية العلامة (عناصر محمية من الحذف العرضي).</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- CHAPTER 3 -->
+        <article id="ch3" class="chapter-card">
+          <span class="chapter-tag">الفصل الثالث</span>
+          <h2 class="chapter-title">إدارة صفحة «عن المركز» والهوية المؤسسية</h2>
+          <p class="chapter-intro">
+            صفحة «عن المركز» تعرض الرؤية، الرسالة، المبادئ، الأهداف، والهيكل التنظيمي. تبدأ الصفحة حالياً في حالة فارغة احترافية تُفيد بأن البيانات قيد التحديث المؤسسي حتى يضيفها المدير.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">3.1 إضافة الرؤية والرسالة ونبذة التعريف</h3>
+            <ol class="steps-list">
+              <li>من القائمة الجانبية، انتقل إلى: <strong>إدارة وتشغيل المنظومة</strong> > <strong>إدارة المحتوى المؤسسي</strong> (الرابط <code>/admin/content</code>).</li>
+              <li>اختر تبويب <strong>«الهوية المؤسسية (identity)»</strong>.</li>
+              <li>اضغط على <strong>«إضافة عنصر جديد»</strong>.</li>
+              <li>
+                <strong>لإضافة الرؤية:</strong>
+                اكتب في المفتاح <code>vision</code>. العنوان: «رؤيتنا» (Our Vision). وفي الوصف بالعربية أدخل نص الرؤية المعتمد للمركز.
+              </li>
+              <li>
+                <strong>لإضافة الرسالة:</strong>
+                اكتب في المفتاح <code>mission</code>. العنوان: «رسالتنا» (Our Mission). وفي الوصف بالعربية أدخل نص الرسالة المعتمد.
+              </li>
+              <li>
+                <strong>لإضافة النبذة والنشأة:</strong>
+                اكتب في المفتاح <code>about_paragraph_1</code> للفقرة التعريفية الأولى، و <code>about_paragraph_2</code> للفقرة الثانية الخاصة بالنهج والمعايير.
+              </li>
+              <li>
+                <strong>لإضافة أهداف المركز:</strong>
+                أضف عناصر بمفاتيح <code>goal_1</code>، <code>goal_2</code>، <code>goal_3</code> وهكذا مع كتابة عنوان الهدف وتفاصيله.
+              </li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">3.2 إدارة المبادئ الستة الحاكمة (Institutional Principles)</h3>
+            <p>
+              يتميز المركز بستة مبادئ حاكمة تظهر في كلٍ من الصفحة الرئيسية وصفحة عن المركز. لإدارتها:
+            </p>
+            <ol class="steps-list">
+              <li>من صفحة <code>/admin/content</code>، اضغط على تبويب <strong>«المبادئ والقيم (principles)»</strong>.</li>
+              <li>اضغط <strong>«إضافة عنصر جديد»</strong> لكل مبدأ.</li>
+              <li>أدخل المفتاح الفريد (مثل: <code>prevention_first</code> للمبدأ الأول).</li>
+              <li>أدخل العنوان: «الوقاية أولاً»، والوصف: «التركيز على رصد المخاطر مبكراً ومعالجة أسبابها قبل وقوعها».</li>
+              <li>حدد الأيقونة المناسبة (مثل <code>Shield</code> أو <code>Scale</code> أو <code>Lock</code>) ورقم الترتيب (1 إلى 6).</li>
+              <li>اضغط حفظ. ينعكس المبدأ فوراً على الموقع العام.</li>
+            </ol>
+          </div>
+        </article>
+
+        <!-- CHAPTER 4 -->
+        <article id="ch4" class="chapter-card">
+          <span class="chapter-tag">الفصل الرابع</span>
+          <h2 class="chapter-title">إدارة مجالات النشاط، دليل الخدمات، وطلبات العملاء</h2>
+          <p class="chapter-intro">
+            تم تصميم دليل الخدمات ليمنح الإدارة مرونة كاملة في بناء هيكل الخدمات وفق التسلسل الميداني الصحيح: قطاع النشاط المؤسسي أولاً، ثم الخدمة وتفاصيلها الفنية، وصولاً لمتابعة ومعالجة طلبات العملاء.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">4.1 التسلسل الإلزامي لإدخال الخدمات</h3>
+            <p>لضمان سلامة العلاقات البرمجية وظهور الخدمات بدقة، التزم بالتسلسل التالي:</p>
+            <div class="alert-box alert-info">
+              <div class="alert-title">خطوات التسلسل</div>
+              <strong>الخطوة 1:</strong> إنشاء قطاع النشاط (مجال الخدمة المؤسسي Category) في جدول المجالات.<br>
+              <strong>الخطوة 2:</strong> إضافة الخدمات الفرعية التابعة لهذا القطاع وربطها به.<br>
+              <strong>الخطوة 3:</strong> تحديد تفاصيل الخدمة (المزايا، القطاعات المستهدفة، ومسار التنفيذ).
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">4.2 إنشاء قطاع نشاط مؤسسي جديد</h3>
+            <ol class="steps-list">
+              <li>من القائمة الجانبية (Sidebar)، انتقل إلى مجموعة <strong>«الخدمات والاستشارات»</strong> واضغط على <strong>«دليل الخدمات المؤسسية»</strong> (الرابط <code>/admin/services</code>).</li>
+              <li>في أعلى الصفحة بجانب العنوان، اضغط على زر <strong>«إضافة مجال نشاط مؤسسي»</strong> ذو الإطار الذهبي.</li>
+              <li>
+                أدخل البيانات الإلزامية في النموذج المنبثق:
+                <ul style="margin: 0.5rem 1.5rem;">
+                  <li><strong>اسم المجال بالعربية:</strong> مثل «قطاع الحراسات وخدمات الأمن والسلامة».</li>
+                  <li><strong>اسم المجال بالإنجليزية:</strong> مثل Guarding & Protective Security Services.</li>
+                  <li><strong>المعرف اللطيف (Slug):</strong> رمز بالإنجليزية مثل <code>guarding-protective-security</code>.</li>
+                  <li><strong>الأيقونة:</strong> اختر أيقونة مناسبة من القائمة (مثل <code>ShieldCheck</code>).</li>
+                  <li><strong>الترتيب:</strong> رقم تسلسلي للعرض (1، 2، 3...).</li>
+                </ul>
+              </li>
+              <li>اضغط <strong>«إضافة مجال النشاط»</strong>. يظهر المجال الجديد كقسم رئيسي فوري في صفحة الخدمات.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">4.3 إنشاء خدمة جديدة وربطها بالمجال</h3>
+            <ol class="steps-list">
+              <li>في أعلى صفحة <code>/admin/services</code>، اضغط على زر <strong>«إضافة خدمة جديدة»</strong> ذو اللون الأخضر الرئيسي.</li>
+              <li>اختر «مجال النشاط التابع له» من القائمة المنسدلة لربط الخدمة بقطاعها الصحيح.</li>
+              <li>
+                أدخل تفاصيل ومواصفات الخدمة:
+                <div class="field-card" style="margin-top: 0.75rem;">
+                  <span class="field-card-name">عنوان الخدمة بالعربية والإنجليزية</span> (إلزامي): اسم واضح مثل «تأمين المقرات والمنشآت الحيوية».
+                </div>
+                <div class="field-card">
+                  <span class="field-card-name">المعرف الرابط (Slug)</span> (إلزامي، فريد): مثل <code>facility-guarding</code>.
+                </div>
+                <div class="field-card">
+                  <span class="field-card-name">الوصف الموجز والوصف الكامل</span> (إلزامي): ملخص من سطرين، يليه شرح تفصيلي لمنهجية تقديم الخدمة.
+                </div>
+                <div class="field-card">
+                  <span class="field-card-name">المزايا الرئيسية (Features)</span>: قائمة نقطية بمزايا الخدمة تظهر في بطاقة العرض.
+                </div>
+                <div class="field-card">
+                  <span class="field-card-name">القطاعات المستهدفة ومراحل التنفيذ</span>: البنوك، المنظمات الدولية، الشركات، مع خطوات سير العمل.
+                </div>
+              </li>
+              <li>حدد حالة النشر: اختر <strong>مفعلة (Active)</strong> لتظهر فوراً في الموقع، أو غير مفعلة للحفظ كمسودة داخلية.</li>
+              <li>اضغط <strong>«إضافة الخدمة»</strong>. ستظهر الخدمة فوراً في دليل الخدمات ومجالات النشاط.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">4.4 معالجة وإدارة طلبات الخدمات (Service Requests)</h3>
+            <p>
+              عندما يتقدم عميل أو منظمة بطلب خدمة عبر الموقع، يتم توجيهه مباشرة إلى وحدة إدارة الطلبات:
+            </p>
+            <ol class="steps-list">
+              <li>من القائمة الجانبية، انتقل إلى: <strong>الخدمات والاستشارات</strong> > <strong>طلبات الخدمات</strong> (الرابط <code>/admin/requests</code>).</li>
+              <li>تظهر الطلبات مصنفة حسب الحالة مع إمكانية الفلترة بالبحث، والنوع، والحالة (جديد، قيد المراجعة، جاري التنفيذ، مكتمل).</li>
+              <li>اضغط على أيقونة العين <strong>«معاينة وتدقيق»</strong> لفتح بطاقة تفاصيل الطلب المتكاملة التي تحتوي على 3 تبويبات رئيسية:
+                <ul style="margin: 0.5rem 1.5rem;">
+                  <li><strong>تبويب الحالة والملاحظات (Status & Notes):</strong> تحديث حالة الطلب، إسناد الطلب لأحد أعضاء الفريق الميداني المسؤول، وتدوين ملاحظات المتابعة والتدقيق.</li>
+                  <li><strong>تبويب الوثائق والملفات (Documents):</strong> إرفاق العقود الرسمية، عروض الأسعار، والمواصفات الفنية المتبادلة مع العميل.</li>
+                  <li><strong>تبويب التجهيزات والمعدات (Equipment Supply):</strong> حجز المعدات المطلوبة لتنفيذ الخدمة مباشرة من المخزن المركزي للسلامة.</li>
+                </ul>
+              </li>
+              <li>اضغط <strong>«حفظ التحديثات»</strong> لإرسال إشعار للعميل والمشرف المسؤول.</li>
+            </ol>
+          </div>
+        </article>
+
+        <!-- CHAPTER 5 -->
+        <article id="ch5" class="chapter-card">
+          <span class="chapter-tag">الفصل الخامس</span>
+          <h2 class="chapter-title">أكاديمية التدريب وبناء القدرات الميدانية</h2>
+          <p class="chapter-intro">
+            يوفر هذا القسم للمدير العام وفريق التدريب منظومة أكاديمية متكاملة عبر 8 تبويبات تخصصية لإدارة الدورات، قيد المتدربين، الجلسات، الحضور، إصدار الشهادات المعتمدة، وتصميم الحقائب التدريبية.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">5.1 الوصول لقطاع التدريب والتنقل بين أقسامه</h3>
+            <p>
+              من القائمة الجانبية (Sidebar)، انتقل إلى مجموعة <strong>«أكاديمية التدريب وبناء القدرات»</strong> ثم اضغط على <strong>«إدارة التدريب والدورات»</strong> (الرابط <code>/admin/training</code>).
+            </p>
+            <p>تجد في أعلى الصفحة شريط تبويبات يضم الأقسام الأكاديمية الثمانية التالية:</p>
+
+            <div class="feature-grid">
+              <div class="feature-card">
+                <div class="feature-card-title">1. الدورات التدريبية (Courses)</div>
+                <div class="feature-card-desc">إنشاء وإدارة وتعديل البرامج التدريبية المفتوحة والخاصة.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">2. طلبات التسجيل (Registrations)</div>
+                <div class="feature-card-desc">مراجعة المتقدمين، قبول أو رفض، وإصدار الشهادات الرقمية.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">3. الجلسات والمحاضرات (Sessions)</div>
+                <div class="feature-card-desc">جدولة الحصص اليومية، تحديد القاعات، والساعات المعتمدة.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">4. سجل الحضور والغياب (Attendance)</div>
+                <div class="feature-card-desc">رصد الحضور اليومي للمتدربين واحتساب نسب الحضور لمتطلبات التخرج.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">5. التقييمات والاختبارات (Evaluations)</div>
+                <div class="feature-card-desc">نتائج الاختبار القبلي والبعدي واستطلاعات قياس رضا المتدربين.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">6. المدربون المعتمدون (Trainers)</div>
+                <div class="feature-card-desc">قاعدة بيانات المدربين والخبراء وسيرهم الذاتية واعتماداتهم.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">7. الحقائب والمواد (Materials)</div>
+                <div class="feature-card-desc">رفع وتوزيع الملازم والحقائب التدريبية والمراجع التخصصية.</div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-card-title">8. تحديد الاحتياجات (TNA)</div>
+                <div class="feature-card-desc">نماذج تقييم الاحتياجات التدريبية للجهات الشريكة وتصميم المسارات.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">5.2 إنشاء دورة تدريبية جديدة</h3>
+            <ol class="steps-list">
+              <li>في تبويب <strong>«الدورات التدريبية»</strong>، اضغط زر <strong>«إنشاء دورة تدريبية جديدة»</strong>.</li>
+              <li>
+                املأ نموذج الدورة المتكامل:
+                <ul style="margin: 0.5rem 1.5rem;">
+                  <li><strong>عنوان الدورة بالعربية والإنجليزية:</strong> مثال: «إدارة مخاطر الحركة والسلامة الميدانية».</li>
+                  <li><strong>المعرف الرابط (Slug):</strong> رمز مثل <code>field-safety-course</code>.</li>
+                  <li><strong>التصنيف التدريبي:</strong> اختر التصنيف المناسب (مثل: أمن ميداني، إسعافات، اتصالات).</li>
+                  <li><strong>المدة والمكان:</strong> مثال: «4 أيام (32 ساعة تطبيقية)» — «مركز التدريب والتأهيل الميداني - عدن».</li>
+                  <li><strong>السعة والمقاعد:</strong> حدد الحد الأقصى للمتدربين (مثال: 25 متدرباً).</li>
+                  <li><strong>الحالة:</strong> اختر <code>OPEN</code> لفتح التسجيل للجمهور في الموقع العام، أو <code>DRAFT</code> للحفظ كمسودة.</li>
+                  <li><strong>شهادة إتمام:</strong> فعل خيار «إصدار شهادة معتمدة».</li>
+                </ul>
+              </li>
+              <li>اضغط <strong>«إنشاء الدورة»</strong>. تظهر الدورة فوراً في صفحة التدريب العامة <code>/training</code> وبوابة المتدربين.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">5.3 إدارة طلبات التسجيل وإصدار الشهادات المعتمدة</h3>
+            <p>
+              في تبويب <strong>«طلبات التسجيل»</strong>:
+            </p>
+            <ul style="margin: 0.5rem 1.5rem 1rem; font-size: 0.92rem;">
+              <li><strong>مراجعة المتقدم:</strong> فحص بيانات المتدرب، جهة عمله، المؤهل، ورقم هاتفه.</li>
+              <li><strong>القبول أو الرفض:</strong> تغيير حالة التسجيل من <code>PENDING</code> إلى <code>ACCEPTED</code> أو <code>REJECTED</code>.</li>
+              <li><strong>إصدار الشهادة الرقمية الرسمية:</strong> بعد إتمام الدورة واجتياز متطلبات الحضور والتقييم، اضغط على زر <strong>«إصدار شهادة»</strong>. يُنشئ النظام كود تحقق رقمي فريد يتيح لأي منظمة أو جهة توظيف التحقق من صحة الشهادة فوراً عبر بوابة التحقق الرقمية العامة <code>/verify</code>.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- CHAPTER 6 -->
+        <article id="ch6" class="chapter-card">
+          <span class="chapter-tag">الفصل السادس</span>
+          <h2 class="chapter-title">إدارة الدراسات والأبحاث الميدانية</h2>
+          <p class="chapter-intro">
+            يتيح نظام إدارة الدراسات نشر موجزات سياق الوصول الإنساني، تقارير تقييم المخاطر، والبحوث الميدانية الرصينة مع التحكم الصارم في درجات السرية والوصول عبر تبويبين رئيسيين.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">6.1 نشر دراسة أو تقرير جديد</h3>
+            <ol class="steps-list">
+              <li>من القائمة الجانبية (Sidebar)، ادخل إلى مجموعة <strong>«الدراسات والأبحاث الميدانية»</strong> واضغط على <strong>«الدراسات والأبحاث»</strong> (الرابط <code>/admin/research</code>).</li>
+              <li>في تبويب <strong>«الدراسات والبحوث الميدانية»</strong>، اضغط زر <strong>«إضافة دراسة أو تقرير جديد»</strong>.</li>
+              <li>
+                أدخل بيانات التقرير:
+                <ul style="margin: 0.5rem 1.5rem;">
+                  <li><strong>العنوان بالعربية والإنجليزية:</strong> عنوان التقرير الرصين.</li>
+                  <li><strong>الملخص التنفيذي (Executive Summary):</strong> فقرة موجزة تلخص أهم النتائج والتوصيات الميدانية.</li>
+                  <li><strong>المحتوى التفصيلي:</strong> النص الكامل للدراسة ومحاورها.</li>
+                  <li><strong>جهة الإعداد / المؤلف:</strong> مثل «وحدة الدراسات والبحوث الميدانية — FACSS».</li>
+                  <li><strong>مستوى الوصول (Visibility):</strong>
+                    <br>• <code>PUBLIC</code>: متاح للعامة للتحميل في مستودع الدراسات <code>/research</code>.
+                    <br>• <code>CLIENT_ONLY</code>: محتوى خاص وحصري للشركاء والعملاء المؤسسيين المعتمدين.
+                  </li>
+                  <li><strong>حالة النشر:</strong> <code>PUBLISHED</code> للنشر المباشر، أو <code>DRAFT</code> للمراجعة والتدقيق.</li>
+                </ul>
+              </li>
+              <li>اضغط <strong>«حفظ ونشر»</strong>.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">6.2 إدارة أذونات وصلاحيات الوصول الممنوحة (Access Grants)</h3>
+            <p>
+              للتقارير الحصرية ذات الطابع الحساس (المحددة بـ <code>CLIENT_ONLY</code>)، يوفر تبويب <strong>«أذونات وصلاحيات الوصول»</strong> تحكماً دقيقاً:
+            </p>
+            <ol class="steps-list">
+              <li>انتقل إلى تبويب <strong>«أذونات وصلاحيات الوصول»</strong> في صفحة <code>/admin/research</code>.</li>
+              <li>حدد التقرير المراد منح صلاحية الاطلاع عليه.</li>
+              <li>اختر المنظمة أو العميل المؤسسي المصرح له من قائمة المستخدمين المعتمدين.</li>
+              <li>اضغط <strong>«منح إذن الوصول»</strong>. يظهر التقرير فوراً في بوابة الشريك الحصرية لهذا العميل فقط.</li>
+            </ol>
+          </div>
+        </article>
+
+        <!-- CHAPTER 7 -->
+        <article id="ch7" class="chapter-card">
+          <span class="chapter-tag">الفصل السابع</span>
+          <h2 class="chapter-title">إدارة المستخدمين، الأدوار، ومصفوفة الصلاحيات (RBAC)</h2>
+          <p class="chapter-intro">
+            تم تصفير جميع الحسابات التجريبية وبقي حساب المدير العام فقط. يشرح هذا الفصل آلية إنشاء مستخدمين جدد، تعيين أدوارهم، وضبط صلاحياتهم الميدانية بدقة متناهية عبر مصفوفة القدرات (Granular Capabilities).
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">7.1 منظومة الأدوار المعتمدة في المنصة</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>الدور (Role)</th>
+                    <th>المسمى الوظيفي</th>
+                    <th>نطاق الصلاحيات المصرح به</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>SUPER_ADMIN</strong></td>
+                    <td>المدير العام للمركز</td>
+                    <td>صلاحيات شاملة ومطلقة على كافة البيانات، الإعدادات الحساسة، الصلاحيات، والبلاغات الميدانية الأصلية.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ADMIN</strong></td>
+                    <td>مدير تنفيذي</td>
+                    <td>إدارة كافة العمليات التشغيلية والخدمات دون صلاحية تعديل الإعدادات الحساسة للنظام.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>SERVICE_MANAGER</strong></td>
+                    <td>مدير العمليات والخدمات</td>
+                    <td>إدارة دليل الخدمات، طلبات الخدمات، عروض الأسعار، والمتابعة الميدانية للعملاء.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>TRAINING_MANAGER</strong></td>
+                    <td>مدير التدريب والتأهيل</td>
+                    <td>إدارة الأكاديمية: الدورات، قيد المتدربين، الحضور، إصدار الشهادات، وتنسيق المدربين.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>RESEARCH_MANAGER</strong></td>
+                    <td>مدير الدراسات والبحوث</td>
+                    <td>إعداد ونشر ومراجعة الدراسات والتقارير الميدانية ومنح أذونات الوصول للشركاء.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>CONTENT_MANAGER</strong></td>
+                    <td>مسؤول المحتوى والإعلام</td>
+                    <td>تحرير نصوص واجهات المنصة والهوية والمبادئ والشارات في نظام إدارة المحتوى CMS.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>STAFF / EMPLOYEE</strong></td>
+                    <td>كادر وموظف تشغيلي</td>
+                    <td>الوصول للوحدات المخصصة له فقط وفق القدرات المسندة لحسابه.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>FIELD_FOCAL_POINT</strong></td>
+                    <td>نقطة اتصال ميدانية</td>
+                    <td>بوابة البلاغات الميدانية الحصرية فقط لرفع تقارير الأحداث المباشرة من الميدان.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>CLIENT</strong></td>
+                    <td>عميل مؤسسي / شريك</td>
+                    <td>بوابة الشركاء: تقديم طلبات الخدمات، متابعة العقود، وتنزيل التقارير الحصرية المصرحة.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>TRAINEE</strong></td>
+                    <td>متدرب</td>
+                    <td>بوابة المتدربين: استعراض الدورات المسجل بها، جداول المحاضرات، وتنزيل الشهادات المعتمدة.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">7.2 خطوات إنشاء مستخدم جديد وتعيين دوره</h3>
+            <ol class="steps-list">
+              <li>من القائمة الجانبية (Sidebar)، انتقل إلى: <strong>إدارة وتشغيل المنظومة</strong> > <strong>المستخدمون والصلاحيات</strong> (الرابط <code>/admin/users</code>).</li>
+              <li>اضغط زر <strong>«إنشاء مستخدم جديد»</strong> ذو اللون الأخضر في أعلى الصفحة.</li>
+              <li>أدخل الاسم الكامل، البريد الإلكتروني المهني، رقم الهاتف، والجهة/المنظمة.</li>
+              <li>اختر الدور المناسب من القائمة المنسدلة وفق الجدول أعلاه.</li>
+              <li>أدخل كلمة مرور أولية قوية تفي بمعايير الأمان (8 خانات على الأقل وتتضمن حروفاً وأرقاماً).</li>
+              <li>اضغط <strong>«إنشاء الحساب»</strong>. يستطيع المستخدم الآن الدخول فوراً بحسب صلاحيات دوره.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">7.3 نافذة التحكم في القدرات الدقيقة (UserPermissionsModal)</h3>
+            <p>
+              يتميز النظام بإمكانية تخصيص صلاحيات تفصيلية (Granular Capabilities) لأي مستخدم من خلال الضغط على زر <strong>«الصلاحيات والقدرات»</strong> بجانب اسم المستخدم في جدول المستخدمين. يتيح ذلك:
+            </p>
+            <ul style="margin: 0.5rem 1.5rem 1rem; font-size: 0.92rem;">
+              <li>منح أو سحب صلاحية فحص البلاغات الميدانية وتدقيقها.</li>
+              <li>منح أو سحب صلاحية اعتماد التنبيهات الأمنية وتوزيعها.</li>
+              <li>منح صلاحية إدارة المخزون والمعدات أو حظرها.</li>
+              <li>منح صلاحية تصدير سجلات التدقيق أو حصرها على القيادة فقط.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- CHAPTER 8 -->
+        <article id="ch8" class="chapter-card">
+          <span class="chapter-tag">الفصل الثامن</span>
+          <h2 class="chapter-title">إدارة العمليات الميدانية، المخاطر، التجهيزات، والرقابة</h2>
+          <p class="chapter-intro">
+            يغطي هذا الفصل كافة الوحدات الميدانية والتشغيلية المتقدمة: البلاغات الميدانية، التنبيهات، سجل المخاطر، المعدات والمخزون، مركز التشغيل، الرسائل، الإعدادات، وسجل التدقيق.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">8.1 البلاغات الميدانية وسير عملها (Field Incidents)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>العمليات الميدانية والإنذار</strong> > <strong>البلاغات الميدانية</strong> (الرابط <code>/admin/incidents</code>).
+            </p>
+            <ul style="margin: 0.5rem 1.5rem 1rem; font-size: 0.92rem;">
+              <li><strong>الرصد المباشر:</strong> استقبال تقارير الحوادث الواردة من نقاط الاتصال الميدانية مع تصنيفها (أمني، وصول إنساني، ألغام ومقذوفات، حوادث حركة).</li>
+              <li><strong>مراقبة مهل الاستجابة (SLA Watchdog):</strong> يحتوي الجدول على فلاتر سريعة ترصد البلاغات التي تقترب من خرق المهلة (Approaching Breach) أو المتجاوزة للمهلة (Breached).</li>
+              <li><strong>التحقيق الأمني وحماية السرية:</strong> عند فتح تفاصيل أي بلاغ على <code>/admin/incidents/[id]</code>، يتم إخفاء بيانات الشهود والمصادر الحساسة للمستخدمين العاديين، وتقتصر رؤية البيانات الأصلية الخام حصرياً على المدير العام <code>SUPER_ADMIN</code> لضمان أمن المصادر الميدانية.</li>
+            </ul>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.2 التنبيهات الميدانية العاجلة (Field Alerts)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>العمليات الميدانية والإنذار</strong> > <strong>التنبيهات الميدانية</strong> (الرابط <code>/admin/alerts</code>).
+            </p>
+            <p>
+              يتيح لغرفة العمليات صياغة نشرات أمنية عاجلة، تحديد درجة الخطورة (معلوماتية، تحذيرية، حرجة)، تحديد النطاق الجغرافي المعني، واعتماد النشر المباشر لتظهر في تنبيهات الشركاء والبعثات الميدانية.
+            </p>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.3 سجل المخاطر التشغيلية (Risk Register)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>العمليات الميدانية والإنذار</strong> > <strong>سجل المخاطر التشغيلية</strong> (الرابط <code>/admin/risks</code>).
+            </p>
+            <ul style="margin: 0.5rem 1.5rem 1rem; font-size: 0.92rem;">
+              <li><strong>تسجيل خطر جديد:</strong> تحديد تصنيف الخطر، الموقع، الاحتمالية (1 إلى 5)، ومستوى الأثر (1 إلى 5).</li>
+              <li><strong>مصفوفة المخاطر الأوتوماتيكية:</strong> حساب درجة الخطورة تلقائياً من خلال خوارزمية (الاحتمالية × الأثر).</li>
+              <li><strong>خطة التخفيف (Mitigation Plan):</strong> توثيق التدابير الوقائية وتعيين مسؤول المتابعة الميداني ومتابعة حالة الخطر حتى إغلاقه.</li>
+            </ul>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.4 المعدات والمخزون والتوريدات (Equipment & Inventory)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>الخدمات والاستشارات</strong> > <strong>المعدات والمخزون</strong> (الرابط <code>/admin/equipment</code>).
+            </p>
+            <p>يحتوي هذا النظام المتطور على 7 أقسام متكاملة:</p>
+            <ol class="steps-list">
+              <li><strong>نظرة عامة ومؤشرات الجاهزية (Overview):</strong> مؤشرات إجمالي الأصناف، القيمة الإجمالية، التنبيه بالأصناف منخفضة الرصيد، والفحوصات المستحقة.</li>
+              <li><strong>دليل المنتجات والتجهيزات (Products):</strong> إضافة الأصناف وتحديد الرقم التعريفي (SKU)، الشركة المصنعة، الموديل، والمواصفات الفنية.</li>
+              <li><strong>الموردون المعتمدون (Suppliers):</strong> سجل الشركات الموردة لأجهزة السلامة، بيانات الاتصال، وشروط التوريد.</li>
+              <li><strong>أوامر الشراء والتوريد (Procurement):</strong> إنشاء ومتابعة طلبات الشراء حتى الاستلام وتحديث أرصدة المخازن آلياً.</li>
+              <li><strong>حركة المخزون والجرد (Inventory Ledger):</strong> سجل دقيق لعمليات الصرف، الإرجاع، والجرد الدوري للمخازن.</li>
+              <li><strong>الفحص الفني الدوري والمعايرة (Inspections):</strong> جدولة وتوثيق اختبارات السلامة والمعايرة الفنية لأجهزة الاتصال والحماية للتأكد من جاهزيتها 100%.</li>
+              <li><strong>تسليم المعدات للمشاريع (Deliveries):</strong> أوامر الصرف والتسليم الميداني للفرق أو العملاء مع محاضر الاستلام الموقعة.</li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.5 مركز تشغيل المنظومة (Operations Hub)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>إدارة وتشغيل المنظومة</strong> > <strong>مركز تشغيل المنظومة</strong> (الرابط <code>/admin/system</code>).
+            </p>
+            <p>
+              يعرض مؤشرات حيوية لحالة الخوادم، سرعة استجابة قاعدة البيانات، الجلسات النشطة، فحص تكامل النظام، وحالة الاتصال بالخدمات السحابية.
+            </p>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.6 رسائل واستفسارات التواصل (Inquiries & Messages)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>إدارة وتشغيل المنظومة</strong> > <strong>رسائل واستفسارات التواصل</strong> (الرابط <code>/admin/messages</code>).
+            </p>
+            <p>
+              صندوق وارد مركزي لكافة الرسائل والاستفسارات والشكاوى الواردة من نماذج التواصل العامة. يتيح تصنيف الرسائل، تدوين ملاحظات الرد، وتحديث الحالة من غير مقروء إلى تم الرد أو الأرشفة.
+            </p>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.7 إعدادات النظام ومحددات الـ SLA (System Settings)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>إدارة وتشغيل المنظومة</strong> > <strong>إعدادات النظام والتواصل</strong> (الرابط <code>/admin/settings</code>).
+            </p>
+            <p>تنقسم الإعدادات إلى 4 تبويبات حيوية:</p>
+            <ul style="margin: 0.5rem 1.5rem 1rem; font-size: 0.92rem;">
+              <li><strong>بيانات الاتصال المباشر (Contact):</strong> تحديث الهاتف الرسمي، البريد المؤسسي، العنوان الجغرافي، وساعات العمل.</li>
+              <li><strong>قنوات التواصل الاجتماعي (Channels):</strong> روابط حسابات المركز الرسمية (واتساب، لينكد إن، إكس، فيسبوك وغيرها).</li>
+              <li><strong>اتفاقيات مستوى الخدمة (SLA Settings):</strong> ضبط المهل الزمنية بالساعات للبلاغات الطارئة، البلاغات العادية، وطلبات الخدمات قبل إطلاق تنبيهات الخرق.</li>
+              <li><strong>إدارة الحقول الديناميكية (Dynamic Fields):</strong> تخصيص خيارات القوائم المنسدلة في نماذج البلاغات والطلبات دون الحاجة لتعديل الكود البرمجي.</li>
+            </ul>
+          </div>
+
+          <div class="section-block">
+            <h3 class="section-title">8.8 سجل الرقابة والتدقيق غير القابل للتعديل (Audit Logs)</h3>
+            <p>
+              للوصول: القائمة الجانبية > <strong>إدارة وتشغيل المنظومة</strong> > <strong>سجل الرقابة والتدقيق</strong> (الرابط <code>/admin/logs</code>).
+            </p>
+            <p>
+              أرشيف رقابي وأمني يوثق كل عملية تتم في النظام بشكل غير قابل للحذف أو التعديل، مع تسجيل: اسم المستخدم، عنوان الـ IP، نوع الإجراء (تسجيل دخول، إنشاء خدمة، تعديل صلاحية، اعتماد بلاغ)، والفارق الدقيق للبيانات (Diff).
+            </p>
+          </div>
+        </article>
+
+        <!-- CHAPTER 9 -->
+        <article id="ch9" class="chapter-card">
+          <span class="chapter-tag">الفصل التاسع</span>
+          <h2 class="chapter-title">ضوابط رفع وإدارة الملفات والمرفقات</h2>
+          <p class="chapter-intro">
+            تخضع جميع المرفقات المرفوعة عبر المنصة لضوابط أمان وفحص مشددة لحماية خوادم المركز وسرية الوثائق المؤسسية.
+          </p>
+
+          <div class="section-block">
+            <h3 class="section-title">9.1 المعايير والقيود الفنية للملفات</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>نوع المرفق</th>
+                    <th>الصيغ المسموحة</th>
+                    <th>الحد الأقصى للحجم</th>
+                    <th>ملاحظات الأمان</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>الدراسات والتقارير الأكاديمية</strong></td>
+                    <td>PDF فقط (<code>.pdf</code>)</td>
+                    <td>15 ميجابايت للملف</td>
+                    <td>يتم التحقق من ترويسة الملف ومنع أي ملفات تنفيذية ملغومة.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>مرفقات البلاغات الميدانية</strong></td>
+                    <td>JPEG, PNG, WebP, PDF</td>
+                    <td>10 ميجابايت للملف</td>
+                    <td>تشفير التخزين وعزل مسار المرفقات الميدانية الحساسة.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>صور الخدمات والشعارات</strong></td>
+                    <td>PNG, WebP, SVG</td>
+                    <td>2 ميجابايت للملف</td>
+                    <td>يُفضل استخدام أبعاد متناسقة وخلفيات شفافة لأيقونات الخدمات.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>وثائق طلبات الخدمات والعقود</strong></td>
+                    <td>PDF, DOCX, XLSX</td>
+                    <td>12 ميجابايت للملف</td>
+                    <td>عزل خاص ضمن مجلد العميل المشفر مع تقييد الوصول.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+        <!-- CHAPTER 10 -->
+        <article id="ch10" class="chapter-card">
+          <span class="chapter-tag">الفصل العاشر</span>
+          <h2 class="chapter-title">دليل تشخيص وحل المشكلات التشغيلية الشائعة</h2>
+          <p class="chapter-intro">
+            يوفر هذا الجدول خطوات عملية فورية لمعالجة أي عائق قد يواجهه المستخدم الإداري أثناء العمل اليومي.
+          </p>
+
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 20%;">المشكلة</th>
+                  <th style="width: 25%;">السبب المحتمل</th>
+                  <th style="width: 35%;">خطوات الحل الإداري</th>
+                  <th style="width: 20%;">متى تتصل بالدعم التقني؟</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>فشل تسجيل الدخول</strong></td>
+                  <td>خطأ في كلمة المرور أو البريد الإلكتروني.</td>
+                  <td>تأكد من عدم وجود مسافات إضافية قبل أو بعد البريد، وتأكد من حالة مفتاح Caps Lock.</td>
+                  <td>إذا تكرر الفشل رغم التأكد من كلمة المرور المعتمدة.</td>
+                </tr>
+                <tr>
+                  <td><strong>عدم ظهور الخدمة أو الدورة في الموقع العام</strong></td>
+                  <td>حالة الخدمة محددة كمسودة (غير مفعلة) أو تم إلغاء نشرها.</td>
+                  <td>ادخل إلى إدارة الخدمات أو التدريب عبر القائمة الجانبية، وافتح تعديل السجل وتأكد من تفعيل خيار «نشط / مفعل (Active)» وحفظ التعديل.</td>
+                  <td>إذا كانت مفعلة في لوحة الإدارة ولا تظهر بعد تحديث الصفحة (Ctrl+F5).</td>
+                </tr>
+                <tr>
+                  <td><strong>ظهور صفحة «قيد التحديث المؤسسي»</strong></td>
+                  <td>القسم فارغ تماماً في قاعدة البيانات ولم تتم إضافة أي عنصر بعد.</td>
+                  <td>أمر طبيعي ومقصود. قم بإنشاء أول سجل في هذا القسم (خدمة، دورة، أو دراسة) وستختفي الرسالة فوراً ويظهر محتواك.</td>
+                  <td>لا حاجة — هذا سلوك الحماية النظيفة المعتمد في المنصة.</td>
+                </tr>
+                <tr>
+                  <td><strong>فشل رفع ملف مرفق</strong></td>
+                  <td>حجم الملف يتجاوز الحد المسموح أو صيغته غير مدعومة.</td>
+                  <td>تأكد من أن الملف بصيغة PDF وأنه أقل من 15 ميجابايت. قم بضغط ملف PDF بواسطة أي أداة ضغط معتمدة وأعد المحاولة.</td>
+                  <td>إذا كان الملف يستوفي الشروط واستمر الفشل.</td>
+                </tr>
+                <tr>
+                  <td><strong>رسالة «انتهت الجلسة» (Session Expired)</strong></td>
+                  <td>مرور فترة زمنية محددة دون نشاط لحماية الأمان.</td>
+                  <td>أعد تسجيل الدخول من جديد عبر <code>/login</code> وسيتم استئناف عملك مباشرة.</td>
+                  <td>إذا كانت الجلسة تنتهي فور تسجيل الدخول مباشرة دون انتظار.</td>
+                </tr>
+                <tr>
+                  <td><strong>اختفاء بعض الأقسام من القائمة الجانبية</strong></td>
+                  <td>الدخول بحساب لا يمتلك صلاحية الوصول لهذه الأقسام (تطبيق قيود RBAC).</td>
+                  <td>تأكد من تسجيل الدخول بحساب المدير العام <code>admin@facss-aden.com</code> أو مراجعة الصلاحيات المسندة للدور.</td>
+                  <td>إذا كان الحساب المسجل هو المدير العام واختفت أقسام رئيسية.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- CHAPTER 11 -->
+        <article id="ch11" class="chapter-card">
+          <span class="chapter-tag">الفصل الحادي عشر</span>
+          <h2 class="chapter-title">قائمة التحقق الرسمية للمدير قبل تدشين المحتوى</h2>
+          <p class="chapter-intro">
+            قبل الإعلان الرسمي أو إرسال الروابط للشركاء والجهات المعنية، راجع قائمة التحقق التالية للتأكد من اكتمال الإدخال والجاهزية التامة:
+          </p>
+
+          <ul class="checklist">
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>التحقق من الهوية الرسمية للمركز:</strong>
+                التأكد من ظهور الاسم العربي الكامل «المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية» والاختصار «FACSS» والشعار «السلامة أولاً — Safety First» في الترويسة والتذييل.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>إدخال العنوانين الأساسيين للرئيسية:</strong>
+                التحقق من ضبط <code>hero_headline</code> و <code>hero_subtitle</code> عبر «إدارة المحتوى المؤسسي» بما يعكس التوجه الميداني للمركز.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>إدخال الرؤية والرسالة في صفحة عن المركز:</strong>
+                إضافة كتلتي <code>vision</code> و <code>mission</code> في تبويب الهوية المؤسسية والتأكد من صياغتهما بالعربية والإنجليزية.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>إضافة مجالات النشاط والخدمات المعتمدة:</strong>
+                إنشاء قطاعات النشاط المؤسسية أولاً من <code>/admin/services</code>، ثم إضافة الخدمات التابعة لها مع إبراز المزايا والقطاعات المستهدفة.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>إعداد الدورات التدريبية المفتوحة:</strong>
+                إنشاء الدورات التدريبية وجداولها وتحديد مواعيدها وسعتها التدريبية وتفعيل حالة <code>OPEN</code>.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>فحص بوابة التحقق الرقمي من الوثائق:</strong>
+                فتح الرابط <code>/verify</code> للتأكد من عمل منظومة التحقق الفوري من الشهادات والوثائق الصادرة عن المركز.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>فحص خلو الصفحات من أي بيانات تجريبية وهمية:</strong>
+                التأكد من عدم وجود أسماء اختبارية أو نصوص غير مفهومة في كافة القوائم والجداول.
+              </div>
+            </li>
+            <li class="checklist-item">
+              <div class="checklist-box"></div>
+              <div>
+                <strong>الحفاظ على سرية حساب المدير العام:</strong>
+                التأكد من عدم تداول كلمة المرور، واستخدام ميزة «تغيير كلمة المرور» دورياً من الشريط العلوي.
+              </div>
+            </li>
+          </ul>
+
+          <div style="text-align: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.88rem;">
+            المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية (FACSS) — العاصمة عدن، الجمهورية اليمنية<br>
+            جميع الحقوق محفوظة © 2026 | السلامة أولاً — Safety First
+          </div>
+        </article>
+
+      </main>
+    </div>
+  </div>
+
+</body>
+</html>
+"""
+
+output_path = os.path.join("docs", "guides", "FACSS_ADMIN_OPERATIONAL_GUIDE_AR.html")
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html_content.strip() + "\n")
+
+print(f"Successfully generated updated guide at: {output_path}")
+print(f"File size: {os.path.getsize(output_path)} bytes")
+

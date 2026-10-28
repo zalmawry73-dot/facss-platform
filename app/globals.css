@@ -233,7 +233,7 @@ img {
 }
 
 .section {
-  padding-block: 4.5rem;
+  padding-block: clamp(2.5rem, 4vw, 3.5rem);
   position: relative;
 }
 
@@ -1141,8 +1141,8 @@ img {
 .page-header-institutional {
   background: radial-gradient(circle at 50% 20%, #114D3B 0%, #0B3D2E 50%, #08281E 100%);
   border-bottom: 1px solid rgba(181, 146, 84, 0.25);
-  padding-top: clamp(3.2rem, 5vw, 4.5rem);
-  padding-bottom: clamp(3.2rem, 5vw, 4.5rem);
+  padding-top: clamp(2rem, 3.5vw, 2.75rem);
+  padding-bottom: clamp(2rem, 3.5vw, 2.75rem);
   text-align: center;
   color: #FFFFFF;
   position: relative;

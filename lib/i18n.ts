@@ -3,10 +3,10 @@ export type Locale = 'ar' | 'en';
 export const translations = {
   ar: {
     // Brand & Header
-    siteTitle: 'مركز الحلول المتكاملة للأمن والسلامة',
-    siteAcronym: 'مركز الحلول المتكاملة',
+    siteTitle: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
+    siteAcronym: 'FACSS',
     slogan: '«السلامة أولاً»',
-    sloganSub: 'Integrated Solutions Center for Safety and Security',
+    sloganSub: 'Integrated Center for Security, Safety & Field Studies',
     tagline: 'خدمات متكاملة في الأمن والسلامة والحراسات الوقائية، والرصد والإنذار المبكر، والدراسات الميدانية وبناء القدرات، وحلول السلامة والتجهيزات',
     
     // Navigation
@@ -466,10 +466,10 @@ export const translations = {
 
   en: {
     // Brand & Header
-    siteTitle: 'Integrated Solutions Center for Safety and Security',
-    siteAcronym: 'Integrated Solutions Center',
+    siteTitle: 'Integrated Center for Security, Safety & Field Studies',
+    siteAcronym: 'FACSS',
     slogan: '“Safety First”',
-    sloganSub: 'Integrated Solutions Center for Safety and Security',
+    sloganSub: 'Integrated Center for Security, Safety & Field Studies',
     tagline: 'Integrated security and safety services, protective guarding, early warning monitoring, field studies, capacity building, and safety equipment',
     
     // Navigation

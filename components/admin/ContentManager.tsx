@@ -78,12 +78,8 @@ const SECTIONS = [
   { id: 'navigation_brand', labelKey: 'sectionNavigationBrand', descKey: 'sectionNavigationBrandDesc', icon: Building2 },
 ] as const;
 
-// Protected from deletion
-const PROTECTED_KEYS = [
-  'vision', 'mission', 'about_paragraph_1', 'about_paragraph_2', 'why_us',
-  'hero_headline', 'hero_subtitle', 'hero_badge_1', 'hero_badge_2', 'hero_badge_3',
-  'about_cta', 'brand_names', 'footer_content', 'banner_services', 'banner_training', 'banner_research'
-];
+// Protected from deletion (core brand navigation only)
+const PROTECTED_KEYS = ['brand_names', 'footer_content'];
 
 // ────────────────────────────────────────────────────────
 // Inline Edit Form Component

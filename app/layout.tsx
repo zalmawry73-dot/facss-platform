@@ -31,9 +31,9 @@ const outfit = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || 'http://localhost:3000'),
-  title: 'مركز الحلول المتكاملة للأمن والسلامة | Integrated Solutions Center for Safety and Security',
-  description: 'مركز الحلول المتكاملة للأمن والسلامة — صرح مهني واستشاري وتنفيذي يقدم حلول الأمن والسلامة، الرصد الميداني والتنبيه المبكر، الدراسات والتحليلات، التدريب والتأهيل. السلامة أولاً.',
-  keywords: 'مركز الحلول المتكاملة للأمن والسلامة, أمن وسلامة, حراسات أمنية عدن, دراسات ميدانية, رصد وتنبيه مبكر, أنظمة سلامة, تدريب أمني, Integrated Solutions Center for Safety and Security',
+  title: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية | Integrated Center for Security, Safety & Field Studies (FACSS)',
+  description: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية (FACSS) — صرح مهني واستشاري وتنفيذي يقدم خدمات الأمن والسلامة، الرصد الميداني والتنبيه المبكر، الدراسات والتحليلات، التدريب والتأهيل. السلامة أولاً — Safety First.',
+  keywords: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية, FACSS, أمن وسلامة, حراسات أمنية عدن, دراسات ميدانية, رصد وتنبيه مبكر, أنظمة سلامة, تدريب أمني, Integrated Center for Security Safety & Field Studies',
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -45,16 +45,16 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: 'مركز الحلول المتكاملة للأمن والسلامة | Integrated Solutions Center for Safety and Security',
-    description: '«السلامة أولاً» — منظومة متكاملة لحلول وخدمات الأمن والسلامة والرصد والدراسات الميدانية وأنظمة التدريب',
+    title: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية | Integrated Center for Security, Safety & Field Studies (FACSS)',
+    description: '«السلامة أولاً» — منظومة متكاملة لخدمات الأمن والسلامة والرصد والدراسات الميدانية وبناء القدرات',
     url: process.env.APP_URL || 'http://localhost:3000',
-    siteName: 'مركز الحلول المتكاملة للأمن والسلامة',
+    siteName: 'المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية (FACSS)',
     images: [
       {
         url: '/images/brand/logo-horizontal-light.png',
         width: 951,
         height: 210,
-        alt: 'شعار مركز الحلول المتكاملة للأمن والسلامة',
+        alt: 'شعار المركز المتكامل لخدمات الأمن والسلامة والدراسات الميدانية',
       },
     ],
     locale: 'ar_YE',

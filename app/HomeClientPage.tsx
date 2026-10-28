@@ -577,101 +577,107 @@ export default function HomeClientPage({ initialContent }: Props) {
       {/* ----------------------------------------------------
          SECTION 5: TRAINING & RESEARCH SHOWCASE
          ---------------------------------------------------- */}
-      <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem' }}>
-            {/* Training Column */}
-            <div
-              className="card-institutional"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                borderTop: '4px solid var(--color-gold-500)',
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                  <div
-                    style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: 'var(--radius-md)',
-                      background: 'rgba(181, 146, 84, 0.14)',
-                      color: 'var(--color-gold-700)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <TrainingIcon size={24} />
-                  </div>
+      {!!((showcaseTrainingBlock && showcaseTrainingBlock.isVisible) || (showcaseResearchBlock && showcaseResearchBlock.isVisible)) && (
+        <section className="section" style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+          <div className="container">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1.75rem' }}>
+              {/* Training Column */}
+              {showcaseTrainingBlock && showcaseTrainingBlock.isVisible && (
+                <div
+                  className="card-institutional"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    borderTop: '4px solid var(--color-gold-500)',
+                  }}
+                >
                   <div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-gold-700)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {trainingTag}
-                    </span>
-                    <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                      {trainingTitle}
-                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                      <div
+                        style={{
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(181, 146, 84, 0.14)',
+                          color: 'var(--color-gold-700)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <TrainingIcon size={24} />
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-gold-700)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {trainingTag}
+                        </span>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+                          {trainingTitle}
+                        </h3>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
+                      {trainingDesc}
+                    </p>
                   </div>
+                  <Link href={trainingLink} className="btn btn-secondary">
+                    <span>{trainingBtnText}</span>
+                    <ArrowIcon size={15} />
+                  </Link>
                 </div>
-                <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
-                  {trainingDesc}
-                </p>
-              </div>
-              <Link href={trainingLink} className="btn btn-secondary">
-                <span>{trainingBtnText}</span>
-                <ArrowIcon size={15} />
-              </Link>
-            </div>
+              )}
 
-            {/* Research Column */}
-            <div
-              className="card-institutional"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                borderTop: '4px solid var(--color-primary-900)',
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                  <div
-                    style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: 'var(--radius-md)',
-                      background: 'var(--color-primary-50)',
-                      color: 'var(--color-primary-900)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <ResearchIcon size={24} />
-                  </div>
+              {/* Research Column */}
+              {showcaseResearchBlock && showcaseResearchBlock.isVisible && (
+                <div
+                  className="card-institutional"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    borderTop: '4px solid var(--color-primary-900)',
+                  }}
+                >
                   <div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary-800)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {researchTag}
-                    </span>
-                    <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                      {researchTitle}
-                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                      <div
+                        style={{
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'var(--color-primary-50)',
+                          color: 'var(--color-primary-900)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <ResearchIcon size={24} />
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary-800)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {researchTag}
+                        </span>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+                          {researchTitle}
+                        </h3>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
+                      {researchDesc}
+                    </p>
                   </div>
+                  <Link href={researchLink} className="btn btn-secondary">
+                    <span>{researchBtnText}</span>
+                    <ArrowIcon size={15} />
+                  </Link>
                 </div>
-                <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
-                  {researchDesc}
-                </p>
-              </div>
-              <Link href={researchLink} className="btn btn-secondary">
-                <span>{researchBtnText}</span>
-                <ArrowIcon size={15} />
-              </Link>
+              )}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ----------------------------------------------------
          SECTION 6: DIGITAL VERIFICATION SPOTLIGHT

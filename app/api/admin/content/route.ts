@@ -296,14 +296,9 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'العنصر غير موجود' }, { status: 404 });
     }
 
-    // Protect core structural items from deletion
-    const PROTECTED_KEYS = [
-      'vision', 'mission', 'about_paragraph_1', 'about_paragraph_2', 'why_us',
-      'hero_headline', 'hero_subtitle', 'hero_badge_1', 'hero_badge_2', 'hero_badge_3',
-      'about_cta', 'brand_names', 'footer_content', 'banner_services', 'banner_training', 'banner_research'
-    ];
-    if (PROTECTED_KEYS.includes(existing.key)) {
-      return NextResponse.json({ error: 'لا يمكن حذف هذا العنصر الهيكلي الأساسي. يمكنك تعديله أو إخفاؤه فقط.' }, { status: 403 });
+    // Only guard core brand identity against non-super-admins
+    if (session?.role !== 'SUPER_ADMIN' && ['brand_names', 'footer_content'].includes(existing.key)) {
+      return NextResponse.json({ error: 'لا يمكن حذف هذا العنصر الأساسي إلا بواسطة المدير العام.' }, { status: 403 });
     }
 
     if ((prisma as any).contentBlock) {

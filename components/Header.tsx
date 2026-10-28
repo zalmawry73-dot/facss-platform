@@ -34,8 +34,8 @@ export default function Header({ brandData }: HeaderProps = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  const brandPrimary = (locale === 'ar' ? brandData?.primaryAr : brandData?.primaryEn) || (locale === 'ar' ? 'مركز الحلول المتكاملة' : 'Integrated Solutions Center');
-  const brandSecondary = (locale === 'ar' ? brandData?.secondaryAr : brandData?.secondaryEn) || (locale === 'ar' ? 'للأمن والسلامة' : 'for Safety and Security');
+  const brandPrimary = (locale === 'ar' ? brandData?.primaryAr : brandData?.primaryEn) || (locale === 'ar' ? 'المركز المتكامل لخدمات الأمن والسلامة' : 'Integrated Center for Security, Safety');
+  const brandSecondary = (locale === 'ar' ? brandData?.secondaryAr : brandData?.secondaryEn) || (locale === 'ar' ? 'والدراسات الميدانية' : '& Field Studies');
 
   // Close menus on route navigation
   useEffect(() => {
